@@ -1,0 +1,72 @@
+.main-icon {
+    height: 80%;
+    aspect-ratio: 1 / 1;
+}
+
+.icon {
+    height: 50%;
+    aspect-ratio: 1 / 1;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    height: min(80px, 6vh);
+    list-style: col;
+    background-color: #cecece;
+}
+
+.nav-left {
+    height: 100%;
+    display: flex;
+    list-style: none;
+    justify-content: left;
+    margin-left: 0.5rem;
+}
+
+.nav-right {
+    height: 100%;
+    display: flex;
+    list-style: none;
+    justify-content: right;
+    margin-right: 0.5rem;
+}
+
+.home-button {
+    display: flex;
+    height: 100%;
+    aspect-ratio: 5 / 2;
+    align-items: center;
+    background-color: #00000000;
+    border: none;
+    cursor: pointer;
+    color: #000000;
+    font-size: 1.6rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.nav-button {
+    display: flex;
+    height: 100%;
+    aspect-ratio: 5 / 3;
+    align-items: center;
+    justify-content: center;
+    background-color: #00000000;
+    border: none;
+    cursor: pointer;
+    color: #000000;
+    gap: 7.5%;
+    font-size: 1.1rem;
+    font-weight: 00;
+    white-space: nowrap;
+}
+
+.nav-button:hover {
+    background-color: #0000001f;
+}
+
+.nav-text{
+    position: relative;
+    top: 3%;
+}
