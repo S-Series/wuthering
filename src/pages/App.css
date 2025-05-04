@@ -8,3 +8,14 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+
+.viewport {
+    display: flex;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}

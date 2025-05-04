@@ -1,6 +1,7 @@
 .main-icon {
     height: 80%;
     aspect-ratio: 1 / 1;
+    margin-right: 10%;
 }
 
 .icon {
@@ -13,7 +14,7 @@
     justify-content: space-between;
     height: min(80px, 6vh);
     list-style: col;
-    background-color: #cecece;
+    background-color: #b0d0d6;
 }
 
 .nav-left {
@@ -28,6 +29,7 @@
     height: 100%;
     display: flex;
     list-style: none;
+    align-items: center;
     justify-content: right;
     margin-right: 0.5rem;
 }
@@ -44,6 +46,19 @@
     font-size: 1.6rem;
     font-weight: bold;
     white-space: nowrap;
+}
+
+.lang-select {
+    display: flex;
+    height: 50%;
+    aspect-ratio: 3/1;
+    align-items: center;
+    justify-content: center;
+    background-color: #00000000;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    padding-left: 2%;
 }
 
 .nav-button {
@@ -66,7 +81,7 @@
     background-color: #0000001f;
 }
 
-.nav-text{
+.nav-text {
     position: relative;
     top: 3%;
 }

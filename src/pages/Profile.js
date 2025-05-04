@@ -10,6 +10,7 @@ function Home() {
       <div className="viewport">
         <SideBar />
         <div className="main-content">
+          <ProfileCard />
         </div>
       </div>
     </div>
