@@ -1,10 +1,9 @@
 import "./ProfileCard.css";
 import Select from "react-select";
-import DropSlot from "./DropSlot";
-import OCRSlot from "./OcrSlot";
 import { useState } from "react";
 import { character as characterList } from "../Datas/Character";
 import { weapon as weaponList } from "../Datas/Weapon";
+import OCRGrid from "./OcrGrid";
 
 function ProfileCard() {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
@@ -102,6 +101,8 @@ function ProfileCard() {
       <div className="profile-card">
 
       </div>
+
+      <OCRGrid/>
     </div>
   );
 }

@@ -20,16 +20,18 @@ function DropSlot({ index }) {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      fontSize: "0.75rem",
-      borderRadius: 3,
-      height: "100%",              // 드롭다운 높이를 부모에 맞춤
-      minHeight: "32px",           // 최소 높이 지정 (없으면 collapse될 수 있음)
-      width: "100%",               // 가로 100% 채우기
-      boxSizing: "border-box",     // padding 포함
+      fontSize: "0.65rem",
+      width: "100%",
+      height: "rem",
+      boxSizing: "border-box",
+      overflow: "hidden",
+      whiteSpace: "nowrap",
     }),
-    container: (base) => ({
+    singleValue: (base) => ({
       ...base,
-      width: "100%",               // 컨테이너도 100%
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
     }),
     menu: (base) => ({
       ...base,

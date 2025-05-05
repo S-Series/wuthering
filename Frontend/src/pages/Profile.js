@@ -12,8 +12,6 @@ function Home() {
         <SideBar />
         <div className="main-content">
           <ProfileCard />
-          <div className="ocr-grid">
-          </div>
         </div>
       </div>
     </div>

@@ -1,0 +1,7 @@
+.ocr-grid{
+    display: flex;
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    justify-content: space-between;
+    gap: 1vw;
+}

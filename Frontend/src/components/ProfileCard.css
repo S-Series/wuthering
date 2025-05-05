@@ -1,6 +1,7 @@
 .portrait{
     display: flex;
     width: min(90%, 1080px);
+    min-width: 800px;
     flex-direction: column;
 }
 
@@ -26,17 +27,4 @@
     margin-top: 2%;
     aspect-ratio: 21 / 9;
     border-radius: 0.5rem;
-}
-
-.ocr-grid {
-    display: flex;
-    background-color: rgb(200, 200, 200);
-    width: calc(100% - 2vw);
-    padding: 1vw;
-    gap: 1vw;
-    margin-top: 2%;
-    margin-bottom: 10%;
-    aspect-ratio: 3 / 2;
-    align-content: center;
-    justify-content: center;
 }
