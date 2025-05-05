@@ -1,0 +1,42 @@
+.portrait{
+    display: flex;
+    width: min(90%, 1080px);
+    flex-direction: column;
+}
+
+.profile-dropdown-grid{
+    display: flex;
+    width: 100%;
+    margin-top: 2%;
+}
+
+.dropdown{
+    display: flex;
+    height: 100%;
+    width: 20%;
+    aspect-ratio: 4 / 1;
+    font-size: 1rem;
+    margin-left: 2.5%;
+}
+
+.profile-card {
+    display: flex;
+    background-color: rgb(200, 200, 200);
+    width: 100%;
+    margin-top: 2%;
+    aspect-ratio: 21 / 9;
+    border-radius: 0.5rem;
+}
+
+.ocr-grid {
+    display: flex;
+    background-color: rgb(200, 200, 200);
+    width: calc(100% - 2vw);
+    padding: 1vw;
+    gap: 1vw;
+    margin-top: 2%;
+    margin-bottom: 10%;
+    aspect-ratio: 3 / 2;
+    align-content: center;
+    justify-content: center;
+}

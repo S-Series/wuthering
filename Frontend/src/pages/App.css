@@ -1,0 +1,31 @@
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 전체 뷰포트 기준 */
+    width: 100%;
+    background-image: url("/public/bg.png"); /* public 폴더 경로 */
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+.viewport {
+    display: flex;
+}
+
+.main-content {
+    margin-top: min(80px, 6vh);
+    margin-left: min(175px, 20vh);
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
