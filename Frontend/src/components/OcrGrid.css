@@ -2,6 +2,6 @@
     display: flex;
     width: 100%;
     aspect-ratio: 2 / 1;
+    margin: 2.5vh 0;
     justify-content: space-between;
-    gap: 1vw;
 }

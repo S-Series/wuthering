@@ -15,17 +15,25 @@ function DropSlot({ index }) {
   const valueOptions = [{ value: "", label: "수치 선택" }];
 
   const selectStyle = {
-    control: (base, state) => ({
+    control: (base) => ({
       ...base,
       display: "flex",
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "center",
       fontSize: "0.65rem",
       width: "100%",
-      height: "rem",
-      boxSizing: "border-box",
+      minHeight: "2rem",
+      height: "2rem",
+      lineHeight: "1rem",
+      paddingTop: 0,
+      paddingBottom: 0,
       overflow: "hidden",
       whiteSpace: "nowrap",
+    }),
+    indicatorsContainer: (base) => ({
+      ...base,
+      width: "2rem",
+      height: "2rem",
     }),
     singleValue: (base) => ({
       ...base,
@@ -36,11 +44,11 @@ function DropSlot({ index }) {
     menu: (base) => ({
       ...base,
       zIndex: 100,
-      fontSize: "0.75rem",
+      fontSize: "0.6rem",
     }),
     option: (base, state) => ({
       ...base,
-      fontSize: "0.75rem",
+      fontSize: "0.6rem",
       backgroundColor: state.isFocused ? "#eee" : "white",
       color: "black",
     }),

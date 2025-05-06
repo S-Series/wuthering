@@ -1,9 +1,10 @@
 import "./ProfileCard.css";
 import Select from "react-select";
 import { useState } from "react";
+import OCRGrid from "./OcrGrid";
+import CharacterStat from "./CharacterStat";
 import { character as characterList } from "../Datas/Character";
 import { weapon as weaponList } from "../Datas/Weapon";
-import OCRGrid from "./OcrGrid";
 
 function ProfileCard() {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
@@ -73,7 +74,7 @@ function ProfileCard() {
   };
 
   return (
-    <div className="portrait">
+    <div className="profile-portrait">
       <div className="profile-dropdown-grid">
         <Select
           className="dropdown"
@@ -99,10 +100,42 @@ function ProfileCard() {
       </div>
 
       <div className="profile-card">
-
+        <img
+          className="profile-card-img"
+          src="./character/shorekeeper/stand.png"></img>
+        <div className="profile-card-stats">
+          <div className="profile-stats-weapon">
+            <img
+              className="profile-weapon-img"
+              src="./weapon/StraightSword/ico001.png"
+            />
+            <div className="profile-weapon">
+              <span className="profile-weapon-name">
+                寛恕のタ・エイス・ヘアウトン
+              </span>
+              <div className="profile-weapon-stats-container">
+                <img className="profile-stat-icon" src="./gem.webp" />
+                <span className="profile-weapon-stats">576</span>
+                <img className="profile-stat-icon" src="./gem.webp" />
+                <span className="profile-weapon-stats">47.8%</span>
+              </div>
+            </div>
+          </div>
+          <div className="profile-stat-grid">
+            <CharacterStat />
+            <CharacterStat />
+            <CharacterStat />
+            <CharacterStat />
+            <CharacterStat />
+            <CharacterStat />
+            <CharacterStat />
+            <CharacterStat />
+          </div>
+        </div>
+        <div className="profile-card-equipment-grid"></div>
       </div>
 
-      <OCRGrid/>
+      <OCRGrid />
     </div>
   );
 }

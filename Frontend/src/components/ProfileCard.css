@@ -1,17 +1,17 @@
-.portrait{
+.profile-portrait {
     display: flex;
     width: min(90%, 1080px);
     min-width: 800px;
     flex-direction: column;
 }
 
-.profile-dropdown-grid{
+.profile-dropdown-grid {
     display: flex;
     width: 100%;
     margin-top: 2%;
 }
 
-.dropdown{
+.dropdown {
     display: flex;
     height: 100%;
     width: 20%;
@@ -22,9 +22,127 @@
 
 .profile-card {
     display: flex;
-    background-color: rgb(200, 200, 200);
     width: 100%;
-    margin-top: 2%;
     aspect-ratio: 21 / 9;
+    background-color: rgb(200, 200, 200);
     border-radius: 0.5rem;
+    margin-top: 2%;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /*
+    background-image: url(../../public/Temp/Output.jpg);
+    background-size: cover;
+    background-position: center;
+    */
+}
+
+.profile-card-img {
+    display: flex;
+    height: 100%;
+    width: 30%;
+    object-fit: cover;
+}
+
+.profile-card-stats {
+    display: flex;
+    width: 30%;
+    height: 95%;
+    align-self: center;
+    background-color: #ffffff33;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.profile-card-equipment-grid {
+    display: flex;
+    width: 37.5%;
+    height: 95%;
+    margin: 0% 1.25%;
+    align-self: center;
+    background-color: #ffffff33;
+}
+
+.profile-stat-icon {
+    display: flex;
+    align-self: center;
+    justify-self: center;
+    height: 85%;
+    aspect-ratio: 1 / 1;
+    background-color: #00ff0033;
+}
+
+.profile-stats-weapon {
+    display: flex;
+    width: 95%;
+    height: 20%;
+    align-self: center;
+    background-color: #ff00dd33;
+}
+
+.profile-stat-grid {
+    display: flex;
+    width: 95%;
+    height: 65%;
+    align-self: center;
+    margin-top: 2.5%;
+    justify-content: space-between;
+    background-color: #0099ff33;
+    flex-direction: column;
+}
+
+.profile-weapon-img {
+    display: flex;
+    background-color: #ff000033;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.profile-weapon {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    background-color: #ff000033;
+    margin-left: 2.5%;
+    flex-direction: column;
+}
+
+.profile-weapon-name {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+
+    margin-left: 0.5rem;
+    width: calc(100% - 0.51rem);
+    height: 50%;
+
+    background-color: #00000033;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 2rem;
+    font-weight: 500;
+
+    font-size: clamp(0rem, 88%, 2rem);
+}
+
+.profile-weapon-stats-container {
+    display: flex;
+    height: 50%;
+    width: 100%;
+}
+
+.profile-weapon-stats {
+    display: flex;
+    align-self: center;
+    align-items: center;
+    justify-content: right;
+    font-size: 1.2rem;
+    width: calc(50% - 0.5rem);
+    height: 75%;
+    background-color: #ff000033;
 }

@@ -1,6 +1,40 @@
-.ocr-body{
+.ocr-body {
   display: flex;
-  width: 10%;
-  flex: 1;
-  background-color: aqua;
+  width: calc(20% - .75vw);
+  aspect-ratio: 3 / 1;
+  flex-direction: column;
+  padding: .25vw;
+}
+
+.ocr-input-slot {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 2px dashed #ffffff;
+  border-radius: 1vw;
+  background-color: #ffffff33;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2.5vh;
+  cursor: pointer;
+  overflow: hidden;
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.ocr-input-slot.main-slot {
+  border: 2px dashed #eeff00;
+  background-color: #eeff0055;
+}
+
+.ocr-input-slot:focus {
+  border: 2px dashed #00fff2;
+  background-color: #00fff233;
+}
+
+.ocr-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
