@@ -1,9 +1,20 @@
 import "./CharacterStat.css";
+import {FixedStats as FixedStats} from "../Datas/Stats";
 
-function CharacterStat(values) {
+function CharacterStat({id, value}) {
+
+  const lang = localStorage.getItem("lang") || "kr";
+
+  const stat = FixedStats.find((stat) => stat.id === id);
+  const label = stat ? stat[lang] || stat.id : id;
+
   return (
     <div className="character-stat-grid">
-          <img className="character-stat-icon" src="./gem.webp"/>
+      <img className="character-stat-icon" src="./gem.webp" />
+      <div className="character-stat-text-grid">
+        <span className="character-stat-text">{label || "NaN"}</span>
+        <span className="character-stat-text R">{value || "NaN"}</span>
+      </div>
     </div>
   );
 }

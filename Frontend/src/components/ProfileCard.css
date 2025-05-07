@@ -13,11 +13,23 @@
 
 .dropdown {
     display: flex;
-    height: 100%;
     width: 20%;
+    height: 100%;
     aspect-ratio: 4 / 1;
     font-size: 1rem;
     margin-left: 2.5%;
+}
+
+.profile-stat-info{
+    display: flex;
+    width: 97.5%;
+    height: 2rem;
+    color: #2f2f2f;
+    align-self: center;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1rem;
+    font-weight: 400;
 }
 
 .profile-card {
@@ -26,7 +38,6 @@
     aspect-ratio: 21 / 9;
     background-color: rgb(200, 200, 200);
     border-radius: 0.5rem;
-    margin-top: 2%;
     align-items: center;
     justify-content: center;
     overflow: hidden;
@@ -70,7 +81,6 @@
     justify-self: center;
     height: 85%;
     aspect-ratio: 1 / 1;
-    background-color: #00ff0033;
 }
 
 .profile-stats-weapon {
@@ -78,7 +88,7 @@
     width: 95%;
     height: 20%;
     align-self: center;
-    background-color: #ff00dd33;
+    margin-top: 2.5%;
 }
 
 .profile-stat-grid {
@@ -88,47 +98,37 @@
     align-self: center;
     margin-top: 2.5%;
     justify-content: space-between;
-    background-color: #0099ff33;
     flex-direction: column;
 }
 
 .profile-weapon-img {
     display: flex;
-    background-color: #ff000033;
     height: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 8px;
+    background-color: #00000033;
 }
 
 .profile-weapon {
     display: flex;
-    flex: 1;
+    width: 68.125%;
     height: 100%;
-    background-color: #ff000033;
     margin-left: 2.5%;
     flex-direction: column;
 }
 
 .profile-weapon-name {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
-    justify-content: left;
-
-    margin-left: 0.5rem;
-    width: calc(100% - 0.51rem);
-    height: 50%;
-
-    background-color: #00000033;
-
-    overflow: hidden;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
     white-space: nowrap;
-    text-overflow: ellipsis;
-    font-size: 2rem;
-    font-weight: 500;
-
-    font-size: clamp(0rem, 88%, 2rem);
-}
+  }
 
 .profile-weapon-stats-container {
     display: flex;
@@ -141,8 +141,25 @@
     align-self: center;
     align-items: center;
     justify-content: right;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     width: calc(50% - 0.5rem);
     height: 75%;
+}
+
+.profile-stats-score-grid{
+    display: flex;
+    width: 95%;
+    height: 100%;
+    align-self: center;
+    align-items: center;
+    justify-content: space-between;
+    margin: 2.5%;
     background-color: #ff000033;
+}
+
+.profile-stats-score-slot{
+    display: flex;
+    width: 30%;
+    height: 100%;
+    background-color: #00000033; 
 }

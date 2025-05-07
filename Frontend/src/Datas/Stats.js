@@ -37,8 +37,8 @@ export const FixedStats = [
   },
   {
     id: "def",
-    en: "",
-    kr: "",
+    en: "Def",
+    kr: "방어력",
     jp: "",
     zh: "",
     ValueMain: [null, null, null],
@@ -54,7 +54,7 @@ export const FixedStats = [
     SubValue: ['8.1%', '9.0%', '10.0%', '10.9%', '11.8%', '12.8%', '13.8%', '14.7%'],
   },
   {
-    id: "critRate",
+    id: "CritRate",
     en: "",
     kr: "크리티컬",
     jp: "",
@@ -63,7 +63,7 @@ export const FixedStats = [
     SubValue: ['6.3%', '6.9%', '7.5%', '8.1%', '8.7%', '9.3%', '9.9%', '10.5%'],
   },
   {
-    id: "critDmg",
+    id: "CritDmg",
     en: "",
     kr: "크리티컬 피해",
     jp: "",
@@ -81,7 +81,7 @@ export const FixedStats = [
     SubValue: null,
   },
   {
-    id: "Resonance",
+    id: "ResonanceBns",
     en: "",
     kr: "공명 효율",
     jp: "",
@@ -90,7 +90,7 @@ export const FixedStats = [
     SubValue: ['6.8%', '7.6%', '8.4%', '9.2%', '10%', '10.8%', '11.6%', '12.4%'],
   },
   {
-    id: "",
+    id: "normalBns",
     en: "",
     kr: "일반공격 피해보너스",
     jp: "",
@@ -99,7 +99,7 @@ export const FixedStats = [
     SubValue: ['6.4%', '7.1%', '7.9%', '8.6%', '9.4%', '10.1%', '10.9%', '11.6%'],
   },
   {
-    id: "",
+    id: "heavyBns",
     en: "",
     kr: "강공격 피해보너스",
     jp: "",
@@ -108,7 +108,7 @@ export const FixedStats = [
     SubValue: ['6.4%', '7.1%', '7.9%', '8.6%', '9.4%', '10.1%', '10.9%', '11.6%'],
   },
   {
-    id: "",
+    id: "skillBns",
     en: "",
     kr: "공명스킬 피해보너스",
     jp: "",
@@ -117,7 +117,7 @@ export const FixedStats = [
     SubValue: ['6.4%', '7.1%', '7.9%', '8.6%', '9.4%', '10.1%', '10.9%', '11.6%'],
   },
   {
-    id: "",
+    id: "ultBns",
     en: "",
     kr: "공명해방 피해보너스",
     jp: "",
@@ -126,7 +126,7 @@ export const FixedStats = [
     SubValue: ['6.4%', '7.1%', '7.9%', '8.6%', '9.4%', '10.1%', '10.9%', '11.6%'],
   },
   {
-    id: "Glacio",
+    id: "GlacioBns",
     en: "",
     kr: "응결 피해 보너스",
     jp: "",
@@ -135,7 +135,7 @@ export const FixedStats = [
     SubValue: null,
   },
   {
-    id: "Fusion",
+    id: "FusionBns",
     en: "",
     kr: "융용 피해 보너스",
     jp: "",
@@ -144,7 +144,7 @@ export const FixedStats = [
     SubValue: null,
   },
   {
-    id: "Electro",
+    id: "ElectroBns",
     en: "",
     kr: "전도 피해 보너스",
     jp: "",
@@ -153,7 +153,7 @@ export const FixedStats = [
     SubValue: null,
   },
   {
-    id: "Aero",
+    id: "AeroBns",
     en: "",
     kr: "기류 피해 보너스",
     jp: "",
@@ -162,7 +162,7 @@ export const FixedStats = [
     SubValue: null,
   },
   {
-    id: "Spectro",
+    id: "SpectroBns",
     en: "",
     kr: "회절 피해 보너스",
     jp: "",
@@ -171,7 +171,7 @@ export const FixedStats = [
     SubValue: null,
   },
   {
-    id: "Havoc",
+    id: "HavocBns",
     en: "",
     kr: "인멸 피해 보너스",
     jp: "",

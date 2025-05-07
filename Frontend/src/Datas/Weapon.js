@@ -1,4 +1,5 @@
 export const weapon = {
+  //$ Count: 13
   StraightSword: [
     {
       id: "Emerald of Genesis",
@@ -92,6 +93,7 @@ export const weapon = {
       imgKey: "ico108",
     },
   ],
+  //$ Count: 10
   GreatSword: [
     {
       id: "Lutrous Razor",
@@ -164,6 +166,7 @@ export const weapon = {
       imgKey: "ico107",
     },
   ],
+  //$ Count: 11
   Gauntlet: [
     {
       id: "Abyss Surges",
@@ -241,10 +244,279 @@ export const weapon = {
       jp: "酩酊のエポス",
       zh: "酩酊的英雄志",
       imgKey: "ico107",
-    }
+    },
   ],
-  Firearm: [],
-  Amplifter: [],
+  //$ Count: 10
+  Firearm: [
+    {
+      id: "Static Mist",
+      kr: "부동의 안개",
+      jp: "不変の湖煙",
+      zh: "停驻之烟",
+      imgKey: "ico001",
+    },
+    {
+      id: "The Last Dance",
+      kr: "죽음과 춤",
+      jp: "ラストダンス",
+      zh: "死与舞",
+      imgKey: "ico002",
+    },
+    {
+      id: "Woodland Aria",
+      kr: "숲속의 아리아",
+      jp: "森のアリア",
+      zh: "林间的咏叹调",
+      imgKey: "ico003",
+    },
+    {
+      id: "Cadenza",
+      kr: "화려한 악곡",
+      jp: "華麗カテンツァ",
+      zh: "华彩乐段",
+      imgKey: "ico101",
+    },
+    {
+      id: "Pistols#26",
+      kr: "26형 권총 · 맹렬한 돌격",
+      jp: "穿撃銃＃26",
+      zh: "穿击枪-26型",
+      imgKey: "ico102",
+    },
+    {
+      id: "Undying Flame",
+      kr: "불멸의 성화",
+      jp: "燃え尽きぬ焔",
+      zh: "无眠烈火",
+      imgKey: "ico103",
+    },
+    {
+      id: "Novaburst",
+      kr: "천공의 순간",
+      jp: "疾走の星",
+      zh: "飞逝",
+      imgKey: "ico104",
+    },
+    {
+      id: "Thunderbolt",
+      kr: "뇌전",
+      jp: "迸る雷霆",
+      zh: "奔雷",
+      imgKey: "ico105",
+    },
+    {
+      id: "Relativistic Jet",
+      kr: "역설의 격류",
+      jp: "悖理を説く宇宙ジェット",
+      zh: "悖论喷流",
+      imgKey: "ico106",
+    },
+    {
+      id: "Romance in Farewell",
+      kr: "작별의 로맨스",
+      jp: "別れのメロス",
+      zh: "叙别的罗曼史",
+      imgKey: "ico107",
+    },
+  ],
+  //$ Count: 15
+  Amplifter: [
+    {
+      id: "Cosmic Ripples",
+      kr: "파도의 기록",
+      jp: "栄枯の湖岸",
+      zh: "漪澜浮录",
+      imgKey: "ico001",
+    },
+    {
+      id: "Stringmaster",
+      kr: "꼭두각시의 손",
+      jp: "糸繰りの奇術",
+      zh: "掣傀之手",
+      imgKey: "ico002",
+    },
+    {
+      id: "Rime-Draped Sprouts",
+      kr: "옥수 비단",
+      jp: "氷華の雅印",
+      zh: "琼枝冰绡",
+      imgKey: "ico003",
+    },
+    {
+      id: "Stellar Symphony",
+      kr: "뭇별의 교향곡",
+      jp: "星々のコンチェルト",
+      zh: "星序协响",
+      imgKey: "ico004",
+    },
+    {
+      id: "Luminous Hymn",
+      kr: "광휘의 찬송가",
+      jp: "光のハルモニア",
+      zh: "和光回唱",
+      imgKey: "ico005",
+    },
+    {
+      id: "Whispers of Sirens",
+      kr: "바다의 속삭임",
+      jp: "深海の囁き",
+      zh: "海的呢喃",
+      imgKey: "ico006",
+    },
+    {
+      id: "Call of the Abyss",
+      kr: "심해의 메아리",
+      jp: "海淵のリフレイン",
+      zh: "渊海回声",
+      imgKey: "ico101",
+    },
+    {
+      id: "Variation",
+      kr: "판타지 변주",
+      jp: "奇妙バリエーション",
+      zh: "奇幻变奏",
+      imgKey: "ico102",
+    },
+    {
+      id: "Ocean's Gift",
+      kr: "바다의 선물",
+      jp: "海の恩恵",
+      zh: "大海的馈赠",
+      imgKey: "ico103",
+    },
+    {
+      id: "Rectifier#25",
+      kr: "25형 증폭기 · 울림의 멜로디",
+      jp: "鳴動機＃25",
+      zh: "鸣动仪-25型",
+      imgKey: "ico104",
+    },
+    {
+      id: "Jinzhou Keeper",
+      kr: "금주의 수호",
+      jp: "今州の衛士",
+      zh: "今州守望",
+      imgKey: "ico105",
+    },
+    {
+      id: "Comet Flare",
+      kr: "굉음",
+      jp: "変化の星",
+      zh: "异度",
+      imgKey: "ico106",
+    },
+    {
+      id: "Augment",
+      kr: "청음",
+      jp: "清らかな音",
+      zh: "清音",
+      imgKey: "ico107",
+    },
+    {
+      id: "Fusion Accretion",
+      kr: "융합의 원반",
+      jp: "コアが溶融する降着円盤",
+      zh: "核熔星盘",
+      imgKey: "ico108",
+    },
+    {
+      id: "Waltz in Masquerade",
+      kr: "허위의 왈츠",
+      jp: "虚飾のワルツ",
+      zh: "虚饰的华尔兹",
+      imgKey: "ico109",
+    },
+  ],
 };
 
-export const weaponStats = {};
+export const weaponStat = [
+  /*values: {
+  hpPct, atkPct, defPct, 
+  CritRate, CritDmg, HealBns, ResonanceBns,
+  normalBns, heavyBns, skillBns, ultBns,
+  GlacioBns, FusionBns, ElectroBns, AeroBns, SpectroBns, HavocBns
+}*/
+  //$ StraightSword
+  {
+    id: "Emerald of Genesis",
+    atk: 588,
+    value: [24.3, 12.8],
+    statType: ["", ""]
+  },
+  {
+    id: "Blazing Brilliance",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Red Spring",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Unflickering Valor",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Bloodpact's Pledge",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Somnoire Anchor",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Overture",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Sword#18",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Commando of Conviction",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Lunar Cutter",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Lumingloss",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Endless Collapse",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  {
+    id: "Fables of Wisdom",
+    atk: 0,
+    value: [0, 0],
+    statType: ["", ""]
+  },
+  //$ GreatSword
+  //$ Gauntlet
+  //$ Firearm
+  //$ Amplifter
+];
