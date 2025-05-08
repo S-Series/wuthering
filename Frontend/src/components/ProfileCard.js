@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 
 import OCRGrid from "./OcrGrid";
+import EquipSlot from "./EquipSlot";
 import CharacterStat from "./CharacterStat";
 import FittedText from "./FittedText";
 
@@ -25,13 +26,25 @@ function ProfileCard() {
       kr: [
         "캐릭터 선택",
         "무기 선택",
+        "* 캐릭터 및 무기 Lv90 기준",
         "* 모든 조건부 스텟은 적용되지 않습니다",
       ],
-      jp: ["キャラ選択", "武器選択", "* 条件付きステータスは適用されません"],
-      zh: ["角色选择", "武器选择", "* 所有条件属性不会被应用"],
+      jp: [
+        "キャラ選択",
+        "武器選択",
+        "* キャラと武器はLv90基準",
+        "* 条件付きステータスは適用されません",
+      ],
+      zh: [
+        "角色选择",
+        "武器选择",
+        "* 角色和武器以90级为基准",
+        "* 所有条件属性不会被应用",
+      ],
       en: [
         "Select Character",
         "Select Weapon",
+        "* Based on Lv90 character and weapon",
         "* Conditional stats are not applied",
       ],
     };
@@ -120,7 +133,7 @@ function ProfileCard() {
               (w) => w.id === opt.value
             );
             setWeapon(selected);
-            setWeaponStat(weaponStats.find((s) => s.id === selected.id));
+            setWeaponStat(weaponStats[selected.id]); // ← 여기 수정
           }}
           placeholder={getStringInfo(lang)[1]}
           isSearchable={false}
@@ -139,6 +152,7 @@ function ProfileCard() {
         />
       </div>
       <span className="profile-stat-info">{getStringInfo(lang)[2]}</span>
+      <span className="profile-stat-info">{getStringInfo(lang)[3]}</span>
       {/* Profile Card */}
       <div className="profile-card">
         {/* Character image */}
@@ -161,24 +175,34 @@ function ProfileCard() {
               alt="weapon"
             />
             <div className="profile-weapon">
-              <FittedText className="profile-weapon-name">
+              <span className="profile-weapon-name">
+                &nbsp;
                 {lang === "en"
-                  ? selectedWeapon?.id || "NaN"
-                  : selectedWeapon?.[lang] || "NaN"}
-              </FittedText>
+                  ? selectedWeapon?.id || "[ ]"
+                  : selectedWeapon?.[lang] || "[ ]"}
+              </span>
               <div className="profile-weapon-stats-container">
                 <img
                   className="profile-stat-icon"
                   src="./gem.webp"
                   alt="stat"
                 />
-                <span className="profile-weapon-stats">{}&nbsp;&nbsp;</span>
+                <span className="profile-weapon-stats">
+                  {selectedWeaponStat?.atk}&nbsp;&nbsp;
+                </span>
                 <img
                   className="profile-stat-icon"
                   src="./gem.webp"
                   alt="stat"
                 />
-                <span className="profile-weapon-stats">{}%</span>
+                <span className="profile-weapon-stats">
+                  {selectedWeaponStat?.value[0]?.toFixed(1)}
+                  {["Pct", "Bns", "crit"].some((suffix) =>
+                    selectedWeaponStat?.statType[0]?.includes(suffix)
+                  )
+                    ? "%"
+                    : ""}
+                </span>{" "}
               </div>
             </div>
           </div>
@@ -193,8 +217,14 @@ function ProfileCard() {
             <CharacterStat id={"ResonanceBns"} value={"123.4%"} />
             <CharacterStat id={"CritRate"} value={"78.9%"} />
             <CharacterStat id={"CritDmg"} value={"234.5%"} />
-            <CharacterStat id={selectedCharacter?.element + "Bns"} value={"34.5%"} />
-            <CharacterStat id={selectedCharacter?.type + "Bns"} value={"34.5%"} />
+            <CharacterStat
+              id={selectedCharacter?.element + "Bns"}
+              value={"34.5%"}
+            />
+            <CharacterStat
+              id={selectedCharacter?.type + "Bns"}
+              value={"34.5%"}
+            />
           </div>
           {/* Final Stats Score */}
           <div className="profile-stats-score-grid">
@@ -204,7 +234,14 @@ function ProfileCard() {
           </div>
         </div>
         {/* Equipment */}
-        <div className="profile-card-equipment-grid" />
+        <div className="profile-card-equipment-grid">
+          <EquipSlot />
+          <div className="profile-card-equipment-divider" />
+          <EquipSlot />
+          <EquipSlot />
+          <EquipSlot />
+          <EquipSlot />
+        </div>
       </div>
 
       <OCRGrid />

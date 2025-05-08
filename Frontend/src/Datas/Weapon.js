@@ -428,95 +428,314 @@ export const weapon = {
     },
   ],
 };
-
-export const weaponStat = [
-  /*values: {
-  hpPct, atkPct, defPct, 
-  CritRate, CritDmg, HealBns, ResonanceBns,
-  normalBns, heavyBns, skillBns, ultBns,
-  GlacioBns, FusionBns, ElectroBns, AeroBns, SpectroBns, HavocBns
-}*/
-  //$ StraightSword
-  {
-    id: "Emerald of Genesis",
+export const weaponStat = {
+  //#region StraightSword
+  "Emerald of Genesis": {
     atk: 588,
     value: [24.3, 12.8],
-    statType: ["", ""]
+    statType: ["critRate", "ResonanceBns"],
   },
-  {
-    id: "Blazing Brilliance",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Blazing Brilliance": {
+    atk: 588,
+    value: [48.6, 12],
+    statType: ["critDmg", "atkPct"],
   },
-  {
-    id: "Red Spring",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Red Spring": {
+    atk: 588,
+    value: [24.3, 12],
+    statType: ["critRate", "atkPct"],
   },
-  {
-    id: "Unflickering Valor",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Unflickering Valor": {
+    atk: 413,
+    value: [77, 8],
+    statType: ["ResonanceBns", "critRate"],
   },
-  {
-    id: "Bloodpact's Pledge",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Bloodpact's Pledge": {
+    atk: 588,
+    value: [38.9, 0],
+    statType: ["ResonanceBns", "atk"],
   },
-  {
-    id: "Somnoire Anchor",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Somnoire Anchor": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
   },
-  {
-    id: "Overture",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  Overture: {
+    atk: 338,
+    value: [51.8, 0],
+    statType: ["ResonanceBns", "atk"],
   },
-  {
-    id: "Sword#18",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Sword#18": {
+    atk: 388,
+    value: [36.5, 0],
+    statType: ["atkPct", "atk"],
   },
-  {
-    id: "Commando of Conviction",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Commando of Conviction": {
+    atk: 413,
+    value: [30.4, 0],
+    statType: ["atkPct", "atk"],
   },
-  {
-    id: "Lunar Cutter",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Lunar Cutter": {
+    atk: 413,
+    value: [30.4, 0],
+    statType: ["atkPct", "atk"],
   },
-  {
-    id: "Lumingloss",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  Lumingloss: {
+    atk: 388,
+    value: [36.5, 0],
+    statType: ["atkPct", "atk"],
   },
-  {
-    id: "Endless Collapse",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Endless Collapse": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
   },
-  {
-    id: "Fables of Wisdom",
-    atk: 0,
-    value: [0, 0],
-    statType: ["", ""]
+  "Fables of Wisdom": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
   },
-  //$ GreatSword
-  //$ Gauntlet
-  //$ Firearm
-  //$ Amplifter
-];
+  //#endregion
+
+  //#region GreatSword
+  "Lutrous Razor": {
+    atk: 588,
+    value: [36.5, 12.8],
+    statType: ["atkPct", "ResonanceBns"],
+  },
+  "Verdant Summit": {
+    atk: 588,
+    value: [48.6, 12],
+    statType: ["critDmg", "typeBns"],
+  },
+  "Ages of Harvest": {
+    atk: 588,
+    value: [24.3, 12],
+    statType: ["critRate", "typeBns"],
+  },
+  Discord: {
+    atk: 338,
+    value: [51.8, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  "Broadblade#41": {
+    atk: 413,
+    value: [32.4, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  "Dauntless Evernight": {
+    atk: 338,
+    value: [61.6, 0],
+    statType: ["defPct", "atk"],
+  },
+  "Helios Cleaver": {
+    atk: 413,
+    value: [30.4, 0],
+    statType: ["atkPct", "atk"],
+  },
+  Autumntrace: {
+    atk: 413,
+    value: [20.3, 0],
+    statType: ["critRate", "atk"],
+  },
+  "Waning Redshift": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
+  },
+  "Meditations on Mercy": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
+  },
+  //#endregion
+
+  //#region Gauntlet
+  "Abyss Surges": {
+    atk: 588,
+    value: [36.5, 12.8],
+    statType: ["atkPct", "ResonanceBns"],
+  },
+  "Verity's Handle": {
+    atk: 588,
+    value: [24.3, 12],
+    statType: ["critRate", "typeBns"],
+  },
+  Tragicomedy: {
+    atk: 588,
+    value: [24.3, 12],
+    statType: ["critRate", "atkPct"],
+  },
+  "Blazing Justice": {
+    atk: 588,
+    value: [48.6, 12],
+    statType: ["critDmg", "atkPct"],
+  },
+  Marcato: {
+    atk: 338,
+    value: [51.8, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  "Gauntlets#21D": {
+    atk: 388,
+    value: [38.9, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  "Amity Accord": {
+    atk: 338,
+    value: [61.6, 0],
+    statType: ["defPct", "atk"],
+  },
+  "Hollow Mirage": {
+    atk: 413,
+    value: [30.4, 0],
+    statType: ["atkPct", "atk"],
+  },
+  Stonard: {
+    atk: 413,
+    value: [20.3, 0],
+    statType: ["critRate", "atk"],
+  },
+  "Celestial Spiral": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
+  },
+  "Legend of Drunken Hero": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
+  },
+  //#endregion
+
+  //#region Firearm
+  "Static Mist": {
+    atk: 588,
+    value: [24.3, 12.8],
+    statType: ["critRate", "ResonanceBns"],
+  },
+  "The Last Dance": {
+    atk: 500,
+    value: [72, 12],
+    statType: ["critDmg", "atkPct"],
+  },
+  "Woodland Aria": {
+    atk: 500,
+    value: [36, 12],
+    statType: ["critRate", "atkPct"],
+  },
+  Cadenza: {
+    atk: 338,
+    value: [51.8, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  "Pistols#26": {
+    atk: 388,
+    value: [36.5, 0],
+    statType: ["atkPct", "atk"],
+  },
+  "Undying Flame": {
+    atk: 413,
+    value: [30.4, 0],
+    statType: ["atkPct", "atk"],
+  },
+  Novaburst: {
+    atk: 413,
+    value: [30.4, 0],
+    statType: ["atkPct", "atk"],
+  },
+  Thunderbolt: {
+    atk: 388,
+    value: [36.5, 0],
+    statType: ["atkPct", "atk"],
+  },
+  "Relativistic Jet": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
+  },
+  "Romance in Farewell": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["aktPct", "atk"],
+  },
+  //#endregion
+
+  //#region Amplifter
+  "Cosmic Ripples": {
+    atk: 500,
+    value: [54, 12.8],
+    statType: ["atkPct", "ResonanceBns"],
+  },
+  Stringmaster: {
+    atk: 500,
+    value: [36, 12],
+    statType: ["critRate", "typeBns"],
+  },
+  "Rime-Draped Sprouts": {
+    atk: 500,
+    value: [72, 12],
+    statType: ["critDmg", "atkPct"],
+  },
+  "Stellar Symphony": {
+    atk: 413,
+    value: [77, 12],
+    statType: ["ResonanceBns", "hpPct"],
+  },
+  "Luminous Hymn": {
+    atk: 500,
+    value: [36, 12],
+    statType: ["critRate", "atkPct"],
+  },
+  "Whispers of Sirens": {
+    atk: 500,
+    value: [72, 12],
+    statType: ["critDmg", "atkPct"],
+  },
+  "Call of the Abyss": {
+    atk: 338,
+    value: [51.8, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  Variation: {
+    atk: 338,
+    value: [51.8, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  "Ocean's Gift": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
+  },
+  "Rectifier#25": {
+    atk: 338,
+    value: [51.8, 0],
+    statType: ["ResonanceBns", "atk"],
+  },
+  "Jinzhou Keeper": {
+    atk: 388,
+    value: [36.5, 0],
+    statType: ["aktPct", "atk"],
+  },
+  "Comet Flare": {
+    atk: 413,
+    value: [30.4, 0],
+    statType: ["hpPct", "atk"],
+  },
+  Augment: {
+    atk: 413,
+    value: [20.3, 0],
+    statType: ["critRate", "atk"],
+  },
+  "Fusion Accretion": {
+    atk: 463,
+    value: [18.2, 0],
+    statType: ["atkPct", "atk"],
+  },
+  "Waltz in Masquerade": {
+    atk: 463,
+    value: [, 0],
+    statType: ["", ""],
+  }
+  //#endregion
+};
