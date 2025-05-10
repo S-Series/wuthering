@@ -1,18 +1,5 @@
 {
-  "projects": {},
-  "builds": [
-    {
-      "src": "web/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "web/build"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/web/$1"
-    }
-  ]
+  "rootDirectory": "web",
+  "buildCommand": "npm run build",
+  "outputDirectory": "build"
 }
