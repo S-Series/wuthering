@@ -1,6 +1,6 @@
 export const weapon = {
   //$ Count: 13
-  StraightSword: [
+  straight_sword: [
     {
       id: "Emerald of Genesis",
       kr: "천년의 회류",
@@ -94,7 +94,7 @@ export const weapon = {
     },
   ],
   //$ Count: 10
-  GreatSword: [
+  great_sword: [
     {
       id: "Lutrous Razor",
       kr: "푸른 물결의 빛",
@@ -167,7 +167,7 @@ export const weapon = {
     },
   ],
   //$ Count: 11
-  Gauntlet: [
+  gauntlet: [
     {
       id: "Abyss Surges",
       kr: "물결의 파동",
@@ -247,7 +247,7 @@ export const weapon = {
     },
   ],
   //$ Count: 10
-  Firearm: [
+  firearm: [
     {
       id: "Static Mist",
       kr: "부동의 안개",
@@ -320,7 +320,7 @@ export const weapon = {
     },
   ],
   //$ Count: 15
-  Amplifter: [
+  amplifter: [
     {
       id: "Cosmic Ripples",
       kr: "파도의 기록",
