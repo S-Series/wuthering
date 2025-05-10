@@ -10,7 +10,11 @@ function CharacterStat({id, value}) {
 
   return (
     <div className="character-stat-grid">
-      <img className="character-stat-icon" src="./gem.webp" />
+      <img 
+        className="character-stat-icon" 
+        src={`/ico/stats/${stat?.id}.webp`} 
+        onError={(e) => (e.currentTarget.src = "/default.webp")}
+      />
       <div className="character-stat-text-grid">
         <span className="character-stat-text">{label || "NaN"}</span>
         <span className="character-stat-text R">{value || "NaN"}</span>

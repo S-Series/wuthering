@@ -1,25 +1,30 @@
 import "./ProfileCard.css";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
+import useFitText from "use-fit-text";
 
 import OCRGrid from "./OcrGrid";
 import EquipSlot from "./EquipSlot";
 import CharacterStat from "./CharacterStat";
-import FittedText from "./FittedText";
 
-import { character as characterList } from "../Datas/Character";
-import {
-  weapon as weaponList,
-  weaponStat as weaponStats,
-} from "../Datas/Weapon";
+import { character as characterList, characterStat } from "../Datas/Character";
+import { weapon as weaponList, weaponStat as weaponStats } from "../Datas/Weapon";
+import { echoSet } from "../Datas/Echo";
 
 function ProfileCard() {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [selectedCharacterC, setSelectedCharacterC] = useState(null);
+  const [characterStatObj, setCharacterStat] = useState(null);
+
   const [selectedWeapon, setWeapon] = useState(null);
   const [selectedWeaponC, setWeaponC] = useState(null);
   const [selectedWeaponStat, setWeaponStat] = useState(null);
+
+  const [equipmentSetIds, setEquipmentSetIds] = useState([]);
+
   const lang = localStorage.getItem("lang") || "kr";
+  const { fontSize, ref } = useFitText();
 
   const getStringInfo = (lang) => {
     const strings = {
@@ -51,24 +56,26 @@ function ProfileCard() {
     return strings[lang] || strings["en"];
   };
 
-  // 문자열 label + 이미지 경로 저장
   const characterOptions = characterList.map((c) => ({
     value: c.id,
     label: lang === "en" ? c.id : c[lang] || c.id,
     img: `/character/${c.id}/ico.webp`,
   }));
-  const weaponOptions = (weaponList[selectedCharacter?.weapon] || []).map(
-    (w) => ({
-      value: w.id,
-      label: lang === "en" ? w.id : w[lang] || w.id,
-      img: `/weapon/${selectedCharacter?.weapon}/${w.imgKey}.png`,
-    })
-  );
-  const weaponOptionsC = ["C1", "C2", "C3", "C4", "C5"].map((c) => ({
+  const weaponOptions = (weaponList[selectedCharacter?.weapon] || []).map((w) => ({
+    value: w.id,
+    label: lang === "en" ? w.id : w[lang] || w.id,
+    img: `/weapon/${selectedCharacter?.weapon}/${w.imgKey}.png`,
+  }));
+  const characterOptionsC = ["C0", "C1", "C2", "C3", "C4", "C5", "C6"].map((c) => ({
     value: c,
     label: c,
   }));
-  const customStyles = {
+  const weaponOptionsC = ["W0", "W1", "W2", "W3", "W4", "W5"].map((w) => ({
+    value: w,
+    label: w,
+  }));
+
+  const customMainStyles = {
     control: (base, state) => ({
       ...base,
       display: "flex",
@@ -88,27 +95,25 @@ function ProfileCard() {
     dropdownIndicator: (base) => ({ ...base, padding: "4px" }),
     indicatorSeparator: () => ({ display: "none" }),
   };
+  const customSubStyles = { ...customMainStyles };
 
   return (
     <div className="profile-portrait">
-      {/* Character, Weapon Select */}
       <div className="profile-dropdown-grid">
         <Select
           className="dropdown"
           options={characterOptions}
-          styles={customStyles}
+          styles={customMainStyles}
           getOptionLabel={(e) => (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img
-                src={e.img}
-                alt=""
-                style={{ width: "25px", height: "25px", marginRight: "8px" }}
-              />
+              <img src={e.img} alt="" style={{ width: "25px", height: "25px", marginRight: "8px" }} />
               {e.label}
             </div>
           )}
           onChange={(opt) => {
-            setSelectedCharacter(characterList.find((c) => c.id === opt.value));
+            const char = characterList.find((c) => c.id === opt.value);
+            setSelectedCharacter(char);
+            setCharacterStat(characterStat[opt.value]);
             setWeapon(null);
           }}
           placeholder={getStringInfo(lang)[0]}
@@ -117,45 +122,41 @@ function ProfileCard() {
         <Select
           className="dropdown"
           options={weaponOptions}
-          styles={customStyles}
+          styles={customMainStyles}
           getOptionLabel={(e) => (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img
-                src={e.img}
-                alt=""
-                style={{ width: "25px", height: "25px", marginRight: "8px" }}
-              />
+              <img src={e.img} alt="" style={{ width: "25px", height: "25px", marginRight: "8px" }} />
               {e.label}
             </div>
           )}
           onChange={(opt) => {
-            const selected = weaponList[selectedCharacter?.weapon].find(
-              (w) => w.id === opt.value
-            );
+            const selected = weaponList[selectedCharacter?.weapon].find((w) => w.id === opt.value);
             setWeapon(selected);
-            setWeaponStat(weaponStats[selected.id]); // ← 여기 수정
+            setWeaponStat(weaponStats[selected.id]);
           }}
           placeholder={getStringInfo(lang)[1]}
           isSearchable={false}
           isDisabled={!selectedCharacter}
         />
         <Select
-          className="dropdown"
+          className="dropdown sub"
+          options={characterOptionsC}
+          styles={customSubStyles}
+          onChange={(opt) => setSelectedCharacterC(opt.value)}
+          placeholder="C_"
+        />
+        <Select
+          className="dropdown sub"
           options={weaponOptionsC}
-          styles={customStyles}
-          getOptionLabel={(e) => (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {e.label}
-            </div>
-          )}
+          styles={customSubStyles}
           onChange={(opt) => setWeaponC(opt.value)}
+          placeholder="W_"
         />
       </div>
       <span className="profile-stat-info">{getStringInfo(lang)[2]}</span>
       <span className="profile-stat-info">{getStringInfo(lang)[3]}</span>
-      {/* Profile Card */}
+
       <div className="profile-card">
-        {/* Character image */}
         <img
           className="profile-card-img"
           src={
@@ -165,75 +166,89 @@ function ProfileCard() {
           }
           alt="char"
         />
-        {/* Character image */}
+
         <div className="profile-card-stats">
-          {/* Weapon Stats */}
           <div className="profile-stats-weapon">
             <img
               className="profile-weapon-img"
               src={`/weapon/${selectedCharacter?.weapon}/${selectedWeapon?.imgKey}.png`}
-              alt="weapon"
+              onError={(e) => (e.currentTarget.src = "/default.webp")}
             />
             <div className="profile-weapon">
               <span className="profile-weapon-name">
-                &nbsp;
-                {lang === "en"
-                  ? selectedWeapon?.id || "[ ]"
-                  : selectedWeapon?.[lang] || "[ ]"}
+                &nbsp;{lang === "en" ? selectedWeapon?.id || "" : selectedWeapon?.[lang] || ""}
               </span>
               <div className="profile-weapon-stats-container">
-                <img
-                  className="profile-stat-icon"
-                  src="./gem.webp"
-                  alt="stat"
+                <img 
+                  className="profile-stat-icon" 
+                  src="/ico/stats/atk.webp" 
+                  onError={(e) => (e.currentTarget.src = "/default.webp")} 
                 />
                 <span className="profile-weapon-stats">
                   {selectedWeaponStat?.atk}&nbsp;&nbsp;
                 </span>
-                <img
-                  className="profile-stat-icon"
-                  src="./gem.webp"
-                  alt="stat"
+                <img 
+                  className="profile-stat-icon" 
+                  src={`/ico/stats/${selectedWeaponStat?.statType[0]}.webp`} 
+                  onError={(e) => (e.currentTarget.src = "/default.webp")}
                 />
                 <span className="profile-weapon-stats">
                   {selectedWeaponStat?.value[0]?.toFixed(1)}
-                  {["Pct", "Bns", "crit"].some((suffix) =>
-                    selectedWeaponStat?.statType[0]?.includes(suffix)
-                  )
-                    ? "%"
-                    : ""}
-                </span>{" "}
+                  {[
+                    "Pct",
+                    "Bns",
+                    "crit"
+                  ].some((s) => selectedWeaponStat?.statType[0]?.includes(s)) ? "%" : ""}
+                </span>
               </div>
             </div>
           </div>
-          {/* Final Stats */}
+
           <div className="profile-stat-grid">
-            {/*{Array.from({ length: 8 }).map((_, i) => (
-              <CharacterStat key={i} />
-            ))}*/}
-            <CharacterStat id={"hp"} value={54321} />
-            <CharacterStat id={"atk"} value={1234} />
-            <CharacterStat id={"def"} value={543} />
-            <CharacterStat id={"ResonanceBns"} value={"123.4%"} />
-            <CharacterStat id={"CritRate"} value={"78.9%"} />
-            <CharacterStat id={"CritDmg"} value={"234.5%"} />
-            <CharacterStat
-              id={selectedCharacter?.element + "Bns"}
-              value={"34.5%"}
-            />
-            <CharacterStat
-              id={selectedCharacter?.type + "Bns"}
-              value={"34.5%"}
-            />
+            <CharacterStat id={"hp"} value={characterStatObj?.baseHp || 0} />
+            <CharacterStat id={"atk"} value={characterStatObj?.baseAtk || 0} />
+            <CharacterStat id={"def"} value={characterStatObj?.baseDef || 0} />
+            <CharacterStat id={"ResonanceBns"} value={`${characterStatObj?.resonanceBns?.toFixed(1) || 0}%`} />
+            <CharacterStat id={"CritRate"} value={`${characterStatObj?.critRate?.toFixed(1) || 0}%`} />
+            <CharacterStat id={"CritDmg"} value={`${characterStatObj?.critDmg?.toFixed(1) || 0}%`} />
+            <CharacterStat id={selectedCharacter?.element + "Bns"} value={`${characterStatObj?.typeBns?.[1]?.toFixed(1) || 0}%`} />
+            <CharacterStat id={selectedCharacter?.type + "Bns"} value={`${characterStatObj?.typeBns?.[0]?.toFixed(1) || 0}%`} />
           </div>
-          {/* Final Stats Score */}
+
           <div className="profile-stats-score-grid">
-            <div className="profile-stats-score-slot"></div>
-            <div className="profile-stats-score-slot"></div>
-            <div className="profile-stats-score-slot"></div>
+            <div className="profile-stats-score-slot">
+              {equipmentSetIds.map((setName, index) => (
+                <div key={index} className="profile-stats-set-slot">
+                  <img className="profile-stats-set-icon" src="/default.webp" />
+                  <div
+                    ref={ref}
+                    style={{
+                      fontSize,
+                      maxFontSize: "0.7rem",
+                      width: "100%",
+                      height: "100%",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textAlign: "right",
+                      textOverflow: "ellipsis",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    {setName}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="profile-stats-score-slot score">
+              <span className="profile-stats-score-label">CV</span>
+              <span className="profile-stats-score-label score">123.4pt</span>
+              <span className="profile-stats-score-label">AV</span>
+              <span className="profile-stats-score-label score">123.4pt</span>
+            </div>
           </div>
         </div>
-        {/* Equipment */}
+
         <div className="profile-card-equipment-grid">
           <EquipSlot />
           <div className="profile-card-equipment-divider" />
