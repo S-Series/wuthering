@@ -1,6 +1,7 @@
 .profile-portrait {
     display: flex;
-    width: min(90%, 1080px);
+    width: max(90%, 960px);
+    max-width: 1200px;
     min-width: 800px;
     flex-direction: column;
 }
@@ -137,7 +138,7 @@
 
 .profile-weapon {
     display: flex;
-    flex: 1;
+    width:  max(min(calc(100vw / 7), 600px), 155px);
     gap: 5%;
     padding: 1% 2.5%;
     flex-direction: column;
@@ -153,7 +154,6 @@
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    font-size: 1.25rem;
     font-weight: bold;
     margin: 0;
     white-space: nowrap;
@@ -170,7 +170,7 @@
     align-self: center;
     align-items: center;
     justify-content: right;
-    font-size: 1.25rem;
+    font-size: min(1.25rem, calc(100vw / 50));
     width: calc(50% - 0.5rem);
     height: 75%;
 }
@@ -200,7 +200,7 @@
 
 .profile-stats-set-slot{
     display: flex;
-    width: 47.5%;
+    width:  max(min(calc(10ㅋ0vw / 8.5), 165px), 110px);
     height: 100%;
     padding: 0.5% 0%;
     align-items: center;
@@ -221,14 +221,14 @@
 }
 
 .profile-stats-score-label{
+    display: flex;
     height: 100%;
-    width: 10%;
-    margin-left: 5%;
+    margin-left: 3%;
     margin-right: 0%;
     align-content: center;
-    justify-content: flex-start;
-    font-size: 1.35rem;
+    font-size:  max(min(calc(100vw / 60), 165px), 1.25rem);
     text-align: left;
+    text-justify:initial;
 }
 
 .profile-stats-score-label.score{

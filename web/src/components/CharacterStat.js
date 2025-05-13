@@ -1,4 +1,5 @@
 import "./CharacterStat.css";
+import useFitText from "use-fit-text";
 import {FixedStats as FixedStats} from "../Datas/Stats";
 
 function CharacterStat({id, value}) {
@@ -7,6 +8,8 @@ function CharacterStat({id, value}) {
 
   const stat = FixedStats.find((stat) => stat.id === id);
   const label = stat ? stat[lang] || stat.id : id;
+
+  const { fontSize, ref } = useFitText();
 
   return (
     <div className="character-stat-grid">

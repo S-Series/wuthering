@@ -5,7 +5,7 @@
     align-items: center;
     margin-top: 10px;
     margin-top: min(80px, 6vh);
-    width: min(175px, 20vh);
+    width: min(125px, 15vh);
     height: calc(100vh - min(80px, 6vh));
     box-sizing: border-box;
     z-index: 1000;

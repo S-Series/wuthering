@@ -9,7 +9,10 @@ import EquipSlot from "./EquipSlot";
 import CharacterStat from "./CharacterStat";
 
 import { character as characterList, characterStat } from "../Datas/Character";
-import { weapon as weaponList, weaponStat as weaponStats } from "../Datas/Weapon";
+import {
+  weapon as weaponList,
+  weaponStat as weaponStats,
+} from "../Datas/Weapon";
 import { echoSet } from "../Datas/Echo";
 
 function ProfileCard() {
@@ -21,10 +24,19 @@ function ProfileCard() {
   const [selectedWeaponC, setWeaponC] = useState(null);
   const [selectedWeaponStat, setWeaponStat] = useState(null);
 
-  const [equipmentSetIds, setEquipmentSetIds] = useState([]);
+  const [equipmentSetIds, setEquipmentSetIds] = useState(["Frost", "Frosty"]);
+
+  const [fitKeyW, setFitKeyW] = useState(0);
+  const [fitKeyE, setFitKeyE] = useState(0);
 
   const lang = localStorage.getItem("lang") || "kr";
-  const { fontSize, ref } = useFitText();
+
+  const { fontSize: fontSizeW, ref: refWeapon } = useFitText({});
+  const { fontSize: fontSizeE, ref: refEcho } = useFitText({});
+
+  useEffect(() => {
+    setFitKeyE((prev) => prev + 1);
+  }, [equipmentSetIds, lang]);
 
   const getStringInfo = (lang) => {
     const strings = {
@@ -61,15 +73,20 @@ function ProfileCard() {
     label: lang === "en" ? c.id : c[lang] || c.id,
     img: `/character/${c.id}/ico.webp`,
   }));
-  const weaponOptions = (weaponList[selectedCharacter?.weapon] || []).map((w) => ({
-    value: w.id,
-    label: lang === "en" ? w.id : w[lang] || w.id,
-    img: `/weapon/${selectedCharacter?.weapon}/${w.imgKey}.png`,
-  }));
-  const characterOptionsC = ["C0", "C1", "C2", "C3", "C4", "C5", "C6"].map((c) => ({
-    value: c,
-    label: c,
-  }));
+  const weaponOptions = (weaponList[selectedCharacter?.weapon] || []).map(
+    (w) => ({
+      value: w.id,
+      label: lang === "en" ? w.id : w[lang] || w.id,
+      img: `/weapon/${selectedCharacter?.weapon}/${w.imgKey}.png`,
+    })
+  );
+
+  const characterOptionsC = ["C0", "C1", "C2", "C3", "C4", "C5", "C6"].map(
+    (c) => ({
+      value: c,
+      label: c,
+    })
+  );
   const weaponOptionsC = ["W0", "W1", "W2", "W3", "W4", "W5"].map((w) => ({
     value: w,
     label: w,
@@ -106,7 +123,11 @@ function ProfileCard() {
           styles={customMainStyles}
           getOptionLabel={(e) => (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img src={e.img} alt="" style={{ width: "25px", height: "25px", marginRight: "8px" }} />
+              <img
+                src={e.img}
+                alt=""
+                style={{ width: "25px", height: "25px", marginRight: "8px" }}
+              />
               {e.label}
             </div>
           )}
@@ -125,14 +146,21 @@ function ProfileCard() {
           styles={customMainStyles}
           getOptionLabel={(e) => (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <img src={e.img} alt="" style={{ width: "25px", height: "25px", marginRight: "8px" }} />
+              <img
+                src={e.img}
+                alt=""
+                style={{ width: "25px", height: "25px", marginRight: "8px" }}
+              />
               {e.label}
             </div>
           )}
           onChange={(opt) => {
-            const selected = weaponList[selectedCharacter?.weapon].find((w) => w.id === opt.value);
+            const selected = weaponList[selectedCharacter?.weapon].find(
+              (w) => w.id === opt.value
+            );
             setWeapon(selected);
             setWeaponStat(weaponStats[selected.id]);
+            setFitKeyW((prev) => prev + 1);
           }}
           placeholder={getStringInfo(lang)[1]}
           isSearchable={false}
@@ -153,6 +181,7 @@ function ProfileCard() {
           placeholder="W_"
         />
       </div>
+
       <span className="profile-stat-info">{getStringInfo(lang)[2]}</span>
       <span className="profile-stat-info">{getStringInfo(lang)[3]}</span>
 
@@ -168,6 +197,7 @@ function ProfileCard() {
         />
 
         <div className="profile-card-stats">
+          {/* 무기 */}
           <div className="profile-stats-weapon">
             <img
               className="profile-weapon-img"
@@ -175,56 +205,95 @@ function ProfileCard() {
               onError={(e) => (e.currentTarget.src = "/default.webp")}
             />
             <div className="profile-weapon">
-              <span className="profile-weapon-name">
-                &nbsp;{lang === "en" ? selectedWeapon?.id || "" : selectedWeapon?.[lang] || ""}
-              </span>
+              <div
+                key={fitKeyW}
+                ref={refWeapon}
+                style={{
+                  fontSize: fontSizeW,
+                  width: "100%",
+                  height: "100%",
+                  minWidth: 0,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textAlign: "right",
+                  textOverflow: "ellipsis",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                }}>
+                &nbsp;
+                {lang === "en"
+                  ? selectedWeapon?.id || ""
+                  : selectedWeapon?.[lang] || ""}
+              </div>
               <div className="profile-weapon-stats-container">
-                <img 
-                  className="profile-stat-icon" 
-                  src="/ico/stats/atk.webp" 
-                  onError={(e) => (e.currentTarget.src = "/default.webp")} 
+                <img
+                  className="profile-stat-icon"
+                  src="/ico/stats/atk.webp"
+                  onError={(e) => (e.currentTarget.src = "/default.webp")}
                 />
                 <span className="profile-weapon-stats">
                   {selectedWeaponStat?.atk}&nbsp;&nbsp;
                 </span>
-                <img 
-                  className="profile-stat-icon" 
-                  src={`/ico/stats/${selectedWeaponStat?.statType[0]}.webp`} 
+                <img
+                  className="profile-stat-icon"
+                  src={`/ico/stats/${selectedWeaponStat?.statType[0]}.webp`}
                   onError={(e) => (e.currentTarget.src = "/default.webp")}
                 />
                 <span className="profile-weapon-stats">
                   {selectedWeaponStat?.value[0]?.toFixed(1)}
-                  {[
-                    "Pct",
-                    "Bns",
-                    "crit"
-                  ].some((s) => selectedWeaponStat?.statType[0]?.includes(s)) ? "%" : ""}
+                  {["Pct", "Bns", "crit"].some((s) =>
+                    selectedWeaponStat?.statType[0]?.includes(s)
+                  )
+                    ? "%"
+                    : ""}
                 </span>
               </div>
             </div>
           </div>
 
+          {/* 캐릭터 스탯 */}
           <div className="profile-stat-grid">
-            <CharacterStat id={"hp"} value={characterStatObj?.baseHp || 0} />
-            <CharacterStat id={"atk"} value={characterStatObj?.baseAtk || 0} />
-            <CharacterStat id={"def"} value={characterStatObj?.baseDef || 0} />
-            <CharacterStat id={"ResonanceBns"} value={`${characterStatObj?.resonanceBns?.toFixed(1) || 0}%`} />
-            <CharacterStat id={"CritRate"} value={`${characterStatObj?.critRate?.toFixed(1) || 0}%`} />
-            <CharacterStat id={"CritDmg"} value={`${characterStatObj?.critDmg?.toFixed(1) || 0}%`} />
-            <CharacterStat id={selectedCharacter?.element + "Bns"} value={`${characterStatObj?.typeBns?.[1]?.toFixed(1) || 0}%`} />
-            <CharacterStat id={selectedCharacter?.type + "Bns"} value={`${characterStatObj?.typeBns?.[0]?.toFixed(1) || 0}%`} />
+            <CharacterStat id="hp" value={characterStatObj?.baseHp || 0} />
+            <CharacterStat id="atk" value={characterStatObj?.baseAtk || 0} />
+            <CharacterStat id="def" value={characterStatObj?.baseDef || 0} />
+            <CharacterStat
+              id="ResonanceBns"
+              value={`${characterStatObj?.resonanceBns?.toFixed(1) || 0}%`}
+            />
+            <CharacterStat
+              id="CritRate"
+              value={`${characterStatObj?.critRate?.toFixed(1) || 0}%`}
+            />
+            <CharacterStat
+              id="CritDmg"
+              value={`${characterStatObj?.critDmg?.toFixed(1) || 0}%`}
+            />
+            <CharacterStat
+              id={selectedCharacter?.element + "Bns"}
+              value={`${characterStatObj?.typeBns?.[1]?.toFixed(1) || 0}%`}
+            />
+            <CharacterStat
+              id={selectedCharacter?.type + "Bns"}
+              value={`${characterStatObj?.typeBns?.[0]?.toFixed(1) || 0}%`}
+            />
           </div>
 
+          {/* 세트 이름 */}
           <div className="profile-stats-score-grid">
             <div className="profile-stats-score-slot">
               {equipmentSetIds.map((setName, index) => (
                 <div key={index} className="profile-stats-set-slot">
-                  <img className="profile-stats-set-icon" src="/default.webp" />
+                  <img
+                    className="profile-stats-set-icon"
+                    src={`/ico/ecoh/${setName}.webp`}
+                    onError={(e) => (e.currentTarget.src = "/default.webp")}
+                  />
                   <div
-                    ref={ref}
+                    key={fitKeyE}
+                    ref={refEcho}
                     style={{
-                      fontSize,
-                      maxFontSize: "0.7rem",
+                      fontSize: fontSizeE,
                       width: "100%",
                       height: "100%",
                       whiteSpace: "nowrap",
@@ -235,7 +304,7 @@ function ProfileCard() {
                       alignItems: "center",
                       justifyContent: "center",
                     }}>
-                    {setName}
+                    {echoSet.find((e) => e.id === setName)?.[lang] || setName}
                   </div>
                 </div>
               ))}
