@@ -1,8 +1,6 @@
 .profile-portrait {
     display: flex;
-    width: max(90%, 960px);
-    max-width: 1200px;
-    min-width: 800px;
+    width: min(max(80vw, calc(960px - min(125px, 15vh) - 2rem)), 860px);
     flex-direction: column;
 }
 
@@ -17,7 +15,7 @@
     width: 20%;
     height: 100%;
     aspect-ratio: 4 / 1;
-    font-size: 1rem;
+    font-size: .75rem;
     margin-left: 2.5%;
 }
 
@@ -28,11 +26,11 @@
 .profile-stat-info{
     display: flex;
     width: 100%;
-    height: 1.5rem;
+    height: 1rem;
     color: #2f2f2f;
     align-self: center;
     justify-content: flex-end;
-    font-size: 1rem;
+    font-size: .75rem;
 }
 
 .profile-card {

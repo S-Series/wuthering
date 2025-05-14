@@ -5,7 +5,7 @@
 }
 
 .icon {
-    height: 50%;
+    height: 40%;
     aspect-ratio: 1 / 1;
 }
 
@@ -15,7 +15,6 @@
     width: 100%;
     justify-content: space-between;
     height: min(80px, 6vh);
-    list-style: col;
     z-index: 1000;
     background-color: #b0d0d6;
 }
@@ -46,7 +45,7 @@
     border: none;
     cursor: pointer;
     color: #000000;
-    font-size: 1.3rem;
+    font-size: calc(min(80px, 6vh) / 2.75);
     font-weight: bold;
     white-space: nowrap;
 }
@@ -58,7 +57,7 @@
     align-items: center;
     justify-content: center;
     background-color: #00000000;
-    font-size: 1rem;
+    font-size: calc(min(80px, 6vh) / 5);
     border-radius: 4px;
     cursor: pointer;
     padding-left: 2%;
@@ -75,7 +74,7 @@
     cursor: pointer;
     color: #000000;
     gap: 7.5%;
-    font-size: 1.1rem;
+    font-size: calc(min(80px, 6vh) / 4);
     font-weight: 00;
     white-space: nowrap;
 }

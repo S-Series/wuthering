@@ -9,8 +9,6 @@ function CharacterStat({id, value}) {
   const stat = FixedStats.find((stat) => stat.id === id);
   const label = stat ? stat[lang] || stat.id : id;
 
-  const { fontSize, ref } = useFitText();
-
   return (
     <div className="character-stat-grid">
       <img 
@@ -19,7 +17,7 @@ function CharacterStat({id, value}) {
         onError={(e) => (e.currentTarget.src = "/default.webp")}
       />
       <div className="character-stat-text-grid">
-        <span className="character-stat-text">{label || "NaN"}</span>
+        <span className="character-stat-text">&nbsp;&nbsp;{label || "NaN"}</span>
         <span className="character-stat-text R">{value || "NaN"}</span>
       </div>
     </div>

@@ -98,7 +98,7 @@ function ProfileCard() {
       display: "flex",
       height: "100%",
       width: "100%",
-      fontSize: "1rem",
+      fontSize: ".75rem",
       borderColor: state.isFocused ? "#2684FF" : "gray",
       boxShadow: state.isFocused ? "0 0 0 1px #2684FF" : "none",
     }),
