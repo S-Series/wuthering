@@ -1,11 +1,14 @@
+import "./OcrSlot.css";
 import { useRef, useState, useEffect } from "react";
 import DropSlot from "./DropSlot";
-import "./OcrSlot.css";
+import { OcrRetouch } from "../func/OcrRetouch";
 
 function OCRSlot({ isMain }) {
   const boxRef = useRef(null);
   const [imageURL, setImageURL] = useState(null);
-  const [ocrText, setOcrText] = useState(""); // 👈 OCR 결과 저장
+  const [ocrText, setOcrText] = useState("");
+
+  const lang = localStorage.getItem("lang") || "kr";
 
   useEffect(() => {
     const handlePaste = (e) => {
@@ -15,7 +18,7 @@ function OCRSlot({ isMain }) {
           const file = item.getAsFile();
           const url = URL.createObjectURL(file);
           setImageURL(url);
-          e.preventDefault(); // 브라우저 기본 삽입 방지
+          e.preventDefault();
         }
       }
     };
@@ -25,7 +28,6 @@ function OCRSlot({ isMain }) {
     return () => box.removeEventListener("paste", handlePaste);
   }, []);
 
-  // ✅ 이미지 업로드 요청
   useEffect(() => {
     if (!imageURL) return;
 
@@ -42,7 +44,7 @@ function OCRSlot({ isMain }) {
       });
 
       const result = await response.json();
-      setOcrText(result.text.join("\n")); // ✅ 여러 줄로 붙이기
+      setOcrText(OcrRetouch(result, lang));
     };
 
     sendToOCR();

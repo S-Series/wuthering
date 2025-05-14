@@ -115,7 +115,7 @@
 .profile-stat-grid {
     display: flex;
     width: 95%;
-    height: 70%;
+    height: 62.5%;
     align-self: center;
     margin-top: 2.5%;
     justify-content: space-between;
@@ -223,10 +223,9 @@
     height: 100%;
     margin-left: 3%;
     margin-right: 0%;
-    align-content: center;
-    font-size:  max(min(calc(100vw / 60), 165px), 1.25rem);
-    text-align: left;
-    text-justify:initial;
+    align-items: flex-end;
+    justify-content: flex-start;
+    font-size:  max(min(0.75vw, 20px), 16px);
 }
 
 .profile-stats-score-label.score{
@@ -234,5 +233,4 @@
     margin-left: 0%;
     margin-right: 3%;
     justify-content: flex-end;
-    text-align: right;
 }
