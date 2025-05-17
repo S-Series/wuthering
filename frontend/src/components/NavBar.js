@@ -12,6 +12,44 @@ function NavBar() {
     if (saved) setLanguage(saved);
   }, []);
 
+  const getStringInfo = (lang) => {
+  const strings = {
+    kr: [
+      "띵조 DEV",
+      "* 모든 기능은 개발 중입니다",
+      "* 오류나 제안은 inweag80@gmail.com 으로 보내주세요",
+      "도움말",
+      "SSeries",
+      "커피 후원"
+    ],
+    jp: [
+      "ウェザウェ DEV",
+      "* すべての機能は開発中です",
+      "* 不具合や提案があれば inweag80@gmail.com までご連絡ください",
+      "ヘルプ",
+      "SSeries",
+      "Ko-Fi"
+    ],
+    zh: [
+      "名潮 DEV",
+      "* 所有功能仍在开发中",
+      "* 如有任何问题或建议，请联系 inweag80@gmail.com",
+      "帮助",
+      "SSeries",
+      "Ko-Fi"
+    ],
+    en: [
+      "WuWa DEV",
+      "* All features are currently under development",
+      "* Found a bug or have feedback? Email inweag80@gmail.com",
+      "Help",
+      "SSeries",
+      "Ko-Fi"
+    ],
+  };
+  return strings[lang] || strings["en"];
+};
+
   const languageOptions = [
     { value: "kr", label: "한국어" },
     { value: "en", label: "English" },
@@ -45,8 +83,12 @@ function NavBar() {
       <div className="nav-left">
         <button className="home-button" onClick={() => navigate("/")}>
           <img src="./gem.webp" alt="Home" className="main-icon"></img>
-          띵조 DEV
+          {getStringInfo(language)[0]}
         </button>
+        <div className="nav-left text-box">
+          <span className="nav-left text">{getStringInfo(language)[1]}</span>
+          <span className="nav-left text">{getStringInfo(language)[2]}</span>
+        </div>
       </div>
       <div className="nav-right">
         <Select
@@ -64,7 +106,7 @@ function NavBar() {
         />
         <button className="nav-button" onClick={() => navigate()}>
           <img src="./info.png" className="icon"></img>
-          <span className="nav-text">Help</span>
+          <span className="nav-text">{getStringInfo(language)[3]}</span>
         </button>
         <button
           className="nav-button"
@@ -72,13 +114,13 @@ function NavBar() {
             window.open("https://github.com/S-Series/wuthering", "_blank")
           }>
           <img src="./github.png" className="icon"></img>
-          <span className="nav-text">SSeries</span>
+          <span className="nav-text">{getStringInfo(language)[4]}</span>
         </button>
         <button
           className="nav-button"
           onClick={() => window.open("https://ko-fi.com/sseries", "_blank")}>
           <img src="./kofi.png" className="icon"></img>
-          <span className="nav-text">Ko-Fi</span>
+          <span className="nav-text">{getStringInfo(language)[5]}</span>
         </button>
       </div>
     </nav>

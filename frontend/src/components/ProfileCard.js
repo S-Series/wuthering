@@ -5,6 +5,7 @@ import Select from "react-select";
 import useFitText from "use-fit-text";
 
 import OCRGrid from "./OcrGrid";
+import DropGrid from "./DropGrid";
 import EquipSlot from "./EquipSlot";
 import CharacterStat from "./CharacterStat";
 
@@ -13,7 +14,7 @@ import {
   weapon as weaponList,
   weaponStat as weaponStats,
 } from "../Datas/Weapon";
-import { echoSet } from "../Datas/Echo";
+import { echoData } from "../Datas/Echo";
 
 function ProfileCard() {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
@@ -185,7 +186,14 @@ function ProfileCard() {
       <span className="profile-stat-info">{getStringInfo(lang)[2]}</span>
       <span className="profile-stat-info">{getStringInfo(lang)[3]}</span>
 
-      <div className="profile-card">
+      <div
+        className="profile-card"
+        style={{
+          backgroundImage: `url("./bg.png")`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}>
         <img
           className="profile-card-img"
           src={
@@ -286,25 +294,11 @@ function ProfileCard() {
                 <div key={index} className="profile-stats-set-slot">
                   <img
                     className="profile-stats-set-icon"
-                    src={`/ico/ecoh/${setName}.webp`}
+                    src={`/ico/echo/${setName}.webp`}
                     onError={(e) => (e.currentTarget.src = "/default.webp")}
                   />
-                  <div
-                    key={fitKeyE}
-                    ref={refEcho}
-                    style={{
-                      fontSize: fontSizeE,
-                      width: "100%",
-                      height: "100%",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textAlign: "right",
-                      textOverflow: "ellipsis",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}>
-                    {echoSet.find((e) => e.id === setName)?.[lang] || setName}
+                  <div className="profile-stats-set-label">
+                    {echoData?.[setName]?.[lang] || setName}
                   </div>
                 </div>
               ))}
@@ -327,8 +321,13 @@ function ProfileCard() {
           <EquipSlot />
         </div>
       </div>
-
-      <OCRGrid />
+      <div className="profile-content">
+        <OCRGrid />
+        <div className="profile-content-equipment">
+          <DropGrid />
+          <div className="profile-content-summary"></div>
+        </div>
+      </div>
     </div>
   );
 }

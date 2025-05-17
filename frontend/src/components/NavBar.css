@@ -13,8 +13,9 @@
     display: flex;
     position: fixed;
     width: 100%;
+    min-width: 960px;
     justify-content: space-between;
-    height: min(80px, 6vh);
+    height: 55px;
     z-index: 1000;
     background-color: #b0d0d6;
 }
@@ -27,13 +28,32 @@
     margin-left: 0.5rem;
 }
 
+.nav-left.text-box{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    justify-content: center;
+    height: 60%;
+    margin-left: max(min(3vw, 20px), 40px);
+}
+
+.nav-left.text{
+    display: flex;
+    align-self: flex-start;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    font-size: max(min(.8vw, 8px), 12px);
+    color: #00000066;
+}
+
 .nav-right {
     height: 100%;
     display: flex;
     list-style: none;
     align-items: center;
     justify-content: right;
-    margin-right: 0.5rem;
+    margin-right: 1vw;
 }
 
 .home-button {
@@ -85,5 +105,6 @@
 
 .nav-text {
     position: relative;
+    font-size: 16px;
     top: 3%;
 }

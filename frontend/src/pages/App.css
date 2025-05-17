@@ -8,6 +8,7 @@ html {
 
 #root {
   min-width: 960px;
+  min-height: 800px;
 }
 
 .app-wrapper {

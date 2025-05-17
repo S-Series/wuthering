@@ -1,22 +1,20 @@
 .ocr-body {
   display: flex;
-  width: calc(20% - .75vw);
-  aspect-ratio: 3 / 1;
+  width: 100%;
   flex-direction: column;
   padding: .25vw;
 }
 
 .ocr-input-slot {
   display: flex;
-  width: calc(100% - 2px);
+  width: cacl(100% - 2px);
   aspect-ratio: 4 / 3;
   border: 1px dashed #ffffff;
-  border-radius: 1vw;
+  border-radius: 8px;
   background-color: #ffffff33;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2.5vh;
   cursor: pointer;
   overflow: hidden;
   text-align: center;
@@ -39,11 +37,11 @@
   object-fit: cover;
 }
 
-.ocr-result-box {
+/*.ocr-result-box {
   margin-top: 1rem;
   padding: 0.5rem;
   background: #f4f4f4;
   border: 1px solid #ccc;
   font-size: 1rem;
   white-space: pre-wrap;
-}
+}*/

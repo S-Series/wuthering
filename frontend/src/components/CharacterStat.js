@@ -1,19 +1,18 @@
 import "./CharacterStat.css";
 import useFitText from "use-fit-text";
-import {FixedStats as FixedStats} from "../Datas/Stats";
+import { FixedStats } from "../Datas/Stats";
 
-function CharacterStat({id, value}) {
-
+function CharacterStat({ id, value }) {
   const lang = localStorage.getItem("lang") || "kr";
 
-  const stat = FixedStats.find((stat) => stat.id === id);
-  const label = stat ? stat[lang] || stat.id : id;
+  const stat = FixedStats[id];
+  const label = stat ? stat[lang] || id : id;
 
   return (
     <div className="character-stat-grid">
-      <img 
-        className="character-stat-icon" 
-        src={`/ico/stats/${stat?.id}.webp`} 
+      <img
+        className="character-stat-icon"
+        src={`/ico/stats/${id}.webp`}
         onError={(e) => (e.currentTarget.src = "/default.webp")}
       />
       <div className="character-stat-text-grid">
@@ -23,4 +22,5 @@ function CharacterStat({id, value}) {
     </div>
   );
 }
+
 export default CharacterStat;

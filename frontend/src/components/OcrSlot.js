@@ -1,12 +1,11 @@
 import "./OcrSlot.css";
 import { useRef, useState, useEffect } from "react";
-import DropSlot from "./DropSlot";
 import { OcrRetouch } from "../func/OcrRetouch";
 
 function OCRSlot({ isMain }) {
   const boxRef = useRef(null);
   const [imageURL, setImageURL] = useState(null);
-  const [ocrText, setOcrText] = useState("");
+  const [ocrData, setOcrData] = useState({ ocrType: [], ocrValue: [] });
 
   const lang = localStorage.getItem("lang") || "kr";
 
@@ -44,7 +43,8 @@ function OCRSlot({ isMain }) {
       });
 
       const result = await response.json();
-      setOcrText(OcrRetouch(result, lang));
+      const { retType, retValue } = OcrRetouch({ text: result.text, lang });
+      setOcrData({ ocrType: retType, ocrValue: retValue });
     };
 
     sendToOCR();
@@ -65,14 +65,11 @@ function OCRSlot({ isMain }) {
           <p className="ocr-guide-text">{isMain ? "Main Slot" : ""}</p>
         )}
       </div>
-
-      {ocrText && (
+      {/*ocrData.ocrType.length > 0 && (
         <div className="ocr-result-box">
-          <pre>{ocrText}</pre>
+          <pre>{JSON.stringify(ocrData, null, 2)}</pre>
         </div>
-      )}
-
-      <DropSlot />
+      )*/}
     </div>
   );
 }
