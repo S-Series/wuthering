@@ -28,26 +28,23 @@ function ProfileCard() {
   const [equipmentSetIds, setEquipmentSetIds] = useState(["Frost", "Frosty"]);
 
   const [fitKeyW, setFitKeyW] = useState(0);
-  const [fitKeyE, setFitKeyE] = useState(0);
 
   const boxRef = useRef(null);
   const fileInputRef = useRef(null);
+  const profileRef = useRef(null);
   const [imageURL, setImageURL] = useState(null);
 
   const lang = localStorage.getItem("lang") || "kr";
 
   const { fontSize: fontSizeW, ref: refWeapon } = useFitText({});
-  const { fontSize: fontSizeE, ref: refEcho } = useFitText({});
 
   const wrapperRef = useRef(null);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1);
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [dragging, setDragging] = useState(false);
   const offset = useRef({ x: 0, y: 0 });
 
-  useEffect(() => {
-    setFitKeyE((prev) => prev + 1);
-  }, [equipmentSetIds, lang]); //$ lang change
   useEffect(() => {
     const handlePaste = (e) => {
       const item = [...e.clipboardData.items].find((i) =>
@@ -57,6 +54,15 @@ function ProfileCard() {
         const file = item.getAsFile();
         const url = URL.createObjectURL(file);
         setImageURL(url);
+        const img = new Image();
+        img.onload = () => {
+          setImageSize({ width: img.naturalWidth, height: img.naturalHeight });
+        };
+        scale = Math.max(
+          profileRef.current.offsetWidth / imageSize.width,
+          profileRef.current.offsetHeight / imageSize.height,
+          0.1
+        );
       }
     };
 
@@ -70,8 +76,20 @@ function ProfileCard() {
     const handleMove = (e) => {
       if (!dragging) return;
       setPos({
-        x: e.clientX - offset.current.x,
-        y: e.clientY - offset.current.y,
+        x: Math.min(
+          Math.max(
+            e.clientX - offset.current.x,
+            (imageSize.width * scale - profileRef.current.offsetWidth) / -2
+          ),
+          (imageSize.width * scale - profileRef.current.offsetWidth) / +2
+        ),
+        y: Math.min(
+          Math.max(
+            e.clientY - offset.current.y,
+            (imageSize.height * scale - profileRef.current.offsetHeight) / -2
+          ),
+          (imageSize.height * scale - profileRef.current.offsetHeight) / +2
+        ),
       });
     };
     const handleUp = () => {
@@ -87,21 +105,45 @@ function ProfileCard() {
     };
   }, [dragging]); //$ drag pos change
   useEffect(() => {
+    if (!profileRef.current || !imageSize.width || !imageSize.height) return;
+
+    setPos({
+      x: Math.min(
+        Math.max(
+          pos.x,
+          (imageSize.width * scale - profileRef.current.offsetWidth) / -2
+        ),
+        (imageSize.width * scale - profileRef.current.offsetWidth) / +2
+      ),
+      y: Math.min(
+        Math.max(
+          pos.y,
+          (imageSize.height * scale - profileRef.current.offsetHeight) / -2
+        ),
+        (imageSize.height * scale - profileRef.current.offsetHeight) / +2
+      ),
+    });
+  }, [scale, imageSize]);
+  useEffect(() => {
     const el = boxRef.current;
-    if (!el) return;
+    if (!el || !imageSize.width || !imageSize.height) return;
 
     const handleWheel = (e) => {
       e.preventDefault();
       const delta = e.deltaY < 0 ? 0.1 : -0.1;
-      setScale((prev) => Math.min(Math.max(prev + delta, 0.5), 3));
+
+      const minScale = Math.max(
+        profileRef.current.offsetWidth / imageSize.width,
+        profileRef.current.offsetHeight / imageSize.height,
+        0.1
+      );
+
+      setScale((prev) => Math.min(Math.max(prev + delta, minScale), 3));
     };
 
     el.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      el.removeEventListener("wheel", handleWheel);
-    };
-  }, []); //$ wheel zoom change
+    return () => el.removeEventListener("wheel", handleWheel);
+  }, [imageSize]); //$ wheel zoom change
 
   const handleDoubleClick = () => {
     fileInputRef.current?.click();
@@ -113,7 +155,6 @@ function ProfileCard() {
       setImageURL(url);
     }
   };
-
   const getStringInfo = (lang) => {
     const strings = {
       kr: [
@@ -156,21 +197,6 @@ function ProfileCard() {
       y: e.clientY - pos.y,
     };
   }; //$ Drag Start
-  const handleMouseMove = (e) => {
-    if (!dragging) return;
-    setPos({
-      x: e.clientX - offset.current.x,
-      y: e.clientY - offset.current.y,
-    });
-  }; //$ Dragging
-  const handleMouseUp = () => {
-    setDragging(false);
-  }; //$ Drag End
-  const handleWheel = (e) => {
-    e.preventDefault();
-    const delta = e.deltaY < 0 ? 0.1 : -0.1;
-    setScale((prev) => Math.min(Math.max(prev + delta, 0.5), 3)); // 0.5x ~ 3x 제한
-  }; //$ Zoom in & out
 
   const characterOptions = characterList.map((c) => ({
     value: c.id,
@@ -195,7 +221,6 @@ function ProfileCard() {
     value: w,
     label: w,
   }));
-
   const customMainStyles = {
     control: (base, state) => ({
       ...base,
@@ -289,13 +314,36 @@ function ProfileCard() {
       <span className="profile-stat-info">{getStringInfo(lang)[2]}</span>
       <span className="profile-stat-info">{getStringInfo(lang)[3]}</span>
 
-      <div
-        className="profile-card"
-        style={{
-          backgroundImage: `url(${imageURL || "./bg.jpg"})`,
-          backgroundPosition: `${pos.x}px ${pos.y - 4}px`,
-          backgroundSize: `${scale * 100}% auto`,
-        }}>
+      <div className="profile-card" ref={profileRef}>
+        {imageURL ? (
+          <img
+            src={imageURL}
+            onLoad={(e) =>
+              setImageSize({
+                width: e.target.naturalWidth,
+                height: e.target.naturalHeight,
+              })
+            }
+            style={{
+              position: "absolute",
+              transformOrigin: "center",
+              transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+              zIndex: 0,
+            }}
+          />
+        ) : (
+          <img
+            src={"/bg.jpg"}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        )}
         <img
           className="profile-card-img"
           src={
@@ -432,13 +480,19 @@ function ProfileCard() {
         {imageURL ? (
           <img
             src={imageURL}
+            onLoad={(e) =>
+              setImageSize({
+                width: e.target.naturalWidth,
+                height: e.target.naturalHeight,
+              })
+            }
             alt={"editable" & "pasted"}
             draggable={false}
             onMouseDown={handleMouseDown}
             className={"profile-draggable-img" & "profile-preview-img"}
             style={{
               transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
-              transformOrigin: "top left",
+              transformOrigin: "center",
               position: "absolute",
               userSelect: "none",
               maxWidth: "none",
@@ -446,9 +500,10 @@ function ProfileCard() {
             }}
           />
         ) : (
-          <span>{getStringInfo(lang)[4]}</span>
+          <span className="profile-draggable-text">
+            {getStringInfo(lang)[4]}
+          </span>
         )}
-
         <input
           type="file"
           accept="image/png, image/jpeg"

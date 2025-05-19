@@ -41,11 +41,12 @@
     background-color: #ffffff;
     border: 1px solid #000;
     border-radius: 0.5rem;
+    gap: 1.25%;
     padding: 1.5%;
     margin-top: 0.5rem;
     align-self: center;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     overflow: hidden;
 }
 
@@ -64,6 +65,7 @@
     background-color: #00000066;
     border: 1px solid #00000033;
     border-radius: .5rem;
+    z-index: 250;
 }
 
 .profile-card-stats {
@@ -90,6 +92,7 @@
     border: 1px solid #00000066;
     border-radius: .5rem;
     justify-content: center;
+    z-index: 250;
 }
 
 .profile-card-equipment-divider {
@@ -124,6 +127,7 @@
     margin-top: 2.5%;
     justify-content: space-between;
     flex-direction: column;
+    z-index: 250;
 }
 
 .profile-weapon-img {
@@ -287,17 +291,23 @@
 
 .profile-card-image-input {
     display: flex;
-    width: 100%;
+    position: relative;
+    width: calc(100% - 2px);
     aspect-ratio: 21 / 9;
+    background-color: #ffffff33;
+    border: 1px dashed #fff;
+    border-radius: 16px;
     padding: 1.5%;
     margin-top: 40px;
-    overflow: hidden;
     align-self: center;
     align-items: center;
     justify-content: center;
-    border: 1px dashed #fff;
-    background-color: #ffffff33;
-    position: relative;
+    overflow: hidden;
+}
+
+.profile-draggable-text{
+    align-self: center;
+    justify-content: center;
 }
 
 /*.profile-preview-img {
