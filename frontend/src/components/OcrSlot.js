@@ -37,7 +37,7 @@ function OCRSlot({ isMain }) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://localhost:8000/ocr?lang=kr", {
+      const response = await fetch("https://wuthering-v1in.onrender.com/ocr?lang=kr", {
         method: "POST",
         body: formData,
       });

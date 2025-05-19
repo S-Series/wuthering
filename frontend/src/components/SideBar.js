@@ -15,7 +15,7 @@ function SideBar() {
                 <span className="side-text">Profile</span>
             </button>
             <div className="sidebar-divider" />
-            <button className="side-button" onClick={() => navigate("/")}>
+            <button className="side-button" onClick={() => navigate("/character")}>
                 <span className="side-text">Character</span>
             </button>
             <div className="sidebar-divider" />

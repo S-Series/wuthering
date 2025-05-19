@@ -3,7 +3,7 @@ import "./DropSlot.css";
 import { useState } from "react";
 import { FixedStats } from "../Datas/Stats";
 
-function DropSlot({ type, value }) {
+function DropSlot({ type = [], value = [] }) {
   const lang = "kr";
 
   const selectStyle = {

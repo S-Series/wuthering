@@ -2,7 +2,6 @@ import "./App.css";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import ProfileCard from "../components/ProfileCard";
-import OCRSlot from "../components/OcrSlot";
 
 function Home() {
   return (
@@ -17,5 +16,4 @@ function Home() {
     </div>
   );
 }
-
 export default Home;
