@@ -5,7 +5,7 @@
     align-items: center;
     margin-top: 55px;
     width: min(125px, 15vh);
-    height: calc(100vh - min(80px, 6vh));
+    height: calc(100vh - 55px);
     box-sizing: border-box;
     z-index: 1000;
     background-color: #202020;
@@ -25,7 +25,7 @@
     border: none;
     cursor: pointer;
     color: #ffffff;
-    font-size: 1.1rem;
+    font-size: max(min(1vw, 16px), 12px);
 }
 
 .side-button:hover {

@@ -1,6 +1,6 @@
 import "./ProfileCard.css";
 
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Select from "react-select";
 import useFitText from "use-fit-text";
 
@@ -10,11 +10,11 @@ import EquipSlot from "./EquipSlot";
 import CharacterStat from "./CharacterStat";
 
 import { character as characterList, characterStat } from "../Datas/Character";
+import { echoData } from "../Datas/Echo";
 import {
   weapon as weaponList,
   weaponStat as weaponStats,
 } from "../Datas/Weapon";
-import { echoData } from "../Datas/Echo";
 
 function ProfileCard() {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
@@ -30,14 +30,89 @@ function ProfileCard() {
   const [fitKeyW, setFitKeyW] = useState(0);
   const [fitKeyE, setFitKeyE] = useState(0);
 
+  const boxRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const [imageURL, setImageURL] = useState(null);
+
   const lang = localStorage.getItem("lang") || "kr";
 
   const { fontSize: fontSizeW, ref: refWeapon } = useFitText({});
   const { fontSize: fontSizeE, ref: refEcho } = useFitText({});
 
+  const wrapperRef = useRef(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1);
+  const [dragging, setDragging] = useState(false);
+  const offset = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
     setFitKeyE((prev) => prev + 1);
-  }, [equipmentSetIds, lang]);
+  }, [equipmentSetIds, lang]); //$ lang change
+  useEffect(() => {
+    const handlePaste = (e) => {
+      const item = [...e.clipboardData.items].find((i) =>
+        i.type.includes("image")
+      );
+      if (item) {
+        const file = item.getAsFile();
+        const url = URL.createObjectURL(file);
+        setImageURL(url);
+      }
+    };
+
+    const box = boxRef.current;
+    if (box) box.addEventListener("paste", handlePaste);
+    return () => {
+      if (box) box.removeEventListener("paste", handlePaste);
+    };
+  }, []); //$ profilecard img url change
+  useEffect(() => {
+    const handleMove = (e) => {
+      if (!dragging) return;
+      setPos({
+        x: e.clientX - offset.current.x,
+        y: e.clientY - offset.current.y,
+      });
+    };
+    const handleUp = () => {
+      setDragging(false);
+    };
+
+    document.addEventListener("mousemove", handleMove);
+    document.addEventListener("mouseup", handleUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMove);
+      document.removeEventListener("mouseup", handleUp);
+    };
+  }, [dragging]); //$ drag pos change
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.1 : -0.1;
+      setScale((prev) => Math.min(Math.max(prev + delta, 0.5), 3));
+    };
+
+    el.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener("wheel", handleWheel);
+    };
+  }, []); //$ wheel zoom change
+
+  const handleDoubleClick = () => {
+    fileInputRef.current?.click();
+  };
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImageURL(url);
+    }
+  };
 
   const getStringInfo = (lang) => {
     const strings = {
@@ -46,28 +121,56 @@ function ProfileCard() {
         "무기 선택",
         "* 캐릭터 및 무기 Lv90 기준",
         "* 모든 조건부 스텟은 적용되지 않습니다",
+        "프로필 배경 이미지",
       ],
       jp: [
         "キャラ選択",
         "武器選択",
         "* キャラと武器はLv90基準",
         "* 条件付きステータスは適用されません",
+        "プロフィール背景画像",
       ],
       zh: [
         "角色选择",
         "武器选择",
         "* 角色和武器以90级为基准",
         "* 所有条件属性不会被应用",
+        "档案背景图像",
       ],
       en: [
         "Select Character",
         "Select Weapon",
         "* Based on Lv90 character and weapon",
         "* Conditional stats are not applied",
+        "Profile Background Image",
       ],
     };
     return strings[lang] || strings["en"];
   };
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setDragging(true);
+    offset.current = {
+      x: e.clientX - pos.x,
+      y: e.clientY - pos.y,
+    };
+  }; //$ Drag Start
+  const handleMouseMove = (e) => {
+    if (!dragging) return;
+    setPos({
+      x: e.clientX - offset.current.x,
+      y: e.clientY - offset.current.y,
+    });
+  }; //$ Dragging
+  const handleMouseUp = () => {
+    setDragging(false);
+  }; //$ Drag End
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 0.1 : -0.1;
+    setScale((prev) => Math.min(Math.max(prev + delta, 0.5), 3)); // 0.5x ~ 3x 제한
+  }; //$ Zoom in & out
 
   const characterOptions = characterList.map((c) => ({
     value: c.id,
@@ -189,10 +292,9 @@ function ProfileCard() {
       <div
         className="profile-card"
         style={{
-          backgroundImage: `url("./bg.png")`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
+          backgroundImage: `url(${imageURL || "./bg.jpg"})`,
+          backgroundPosition: `${pos.x}px ${pos.y - 4}px`,
+          backgroundSize: `${scale * 100}% auto`,
         }}>
         <img
           className="profile-card-img"
@@ -320,6 +422,40 @@ function ProfileCard() {
           <EquipSlot />
           <EquipSlot />
         </div>
+      </div>
+      <div
+        className="profile-card-image-input"
+        tabIndex={0}
+        ref={boxRef}
+        contentEditable={false}
+        onDoubleClick={handleDoubleClick}>
+        {imageURL ? (
+          <img
+            src={imageURL}
+            alt={"editable" & "pasted"}
+            draggable={false}
+            onMouseDown={handleMouseDown}
+            className={"profile-draggable-img" & "profile-preview-img"}
+            style={{
+              transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+              transformOrigin: "top left",
+              position: "absolute",
+              userSelect: "none",
+              maxWidth: "none",
+              cursor: dragging ? "grabbing" : "grab",
+            }}
+          />
+        ) : (
+          <span>{getStringInfo(lang)[4]}</span>
+        )}
+
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          ref={fileInputRef}
+          onChange={handleImageSelect}
+          style={{ display: "none" }}
+        />
       </div>
       <div className="profile-content">
         <OCRGrid />

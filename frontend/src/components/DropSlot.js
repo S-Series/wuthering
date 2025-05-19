@@ -1,7 +1,12 @@
 import Select from "react-select";
 import "./DropSlot.css";
 import { useState } from "react";
-import { FixedStats } from "../Datas/Stats";
+import {
+  FixedStatsMain4 as Main4,
+  FixedStatsMain3 as Main3,
+  FixedStatsMain1 as Main1,
+  FixedStatsSub as Sub,
+} from "../Datas/Stats";
 
 function DropSlot({ type = [], value = [] }) {
   const lang = "kr";
@@ -17,13 +22,27 @@ function DropSlot({ type = [], value = [] }) {
     option: (base, state) => ({ ...base }),
   };
 
-  const statOptions = Object.entries(FixedStats).map(([id, stat]) => ({
+  const MainOptions4 = Object.entries(Main4).map(([id, stat]) => ({
+    value: id,
+    label: stat[lang] || id,
+  }));
+  const MainOptions3 = Object.entries(Main3).map(([id, stat]) => ({
+    value: id,
+    label: stat[lang] || id,
+  }));
+  const MainOptions1 = Object.entries(Main1).map(([id, stat]) => ({
+    value: id,
+    label: stat[lang] || id,
+  }));
+  const SubOptions = Object.entries(Sub).map(([id, stat]) => ({
     value: id,
     label: stat[lang] || id,
   }));
 
+  const [options, setOptions] = useState(MainOptions4);
+
   const getValueOptions = (id) => {
-    const stat = FixedStats[id];
+    const stat = options;
     if (!stat) return [];
 
     const vals = [...(stat.ValueMain || []), ...(stat.SubValue || [])]
@@ -42,17 +61,17 @@ function DropSlot({ type = [], value = [] }) {
         {[0, 1].map((i) => (
           <div className="dropdown-row" key={`main-${i}`}>
             <Select
-              options={statOptions}
+              options={options}
               styles={selectStyle}
               placeholder="속성 선택"
               defaultValue={
                 type[i]
-                  ? statOptions.find((opt) => opt.value === type[i])
+                  ? options.find((opt) => opt.value === type[i])
                   : null
               }
             />
             <Select
-              options={getValueOptions(type[i])}
+              options={getValueOptions(type[i], options)}
               styles={selectStyle}
               placeholder="수치 선택"
               defaultValue={
@@ -67,17 +86,17 @@ function DropSlot({ type = [], value = [] }) {
         {[0, 1, 2, 3, 4].map((i) => (
           <div className="dropdown-row" key={`sub-${i}`}>
             <Select
-              options={statOptions}
+              options={SubOptions}
               styles={selectStyle}
               placeholder="속성 선택"
               defaultValue={
                 type[i + 2]
-                  ? statOptions.find((opt) => opt.value === type[i + 2])
+                  ? SubOptions.find((opt) => opt.value === type[i + 2])
                   : null
               }
             />
             <Select
-              options={getValueOptions(type[i + 2])}
+              options={getValueOptions(type[i + 2], SubOptions)}
               styles={selectStyle}
               placeholder="수치 선택"
               defaultValue={

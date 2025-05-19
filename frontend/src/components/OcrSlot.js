@@ -2,7 +2,7 @@ import "./OcrSlot.css";
 import { useRef, useState, useEffect } from "react";
 import { OcrRetouch } from "../func/OcrRetouch";
 
-function OCRSlot({ isMain }) {
+function OCRSlot({ isMain = false }) {
   const boxRef = useRef(null);
   const [imageURL, setImageURL] = useState(null);
   const [ocrData, setOcrData] = useState({ ocrType: [], ocrValue: [] });

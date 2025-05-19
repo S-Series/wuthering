@@ -1,5 +1,6 @@
 export const FixedStats = {
   hp: {
+    id: "hp",
     en: "HP",
     kr: "HP",
     jp: "HP",
@@ -8,6 +9,7 @@ export const FixedStats = {
     ValueSub: [320, 360, 390, 430, 470, 510, 540, 580],
   },
   hpPct: {
+    id: "hpPct",
     en: "HP%",
     kr: "HP%",
     jp: "HP%",
@@ -25,6 +27,7 @@ export const FixedStats = {
     ],
   },
   atk: {
+    id: "atk",
     en: "Atk",
     kr: "공격력",
     jp: "攻撃力",
@@ -33,6 +36,7 @@ export const FixedStats = {
     SubValue: [30, 40, 50, 60],
   },
   atkPct: {
+    id: "atkPct",
     en: "Atk%",
     kr: "공격력%",
     jp: "攻撃力%",
@@ -50,6 +54,7 @@ export const FixedStats = {
     ],
   },
   def: {
+    id: "def",
     en: "Def",
     kr: "방어력",
     jp: "防御力",
@@ -58,6 +63,7 @@ export const FixedStats = {
     SubValue: [40, 50, 60],
   },
   defPct: {
+    id: "defPct",
     en: "Def%",
     kr: "방어력%",
     jp: "防御力%",
@@ -75,6 +81,7 @@ export const FixedStats = {
     ],
   },
   CritRate: {
+    id: "CritRate",
     en: "",
     kr: "크리티컬",
     jp: "クリティカル",
@@ -83,6 +90,7 @@ export const FixedStats = {
     SubValue: ["6.3%", "6.9%", "7.5%", "8.1%", "8.7%", "9.3%", "9.9%", "10.5%"],
   },
   CritDmg: {
+    id: "CritDmg",
     en: "",
     kr: "크리티컬 피해",
     jp: "クリティカルダメージ",
@@ -100,6 +108,7 @@ export const FixedStats = {
     ],
   },
   healBns: {
+    id: "healBns",
     en: "",
     kr: "치료 보너스",
     jp: "HP回復効果アップ",
@@ -108,6 +117,7 @@ export const FixedStats = {
     SubValue: null,
   },
   ResonanceBns: {
+    id: "ResonanceBns",
     en: "",
     kr: "공명 효율",
     jp: "共鳴効率",
@@ -125,6 +135,7 @@ export const FixedStats = {
     ],
   },
   normalBns: {
+    id: "normalBns",
     en: "",
     kr: "일반공격 피해보너스",
     jp: "通常攻撃ダメージアップ",
@@ -142,6 +153,7 @@ export const FixedStats = {
     ],
   },
   heavyBns: {
+    id: "heavyBns",
     en: "",
     kr: "강공격 피해보너스",
     jp: "重撃ダメージアップ",
@@ -159,6 +171,7 @@ export const FixedStats = {
     ],
   },
   skillBns: {
+    id: "skillBns",
     en: "",
     kr: "공명스킬 피해보너스",
     jp: "共鳴スキルダメージアップ",
@@ -176,6 +189,7 @@ export const FixedStats = {
     ],
   },
   ultBns: {
+    id: "ultBns",
     en: "",
     kr: "공명해방 피해보너스",
     jp: "共鳴解放ダメージアップ",
@@ -193,6 +207,7 @@ export const FixedStats = {
     ],
   },
   GlacioBns: {
+    id: "GlacioBns",
     en: "",
     kr: "응결 피해 보너스",
     jp: "凝縮ダメージアップ",
@@ -201,6 +216,7 @@ export const FixedStats = {
     SubValue: null,
   },
   FusionBns: {
+    id: "FusionBns",
     en: "",
     kr: "융용 피해 보너스",
     jp: "焦熱ダメージアップ",
@@ -209,6 +225,7 @@ export const FixedStats = {
     SubValue: null,
   },
   ElectroBns: {
+    id: "ElectroBns",
     en: "",
     kr: "전도 피해 보너스",
     jp: "電導ダメージアップ",
@@ -217,6 +234,7 @@ export const FixedStats = {
     SubValue: null,
   },
   AeroBns: {
+    id: "AeroBns",
     en: "",
     kr: "기류 피해 보너스",
     jp: "気動ダメージアップ",
@@ -225,6 +243,7 @@ export const FixedStats = {
     SubValue: null,
   },
   SpectroBns: {
+    id: "SpectroBns",
     en: "",
     kr: "회절 피해 보너스",
     jp: "回折ダメージアップ",
@@ -233,6 +252,7 @@ export const FixedStats = {
     SubValue: null,
   },
   HavocBns: {
+    id: "HavocBns",
     en: "",
     kr: "인멸 피해 보너스",
     jp: "消滅ダメージアップ",
@@ -241,3 +261,23 @@ export const FixedStats = {
     SubValue: null,
   },
 };
+
+export const FixedStatsMain4 = Object.fromEntries(
+  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueMain?.[0] !== null)
+);
+
+export const FixedStatsMain3 = Object.fromEntries(
+  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueMain?.[1] !== null)
+);
+
+export const FixedStatsMain1 = Object.fromEntries(
+  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueMain?.[2] !== null)
+);
+
+export const FixedStatsSub = Object.fromEntries(
+  Object.entries(FixedStats).filter(([_, stat]) => stat.SubValue !== null)
+);
+
+export const FixedMainSub = {
+  
+}

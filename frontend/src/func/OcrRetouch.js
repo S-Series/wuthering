@@ -6,7 +6,9 @@ export function OcrRetouch({ text, lang }) {
   if (!text || !Array.isArray(text)) return { retType: [], retValue: [] };
   if (!lang) lang = "en";
 
-  const statList = FixedStats.map(stat => stat[lang]).filter(Boolean);
+  console.log(text);
+
+  const statList = Object.values(FixedStats).map(stat => stat[lang]).filter(Boolean);
   const correction = correctionMap[lang] || {};
   const correctedText = text.map((t) => correction[t.trim()] || t.trim());
 
@@ -47,7 +49,7 @@ export function OcrRetouch({ text, lang }) {
     const label = rawTypes[i];
     const value = parseFloat(rawValues[i]);
 
-    const candidates = FixedStats.filter(stat => stat[lang] === label);
+    const candidates = Object.values(FixedStats).filter(stat => stat[lang] === label);
     let selectedId = candidates[0]?.id || null;
 
     if (candidates.length > 1) {
