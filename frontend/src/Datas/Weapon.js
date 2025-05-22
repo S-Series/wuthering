@@ -433,22 +433,22 @@ export const weaponStat = {
   "Emerald of Genesis": {
     atk: 588,
     value: [24.3, 12.8],
-    statType: ["critRate", "ResonanceBns"],
+    statType: ["CritRate", "ResonanceBns"],
   },
   "Blazing Brilliance": {
     atk: 588,
     value: [48.6, 12],
-    statType: ["critDmg", "atkPct"],
+    statType: ["CritDmg", "atkPct"],
   },
   "Red Spring": {
     atk: 588,
     value: [24.3, 12],
-    statType: ["critRate", "atkPct"],
+    statType: ["CritRate", "atkPct"],
   },
   "Unflickering Valor": {
     atk: 413,
     value: [77, 8],
-    statType: ["ResonanceBns", "critRate"],
+    statType: ["ResonanceBns", "CritRate"],
   },
   "Bloodpact's Pledge": {
     atk: 588,
@@ -506,12 +506,12 @@ export const weaponStat = {
   "Verdant Summit": {
     atk: 588,
     value: [48.6, 12],
-    statType: ["critDmg", "typeBns"],
+    statType: ["CritDmg", "typeBns"],
   },
   "Ages of Harvest": {
     atk: 588,
     value: [24.3, 12],
-    statType: ["critRate", "typeBns"],
+    statType: ["CritRate", "typeBns"],
   },
   Discord: {
     atk: 338,
@@ -536,7 +536,7 @@ export const weaponStat = {
   Autumntrace: {
     atk: 413,
     value: [20.3, 0],
-    statType: ["critRate", "atk"],
+    statType: ["CritRate", "atk"],
   },
   "Waning Redshift": {
     atk: 463,
@@ -559,17 +559,17 @@ export const weaponStat = {
   "Verity's Handle": {
     atk: 588,
     value: [24.3, 12],
-    statType: ["critRate", "typeBns"],
+    statType: ["CritRate", "typeBns"],
   },
   Tragicomedy: {
     atk: 588,
     value: [24.3, 12],
-    statType: ["critRate", "atkPct"],
+    statType: ["CritRate", "atkPct"],
   },
   "Blazing Justice": {
     atk: 588,
     value: [48.6, 12],
-    statType: ["critDmg", "atkPct"],
+    statType: ["CritDmg", "atkPct"],
   },
   Marcato: {
     atk: 338,
@@ -594,7 +594,7 @@ export const weaponStat = {
   Stonard: {
     atk: 413,
     value: [20.3, 0],
-    statType: ["critRate", "atk"],
+    statType: ["CritRate", "atk"],
   },
   "Celestial Spiral": {
     atk: 463,
@@ -612,17 +612,17 @@ export const weaponStat = {
   "Static Mist": {
     atk: 588,
     value: [24.3, 12.8],
-    statType: ["critRate", "ResonanceBns"],
+    statType: ["CritRate", "ResonanceBns"],
   },
   "The Last Dance": {
     atk: 500,
     value: [72, 12],
-    statType: ["critDmg", "atkPct"],
+    statType: ["CritDmg", "atkPct"],
   },
   "Woodland Aria": {
     atk: 500,
     value: [36, 12],
-    statType: ["critRate", "atkPct"],
+    statType: ["CritRate", "atkPct"],
   },
   Cadenza: {
     atk: 338,
@@ -670,12 +670,12 @@ export const weaponStat = {
   Stringmaster: {
     atk: 500,
     value: [36, 12],
-    statType: ["critRate", "typeBns"],
+    statType: ["CritRate", "typeBns"],
   },
   "Rime-Draped Sprouts": {
     atk: 500,
     value: [72, 12],
-    statType: ["critDmg", "atkPct"],
+    statType: ["CritDmg", "atkPct"],
   },
   "Stellar Symphony": {
     atk: 413,
@@ -685,12 +685,12 @@ export const weaponStat = {
   "Luminous Hymn": {
     atk: 500,
     value: [36, 12],
-    statType: ["critRate", "atkPct"],
+    statType: ["CritRate", "atkPct"],
   },
   "Whispers of Sirens": {
     atk: 500,
     value: [72, 12],
-    statType: ["critDmg", "atkPct"],
+    statType: ["CritDmg", "atkPct"],
   },
   "Call of the Abyss": {
     atk: 338,
@@ -725,7 +725,7 @@ export const weaponStat = {
   Augment: {
     atk: 413,
     value: [20.3, 0],
-    statType: ["critRate", "atk"],
+    statType: ["CritRate", "atk"],
   },
   "Fusion Accretion": {
     atk: 463,

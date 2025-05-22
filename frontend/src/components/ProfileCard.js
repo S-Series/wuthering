@@ -3,11 +3,11 @@ import "./ProfileCard.css";
 import React, { useRef, useState, useEffect } from "react";
 import Select from "react-select";
 import useFitText from "use-fit-text";
+import { ChromePicker } from "react-color";
 
-import OCRGrid from "./OcrGrid";
-import DropGrid from "./DropGrid";
 import EquipSlot from "./EquipSlot";
 import CharacterStat from "./CharacterStat";
+import ProfileStats from "./ProfileStats";
 
 import { character as characterList, characterStat } from "../Datas/Character";
 import { echoData } from "../Datas/Echo";
@@ -17,6 +17,14 @@ import {
 } from "../Datas/Weapon";
 
 function ProfileCard() {
+  const boxPickerRef = useRef(null);
+  const textPickerRef = useRef(null);
+  const [color, setColor] = useState({
+    boxColor: "#ffffff66",
+    textColor: "#000000ff",
+  });
+  const [showPicker, setShowPicker] = useState({ box: false, text: false });
+
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [selectedCharacterC, setSelectedCharacterC] = useState(null);
   const [characterStatObj, setCharacterStat] = useState(null);
@@ -46,6 +54,37 @@ function ProfileCard() {
   const offset = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+  let mouseDownInside = false;
+
+  const handleMouseDown = (e) => {
+    mouseDownInside =
+      boxPickerRef.current?.contains(e.target) ||
+      textPickerRef.current?.contains(e.target);
+  };
+
+  const handleClickOrEsc = (e) => {
+    if (e.type === "keydown" && e.key === "Escape") {
+      setShowPicker({ box: false, text: false });
+      return;
+    }
+
+    if (!mouseDownInside) {
+      setShowPicker({ box: false, text: false });
+    }
+  };
+
+  document.addEventListener("mousedown", handleMouseDown, true);
+  document.addEventListener("click", handleClickOrEsc, true);
+  document.addEventListener("keydown", handleClickOrEsc);
+
+  return () => {
+    document.removeEventListener("mousedown", handleMouseDown, true);
+    document.removeEventListener("click", handleClickOrEsc, true);
+    document.removeEventListener("keydown", handleClickOrEsc);
+  };
+  }, []); //$ color picker close
+  
+  useEffect(() => {
     const handlePaste = (e) => {
       const item = [...e.clipboardData.items].find((i) =>
         i.type.includes("image")
@@ -71,7 +110,8 @@ function ProfileCard() {
     return () => {
       if (box) box.removeEventListener("paste", handlePaste);
     };
-  }, []); //$ profilecard img url change
+  }, []);
+
   useEffect(() => {
     const handleMove = (e) => {
       if (!dragging) return;
@@ -104,6 +144,7 @@ function ProfileCard() {
       document.removeEventListener("mouseup", handleUp);
     };
   }, [dragging]); //$ drag pos change
+
   useEffect(() => {
     if (!profileRef.current || !imageSize.width || !imageSize.height) return;
 
@@ -124,6 +165,7 @@ function ProfileCard() {
       ),
     });
   }, [scale, imageSize]);
+
   useEffect(() => {
     const el = boxRef.current;
     if (!el || !imageSize.width || !imageSize.height) return;
@@ -198,16 +240,22 @@ function ProfileCard() {
     };
   }; //$ Drag Start
 
+  function toHex(c) {
+    const toHex = (val) => Math.round(val).toString(16).padStart(2, "0");
+    const alpha = toHex(c.a * 255);
+    return `#${toHex(c.r)}${toHex(c.g)}${toHex(c.b)}${alpha}`;
+  }
+
   const characterOptions = characterList.map((c) => ({
     value: c.id,
     label: lang === "en" ? c.id : c[lang] || c.id,
-    img: `/character/${c.id}/ico.webp`,
+    img: `https://wuthering-v1in.onrender.com/static/character/${c.id}/ico.webp`,
   }));
   const weaponOptions = (weaponList[selectedCharacter?.weapon] || []).map(
     (w) => ({
       value: w.id,
       label: lang === "en" ? w.id : w[lang] || w.id,
-      img: `/weapon/${selectedCharacter?.weapon}/${w.imgKey}.png`,
+      img: `https://wuthering-v1in.onrender.com/static/weapon/${selectedCharacter?.weapon}/${w.imgKey}.png`,
     })
   );
 
@@ -309,6 +357,60 @@ function ProfileCard() {
           onChange={(opt) => setWeaponC(opt.value)}
           placeholder="W_"
         />
+
+        <div className="profile-color-container">
+          <div className="profile-color-picker">
+            <button
+              className="profile-color-picker-button"
+              onClick={() => setShowPicker((p) => ({ ...p, box: !p.box }))}
+              style={{ backgroundColor: color.boxColor }}
+            />
+            {showPicker.box && (
+              <div
+                className="color-picker-overlay"
+                ref={boxPickerRef}
+                onDragStart={(e) => e.preventDefault()}
+                draggable={false}>
+                <ChromePicker
+                  color={color.boxColor}
+                  onDragStart={(e) => e.preventDefault()}
+                  draggable={false}
+                  onChange={(updated) =>
+                    setColor((prev) => ({
+                      ...prev,
+                      boxColor: toHex(updated.rgb),
+                    }))
+                  }
+                />
+              </div>
+            )}
+
+            <button
+              className="profile-color-picker-button"
+              onClick={() => setShowPicker((p) => ({ ...p, text: !p.text }))}
+              style={{ backgroundColor: color.textColor }}
+            />
+            {showPicker.text && (
+              <div
+                className="color-picker-overlay"
+                ref={textPickerRef}
+                onDragStart={(e) => e.preventDefault()}
+                draggable={false}>
+                <ChromePicker
+                  color={color.textColor}
+                  onDragStart={(e) => e.preventDefault()}
+                  draggable={false}
+                  onChange={(updated) =>
+                    setColor((prev) => ({
+                      ...prev,
+                      textColor: toHex(updated.rgb),
+                    }))
+                  }
+                />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <span className="profile-stat-info">{getStringInfo(lang)[2]}</span>
@@ -348,21 +450,27 @@ function ProfileCard() {
           className="profile-card-img"
           src={
             selectedCharacter?.id
-              ? `./character/${selectedCharacter.id}/stand.png`
-              : "./character/rover/stand.png"
+              ? `https://wuthering-v1in.onrender.com/static/character/${selectedCharacter.id}/stand.png`
+              : "https://wuthering-v1in.onrender.com/static/character/rover/stand.png"
           }
+          style={{ backgroundColor: color.boxColor }}
           alt="char"
         />
 
-        <div className="profile-card-stats">
+        <div
+          className="profile-card-stats"
+          style={{ backgroundColor: color.boxColor }}>
           {/* 무기 */}
           <div className="profile-stats-weapon">
             <img
               className="profile-weapon-img"
-              src={`/weapon/${selectedCharacter?.weapon}/${selectedWeapon?.imgKey}.png`}
+              src={`https://wuthering-v1in.onrender.com/static/weapon/${selectedCharacter?.weapon}/${selectedWeapon?.imgKey}.png`}
               onError={(e) => (e.currentTarget.src = "/default.webp")}
+              style={{ backgroundColor: color.boxColor }}
             />
-            <div className="profile-weapon">
+            <div
+              className="profile-weapon"
+              style={{ backgroundColor: color.boxColor }}>
               <div
                 key={fitKeyW}
                 ref={refWeapon}
@@ -378,6 +486,10 @@ function ProfileCard() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "flex-start",
+                  color: color.textColor,
+                  WebkitFontSmoothing: "antialiased",
+                  MozOsxFontSmoothing: "grayscale",
+                  textRendering: "optimizeLegibility",
                 }}>
                 &nbsp;
                 {lang === "en"
@@ -391,20 +503,21 @@ function ProfileCard() {
                   onError={(e) => (e.currentTarget.src = "/default.webp")}
                 />
                 <span className="profile-weapon-stats">
-                  {selectedWeaponStat?.atk}&nbsp;&nbsp;
+                  {selectedWeaponStat?.atk}&nbsp;&nbsp;&nbsp;&nbsp;
                 </span>
                 <img
                   className="profile-stat-icon"
-                  src={`/ico/stats/${selectedWeaponStat?.statType[0]}.webp`}
+                  src={`https://wuthering-v1in.onrender.com/static/ico/stats/${selectedWeaponStat?.statType[0]}.webp`}
                   onError={(e) => (e.currentTarget.src = "/default.webp")}
                 />
                 <span className="profile-weapon-stats">
                   {selectedWeaponStat?.value[0]?.toFixed(1)}
-                  {["Pct", "Bns", "crit"].some((s) =>
+                  {["Pct", "Bns", "Crit"].some((s) =>
                     selectedWeaponStat?.statType[0]?.includes(s)
                   )
                     ? "%"
                     : ""}
+                  &nbsp;&nbsp;
                 </span>
               </div>
             </div>
@@ -412,28 +525,45 @@ function ProfileCard() {
 
           {/* 캐릭터 스탯 */}
           <div className="profile-stat-grid">
-            <CharacterStat id="hp" value={characterStatObj?.baseHp || 0} />
-            <CharacterStat id="atk" value={characterStatObj?.baseAtk || 0} />
-            <CharacterStat id="def" value={characterStatObj?.baseDef || 0} />
+            <CharacterStat
+              id="hp"
+              value={characterStatObj?.baseHp || 0}
+              color={color.textColor}
+            />
+            <CharacterStat
+              id="atk"
+              value={characterStatObj?.baseAtk || 0}
+              color={color.textColor}
+            />
+            <CharacterStat
+              id="def"
+              value={characterStatObj?.baseDef || 0}
+              color={color.textColor}
+            />
             <CharacterStat
               id="ResonanceBns"
               value={`${characterStatObj?.resonanceBns?.toFixed(1) || 0}%`}
+              color={color.textColor}
             />
             <CharacterStat
               id="CritRate"
               value={`${characterStatObj?.critRate?.toFixed(1) || 0}%`}
+              color={color.textColor}
             />
             <CharacterStat
               id="CritDmg"
               value={`${characterStatObj?.critDmg?.toFixed(1) || 0}%`}
+              color={color.textColor}
             />
             <CharacterStat
               id={selectedCharacter?.element + "Bns"}
               value={`${characterStatObj?.typeBns?.[1]?.toFixed(1) || 0}%`}
+              color={color.textColor}
             />
             <CharacterStat
               id={selectedCharacter?.type + "Bns"}
               value={`${characterStatObj?.typeBns?.[0]?.toFixed(1) || 0}%`}
+              color={color.textColor}
             />
           </div>
 
@@ -444,7 +574,7 @@ function ProfileCard() {
                 <div key={index} className="profile-stats-set-slot">
                   <img
                     className="profile-stats-set-icon"
-                    src={`/ico/echo/${setName}.webp`}
+                    src={`https://wuthering-v1in.onrender.com/static/ico/echo/${setName}.webp`}
                     onError={(e) => (e.currentTarget.src = "/default.webp")}
                   />
                   <div className="profile-stats-set-label">
@@ -462,13 +592,15 @@ function ProfileCard() {
           </div>
         </div>
 
-        <div className="profile-card-equipment-grid">
-          <EquipSlot />
+        <div
+          className="profile-card-equipment-grid"
+          style={{ backgroundColor: color.boxColor }}>
+          <EquipSlot color={color.textColor} />
           <div className="profile-card-equipment-divider" />
-          <EquipSlot />
-          <EquipSlot />
-          <EquipSlot />
-          <EquipSlot />
+          <EquipSlot color={color.textColor} />
+          <EquipSlot color={color.textColor} />
+          <EquipSlot color={color.textColor} />
+          <EquipSlot color={color.textColor} />
         </div>
       </div>
       <div
@@ -512,13 +644,7 @@ function ProfileCard() {
           style={{ display: "none" }}
         />
       </div>
-      <div className="profile-content">
-        <OCRGrid />
-        <div className="profile-content-equipment">
-          <DropGrid />
-          <div className="profile-content-summary"></div>
-        </div>
-      </div>
+      <ProfileStats />
     </div>
   );
 }

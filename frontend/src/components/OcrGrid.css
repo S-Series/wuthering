@@ -1,8 +1,0 @@
-.ocr-grid{
-    display: flex;
-    flex-direction: column;
-    width: 25%;
-    margin-right: 50px;
-    justify-content: space-between;
-    gap: 25px;
-}

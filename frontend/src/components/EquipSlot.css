@@ -61,6 +61,9 @@
     font-size: max(min(0.77vw, 0.8rem), 0.7rem);
     justify-content: flex-end;
     margin-right: 0.25rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: "optimizeLegibility";
 }
 
 .equipment-stat-label.score{

@@ -23,6 +23,36 @@
     width: 10%;
 }
 
+.profile-color-container{
+    display: flex;
+    width: 30%;
+    height: 100%;
+    justify-content: flex-end;
+}
+.profile-color-picker{
+    display: flex;
+    position: relative;
+    width: 50%;
+    height: 100%;
+    gap: 10%;
+    align-items: center;
+}
+
+.profile-color-picker-button{
+    position: relative;
+    width: 100%;
+    height: 80%;
+}
+
+.color-picker-overlay{
+    display:block;
+    position: absolute;
+    user-select: none;
+    top: 50px;
+    left: -50%;
+    z-index: 500;
+}
+
 .profile-stat-info {
     display: flex;
     width: 100%;
@@ -40,9 +70,9 @@
     aspect-ratio: 21 / 9;
     background-color: #ffffff;
     border: 1px solid #000;
-    border-radius: 0.5rem;
+    border-radius: 16px;
     gap: 1.25%;
-    padding: 1.5%;
+    padding: 16px;
     margin-top: 0.5rem;
     align-self: center;
     align-items: center;
@@ -152,6 +182,9 @@
     justify-content: space-between;
     background-color: #00000033;
     border-radius: .5rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: "optimizeLegibility";
 }
 
 .profile-weapon-name {
@@ -209,6 +242,7 @@
     width: max(min(calc(100vw / 8.5), 165px), 110px);
     height: (100% - calc(min(max(1px, 0.15vw), 3px) * 2));
     padding: min(max(1px, 0.15vw), 3px);
+    border-radius: 5px;
     align-items: center;
     background-color: #00000033;
 }
@@ -260,6 +294,7 @@
     aspect-ratio: 1 / 1;
     margin-top: 40px;
     margin-bottom: 120px;
+    padding: 16px;
 }
 
 .profile-content-equipment {
@@ -297,7 +332,7 @@
     background-color: #ffffff33;
     border: 1px dashed #fff;
     border-radius: 16px;
-    padding: 1.5%;
+    padding: 16px;
     margin-top: 40px;
     align-self: center;
     align-items: center;

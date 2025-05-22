@@ -1,0 +1,43 @@
+.profile-stat-slot {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 2px);
+    aspect-ratio: 1 / 1;
+    border: 1px dashed #000;
+    border-radius: 16px;
+    background-color: #00000033;
+    padding: 16px;
+    align-self: center;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 40px;
+    overflow: hidden;
+}
+
+.profile-echo-cost-slot {
+    display: flex;
+    width: 100%;
+    height: 5%;
+}
+
+.profile-ocr-slot {
+    display: flex;
+    width: 100%;
+    height: 20%;
+    align-items: center;
+    background-color: #00000033;
+}
+
+.profile-ocr-img-crop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 50%;
+}
+
+.image-range-data {
+    
+}
