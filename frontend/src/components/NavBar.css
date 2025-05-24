@@ -7,6 +7,7 @@
 .icon {
     height: 40%;
     aspect-ratio: 1 / 1;
+    align-self: center;
 }
 
 .navbar {
@@ -106,5 +107,4 @@
 .nav-text {
     position: relative;
     font-size: 16px;
-    top: 3%;
 }

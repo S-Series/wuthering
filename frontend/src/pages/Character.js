@@ -2,8 +2,7 @@ import "./App.css";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 
-import OCRSlot from "../components/OcrSlot";
-import DropSlot from "../components/DropSlot";
+import ImageDrag from "../func/ImageDrag";
 
 function Character() {
   return (
@@ -12,9 +11,14 @@ function Character() {
       <div className="viewport">
         <SideBar />
         <div className="main-content">
-            <OCRSlot />
+          <div style={{ width: "80%", height: "800px" }}>
+            <ImageDrag
+              path="/bg.jpg"
+              pos={{ x: 0, y: 0, s: 1 }}
+              onChange={(v) => console.log(v)}
+            />
+          </div>
         </div>
-            <DropSlot />
       </div>
     </div>
   );

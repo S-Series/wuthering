@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 function NavBar() {
+  const backend = "https://wuthering-v1in.onrender.com/static";
   const navigate = useNavigate();
   const [language, setLanguage] = useState("kr");
 
@@ -82,7 +83,7 @@ function NavBar() {
     <nav className="navbar">
       <div className="nav-left">
         <button className="home-button" onClick={() => navigate("/")}>
-          <img src="./gem.webp" alt="Home" className="main-icon"></img>
+          <img src={`${backend}/default.webp`} className="main-icon"></img>
           {getStringInfo(language)[0]}
         </button>
         <div className="nav-left text-box">
@@ -105,7 +106,7 @@ function NavBar() {
           isSearchable={false}
         />
         <button className="nav-button" onClick={() => navigate()}>
-          <img src="./info.png" className="icon"></img>
+          <img src={`${backend}/info.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(language)[3]}</span>
         </button>
         <button
@@ -113,13 +114,13 @@ function NavBar() {
           onClick={() =>
             window.open("https://github.com/S-Series/wuthering", "_blank")
           }>
-          <img src="./github.png" className="icon"></img>
+          <img src={`${backend}/github.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(language)[4]}</span>
         </button>
         <button
           className="nav-button"
           onClick={() => window.open("https://ko-fi.com/sseries", "_blank")}>
-          <img src="./kofi.png" className="icon"></img>
+          <img src={`${backend}/kofi.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(language)[5]}</span>
         </button>
       </div>
