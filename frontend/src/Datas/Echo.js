@@ -2,57 +2,66 @@ import { FixedStats } from "./Stats";
 
 const hpPct = "hpPct";
 
-export const echoData = {
+export const harmony = {
   //#region Ver1.0 Echos
   Frost: {
+    id: "Frost",
     en: "Freezing Frost",
     kr: "야밤의 서리",
     jp: "夜にこびり付く白霜",
     zh: "凝夜白霜"
   },
   Rift: {
+    id: "Rift",
     en: "Molten Rift",
     kr: "솟구치는 용암",
     jp: "山を轟かせる崩火",
     zh: "熔山裂谷"
   },
   Thunder: {
+    id: "Thunder",
     en: "Void Thunder",
     kr: "울려퍼지는 뇌음",
     jp: "空を切り裂く冥雷",
     zh: "彻空冥雷"
   },
   Gale: {
+    id: "Gale",
     en: "Sierra Gale",
     kr: "스쳐가는 바람",
     jp: "谷を突き抜ける長風",
     zh: "啸谷长风"
   },
   Light: {
+    id: "Light",
     en: "Celestial Light",
     kr: "빛나는 별",
     jp: "闇を取り払う浮星",
     zh: "浮星祛暗"
   },
   Eclipse: {
+    id: "Eclipse",
     en: "Sun-sinking Eclipse",
     kr: "빛을 삼키는 해",
     jp: "二度と輝かない沈日",
     zh: "沉日劫明"
   },
   Rejuvent: {
+    id: "Rejuvent",
     en: "Rejuvenating Glow",
     kr: "찬란한 광휘",
     jp: "喧騒に隠す回光",
     zh: "隐世回光"
   },
   Clouds: {
+    id: "Clouds",
     en: "Moonlit Clouds",
     kr: "떠오르는 구름",
     jp: "月を窺う軽雲",
     zh: "轻云出月"
   },
   Tunes: {
+    id: "Tunes",
     en: "Lingering Tunes",
     kr: "끊임없는 잔향",
     jp: "絶えない余韻",
@@ -61,48 +70,56 @@ export const echoData = {
   //#endregion
   //#region Ver2.0 Echos
   Frosty: {
+    id: "Frosty",
     en: "Frosty Resolve",
     kr: "냉철한 결단",
     jp: "フロステッド・ハート",
     zh: "凌冽决断之心"
   },
   Radiance: {
+    id: "Radiance",
     en: "Eternal Radiance",
     kr: "영원의 광채",
     jp: "エターナル・ライト",
     zh: "此间永驻之光"
   },
   Veil: {
+    id: "Veil",
     en: "Midnight Veil",
     kr: "어둠의 장막",
     jp: "ミッドナイト・ベール",
     zh: "幽夜隐匿之帷"
   },
   Empyrean: {
+    id: "Empyrean",
     en: "Empyrean Anthem",
     kr: "하늘의 합주곡",
     jp: "セレッシャル・アンサム",
     zh: "高天共奏之曲"
   },
   Courage: {
+    id: "Courage",
     en: "Tidebreaking Courage",
     kr: "파도에 맞선 용기",
     jp: "タイズターニング・ヴァラ",
     zh: "无惧浪涛之勇"
   },
   Welkin: {
+    id: "Welkin",
     en: "Gusts of Welkin",
     kr: "끝없는 하늘",
     jp: "バウンドレス・スカイ",
     zh: "流云逝尽之空"
   },
   UnKnownEcho01: {
+    id: "UnKnownEcho01",
     en: "UnKnown",
     kr: "영광이 깃든 바람",
     jp: "グロリアス・ウィンド",
     zh: "愿戴荣光之旅"
   },
   UnKnownEcho02: {
+    id: "UnKnownEcho02",
     en: "UnKnown",
     kr: "울부짖는 불꽃",
     jp: "ハウリング・フレイム",
@@ -111,21 +128,22 @@ export const echoData = {
   //#endregion
   //#region Ver3.0 Echos
 };
+
 export const echoDict = {
   Cost4: {
-    "W75": {
+    "W75N": {
       "en": "Nightmare: Tempest Mephis",
       "kr": "악몽 · 천둥의 비늘",
       "jp": "雷刹のウロコ",
       "zh": "朔雷之鳞",
       "type": [
-        [echoData.Thunder],
+        [harmony.Thunder.en],
       ],
       "stats": [
         {[FixedStats.hpPct]: 12}
       ]
     },
-    "H80": {
+    "H80N": {
       "en": "Nightmare: Crownless",
       "kr": "악몽 · 크라운리스",
       "jp": "無冠者",
@@ -133,7 +151,7 @@ export const echoDict = {
       "type": "",
       "stats": []
     },
-    "H71": {
+    "H71N": {
       "en": "Nightmare: Feilian Beringal",
       "kr": "악몽 · 폭주의 고릴라",
       "jp": "飛廉の大猿",
@@ -141,7 +159,7 @@ export const echoDict = {
       "type": "",
       "stats": []
     },
-    "N74": {
+    "N74N": {
       "en": "Nightmare: Lampylumen Myriad",
       "kr": "악몽 · 반디의 군세",
       "jp": "輝き蛍の軍勢",
@@ -149,7 +167,7 @@ export const echoDict = {
       "type": "",
       "stats": []
     },
-    "H73": {
+    "H73N": {
       "en": "Nightmare: Mourning Aix",
       "kr": "악몽 · 애곡하는 아익스",
       "jp": "哀切の凶鳥",
@@ -165,7 +183,7 @@ export const echoDict = {
       "type": "",
       "stats": []
     },
-    "H72": {
+    "H72N": {
       "en": "Nightmare: Impermanence Heron",
       "kr": "악몽 · 음험한 백로",
       "jp": "無情のサギ",
@@ -253,7 +271,7 @@ export const echoDict = {
       "type": "",
       "stats": []
     },
-    "W76": {
+    "W76N": {
       "en": "Nightmare: Thundering Mephis",
       "kr": "악몽 · 뇌운의 비늘",
       "jp": "雲閃のウロコ",
@@ -269,7 +287,7 @@ export const echoDict = {
       "type": "",
       "stats": []
     },
-    "W77": {
+    "W77N": {
       "en": "Nightmare: Inferno Rider",
       "kr": "악몽 · 지옥불 기사",
       "jp": "燎原の炎騎",
@@ -971,3 +989,9 @@ export const echoDict = {
     }
   }
 };
+
+Object.values(echoDict).forEach(group => {
+  Object.entries(group).forEach(([id, data]) => {
+    data.id = id;
+  });
+});

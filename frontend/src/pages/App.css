@@ -6,11 +6,6 @@ html {
   overflow-y: auto;
 }
 
-#root {
-  min-width: 960px;
-  min-height: 800px;
-}
-
 .app-wrapper {
   display: flex;
   flex-direction: column;
@@ -29,11 +24,10 @@ html {
 }
 
 .main-content {
-  margin-top: min(80px, 6vh);
+  margin-top: 55px;
   margin-left: min(125px, 15vh);
   flex: 1;
   display: flex;
   justify-content: center;
   width: min(90%, 1080px);
-  min-width: 800px;
 }
