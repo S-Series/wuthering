@@ -18,6 +18,7 @@
 .profile-portrait {
     display: flex;
     width: clamp(856px, 80vw, 1070px);
+    min-width: 856px;
     flex-direction: column;
 }
 
@@ -26,6 +27,7 @@
     position: relative;
     margin-top: 55px;
     width: 100%;
+    min-width: 856px;
     aspect-ratio: 2140 / 940;
     box-shadow: 0px 10px 30px #000000;
     border: 1px solid #999999ff;
@@ -46,12 +48,17 @@
     display: block;
     width: 100%;
     height: 100%;
+    align-content: center;
+    justify-content: center;
     object-fit: contain;
 }
 
 .profile-card-text {
     display: block;
     position: absolute;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     z-index: 500;
 }
 .enFont {
@@ -65,4 +72,28 @@
 }
 .zhFont {
     font-family: "zh-font", sans-serif;
+}
+
+.stat-score-slot{
+    display: flex;
+    width: 50%;
+    height: 100%;
+    align-content: center;
+    justify-content: center;
+}
+
+.stat-score-text{
+    display: flex;
+    height: 100%;
+    color: #ffffff;
+    align-items: center;
+    text-align: center;
+}
+.stat-score-text.title{
+    width: 20%;
+    justify-content: flex-start;
+}
+.stat-score-text.value{
+    width: 50%;
+    justify-content: flex-end;
 }

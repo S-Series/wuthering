@@ -40,9 +40,9 @@ function NavBar() {
       "Ko-Fi"
     ],
     en: [
-      "WuWa DEV",
+      "WWaves DEV",
       "* All features are currently under development",
-      "* Found a bug or have feedback? Email inweag80@gmail.com",
+      "* Found a bug or have feedback? Email: inweag80@gmail.com",
       "Help",
       "SSeries",
       "Ko-Fi"

@@ -1,9 +1,9 @@
-import { FixedMainSub, FixedStatsSub } from "./Stats";
+import { FixedStats, FixedMainSub, FixedStatsSub } from "./Stats";
 import { FixedStatsMain4, FixedStatsMain3, FixedStatsMain1 } from "./Stats";
 
 class EchoData {
   constructor() {
-    this.echoId = "";
+    this.echoId = "G03";
     this.harmony = "";
     this.cost = 4;
     this.stats = Array(7).fill([
@@ -24,12 +24,20 @@ class EchoData {
   }
 }
 
+class StatData{
+  constructor(){
+    this[FixedStats.hp.id] = 0;
+  }
+}
+
 class ProfileData {
-  constructor(_characterId = "") {
-    this.characterId = _characterId;
+  constructor(_characterId = null) {
+    this.characterId = _characterId || "rover";
     this.weaponId = "";
-    this.ascension = [0, 0]; // [C, W]
+    this.constellation = [0, 0]; // [C, W]
+    this.harmony = "Eclipse";
     this.echoData = Array.from({ length: 5 }, () => new EchoData());
+    this.statScore = Array(2).fill(0);
   }
 
   SetProfileData(characterId) {
@@ -38,7 +46,7 @@ class ProfileData {
       const parsed = JSON.parse(saved);
       this.characterId = parsed.characterId;
       this.weaponId = parsed.weaponId;
-      this.ascension = parsed.ascension;
+      this.constellation = parsed.constellation;
       this.echoData = parsed.echoData.map((e) =>
         Object.assign(new EchoData(), e)
       );
@@ -51,7 +59,7 @@ class ProfileData {
       JSON.stringify({
         characterId: this.characterId,
         weaponId: this.weaponId,
-        ascension: this.ascension,
+        constellation: this.constellation,
         echoData: this.echoData,
       })
     );

@@ -82,7 +82,7 @@ export const FixedStats = {
   },
   CritRate: {
     id: "CritRate",
-    en: "",
+    en: "Critical Rate",
     kr: "크리티컬",
     jp: "クリティカル",
     zh: "暴击",
@@ -91,7 +91,7 @@ export const FixedStats = {
   },
   CritDmg: {
     id: "CritDmg",
-    en: "",
+    en: "Critical Damage",
     kr: "크리티컬 피해",
     jp: "クリティカルダメージ",
     zh: "暴击伤害",
@@ -109,7 +109,7 @@ export const FixedStats = {
   },
   healBns: {
     id: "healBns",
-    en: "",
+    en: "Heal Bonus",
     kr: "치료 보너스",
     jp: "HP回復効果アップ",
     zh: "治療效果加成",
@@ -118,7 +118,7 @@ export const FixedStats = {
   },
   ResonanceBns: {
     id: "ResonanceBns",
-    en: "",
+    en: "Resonance Bonus",
     kr: "공명 효율",
     jp: "共鳴効率",
     zh: "共鳴効率",
@@ -136,7 +136,7 @@ export const FixedStats = {
   },
   normalBns: {
     id: "normalBns",
-    en: "",
+    en: "Normal Attack Damage Bonus",
     kr: "일반공격 피해보너스",
     jp: "通常攻撃ダメージアップ",
     zh: "普攻伤害加成",
@@ -154,7 +154,7 @@ export const FixedStats = {
   },
   heavyBns: {
     id: "heavyBns",
-    en: "",
+    en: "Heavy Attack Damage Bonus",
     kr: "강공격 피해보너스",
     jp: "重撃ダメージアップ",
     zh: "重击伤害加成",
@@ -172,7 +172,7 @@ export const FixedStats = {
   },
   skillBns: {
     id: "skillBns",
-    en: "",
+    en: "Skill Attack Damage Bonus",
     kr: "공명스킬 피해보너스",
     jp: "共鳴スキルダメージアップ",
     zh: "共鸣技能伤害加成",
@@ -190,7 +190,7 @@ export const FixedStats = {
   },
   ultBns: {
     id: "ultBns",
-    en: "",
+    en: "Ultimate Attack Damage Bonus",
     kr: "공명해방 피해보너스",
     jp: "共鳴解放ダメージアップ",
     zh: "共鸣解放伤害加成",
@@ -208,7 +208,7 @@ export const FixedStats = {
   },
   GlacioBns: {
     id: "GlacioBns",
-    en: "",
+    en: "Glacio Attack Damage Bonus",
     kr: "응결 피해 보너스",
     jp: "凝縮ダメージアップ",
     zh: "冷凝伤害加成",
@@ -217,7 +217,7 @@ export const FixedStats = {
   },
   FusionBns: {
     id: "FusionBns",
-    en: "",
+    en: "Fusion Attack Damage Bonus",
     kr: "융용 피해 보너스",
     jp: "焦熱ダメージアップ",
     zh: "热熔伤害加成",
@@ -226,7 +226,7 @@ export const FixedStats = {
   },
   ElectroBns: {
     id: "ElectroBns",
-    en: "",
+    en: "Electro Attack Damage Bonus",
     kr: "전도 피해 보너스",
     jp: "電導ダメージアップ",
     zh: "导电伤害加成",
@@ -235,7 +235,7 @@ export const FixedStats = {
   },
   AeroBns: {
     id: "AeroBns",
-    en: "",
+    en: "Aero Attack Damage Bonus",
     kr: "기류 피해 보너스",
     jp: "気動ダメージアップ",
     zh: "氣動傷害加成",
@@ -244,7 +244,7 @@ export const FixedStats = {
   },
   SpectroBns: {
     id: "SpectroBns",
-    en: "",
+    en: "Spectro Attack Damage Bonus",
     kr: "회절 피해 보너스",
     jp: "回折ダメージアップ",
     zh: "衍射傷害加成",
@@ -253,7 +253,7 @@ export const FixedStats = {
   },
   HavocBns: {
     id: "HavocBns",
-    en: "",
+    en: "Davoc Attack Damage Bonus",
     kr: "인멸 피해 보너스",
     jp: "消滅ダメージアップ",
     zh: "湮滅傷害加成",
