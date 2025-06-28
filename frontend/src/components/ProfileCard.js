@@ -2,13 +2,16 @@ import "./ProfileCard.css";
 import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Select, { components } from "react-select";
 
-import { profileData, userdata } from "../Datas/userData";
 import { character, characterStat } from "../Datas/Character";
 import { weapon, weaponStat } from "../Datas/Weapon";
 import { FixedStats } from "../Datas/Stats";
-import ImageDrag from "../func/ImageDrag";
-import StatSlot from "./CardComp/StatSlot";
+import { profileData, userdata } from "../Datas/userData";
 import { echoDict, harmony } from "../Datas/Echo";
+
+import ImageDrag from "../func/ImageDrag";
+
+import StatSlot from "./CardComp/StatSlot";
+import EchoSlot from "./CardComp/EchoSlot";
 
 function ProfileCard() {
   //#region Refs
@@ -17,7 +20,6 @@ function ProfileCard() {
   //#endregion
 
   //#region Variables
-  const apiKey = process.env.REACT_APP_API_KEY;
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const [initKey, setInitKey] = useState(true);
@@ -57,18 +59,6 @@ function ProfileCard() {
     value: item.value,
     label: item.label,
   }));
-  //#endregion
-
-  //#region Events
-  window.onresize = () => {
-    setSlotSize({
-      width: ProfileCardSlotRef.current.offsetWidth,
-      height: ProfileCardSlotRef.current.offsetHeight,
-    });
-    console.log(slotSize); // 여기서는 제대로 사이즈가 잡힘
-
-    setSizeValue(slotSize.width / 2140);
-  };
   //#endregion
 
   //#region Functions
@@ -120,6 +110,16 @@ function ProfileCard() {
   //$ OnLoad
   useEffect(() => {
     setLang(localStorage.getItem("lang"));
+
+    function handleResize() {
+      const w = ProfileCardSlotRef.current.offsetWidth;
+      const h = ProfileCardSlotRef.current.offsetHeight;
+      setSlotSize({ width: w, height: h });
+      setSizeValue(w / 2140);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
   //$ After Render
   useLayoutEffect(() => {
@@ -139,10 +139,66 @@ function ProfileCard() {
   //#endregion
 
   //#region React Select Options
-  const CharacterOptions = character.map((name) => ({
-    value: name.id,
-    label: name[lang] || name.id,
-  }));
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  function getCharacterOptions({ weaponType = null, element = null, type = null } = {}) {
+    const filterList = weaponType === null ? character :
+    character[weaponType].filter((w) =>
+        (element === null || w.element === element) &&
+        (type === null || w.type === type)
+    );
+
+    return filterList.map((c) => ({
+      label: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: `${20 * sizeValue}px`,
+          }}>
+          <img
+            src={`${apiUrl}/static/character/${c.id}/ico.webp`}
+            style={{
+              width: `${60 * sizeValue}px`,
+              height: `${60 * sizeValue}px`,
+            }}
+          />
+          <span style={{ fontSize: `${32 * sizeValue}px` }}>
+            {c[lang === "en" || lang === null ? "id" : lang]}
+          </span>
+        </div>
+      ),
+      value: c.id,
+      weapon: c.weapon,
+      type: c.type
+    }));
+  }
+  const [selectedWeapon, setSelectedWeapon] = useState(null);
+  function getWeaponOptionsByType(type) {
+    const list = weapon[type] || [];
+
+    return list.map((item) => ({
+      value: item.id,
+      label: (
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <img
+            src={`${apiUrl}/static/weapon/${type}/${item.imgKey}.png`}
+            alt={item.kr}
+            style={{
+              width: `${60 * sizeValue}px`,
+              height: `${60 * sizeValue}px`,
+            }}
+          />
+          <span>{item.kr}</span>
+        </div>
+      ),
+      id: item.id,
+      en: item.id,
+      kr: item.kr,
+      jp: item.jp,
+      zh: item.zh,
+      imgKey: item.imgKey
+    }));
+  }
   //#endregion
 
   return (
@@ -160,7 +216,13 @@ function ProfileCard() {
             borderTopLeftRadius: `calc(40px * ${sizeValue})`,
             overflow: "hidden",
           }}>
-          <ImageDrag />
+          <ImageDrag 
+            path={selectedCharacter ?
+              `${apiUrl}/static/character/${selectedCharacter.value}/stand.png`
+              : ""
+            }
+            sizeValue={sizeValue}
+          />
         </div>
         {/* //$ Character Info */}
         <div
@@ -241,7 +303,11 @@ function ProfileCard() {
           }}>
           <img
             className="profile-card-icon"
-            src={`${apiUrl}/static/weapon/straight_sword/ico003.png`}
+            src={
+              selectedWeapon && selectedCharacter ?
+              `${apiUrl}/static/weapon/${selectedCharacter.weapon}/${selectedWeapon.imgKey}.png`
+              : ""
+            }
           />
           <Select
             options={W_ConstellationOption}
@@ -311,7 +377,7 @@ function ProfileCard() {
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
             }}>
-            Spring Light
+            {selectedWeapon?.[lang ?? "en"] ?? ""}
           </span>
           {/* //$ Weapon Sub Stat */}
           <img
@@ -363,6 +429,7 @@ function ProfileCard() {
           }}>
           {statId.map((item, idx) => (
             <StatSlot
+              key={idx}
               styles={[
                 setSlotStyle({ w: 570, h: 50, x: 15, y: 15 + idx * 70 }),
                 setSlotStyle({ w: 490, h: 50, x: 65, y: 0 }),
@@ -398,16 +465,16 @@ function ProfileCard() {
                     display: "flex",
                     width: `${37.5 * sizeValue}px`,
                     height: `${37.5 * sizeValue}px`,
-                    padding: `${7.5 / 2 * sizeValue}px`,
+                    padding: `${(7.5 / 2) * sizeValue}px`,
                   }}
                 />
-                <div style={{width: `${10 * sizeValue}px`}}/>
+                <div style={{ width: `${10 * sizeValue}px` }} />
                 <span
                   style={{
                     display: "flex",
                     width: "fit-content",
                     height: `${45 * sizeValue}px`,
-                    alignItems: "center", 
+                    alignItems: "center",
                     justifyContent: "center",
                     fontSize: `${28 * sizeValue}px`,
                     transform: `translateY(-${3 * sizeValue}px)`,
@@ -417,54 +484,136 @@ function ProfileCard() {
                   }}>
                   {`${harmony[profileData.harmony]?.[lang]}`}
                 </span>
-                <div style={{width: `${10 * sizeValue}px`}}/>
+                <div style={{ width: `${10 * sizeValue}px` }} />
               </div>
             )}
           </div>
           {/* //$ Character Score */}
           <div
             style={{
-            display: "flex",
-            flexDirection: "row",
-            ...setSlotStyle({ w: 600, h: 50, y: 635 }),
-          }}>
+              display: "flex",
+              flexDirection: "row",
+              ...setSlotStyle({ w: 600, h: 50, y: 635 }),
+            }}>
             {profileData.statScore.map((item, idx) => (
-              <div className="stat-score-slot">
-                <span className="stat-score-text title"
-                  style={{fontSize:`${42 * sizeValue}px`}}>
+              <div className="stat-score-slot" key={idx}>
+                <span
+                  className="stat-score-text title"
+                  style={{ fontSize: `${42 * sizeValue}px` }}>
                   {idx === 0 ? "AV." : "CV."}
                 </span>
-                <span className="stat-score-text value"
-                  style={{fontSize:`${36 * sizeValue}px`}}>
-                  12{profileData.statScore[idx]}.3pt
+                <span
+                  className="stat-score-text value"
+                  style={{ fontSize: `${36 * sizeValue}px` }}>
+                  12
+                  {profileData.statScore[idx]}
+                  .3pt
                 </span>
               </div>
             ))}
           </div>
         </div>
-        <div className="profile-card-total-info profile-slot"
+        <div
+          className="profile-card-total-info profile-slot"
           style={{
-            ...setSlotStyle({w: 800, h: 215, x: 1320, y:70})
-          }}></div>
-        <span style={{
-          display: "flex",
-          ...setSlotStyle({w: 800, h: 50, x: 1320, y: 20}),
-          color: "#ffffff",
-          fontSize: `${30 * sizeValue}px`,
-          alignContent: "flex-end",
-          justifyContent: "flex-end",
-        }}>wwaves.dev/profile</span>
-        {profileData.echoData.map((item, idx) => (
-          <div className="profile-card-echo-slot profile-slot"
-          style={{
-            ...setSlotStyle({w: 148, h: 620, x: 1320 + 163 * idx, y: 300})
+            ...setSlotStyle({ w: 800, h: 215, x: 1320, y: 70 }),
           }}>
-            <img src={`${apiUrl}/static/ico/echos/${profileData.echoData[idx].echoId}.webp`}
-              style={{
-                ...setSlotStyle({w: 140, h: 140, x: 4, y: 5})
-              }}/>
+          <img
+            src={`/default.webp`}
+            style={{
+              ...setSlotStyle({ w: 230, h: 140, x: 10, y: 10 }),
+              objectFit: "contain",
+              objectPosition: "center",
+              backgroundColor: "#00000066",
+            }}
+          />
+          <span
+            style={{
+              ...setSlotStyle({ w: 230, h: 50, x: 10, y: 155 }),
+              color: "#fff",
+              textAlign: "center",
+              fontSize: `${36 * sizeValue}px`,
+            }}>
+            Av. 567.8pt
+          </span>
+          <div
+            style={{
+              position: "relative",
+              alignContent: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+              ...setSlotStyle({ w: 540, h: 195, x: 250, y: 10 }),
+              backgroundColor: "#00000033",
+            }}>
+            <ImageDrag path={""} sizeValue={sizeValue} />
+          </div>
+        </div>
+        <span
+          style={{
+            display: "flex",
+            ...setSlotStyle({ w: 800, h: 50, x: 1320, y: 20 }),
+            color: "#ffffff",
+            fontSize: `${30 * sizeValue}px`,
+            alignContent: "flex-end",
+            justifyContent: "flex-end",
+          }}>
+          wwaves.dev/profile
+        </span>
+        {profileData.echoData.map((item, idx) => (
+          <div
+            key={idx}
+            className="profile-card-echo-slot profile-slot"
+            style={{
+              ...setSlotStyle({ w: 148, h: 620, x: 1320 + 163 * idx, y: 300 }),
+            }}>
+            <EchoSlot
+              echoData={profileData.echoData[idx]}
+              sizeValue={sizeValue}
+            />
           </div>
         ))}
+      </div>
+      <div className="profile-select-slot">
+        <Select
+          className="character-select-dropdown"
+          options={getCharacterOptions()}
+          placeholder="Character Option"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: `${400 * sizeValue}px`,
+              height: `${100 * sizeValue}px`,
+            }),
+            option: (base) => ({
+              ...base,
+            }),
+          }}
+          onChange={(item) => {
+            setSelectedCharacter(item);
+          }}
+        />
+        <Select
+          className="weapon-select-dropdown"
+          options={
+            selectedCharacter
+              ? getWeaponOptionsByType(selectedCharacter.weapon)
+              : []
+          }
+          placeholder="Weapon Option"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: `${400 * sizeValue}px`,
+              height: `${100 * sizeValue}px`,
+            }),
+            option: (base) => ({
+              ...base,
+            }),
+          }}
+          onChange={(item) => {
+            setSelectedWeapon(item);
+          }}
+        />
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 @font-face {
-  font-family: 'kr-font';
-  src: url('../../assets/fonts/kr.ttf') format('truetype');
-}
-@font-face {
   font-family: 'en-font';
   src: url('../../assets/fonts/en.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'kr-font';
+  src: url('../../assets/fonts/kr.ttf') format('truetype');
 }
 @font-face {
   font-family: 'jp-font';
@@ -13,6 +13,18 @@
 @font-face {
   font-family: 'zh-font';
   src: url('../../assets/fonts/zh.ttf') format('truetype');
+}
+.enFont {
+    font-family: "en-font", sans-serif;
+}
+.krFont {
+    font-family: "kr-font", sans-serif;
+}
+.jpFont {
+    font-family: "jp-font", sans-serif;
+}
+.zhFont {
+    font-family: "zh-font", sans-serif;
 }
 
 .profile-portrait {
@@ -61,18 +73,7 @@
     text-overflow: ellipsis;
     z-index: 500;
 }
-.enFont {
-    font-family: "en-font", sans-serif;
-}
-.krFont {
-    font-family: "kr-font", sans-serif;
-}
-.jpFont {
-    font-family: "jp-font", sans-serif;
-}
-.zhFont {
-    font-family: "zh-font", sans-serif;
-}
+
 
 .stat-score-slot{
     display: flex;
@@ -96,4 +97,14 @@
 .stat-score-text.value{
     width: 50%;
     justify-content: flex-end;
+}
+
+.profile-select-slot{
+    display: flex;
+    position: relative;
+    margin: 25px;
+    width: calc(100% - 50px);
+    min-width: 856px;
+    aspect-ratio: 18 / 1;
+    align-items: center;
 }

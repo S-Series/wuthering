@@ -4,17 +4,11 @@ import { FixedStatsMain4, FixedStatsMain3, FixedStatsMain1 } from "./Stats";
 class EchoData {
   constructor() {
     this.echoId = "G03";
-    this.harmony = "";
+    this.harmony = "Eclipse";
     this.cost = 4;
-    this.stats = Array(7).fill([
-      [null, null],
-      [null, null],
-      [null, null],
-      [null, null],
-      [null, null],
-      [null, null],
+    this.stats = Array(7).fill(
       [null, null]
-    ]);
+    );
   }
 
   SetCost(costData) { this.cost = costData; }
@@ -23,6 +17,7 @@ class EchoData {
     // this.stats = Array(7).fill(["", ""]);
   }
 }
+export default EchoData;
 
 class StatData{
   constructor(){
