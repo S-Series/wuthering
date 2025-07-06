@@ -1,15 +1,18 @@
+// basic
 import "./ProfileCard.css";
 import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import Select, { components } from "react-select";
-
-import { character, characterStat } from "../Datas/Character";
-import { weapon, weaponStat } from "../Datas/Weapon";
-import { FixedStats } from "../Datas/Stats";
-import { profileData, userdata } from "../Datas/userData";
-import { echoDict, harmony } from "../Datas/Echo";
-
-import ImageDrag from "../func/ImageDrag";
-
+// data
+import { character, characterStat } from "../data/Character";
+import { weapon, weaponStat } from "../data/Weapon";
+import { FixedStats } from "../data/Stats";
+import { profileData, userdata } from "../data/userData";
+import { echoDict, harmony } from "../data/Echo";
+// hooks
+import { useProfile } from "../hooks/useProfile";
+// utils
+import ImageDrag from "../utils/ImageDrag";
+// others
 import StatSlot from "./CardComp/StatSlot";
 import EchoSlot from "./CardComp/EchoSlot";
 
@@ -59,6 +62,15 @@ function ProfileCard() {
     value: item.value,
     label: item.label,
   }));
+
+  const {
+    characterId, setCharacterId,
+    weaponId, setWeaponId,
+    constellation, setConstellation,
+    echoList, setEchoList,
+    characterData, weaponData,
+    characterStats, weaponStats, finalStats,
+  } = useProfile();
   //#endregion
 
   //#region Functions
@@ -104,6 +116,10 @@ function ProfileCard() {
       left: `calc(${x}px * ${sizeValue})`,
     };
   };
+  function capitalizeFirst(str) {
+    if (!str) return "";
+    return str[0].toUpperCase() + str.slice(1).toLowerCase();
+  }
   //#endregion
 
   //#region Initialize
@@ -135,17 +151,22 @@ function ProfileCard() {
   //#endregion
 
   //#region OnChange Action
-  useEffect(() => {}, [initKey]);
   //#endregion
 
   //#region React Select Options
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
-  function getCharacterOptions({ weaponType = null, element = null, type = null } = {}) {
-    const filterList = weaponType === null ? character :
-    character[weaponType].filter((w) =>
-        (element === null || w.element === element) &&
-        (type === null || w.type === type)
-    );
+  function getCharacterOptions({
+    weaponType = null,
+    element = null,
+    type = null,
+  } = {}) {
+    const filterList =
+      weaponType === null
+        ? character
+        : character[weaponType].filter(
+            (w) =>
+              (element === null || w.element === element) &&
+              (type === null || w.type === type)
+          );
 
     return filterList.map((c) => ({
       label: (
@@ -169,10 +190,10 @@ function ProfileCard() {
       ),
       value: c.id,
       weapon: c.weapon,
-      type: c.type
+      type: c.type,
+      element: c.element,
     }));
   }
-  const [selectedWeapon, setSelectedWeapon] = useState(null);
   function getWeaponOptionsByType(type) {
     const list = weapon[type] || [];
 
@@ -196,7 +217,7 @@ function ProfileCard() {
       kr: item.kr,
       jp: item.jp,
       zh: item.zh,
-      imgKey: item.imgKey
+      imgKey: item.imgKey,
     }));
   }
   //#endregion
@@ -216,10 +237,11 @@ function ProfileCard() {
             borderTopLeftRadius: `calc(40px * ${sizeValue})`,
             overflow: "hidden",
           }}>
-          <ImageDrag 
-            path={selectedCharacter ?
-              `${apiUrl}/static/character/${selectedCharacter.value}/stand.png`
-              : ""
+          <ImageDrag
+            path={
+              characterId
+                ? `${apiUrl}/static/character/${characterId}/stand.png`
+                : ""
             }
             sizeValue={sizeValue}
           />
@@ -264,23 +286,39 @@ function ProfileCard() {
           {/* //$ Right */}
           <img
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/element/havoc.png`}
+            src={`${apiUrl}/static/ico/element/${characterData?.element?.toLowerCase()}.png`}
             style={setSlotStyle({ w: 50, h: 50, x: 470, y: 10 })}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
+            }}
           />
           <img
             className="profile-card-icon"
             src={`${apiUrl}/static/ico/stats/atk.webp`}
             style={setSlotStyle({ w: 40, h: 40, x: 520, y: 15 })}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
+            }}
           />
           <img
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/stats/normalBns.webp`}
+            src={`${apiUrl}/static/ico/stats/${characterData?.type}Bns.webp`}
             style={setSlotStyle({ w: 40, h: 40, x: 565, y: 15 })}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
+            }}
           />
           <img
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/weapon_type/straight_sword.webp`}
+            src={`${apiUrl}/static/ico/weapon_type/${characterData?.weapon}.webp`}
             style={setSlotStyle({ w: 40, h: 40, x: 610, y: 15 })}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
+            }}
           />
           <span
             className={`profile-card-text ${lang}Font`}
@@ -290,7 +328,9 @@ function ProfileCard() {
               color: "#ffffff",
               fontSize: `calc(46px * ${sizeValue})`,
             }}>
-            Camellya
+            {lang === "en"
+              ? capitalizeFirst(characterData?.id) ?? ""
+              : characterData?.[lang] ?? ""}
           </span>
         </div>
         {/* //$ Weapon Icon */}
@@ -304,9 +344,9 @@ function ProfileCard() {
           <img
             className="profile-card-icon"
             src={
-              selectedWeapon && selectedCharacter ?
-              `${apiUrl}/static/weapon/${selectedCharacter.weapon}/${selectedWeapon.imgKey}.png`
-              : ""
+              characterData && weaponData
+                ? `${apiUrl}/static/weapon/${characterData.weapon}/${weaponData.imgKey}.png`
+                : ""
             }
           />
           <Select
@@ -377,7 +417,11 @@ function ProfileCard() {
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
             }}>
-            {selectedWeapon?.[lang ?? "en"] ?? ""}
+            {characterData
+              ? weapon[characterData.weapon].find((w) => w.id === weaponId)?.[
+                  lang ?? "en"
+                ] ?? ""
+              : ""}
           </span>
           {/* //$ Weapon Sub Stat */}
           <img
@@ -397,7 +441,7 @@ function ProfileCard() {
               alignContent: "center",
               ...setSlotStyle({ w: 170, h: 60, x: 175, y: 75 }),
             }}>
-            500
+            {weaponStats?.atk ?? ""}
           </span>
           {/* //$ Weapon Main Stat */}
           <img
@@ -417,7 +461,7 @@ function ProfileCard() {
               alignContent: "center",
               ...setSlotStyle({ w: 195, h: 60, x: 375, y: 75 }),
             }}>
-            22.0%
+            {weaponStats?.value?.[0].toFixed(1) ?? ""}%
           </span>
         </div>
         {/* //$ Character Stats */}
@@ -435,7 +479,10 @@ function ProfileCard() {
                 setSlotStyle({ w: 490, h: 50, x: 65, y: 0 }),
               ]}
               imgPath={`${apiUrl}/static/ico/stats/${statId[idx]}.webp`}
-              textValue={[`${FixedStats[statId[idx]]?.[lang]}`, "54321"]}
+              textValue={[
+                `${FixedStats[statId[idx]]?.[lang]}`,
+                finalStats?.[statId[idx] ?? ""],
+              ]}
               fontSize={`${32 * sizeValue}px`}
             />
           ))}
@@ -576,6 +623,7 @@ function ProfileCard() {
       <div className="profile-select-slot">
         <Select
           className="character-select-dropdown"
+          menuPlacement="auto"
           options={getCharacterOptions()}
           placeholder="Character Option"
           styles={{
@@ -584,20 +632,24 @@ function ProfileCard() {
               width: `${400 * sizeValue}px`,
               height: `${100 * sizeValue}px`,
             }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
             option: (base) => ({
               ...base,
             }),
           }}
           onChange={(item) => {
-            setSelectedCharacter(item);
+            setCharacterId(item.value);
           }}
         />
+        <div className="empty-select-dropdown" />
         <Select
           className="weapon-select-dropdown"
+          menuPlacement="auto"
           options={
-            selectedCharacter
-              ? getWeaponOptionsByType(selectedCharacter.weapon)
-              : []
+            characterData ? getWeaponOptionsByType(characterData.weapon) : []
           }
           placeholder="Weapon Option"
           styles={{
@@ -606,12 +658,16 @@ function ProfileCard() {
               width: `${400 * sizeValue}px`,
               height: `${100 * sizeValue}px`,
             }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
             option: (base) => ({
               ...base,
             }),
           }}
           onChange={(item) => {
-            setSelectedWeapon(item);
+            setWeaponId(item.value);
           }}
         />
       </div>

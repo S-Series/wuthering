@@ -1,6 +1,6 @@
-import { echoDict } from "../../Datas/Echo";
-import { userdata } from "../../Datas/userData";
-import EchoData from "../../Datas/userData";
+import { echoDict } from "../../data/Echo";
+import { userdata } from "../../data/userData";
+import EchoData from "../../data/userData";
 
 function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
   const apiUrl = process.env.REACT_APP_API_URL;

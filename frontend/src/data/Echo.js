@@ -1,6 +1,13 @@
 import { FixedStats } from "./Stats";
 
-const hpPct = "hpPct";
+export function createEmptyEcho(){
+  return {
+    echoId: "default",
+    harmont: "None",
+    cost: 1,
+    stats: Array(7).fill([null, null])
+  }
+}
 
 export const harmony = {
   //#region Ver1.0 Echos

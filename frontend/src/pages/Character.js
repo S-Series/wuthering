@@ -2,7 +2,7 @@ import "./App.css";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 
-import ImageDrag from "../func/ImageDrag";
+import ImageDrag from "../utils/ImageDrag";
 
 function Character() {
   return (

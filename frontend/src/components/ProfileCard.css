@@ -22,9 +22,11 @@
 }
 .jpFont {
     font-family: "jp-font", sans-serif;
+    transform: translateY(4px);
 }
 .zhFont {
     font-family: "zh-font", sans-serif;
+    transform: translateY(-2px);
 }
 
 .profile-portrait {
@@ -74,7 +76,6 @@
     z-index: 500;
 }
 
-
 .stat-score-slot{
     display: flex;
     width: 50%;
@@ -107,4 +108,9 @@
     min-width: 856px;
     aspect-ratio: 18 / 1;
     align-items: center;
+}
+.empty-select-dropdown {
+    display: flex;
+    height: 100%;
+    aspect-ratio: 1 / 2;
 }

@@ -1,6 +1,6 @@
 import stringSimilarity from "string-similarity";
-import { FixedStats } from "../Datas/Stats";
-import { correctionMap } from "../func/TextCorrection";
+import { FixedStats } from "../data/Stats";
+import { correctionMap } from "./TextCorrection";
 
 export function OcrRetouch({ text, lang }) {
   if (!text || !Array.isArray(text)) return { retType: [], retValue: [] };
