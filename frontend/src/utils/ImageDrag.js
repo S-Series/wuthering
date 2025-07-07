@@ -143,7 +143,11 @@ function ImageDrag({path = null, sizeValue = 1}) {
       onMouseEnter={() => boxHovered(true)}
       onMouseLeave={() => boxHovered(false)}
       onMouseDown={() => setDragging(true)}
-      onDoubleClick={() => setDoubleClicked(true)}>
+      onDoubleClick={() => setDoubleClicked(true)}
+      onError={(e) => {
+        e.currentTarget.onerror = null;
+        e.currentTarget.src = "none";
+      }}>
       <img
         className="image-drag-slot-content"
         ref={imageContRef}

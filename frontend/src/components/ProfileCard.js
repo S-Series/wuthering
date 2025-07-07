@@ -1,6 +1,6 @@
 // basic
 import "./ProfileCard.css";
-import { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { useRef, useState, useEffect, useLayoutEffect, useMemo } from "react";
 import Select, { components } from "react-select";
 // data
 import { character, characterStat } from "../data/Character";
@@ -29,6 +29,9 @@ function ProfileCard() {
   const [lang, setLang] = useState("en");
   const [sizeValue, setSizeValue] = useState(1.0);
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
+
+  const [filterWeapon, setFilterWeapon] = useState(null);
+  const [filterElement, setFilterElement] = useState(null);
 
   const statId = [
     FixedStats.hp.id,
@@ -64,12 +67,19 @@ function ProfileCard() {
   }));
 
   const {
-    characterId, setCharacterId,
-    weaponId, setWeaponId,
-    constellation, setConstellation,
-    echoList, setEchoList,
-    characterData, weaponData,
-    characterStats, weaponStats, finalStats,
+    characterId,
+    setCharacterId,
+    weaponId,
+    setWeaponId,
+    constellation,
+    setConstellation,
+    echoList,
+    setEchoList,
+    characterData,
+    weaponData,
+    characterStats,
+    weaponStats,
+    finalStats,
   } = useProfile();
   //#endregion
 
@@ -154,18 +164,96 @@ function ProfileCard() {
   //#endregion
 
   //#region React Select Options
-  function getCharacterOptions({
-    weaponType = null,
-    element = null,
-    type = null,
-  } = {}) {
+  const weaponTypes = [
+    {kr: null, en: null, jp: null, zh: null},
+    {kr: "직검", en: "sword", jp: "", zh: ""},
+    {kr: "대검", en: "broadblade", jp: "", zh: ""},
+    {kr: "권총", en: "pistol", jp: "", zh: ""},
+    {kr: "권갑", en: "gauntlet", jp: "", zh: ""},
+    {kr: "증폭기", en: "rectifier", jp: "", zh: ""},
+  ];
+  const [weaponFilter, setWeaponFilter] = useState(null);
+  const weaponOptions = useMemo(() => {
+    const list = weaponFilter
+      ? weaponTypes.filter((e) => e.en === weaponFilter)
+      : weaponTypes;
+
+    return list.map((e) => ({
+      value: e.en,
+      label: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: `${10 * sizeValue}px`,
+          }}>
+          <img
+            src={`${apiUrl}/static/ico/weapon_type/${e.en}.webp`}
+            style={{
+              width: `${75 * sizeValue}px`,
+              height: `${75 * sizeValue}px`,
+            }}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+            }}
+          />
+          <span style={{ fontSize: `${32 * sizeValue}px` }}>
+            {e[lang] ?? "All"}
+          </span>
+        </div>
+      )
+    }))
+  })
+
+  const elements = [
+    { en: null, kr: null, jp: null, zh: null },
+    { kr: "기류", en: "Aero", jp: "", zh: "" },
+    { kr: "융용", en: "Fusion", jp: "", zh: "" },
+    { kr: "전도", en: "Electro", jp: "", zh: "" },
+    { kr: "응결", en: "Glacio", jp: "", zh: "" },
+    { kr: "회절", en: "Spectro", jp: "", zh: "" },
+    { kr: "인멸", en: "Havoc", jp: "", zh: "" },
+  ];
+  const [elementFilter, setElementFilter] = useState(null);
+  const elementOptions = useMemo(() => {
+    const list = elementFilter
+      ? elements.filter((e) => e.en === elementFilter)
+      : elements;
+
+    return list.map((e) => ({
+      value: e.en,
+      label: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: `${10 * sizeValue}px`,
+          }}>
+          <img
+            src={`${apiUrl}/static/ico/element/${e?.en?.toLowerCase()}.png`}
+            style={{
+              width: `${75 * sizeValue}px`,
+              height: `${75 * sizeValue}px`,
+            }}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
+            }}
+          />
+          <span style={{ fontSize: `${32 * sizeValue}px` }}>
+            {e[lang] ?? "All"}
+          </span>
+        </div>
+      )
+    }));
+  }, [elementFilter, lang])
+
+  function getCharacterOptions() {
     const filterList =
-      weaponType === null
+      filterWeapon === null
         ? character
-        : character[weaponType].filter(
-            (w) =>
-              (element === null || w.element === element) &&
-              (type === null || w.type === type)
+        : character[filterWeapon].filter(
+            (c) => filterElement === null || c.element === filterElement
           );
 
     return filterList.map((c) => ({
@@ -174,16 +262,16 @@ function ProfileCard() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: `${20 * sizeValue}px`,
+            gap: `${10 * sizeValue}px`,
           }}>
           <img
             src={`${apiUrl}/static/character/${c.id}/ico.webp`}
             style={{
-              width: `${60 * sizeValue}px`,
-              height: `${60 * sizeValue}px`,
+              width: `${50 * sizeValue}px`,
+              height: `${50 * sizeValue}px`,
             }}
           />
-          <span style={{ fontSize: `${32 * sizeValue}px` }}>
+          <span style={{ fontSize: `${24 * sizeValue}px` }}>
             {c[lang === "en" || lang === null ? "id" : lang]}
           </span>
         </div>
@@ -224,6 +312,111 @@ function ProfileCard() {
 
   return (
     <div className="profile-portrait">
+      <div className="profile-select-slot">
+        <Select
+          className="weapon-select-dropdown"
+          menuPlacement="auto"
+          options={weaponOptions}
+          placeholder="W-Filter"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: `${300 * sizeValue}px`,
+              height: `${100 * sizeValue}px`,
+              backgroundColor: "#cccccc"
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+              backgroundColor: "#666666",
+            }),
+            option: (base) => ({
+              ...base,
+              transform: `translateX(-${10 * sizeValue}px)`,
+              color: "#ffffff",
+              backgroundColor: "#666666",
+            }),
+          }}
+          onChange={(item) => {}}
+        />
+        <div className="empty-select-dropdown" />
+        <Select
+          className="element-select-dropdown"
+          menuPlacement="auto"
+          options={ elementOptions}
+          placeholder="E-Filter"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: `${300 * sizeValue}px`,
+              height: `${100 * sizeValue}px`,
+              backgroundColor: "#cccccc"
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+              backgroundColor: "#666666"
+            }),
+            option: (base) => ({
+              ...base,
+              transform: `translateX(-${10 * sizeValue}px)`,
+              color: "#ffffff",
+              backgroundColor: "#666666"
+            }),
+          }}
+          onChange={(item) => {}}
+        />
+        <div className="empty-select-dropdown" />
+        <Select
+          className="character-select-dropdown"
+          menuPlacement="auto"
+          options={getCharacterOptions()}
+          placeholder="Character Option"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: `${400 * sizeValue}px`,
+              height: `${100 * sizeValue}px`,
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
+            option: (base) => ({
+              ...base,
+            }),
+          }}
+          onChange={(item) => {
+            setCharacterId(item.value);
+          }}
+        />
+        <div className="empty-select-dropdown" />
+        <Select
+          className="weapon-select-dropdown"
+          menuPlacement="auto"
+          options={
+            characterData ? getWeaponOptionsByType(characterData.weapon) : []
+          }
+          placeholder="Weapon Option"
+          styles={{
+            control: (base, state) => ({
+              ...base,
+              width: `${400 * sizeValue}px`,
+              height: `${100 * sizeValue}px`,
+            }),
+            menu: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
+            option: (base) => ({
+              ...base,
+            }),
+          }}
+          onChange={(item) => {
+            setWeaponId(item.value);
+          }}
+        />
+      </div>
       <div
         className="profile-card-slot"
         ref={ProfileCardSlotRef}
@@ -417,7 +610,7 @@ function ProfileCard() {
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
             }}>
-            {characterData
+            {characterData && weaponId
               ? weapon[characterData.weapon].find((w) => w.id === weaponId)?.[
                   lang ?? "en"
                 ] ?? ""
@@ -619,57 +812,6 @@ function ProfileCard() {
             />
           </div>
         ))}
-      </div>
-      <div className="profile-select-slot">
-        <Select
-          className="character-select-dropdown"
-          menuPlacement="auto"
-          options={getCharacterOptions()}
-          placeholder="Character Option"
-          styles={{
-            control: (base, state) => ({
-              ...base,
-              width: `${400 * sizeValue}px`,
-              height: `${100 * sizeValue}px`,
-            }),
-            menu: (base) => ({
-              ...base,
-              zIndex: 9999,
-            }),
-            option: (base) => ({
-              ...base,
-            }),
-          }}
-          onChange={(item) => {
-            setCharacterId(item.value);
-          }}
-        />
-        <div className="empty-select-dropdown" />
-        <Select
-          className="weapon-select-dropdown"
-          menuPlacement="auto"
-          options={
-            characterData ? getWeaponOptionsByType(characterData.weapon) : []
-          }
-          placeholder="Weapon Option"
-          styles={{
-            control: (base, state) => ({
-              ...base,
-              width: `${400 * sizeValue}px`,
-              height: `${100 * sizeValue}px`,
-            }),
-            menu: (base) => ({
-              ...base,
-              zIndex: 9999,
-            }),
-            option: (base) => ({
-              ...base,
-            }),
-          }}
-          onChange={(item) => {
-            setWeaponId(item.value);
-          }}
-        />
       </div>
     </div>
   );

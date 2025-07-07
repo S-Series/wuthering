@@ -39,7 +39,6 @@
 .profile-card-slot {
     display: block;
     position: relative;
-    margin-top: 55px;
     width: 100%;
     min-width: 856px;
     aspect-ratio: 2140 / 940;
@@ -106,7 +105,6 @@
     margin: 25px;
     width: calc(100% - 50px);
     min-width: 856px;
-    aspect-ratio: 18 / 1;
     align-items: center;
 }
 .empty-select-dropdown {
