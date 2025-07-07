@@ -476,7 +476,7 @@ function ProfileCard() {
               key={idx}
               styles={[
                 setSlotStyle({ w: 570, h: 50, x: 15, y: 15 + idx * 70 }),
-                setSlotStyle({ w: 490, h: 50, x: 65, y: 0 }),
+                setSlotStyle({ w: 430, h: 50, x: 65, y: 0 }),
               ]}
               imgPath={`${apiUrl}/static/ico/stats/${statId[idx]}.webp`}
               textValue={[
