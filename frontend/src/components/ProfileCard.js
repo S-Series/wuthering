@@ -30,6 +30,8 @@ function ProfileCard() {
   const [sizeValue, setSizeValue] = useState(1.0);
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
 
+  const [reloadKey, setReloadKey] = useState(0);
+
   const [filterWeapon, setFilterWeapon] = useState(null);
   const [filterElement, setFilterElement] = useState(null);
 
@@ -144,6 +146,8 @@ function ProfileCard() {
       setSizeValue(w / 2140);
     }
 
+    setReloadKey((prev) => prev + 1);
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -165,20 +169,16 @@ function ProfileCard() {
 
   //#region React Select Options
   const weaponTypes = [
-    {kr: null, en: null, jp: null, zh: null},
-    {kr: "직검", en: "sword", jp: "", zh: ""},
-    {kr: "대검", en: "broadblade", jp: "", zh: ""},
-    {kr: "권총", en: "pistol", jp: "", zh: ""},
-    {kr: "권갑", en: "gauntlet", jp: "", zh: ""},
-    {kr: "증폭기", en: "rectifier", jp: "", zh: ""},
+    { kr: null, en: null, jp: null, zh: null },
+    { kr: "직검", en: "sword", jp: "", zh: "" },
+    { kr: "대검", en: "broadblade", jp: "", zh: "" },
+    { kr: "권총", en: "pistol", jp: "", zh: "" },
+    { kr: "권갑", en: "gauntlet", jp: "", zh: "" },
+    { kr: "증폭기", en: "rectifier", jp: "", zh: "" },
   ];
   const [weaponFilter, setWeaponFilter] = useState(null);
   const weaponOptions = useMemo(() => {
-    const list = weaponFilter
-      ? weaponTypes.filter((e) => e.en === weaponFilter)
-      : weaponTypes;
-
-    return list.map((e) => ({
+    return weaponTypes.map((e) => ({
       value: e.en,
       label: (
         <div
@@ -195,15 +195,18 @@ function ProfileCard() {
             }}
             onError={(e) => {
               e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
             }}
           />
-          <span style={{ fontSize: `${32 * sizeValue}px` }}>
-            {e[lang] ?? "All"}
+          <span
+            className={`${lang}Font`}
+            style={{ fontSize: `${32 * sizeValue}px` }}>
+            {e[lang ?? "en"] ?? "All"}
           </span>
         </div>
-      )
-    }))
-  })
+      ),
+    }));
+  }, [lang, reloadKey]);
 
   const elements = [
     { en: null, kr: null, jp: null, zh: null },
@@ -216,11 +219,7 @@ function ProfileCard() {
   ];
   const [elementFilter, setElementFilter] = useState(null);
   const elementOptions = useMemo(() => {
-    const list = elementFilter
-      ? elements.filter((e) => e.en === elementFilter)
-      : elements;
-
-    return list.map((e) => ({
+    return elements.map((e) => ({
       value: e.en,
       label: (
         <div
@@ -240,13 +239,54 @@ function ProfileCard() {
               e.currentTarget.src = "/default.webp";
             }}
           />
-          <span style={{ fontSize: `${32 * sizeValue}px` }}>
-            {e[lang] ?? "All"}
+          <span
+            className={`${lang}Font`}
+            style={{ fontSize: `${32 * sizeValue}px` }}>
+            {e[lang ?? "en"] ?? "All"}
           </span>
         </div>
-      )
+      ),
     }));
-  }, [elementFilter, lang])
+  }, [lang, reloadKey]);
+
+  const characterOptions = useMemo(() => {
+    const filtered_W = weaponFilter
+      ? character.filter((item) => item.weapon === weaponFilter)
+      : character;
+
+    const filtered_WE = elementFilter
+      ? filtered_W.filter((item) => item.element === elementFilter)
+      : filtered_W;
+
+    return filtered_WE.map((item) => ({
+      value: item.id,
+      label: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: `${10 * sizeValue}px`,
+          }}>
+          <img
+            src={`${apiUrl}/static/character/${item?.id}/ico.webp`}
+            style={{
+              width: `${75 * sizeValue}px`,
+              height: `${75 * sizeValue}px`,
+            }}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
+            }}
+          />
+          <span
+            className={`${lang}Font`}
+            style={{ fontSize: `${32 * sizeValue}px` }}>
+            {item[lang === "en" ? "id" : lang] ?? "error"}
+          </span>
+        </div>
+      ),
+    }));
+  });
 
   function getCharacterOptions() {
     const filterList =
@@ -323,7 +363,7 @@ function ProfileCard() {
               ...base,
               width: `${300 * sizeValue}px`,
               height: `${100 * sizeValue}px`,
-              backgroundColor: "#cccccc"
+              backgroundColor: "#cccccc",
             }),
             menu: (base) => ({
               ...base,
@@ -337,40 +377,44 @@ function ProfileCard() {
               backgroundColor: "#666666",
             }),
           }}
-          onChange={(item) => {}}
+          onChange={(item) => {
+            setWeaponFilter(item.value);
+          }}
         />
         <div className="empty-select-dropdown" />
         <Select
           className="element-select-dropdown"
           menuPlacement="auto"
-          options={ elementOptions}
+          options={elementOptions}
           placeholder="E-Filter"
           styles={{
             control: (base, state) => ({
               ...base,
               width: `${300 * sizeValue}px`,
               height: `${100 * sizeValue}px`,
-              backgroundColor: "#cccccc"
+              backgroundColor: "#cccccc",
             }),
             menu: (base) => ({
               ...base,
               zIndex: 9999,
-              backgroundColor: "#666666"
+              backgroundColor: "#666666",
             }),
             option: (base) => ({
               ...base,
               transform: `translateX(-${10 * sizeValue}px)`,
               color: "#ffffff",
-              backgroundColor: "#666666"
+              backgroundColor: "#666666",
             }),
           }}
-          onChange={(item) => {}}
+          onChange={(item) => {
+            setElementFilter(item.value);
+          }}
         />
         <div className="empty-select-dropdown" />
         <Select
           className="character-select-dropdown"
           menuPlacement="auto"
-          options={getCharacterOptions()}
+          options={characterOptions}
           placeholder="Character Option"
           styles={{
             control: (base, state) => ({
@@ -637,8 +681,7 @@ function ProfileCard() {
             {weaponStats?.atk ?? ""}
           </span>
           {/* //$ Weapon Main Stat */}
-          <img
-            className="profile-card-icon"
+          <img className="profile-card-icon"
             src={`${apiUrl}/static/ico/stats/CritRate.webp`}
             style={{
               ...setSlotStyle({ w: 55, h: 55, x: 385, y: 75 }),
@@ -812,6 +855,90 @@ function ProfileCard() {
             />
           </div>
         ))}
+      </div>
+      <div className="profile-ocr-slot">
+        <div
+          className="ocr-select-slot"
+          style={{
+            ...setSlotStyle({ w: 500, h: 816, x: 20, y: 20 }),
+            backgroundColor: "#00000033",
+          }}>
+          <span
+            className="ocr-text title"
+            style={{
+              ...setSlotStyle({ w: 500, h: 70, x: 0, y: 16 }),
+              fontSize: `${64 * sizeValue}px`,
+              alignContent: "center",
+              textAlign: "center",
+            }}>
+            asdf
+          </span>
+          {echoList.map((item, idx) => {
+            return (
+              <div
+                className="ocr-select"
+                key={idx}
+                style={{
+                  ...setSlotStyle({
+                    w: 500,
+                    h: 120,
+                    x: 0,
+                    y: 100 + idx * 150,
+                  }),
+                  backgroundColor: "#00000033",
+                }}>
+                <div className="ocr-react-select-slot"
+                  style={{
+                    ...setSlotStyle({ w: 260, h: 80, x: 15, y: 20 }),
+                  }}>
+                  <Select
+                    className="ocr-cost-select"
+                    options={[
+                      { value: 4, label: "4Cost" },
+                      { value: 3, label: "3Cost" },
+                      { value: 1, label: "1Cost" },
+                    ]}
+                    defaultValue={{ 
+                      value: idx === 0 ? 4 : idx < 3 ? 3 : 1,
+                      label: `${idx === 0 ? 4 : idx < 3 ? 3 : 1}Cost` 
+                    }}
+                    styles={{
+                      container: (base) => ({
+                        ...base,
+                        height: "100%",
+                      }),
+                      control: (base) => ({
+                        ...base,
+                        height: "100%",
+                        minHeight: "unset",
+                      }),
+                      valueContainer: (base) => ({
+                        ...base,
+                        height: "100%",
+                      }),
+                      input: (base) => ({
+                        ...base,
+                        margin: 0,
+                        padding: 0,
+                      }),
+                      indicatorsContainer: (base) => ({
+                        ...base,
+                        height: "100%",
+                      }),
+                    }}
+                  />
+                </div>
+                <button className="ocr-react-select-btn"
+                  style={{
+                    ...setSlotStyle({ w: 180, h: 80, x: 300, y: 20 }),
+                  }}
+                > Select </button>
+              </div>
+            );
+          })}
+        </div>
+        <div className="ocr-input-slot ocr"></div>
+        <div className="ocr-input-slot dropdown"></div>
       </div>
     </div>
   );

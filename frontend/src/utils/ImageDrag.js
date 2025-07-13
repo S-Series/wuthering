@@ -1,7 +1,7 @@
 import "./ImageDrag.css";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 
-function ImageDrag({path = null, sizeValue = 1}) {
+function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const imageSlotRef = useRef();

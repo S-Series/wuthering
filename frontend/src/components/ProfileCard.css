@@ -1,29 +1,36 @@
 @font-face {
-  font-family: 'en-font';
-  src: url('../../assets/fonts/en.ttf') format('truetype');
+    font-family: 'en-font';
+    src: url('../../assets/fonts/en.ttf') format('truetype');
 }
+
 @font-face {
-  font-family: 'kr-font';
-  src: url('../../assets/fonts/kr.ttf') format('truetype');
+    font-family: 'kr-font';
+    src: url('../../assets/fonts/kr.ttf') format('truetype');
 }
+
 @font-face {
-  font-family: 'jp-font';
-  src: url('../../assets/fonts/jp.ttf') format('truetype');
+    font-family: 'jp-font';
+    src: url('../../assets/fonts/jp.ttf') format('truetype');
 }
+
 @font-face {
-  font-family: 'zh-font';
-  src: url('../../assets/fonts/zh.ttf') format('truetype');
+    font-family: 'zh-font';
+    src: url('../../assets/fonts/zh.ttf') format('truetype');
 }
+
 .enFont {
     font-family: "en-font", sans-serif;
 }
+
 .krFont {
     font-family: "kr-font", sans-serif;
 }
+
 .jpFont {
     font-family: "jp-font", sans-serif;
     transform: translateY(4px);
 }
+
 .zhFont {
     font-family: "zh-font", sans-serif;
     transform: translateY(-2px);
@@ -75,7 +82,7 @@
     z-index: 500;
 }
 
-.stat-score-slot{
+.stat-score-slot {
     display: flex;
     width: 50%;
     height: 100%;
@@ -83,23 +90,25 @@
     justify-content: center;
 }
 
-.stat-score-text{
+.stat-score-text {
     display: flex;
     height: 100%;
     color: #ffffff;
     align-items: center;
     text-align: center;
 }
-.stat-score-text.title{
+
+.stat-score-text.title {
     width: 20%;
     justify-content: flex-start;
 }
-.stat-score-text.value{
+
+.stat-score-text.value {
     width: 50%;
     justify-content: flex-end;
 }
 
-.profile-select-slot{
+.profile-select-slot {
     display: flex;
     position: relative;
     margin: 25px;
@@ -107,8 +116,30 @@
     min-width: 856px;
     align-items: center;
 }
+
 .empty-select-dropdown {
     display: flex;
     height: 100%;
     aspect-ratio: 1 / 2;
+}
+
+.profile-ocr-slot {
+    display: block;
+    position: relative;
+    width: calc(100% - 2px);
+    min-width: 856px;
+    aspect-ratio: 2140 / 856;
+    margin: 5% 0;
+    border: 1px solid #fff;
+    border-radius: 10px;
+}
+.ocr-select-slot {
+    align-content: center;
+    justify-content: center;
+}
+.ocr-text {
+    color: #fff;
+}
+.ocr-text.title {
+    font-weight: bold;
 }
