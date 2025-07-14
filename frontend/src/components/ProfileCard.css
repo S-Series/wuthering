@@ -128,7 +128,7 @@
     position: relative;
     width: calc(100% - 2px);
     min-width: 856px;
-    aspect-ratio: 2140 / 856;
+    aspect-ratio: 2140 / 856; /* 5 : 2 */
     margin: 5% 0;
     border: 1px solid #fff;
     border-radius: 10px;
