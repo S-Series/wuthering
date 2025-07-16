@@ -1,11 +1,12 @@
 import "./ImageDrag.css";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 
-function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
+function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const imageSlotRef = useRef();
   const imageContRef = useRef();
+  const fileInputRef = useRef();
 
   const [reloadKey, setReloadKey] = useState(false);
   const [resizeKey, setResizeKey] = useState(false);
@@ -31,11 +32,9 @@ function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
   useEffect(() => {
     setImgPath(path);
-  }, [path])
-
+  }, [path]);
   useEffect(() => {
     if (imageSize.width == 0 || imageSize.height == 0) return;
 
@@ -60,7 +59,6 @@ function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
     }));
     setImageMinZoom(sizeValue);
   }, [imageSize, reloadKey]);
-
   useEffect(() => {
     function wheel(e) {
       if (!hovered) return;
@@ -72,14 +70,13 @@ function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
         ...prev,
         s: Math.max(imageMinZoom, prev.s + sizeValue),
       }));
-      setResizeKey(prev => !prev);
+      setResizeKey((prev) => !prev);
     }
     window.addEventListener("wheel", wheel, { passive: false });
     return () => {
       window.removeEventListener("wheel", wheel);
     };
   }, [hovered]);
-
   useEffect(() => {
     console.log(imageTrans);
     if (!dragging) return;
@@ -118,7 +115,6 @@ function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [dragging]);
-
   useEffect(() => {
     const mx = (imageSize.width * imageTrans.s - slotSize.width) / 2;
     const my = (imageSize.height * imageTrans.s - slotSize.height) / 2;
@@ -126,13 +122,50 @@ function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
 
     const dx = Math.min(Math.max(imageTrans.x, -maxTrans.x), maxTrans.x);
     const dy = Math.min(Math.max(imageTrans.y, -maxTrans.y), maxTrans.y);
-    setImageTrans(prev => ({...prev, x: dx, y: dy }));
+    setImageTrans((prev) => ({ ...prev, x: dx, y: dy }));
   }, [resizeKey]);
+  useEffect(() => {
+    if (!inputable) return;
+
+    const handlePaste = (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            setImgPath(event.target.result); // ✅ base64 이미지 적용
+          };
+          reader.readAsDataURL(file);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, [inputable]);
 
   useLayoutEffect(() => {}, []);
 
   function boxHovered(isOvered) {
     setHovered(isOvered);
+  }
+  function handleDoubleClick() {
+    if (!inputable) return;
+    if (fileInputRef.current) fileInputRef.current.click();
+  }
+  function handleFileChange(item) {
+    const file = item.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (item) => {
+      setImgPath(item.target.result);
+    };
+    reader.readAsDataURL(file);
   }
 
   return (
@@ -143,16 +176,36 @@ function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
       onMouseEnter={() => boxHovered(true)}
       onMouseLeave={() => boxHovered(false)}
       onMouseDown={() => setDragging(true)}
-      onDoubleClick={() => setDoubleClicked(true)}
+      onDoubleClick={() => {
+        handleDoubleClick();
+      }}
       onError={(e) => {
         e.currentTarget.onerror = null;
         e.currentTarget.src = "none";
-      }}>
+      }}
+      style={{
+        userSelect: "none",
+        WebkitUserSelect: "none",
+      }}
+    >
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        draggable="false"
+        style={{
+          display: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+        }}
+        onChange={handleFileChange}
+      />
       <img
         className="image-drag-slot-content"
         ref={imageContRef}
         src={`${imgPath}`}
         draggable="false"
+        onDragStart={(e) => e.preventDefault()}
         onLoad={(e) => {
           setImageSize({
             width: e.target.naturalWidth,
@@ -160,6 +213,9 @@ function ImageDrag({path = null, sizeValue = 1, inputable = false}) {
           });
         }}
         style={{
+          pointerEvents: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
           transform: `translate(${imageTrans.x}px, ${imageTrans.y}px) scale(${imageTrans.s})`,
         }}
       />
