@@ -23,33 +23,53 @@ export function useProfile() {
   const [weaponStats, setWeaponStats] = useState(null);
 
   const finalStats = useMemo(() => {
-    let retHp = 0;
-    let retAtk = 0;
-    let retDef = 0;
-    let retRes = 0;
-    let retCrit = [0, 0];
-    let retType = ["", ""];
+    let retHp = 0,
+      retAtk = 0,
+      retDef = 0,
+      retRes = 0,
+      retCrit = [0, 0],
+      retTypeBns = [0, 0];
 
-    return ({
-      hp: 0,
-      atk: 0,
-      def: 0,
-      res: 0,
-      critRate: 0,
-      critDmg: 0,
-      type: ["", ""],
-      typeBns: [0, 0]
-  });}, [characterData, weaponData, echoList]);
+    const characterData = character.find(
+      (item) => item.id === characterId ?? "rover"
+    );
+    //$ [element, type]
+    const typeDef = characterData
+      ? [characterData.element + "Bns", characterData.type + "Bns"]
+      : ["", ""];
+
+    retHp = characterStats ?characterStats.baseHp : 0;
+    retAtk = characterStats ?characterStats.baseAtk : 0;
+    retDef = characterStats ?characterStats.baseDef : 0;
+    retRes = characterStats ?characterStats.resonanceBns : 0;
+    retCrit = characterStats
+      ? [characterStats.critRate, characterStats.critDmg]
+      : [5, 150];
+    retTypeBns = characterStats ? characterStats.typeBns : [0, 0];
+
+    return {
+      hp: retHp,
+      atk: retAtk,
+      def: retDef,
+      ResonanceBns: retRes,
+      CritRate: retCrit[0],
+      CritDmg: retCrit[1],
+      type: typeDef,
+      typeBns: retTypeBns,
+    };
+  }, [characterStats, weaponStats, echoList]);
 
   useEffect(() => {
     const saved = localStorage.getItem("wwavesdev-character");
-    if (saved) {setCharacterId(saved);}
-  }, [])
+    if (saved) {
+      setCharacterId(saved);
+    }
+  }, []);
 
   useEffect(() => {
     const data = character.find((c) => c.id === characterId);
     setCharacterData(data);
-    localStorage.setItem("wwavesdev-character", data)
+    localStorage.setItem("wwavesdev-character", data);
   }, [characterId]);
 
   useEffect(() => {
@@ -70,11 +90,18 @@ export function useProfile() {
   }, [characterStats, weaponStats, echoList]);
 
   return {
-    characterId, setCharacterId,
-    weaponId, setWeaponId,
-    constellation, setConstellation,
-    echoList, setEchoList,
-    characterData, weaponData,
-    characterStats, weaponStats, finalStats,
+    characterId,
+    setCharacterId,
+    weaponId,
+    setWeaponId,
+    constellation,
+    setConstellation,
+    echoList,
+    setEchoList,
+    characterData,
+    weaponData,
+    characterStats,
+    weaponStats,
+    finalStats,
   };
 }

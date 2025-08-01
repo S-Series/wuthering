@@ -19,12 +19,6 @@ class EchoData {
 }
 export default EchoData;
 
-class StatData{
-  constructor(){
-    this[FixedStats.hp.id] = 0;
-  }
-}
-
 class ProfileData {
   constructor(_characterId = null) {
     this.characterId = _characterId || "rover";

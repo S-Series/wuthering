@@ -12,6 +12,7 @@ function StatSlot({
         alignContent: "center",
       }}>
       <img
+        alt=""
         src={imgPath}
         style={{
           display: "block",
