@@ -2,6 +2,7 @@
 import "./ProfileCard.css";
 import { useRef, useState, useEffect, useLayoutEffect, useMemo } from "react";
 import Select, { components } from "react-select";
+import {motion, AnimatePresence} from "framer-motion"
 // data
 import { character, characterStat } from "../data/Character";
 import { weapon, weaponStat } from "../data/Weapon";
@@ -34,6 +35,8 @@ function ProfileCard() {
 
   const [filterWeapon, setFilterWeapon] = useState(null);
   const [filterElement, setFilterElement] = useState(null);
+
+  const [selectedEchoIdx, setSelectedEchoIdx] = useState(0);
 
   const statId = [
     FixedStats.hp.id,
@@ -83,6 +86,10 @@ function ProfileCard() {
     weaponStats,
     finalStats,
   } = useProfile();
+
+  const attackTypeBns = useMemo(() => {
+    return ["", ""]
+  }, [characterId, characterData])
   //#endregion
 
   //#region Functions
@@ -416,6 +423,11 @@ function ProfileCard() {
           onChange={(item) => {
             setCharacterId(item.value);
           }}
+          defaultValue={(() => {
+            const saved = localStorage.getItem("wwavesdev-character");
+            const c = character.find((item) => item.id === saved);
+            return c ?? character.find((item) => item.id === "rover");
+          })()}
         />
         <div className="empty-select-dropdown" />
         <Select
@@ -654,19 +666,23 @@ function ProfileCard() {
             style={{
               color: "#ffffff",
               ref: { WeaponNameTextRef },
-              fontSize: `calc(36px * ${sizeValue})`,
+              fontSize: `calc(40px * ${sizeValue})`,
               textAlign: "right",
               alignContent: "center",
-              ...setSlotStyle({ w: 170, h: 60, x: 175, y: 75 }),
+              ...setSlotStyle({ w: 170, h: 60, x: 165, y: 75 }),
             }}>
             {weaponStats?.atk ?? ""}
           </span>
           {/* //$ Weapon Main Stat */}
           <img
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/stats/CritRate.webp`}
+            src={`${apiUrl}/static/ico/stats/${weaponStats?.statType[0]}.webp`}
             style={{
               ...setSlotStyle({ w: 55, h: 55, x: 385, y: 75 }),
+            }}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
             }}
           />
           <span
@@ -674,10 +690,10 @@ function ProfileCard() {
             style={{
               color: "#ffffff",
               ref: { WeaponNameTextRef },
-              fontSize: `calc(36px * ${sizeValue})`,
+              fontSize: `calc(40px * ${sizeValue})`,
               textAlign: "right",
               alignContent: "center",
-              ...setSlotStyle({ w: 195, h: 60, x: 375, y: 75 }),
+              ...setSlotStyle({ w: 195, h: 60, x: 380, y: 75 }),
             }}>
             {weaponStats?.value?.[0].toFixed(1) ?? ""}%
           </span>
@@ -694,14 +710,15 @@ function ProfileCard() {
               key={idx}
               styles={[
                 setSlotStyle({ w: 570, h: 50, x: 15, y: 15 + idx * 70 }),
-                setSlotStyle({ w: 430, h: 50, x: 65, y: 0 }),
+                setSlotStyle({ w: 422.5, h: 50, x: 65, y: 2.5 }),
+                setSlotStyle({ w: 80, h: 35, x: 482.5, y: 16 }),
               ]}
               imgPath={`${apiUrl}/static/ico/stats/${statId[idx]}.webp`}
               textValue={[
                 `${FixedStats[statId[idx]]?.[lang]}`,
                 finalStats?.[statId[idx] ?? ""],
               ]}
-              fontSize={`${32 * sizeValue}px`}
+              fontSize={[`${30 * sizeValue}px`, `${17.5 * sizeValue}px`]}
             />
           ))}
           {/* //$ Character Harmony */}
@@ -849,11 +866,11 @@ function ProfileCard() {
             className="ocr-text title"
             style={{
               ...setSlotStyle({ w: 500, h: 70, x: 0, y: 16 }),
-              fontSize: `${64 * sizeValue}px`,
+              fontSize: `${56 * sizeValue}px`,
               alignContent: "center",
               textAlign: "center",
             }}>
-            asdf
+            Echo Data
           </span>
           {echoList.map((item, idx) => {
             return (
@@ -915,6 +932,12 @@ function ProfileCard() {
                   className="ocr-react-select-btn"
                   style={{
                     ...setSlotStyle({ w: 180, h: 80, x: 300, y: 20 }),
+                    backgroundColor: `${
+                      idx === selectedEchoIdx ? "#99ccff" : "#fff"
+                    }`,
+                  }}
+                  onClick={() => {
+                    setSelectedEchoIdx(idx);
                   }}>
                   {" "}
                   Select{" "}
@@ -923,27 +946,47 @@ function ProfileCard() {
             );
           })}
         </div>
-        <div
-          className="ocr-input-slot ocr"
-          style={{
-            ...setSlotStyle({ w: 800, h: 816, x: 540, y: 20 }),
-            backgroundColor: "#00000033",
-          }}>
-          <div
-            style={{
-              ...setSlotStyle({ w: 750 - 2, h: 616 - 2, x: 25, y: 25 }),
-              backgroundColor: "#00000033",
-              border: "1px dashed #fff",
-            }}>
-            <ImageDrag inputable={true} sizeValue={sizeValue} />
-          </div>
-        </div>
-        <div
-          className="ocr-input-slot dropdown"
-          style={{
-            ...setSlotStyle({ w: 750, h: 816, x: 1360, y: 20 }),
-            backgroundColor: "#00000033",
-          }}></div>
+
+        <AnimatePresence mode="wait">
+          {echoList.map((echoData, idx) =>
+            selectedEchoIdx === idx ? (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  pointerEvents: "none",
+                }}>
+                <div
+                  className="ocr-input-slot ocr"
+                  style={{
+                    ...setSlotStyle({ w: 800, h: 816, x: 540, y: 20 }),
+                    backgroundColor: "#00000033",
+                  }}>
+                  <div
+                    style={{
+                      ...setSlotStyle({ w: 750 - 2, h: 616 - 2, x: 25, y: 25 }),
+                      backgroundColor: "#00000033",
+                      border: "1px dashed #fff",
+                    }}>
+                    <ImageDrag inputable={true} sizeValue={sizeValue} />
+                  </div>
+                </div>
+                <div
+                  className="ocr-input-slot dropdown"
+                  style={{
+                    ...setSlotStyle({ w: 750, h: 816, x: 1360, y: 20 }),
+                    backgroundColor: "#00000033",
+                  }}></div>
+              </motion.div>
+            ) : null
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

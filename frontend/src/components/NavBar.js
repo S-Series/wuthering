@@ -64,19 +64,23 @@ function NavBar() {
       ...base,
       minWidth: 120,
       width: "auto",
-      fontSize: "0.9rem",
+      fontSize: "14px",
       padding: "0 4px",
     }),
     singleValue: (base) => ({
       ...base,
       whiteSpace: "nowrap",
       overflow: "visible",
-      textOverflow: "clip", // 'ellipsis'를 없앰
+      textOverflow: "clip",
     }),
     menu: (base) => ({
       ...base,
       zIndex: 999,
     }),
+    option: (base) => ({
+      ...base,
+      fontSize: "14px"
+    })
   };
 
   return (

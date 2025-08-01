@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createEmptyEcho } from "../data/Echo";
 import { calculateFinalStats } from "../utils/calcFinalStats.js";
 import { character, characterStat } from "../data/Character";
@@ -22,18 +22,34 @@ export function useProfile() {
   const [weaponData, setWeaponData] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
 
-  const [finalStats, setFinalStats] = useState(null);
+  const finalStats = useMemo(() => {
+    let retHp = 0;
+    let retAtk = 0;
+    let retDef = 0;
+    let retRes = 0;
+    let retCrit = [0, 0];
+    let retType = ["", ""];
+
+    return ({
+      hp: 0,
+      atk: 0,
+      def: 0,
+      res: 0,
+      critRate: 0,
+      critDmg: 0,
+      type: ["", ""],
+      typeBns: [0, 0]
+  });}, [characterData, weaponData, echoList]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("wwavesdev-character");
+    if (saved) {setCharacterId(saved);}
+  }, [])
 
   useEffect(() => {
     const data = character.find((c) => c.id === characterId);
-    if (characterData && characterData.weapon !== data.weapon) {
-      //$ if weapon type dismatched, reset weapon selection
-      setWeaponId("");
-      setWeaponData(null);
-      setWeaponStats(null);
-    }
     setCharacterData(data);
-    setCharacterStats(characterStat[characterId] ?? null);
+    localStorage.setItem("wwavesdev-character", data)
   }, [characterId]);
 
   useEffect(() => {
@@ -51,7 +67,6 @@ export function useProfile() {
       weaponStats,
       echoList,
     });
-    setFinalStats(result);
   }, [characterStats, weaponStats, echoList]);
 
   return {

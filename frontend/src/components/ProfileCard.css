@@ -28,12 +28,10 @@
 
 .jpFont {
     font-family: "jp-font", sans-serif;
-    transform: translateY(4px);
 }
 
 .zhFont {
     font-family: "zh-font", sans-serif;
-    transform: translateY(-2px);
 }
 
 .profile-portrait {
