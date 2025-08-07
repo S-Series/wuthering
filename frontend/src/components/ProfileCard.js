@@ -294,7 +294,7 @@ function ProfileCard() {
         </div>
       ),
     }));
-  });
+  }, [elementFilter, lang, sizeValue, weaponFilter]);
   const weaponOptions = useMemo(() => {
     const filtered = characterData ? weapon[characterData.weapon] : [];
 
@@ -330,6 +330,7 @@ function ProfileCard() {
         </div>
       ),
     }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterData, lang, sizeValue]);
   //#endregion
 
@@ -416,11 +417,6 @@ function ProfileCard() {
           onChange={(item) => {
             setCharacterId(item.value);
           }}
-          defaultValue={(() => {
-            const saved = localStorage.getItem("wwavesdev-character");
-            const c = character.find((item) => item.id === saved);
-            return c ?? character.find((item) => item.id === "rover");
-          })()}
         />
         <div className="empty-select-dropdown" />
         <Select

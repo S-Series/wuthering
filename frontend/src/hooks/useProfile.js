@@ -6,7 +6,7 @@ import { weapon, weaponStat } from "../data/Weapon";
 
 export function useProfile() {
   //$ Edit in Outside
-  const [characterId, setCharacterId] = useState("rover");
+  const [characterId, setCharacterId] = useState(null);
   const [weaponId, setWeaponId] = useState("");
   const [constellation, setConstellation] = useState([0, 0]);
   const [echoList, setEchoList] = useState(
@@ -60,16 +60,20 @@ export function useProfile() {
   }, [characterStats, weaponStats, echoList]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("wwavesdev-character");
+    const saved = localStorage.getItem("lastCharacter");
+    console.log(saved)
     if (saved) {
       setCharacterId(saved);
+    } else {
+      setCharacterId("rover");
     }
   }, []);
 
   useEffect(() => {
+    if (!characterId) return;
     const data = character.find((c) => c.id === characterId);
     setCharacterData(data);
-    localStorage.setItem("wwavesdev-character", data);
+    localStorage.setItem("lastCharacter", data.id);
   }, [characterId]);
 
   useEffect(() => {
