@@ -23,12 +23,18 @@ export function useProfile() {
   const [weaponStats, setWeaponStats] = useState(null);
 
   const finalStats = useMemo(() => {
+    //$ return values
     let retHp = 0,
       retAtk = 0,
       retDef = 0,
       retRes = 0,
       retCrit = [0, 0],
       retTypeBns = [0, 0];
+
+    //$ calc values
+    let hpPct = 1.00,
+      atkPct = 1.00,
+      defPct = 1.00;
 
     const characterData = character.find(
       (item) => item.id === characterId ?? "rover"
@@ -38,14 +44,18 @@ export function useProfile() {
       ? [characterData.element + "Bns", characterData.type + "Bns"]
       : ["", ""];
 
-    retHp = characterStats ?characterStats.baseHp : 0;
-    retAtk = characterStats ?characterStats.baseAtk : 0;
-    retDef = characterStats ?characterStats.baseDef : 0;
-    retRes = characterStats ?characterStats.resonanceBns : 0;
+    //$ Character BaseStats
+    retHp = characterStats ? characterStats.baseHp : 0;
+    retAtk = characterStats ? characterStats.baseAtk : 0;
+    retDef = characterStats ? characterStats.baseDef : 0;
+    retRes = characterStats ? characterStats.resonanceBns : 0;
     retCrit = characterStats
       ? [characterStats.critRate, characterStats.critDmg]
       : [5, 150];
     retTypeBns = characterStats ? characterStats.typeBns : [0, 0];
+
+    //$ Weapon BaseStats
+    retAtk = retAtk + (weaponStats ? weaponStats.atk : 0);
 
     return {
       hp: retHp,
@@ -71,8 +81,10 @@ export function useProfile() {
 
   useEffect(() => {
     if (!characterId) return;
-    const data = character.find((c) => c.id === characterId);
+    const data = character.find((item) => item.id === characterId);
     setCharacterData(data);
+    const stat = characterStat[characterId] ?? characterStat["rover"].spectro;
+    setCharacterStats(stat);
     localStorage.setItem("lastCharacter", data.id);
   }, [characterId]);
 

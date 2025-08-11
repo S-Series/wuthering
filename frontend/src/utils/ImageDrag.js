@@ -204,7 +204,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
         className="image-drag-slot-content"
         ref={imageContRef}
         src={`${imgPath}`}
-        draggable="false"
+        draggable="false" 
         onDragStart={(e) => e.preventDefault()}
         onLoad={(e) => {
           setImageSize({
