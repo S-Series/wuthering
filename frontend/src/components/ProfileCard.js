@@ -79,8 +79,11 @@ function ProfileCard() {
   } = useProfile();
 
   const statId = useMemo(() => {
-    return ["hp", "atk", "def", "ResonanceBns", "CritRate", "CritDmg", finalStats.type[0], finalStats.type[1]];
-  }, []);
+    return ["hp", "atk", "def", "ResonanceBns", "CritRate", "CritDmg", 
+      `${characterStats?.element ?? ""}Bns`,
+      finalStats.type[1]
+    ];
+  }, [finalStats]);
   //#endregion
 
   //#region Functions
@@ -711,13 +714,13 @@ function ProfileCard() {
               ]}
               imgPath={`${apiUrl}/static/ico/stats/${statId[idx]}.webp`}
               textValue={[
-                FixedStats[statId[idx]]?.[lang],
+                FixedStats[statId[idx]]?.[lang] ?? "",
                 `${
                   typeof finalStats?.[statId[idx] ?? ""] === "number"
                     ? finalStats[statId[idx]].toFixed(idx > 2 ? 1 : 0)
                     : finalStats?.[statId[idx] ?? ""]
                 }${idx > 2 ? "%" : ""}`,
-                `${finalStats?.[statId[idx] ?? ""]}` + `${idx > 2 ? "%" : ""}`,
+                `${finalStats?.[statId[idx] ?? ""]}${idx > 2 ? "%" : ""}`,
               ]}
               fontSize={[`${30 * sizeValue}px`, `${17.5 * sizeValue}px`]}
             />

@@ -3,6 +3,7 @@ import { createEmptyEcho } from "../data/Echo";
 import { calculateFinalStats } from "../utils/calcFinalStats.js";
 import { character, characterStat } from "../data/Character";
 import { weapon, weaponStat } from "../data/Weapon";
+import { FixedStats } from "../data/Stats.js";
 
 export function useProfile() {
   //$ Edit in Outside
@@ -22,52 +23,17 @@ export function useProfile() {
   const [weaponData, setWeaponData] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
 
+  const ZERO_STATS = useMemo(
+    () => Object.fromEntries(Object.keys(FixedStats).map((k) => [k, 0])),
+    []
+  );
   const finalStats = useMemo(() => {
-    //$ return values
-    let retHp = 0,
-      retAtk = 0,
-      retDef = 0,
-      retRes = 0,
-      retCrit = [0, 0],
-      retTypeBns = [0, 0];
+    let stats = { ...ZERO_STATS };
 
-    //$ calc values
-    let hpPct = 1.00,
-      atkPct = 1.00,
-      defPct = 1.00;
+    stats.hp = 12345;
 
-    const characterData = character.find(
-      (item) => item.id === characterId ?? "rover"
-    );
-    //$ [element, type]
-    const typeDef = characterData
-      ? [characterData.element + "Bns", characterData.type + "Bns"]
-      : ["", ""];
-
-    //$ Character BaseStats
-    retHp = characterStats ? characterStats.baseHp : 0;
-    retAtk = characterStats ? characterStats.baseAtk : 0;
-    retDef = characterStats ? characterStats.baseDef : 0;
-    retRes = characterStats ? characterStats.resonanceBns : 0;
-    retCrit = characterStats
-      ? [characterStats.critRate, characterStats.critDmg]
-      : [5, 150];
-    retTypeBns = characterStats ? characterStats.typeBns : [0, 0];
-
-    //$ Weapon BaseStats
-    retAtk = retAtk + (weaponStats ? weaponStats.atk : 0);
-
-    return {
-      hp: retHp,
-      atk: retAtk,
-      def: retDef,
-      ResonanceBns: retRes,
-      CritRate: retCrit[0],
-      CritDmg: retCrit[1],
-      type: typeDef,
-      typeBns: retTypeBns,
-    };
-  }, [characterStats, weaponStats, echoList]);
+    return stats;
+  }, [characterStats, weaponStats, characterId]);
 
   useEffect(() => {
     const saved = localStorage.getItem("lastCharacter");
@@ -83,7 +49,9 @@ export function useProfile() {
     if (!characterId) return;
     const data = character.find((item) => item.id === characterId);
     setCharacterData(data);
-    const stat = characterStat[characterId] ?? characterStat["rover"].spectro;
+    const stat = characterId === "rover"
+      ? characterStat[characterId] ?? null
+      : characterStat["rover"].spectro ?? null;
     setCharacterStats(stat);
     localStorage.setItem("lastCharacter", data.id);
   }, [characterId]);
