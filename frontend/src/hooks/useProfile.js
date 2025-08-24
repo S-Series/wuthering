@@ -30,19 +30,23 @@ export function useProfile() {
   const finalStats = useMemo(() => {
     let stats = { ...ZERO_STATS };
 
-    stats.hp = 12345;
-
     return stats;
-  }, [characterStats, weaponStats, characterId]);
+  }, [characterId, characterData, characterStats, weaponStats]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("lastCharacter");
-    console.log(saved)
-    if (saved) {
-      setCharacterId(saved);
-    } else {
-      setCharacterId("rover");
-    }
+    const characterSaved = localStorage.getItem("lastCharacter");
+    const weaponSaved = localStorage.getItem("lastWeapon");
+
+    characterSaved 
+      ? setCharacterId(characterSaved) 
+      : setCharacterId("rover");
+
+    weaponSaved
+      ? setWeaponId(weaponSaved)
+      : setWeaponId(null);
+
+    console.log(characterSaved);
+    console.log(weaponSaved);
   }, []);
 
   useEffect(() => {
@@ -57,11 +61,12 @@ export function useProfile() {
   }, [characterId]);
 
   useEffect(() => {
-    if (!characterData) return;
-    const data = weapon[characterData.weapon]?.find((w) => w.id === weaponId);
+    const data = weapon[characterData?.weapon ?? "sword"]?.find((w) => w.id === weaponId);
     const stats = weaponStat[weaponId];
     setWeaponData(data);
     setWeaponStats(stats);
+    console.log(data?.id);
+    localStorage.setItem("lastWeapon", data?.id);
   }, [weaponId, characterData]);
 
   useEffect(() => {

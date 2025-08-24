@@ -78,7 +78,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
     };
   }, [hovered]);
   useEffect(() => {
-    console.log(imageTrans);
+    //console.log(imageTrans);
     if (!dragging) return;
     let prev = { x: 0, y: 0 };
 
@@ -172,7 +172,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
     <div
       className="image-drag-slot"
       ref={imageSlotRef}
-      src={`${imgPath}`}
+      src={imgPath ? imgPath : null}
       onMouseEnter={() => boxHovered(true)}
       onMouseLeave={() => boxHovered(false)}
       onMouseDown={() => setDragging(true)}
@@ -186,8 +186,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
       style={{
         userSelect: "none",
         WebkitUserSelect: "none",
-      }}
-    >
+      }}>
       <input
         ref={fileInputRef}
         type="file"
@@ -203,8 +202,8 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
       <img
         className="image-drag-slot-content"
         ref={imageContRef}
-        src={`${imgPath}`}
-        draggable="false" 
+        src={imgPath ? imgPath : null}
+        draggable="false"
         onDragStart={(e) => e.preventDefault()}
         onLoad={(e) => {
           setImageSize({

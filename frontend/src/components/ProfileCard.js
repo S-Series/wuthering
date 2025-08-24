@@ -80,8 +80,8 @@ function ProfileCard() {
 
   const statId = useMemo(() => {
     return ["hp", "atk", "def", "ResonanceBns", "CritRate", "CritDmg", 
-      `${characterStats?.element ?? ""}Bns`,
-      finalStats.type[1]
+      `${characterData?.element ?? ""}Bns`,
+      `${characterData?.type ?? ""}Bns`,
     ];
   }, [finalStats]);
   //#endregion
@@ -573,7 +573,7 @@ function ProfileCard() {
             src={
               characterData && weaponData
                 ? `${apiUrl}/static/weapon/${characterData.weapon}/${weaponData.imgKey}.png`
-                : ""
+                : null
             }
           />
           <Select
