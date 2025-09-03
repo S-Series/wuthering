@@ -327,10 +327,10 @@ export const characterStat = {
     baseAtk: 263,
     baseDef: 1076,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -343,10 +343,10 @@ export const characterStat = {
     baseAtk: 213,
     baseDef: 1002,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 12.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 0.0,
     hpPct: 12.0,
@@ -359,10 +359,10 @@ export const characterStat = {
     baseAtk: 375,
     baseDef: 1308,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -379,9 +379,9 @@ export const characterStat = {
     baseAtk: 438,
     baseDef: 1186,
 
-    critRate: 5.0,
-    critDmg: 166.0,
-    resonanceBns: 100.0,
+    CritRate: 5.0,
+    CritDmg: 166.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -394,10 +394,10 @@ export const characterStat = {
     baseAtk: 450,
     baseDef: 1161,
 
-    critRate: 5.0,
-    critDmg: 166.0,
+    CritRate: 5.0,
+    CritDmg: 166.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -410,10 +410,10 @@ export const characterStat = {
     baseAtk: 400,
     baseDef: 1100,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 20.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -426,10 +426,10 @@ export const characterStat = {
     baseAtk: 463,
     baseDef: 1198,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -442,10 +442,10 @@ export const characterStat = {
     baseAtk: 463,
     baseDef: 1100,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -458,10 +458,10 @@ export const characterStat = {
     baseAtk: 375,
     baseDef: 1198,
 
-    critRate: 5.0,
-    critDmg: 166.0,
+    CritRate: 5.0,
+    CritDmg: 166.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -474,10 +474,10 @@ export const characterStat = {
     baseAtk: 300,
     baseDef: 953,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -490,10 +490,10 @@ export const characterStat = {
     baseAtk: 263,
     baseDef: 1149,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -506,10 +506,10 @@ export const characterStat = {
     baseAtk: 425,
     baseDef: 1247,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -522,10 +522,10 @@ export const characterStat = {
     baseAtk: 338,
     baseDef: 1124,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -538,10 +538,10 @@ export const characterStat = {
     baseAtk: 413,
     baseDef: 1259,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -554,10 +554,10 @@ export const characterStat = {
     baseAtk: 438,
     baseDef: 1186,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -570,10 +570,10 @@ export const characterStat = {
     baseAtk: 438,
     baseDef: 1210,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -586,10 +586,10 @@ export const characterStat = {
     baseAtk: 338,
     baseDef: 880,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -602,10 +602,10 @@ export const characterStat = {
     baseAtk: 250,
     baseDef: 1137,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -618,10 +618,10 @@ export const characterStat = {
     baseAtk: 413,
     baseDef: 1259,
 
-    critRate: 5.0,
-    critDmg: 166.0,
+    CritRate: 5.0,
+    CritDmg: 166.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -634,10 +634,10 @@ export const characterStat = {
     baseAtk: 375,
     baseDef: 1198,
 
-    critRate: 5.0,
-    critDmg: 166.0,
+    CritRate: 5.0,
+    CritDmg: 166.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -651,10 +651,10 @@ export const characterStat = {
       baseAtk: 375,
       baseDef: 1369,
 
-      critRate: 5.0,
-      critDmg: 150.0,
+      CritRate: 5.0,
+      CritDmg: 150.0,
       healBns: 0.0,
-      resonanceBns: 100.0,
+      ResonanceBns: 100.0,
 
       atkPct: 12.0,
       hpPct: 0.0,
@@ -667,10 +667,10 @@ export const characterStat = {
       baseAtk: 413,
       baseDef: 1259,
 
-      critRate: 5.0,
-      critDmg: 150.0,
+      CritRate: 5.0,
+      CritDmg: 150.0,
       healBns: 0.0,
-      resonanceBns: 100.0,
+      ResonanceBns: 100.0,
 
       atkPct: 12.0,
       hpPct: 0.0,
@@ -683,10 +683,10 @@ export const characterStat = {
       baseAtk: 438,
       baseDef: 1137,
 
-      critRate: 5.0,
-      critDmg: 150.0,
+      CritRate: 5.0,
+      CritDmg: 150.0,
       healBns: 0.0,
-      resonanceBns: 100.0,
+      ResonanceBns: 100.0,
 
       atkPct: 12.0,
       hpPct: 0.0,
@@ -700,10 +700,10 @@ export const characterStat = {
     baseAtk: 275,
     baseDef: 941,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -716,10 +716,10 @@ export const characterStat = {
     baseAtk: 288,
     baseDef: 1100,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 0.0,
     hpPct: 12.0,
@@ -732,10 +732,10 @@ export const characterStat = {
     baseAtk: 225,
     baseDef: 1564,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 0.0,
     hpPct: 0.0,
@@ -748,10 +748,10 @@ export const characterStat = {
     baseAtk: 338,
     baseDef: 1100,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -764,10 +764,10 @@ export const characterStat = {
     baseAtk: 425,
     baseDef: 1222,
 
-    critRate: 5.0,
-    critDmg: 166.0,
+    CritRate: 5.0,
+    CritDmg: 166.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -780,10 +780,10 @@ export const characterStat = {
     baseAtk: 250,
     baseDef: 1100,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -796,10 +796,10 @@ export const characterStat = {
     baseAtk: 400,
     baseDef: 1283,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -812,10 +812,10 @@ export const characterStat = {
     baseAtk: 263,
     baseDef: 1051,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -828,10 +828,10 @@ export const characterStat = {
     baseAtk: 225,
     baseDef: 1638,
 
-    critRate: 5.0,
-    critDmg: 150.0,
+    CritRate: 5.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 0.0,
     hpPct: 0.0,
@@ -844,10 +844,10 @@ export const characterStat = {
     baseAtk: 438,
     baseDef: 1137,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,
@@ -860,10 +860,10 @@ export const characterStat = {
     baseAtk: 375,
     baseDef: 1198,
 
-    critRate: 13.0,
-    critDmg: 150.0,
+    CritRate: 13.0,
+    CritDmg: 150.0,
     healBns: 0.0,
-    resonanceBns: 100.0,
+    ResonanceBns: 100.0,
 
     atkPct: 12.0,
     hpPct: 0.0,

@@ -27,8 +27,26 @@ export function useProfile() {
     () => Object.fromEntries(Object.keys(FixedStats).map((k) => [k, 0])),
     []
   );
+  
   const finalStats = useMemo(() => {
     let stats = { ...ZERO_STATS };
+
+    const types = [
+      `${characterData?.element ?? "Aero"}Bns`,
+      `${characterData?.type ?? "normal"}Bns`
+    ]
+    console.log(types);
+
+    stats.hp = Number(characterStats?.baseHp ?? 0);
+    stats.atk = Number((characterStats?.baseAtk ?? 0) + (weaponStats?.atk ?? 0));
+    stats.def = Number(characterStats?.baseDef ?? 0);
+    stats.ResonanceBns = Number(characterStats?.ResonanceBns ?? 100.0);
+    stats.CritRate = Number(characterStats?.CritRate ?? 5.0);
+    stats.CritDmg = Number(characterStats?.CritDmg ?? 150.0);
+    stats[types[0]] = Number(characterStats?.typeBns[0] ?? 0.0);
+    stats[types[1]] = Number(characterStats?.typeBns[1] ?? 0.0);
+
+    console.log(stats);
 
     return stats;
   }, [characterId, characterData, characterStats, weaponStats]);
@@ -37,13 +55,9 @@ export function useProfile() {
     const characterSaved = localStorage.getItem("lastCharacter");
     const weaponSaved = localStorage.getItem("lastWeapon");
 
-    characterSaved 
-      ? setCharacterId(characterSaved) 
-      : setCharacterId("rover");
+    setCharacterId(characterSaved || "rover") 
 
-    weaponSaved
-      ? setWeaponId(weaponSaved)
-      : setWeaponId(null);
+    setWeaponId(weaponSaved && (weaponSaved !== "undefined") ? weaponSaved : null);
 
     console.log(characterSaved);
     console.log(weaponSaved);
@@ -51,13 +65,18 @@ export function useProfile() {
 
   useEffect(() => {
     if (!characterId) return;
+
     const data = character.find((item) => item.id === characterId);
     setCharacterData(data);
+
     const stat = characterId === "rover"
       ? characterStat[characterId] ?? null
       : characterStat["rover"].spectro ?? null;
+
     setCharacterStats(stat);
     localStorage.setItem("lastCharacter", data.id);
+
+    console.log(stat);
   }, [characterId]);
 
   useEffect(() => {
@@ -66,7 +85,9 @@ export function useProfile() {
     setWeaponData(data);
     setWeaponStats(stats);
     console.log(data?.id);
-    localStorage.setItem("lastWeapon", data?.id);
+    if (data && data !== "undefined") {
+      localStorage.setItem("lastWeapon", data?.id);
+    }
   }, [weaponId, characterData]);
 
   useEffect(() => {

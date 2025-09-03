@@ -18,6 +18,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
   return (
     <div>
       <img
+        alt=""
         src={`${apiUrl}/static/ico/echos/${echoData.echoId}.webp`}
         style={{
           ...setSlotStyle({ w: 140 - 2, h: 140 - 2, x: 4, y: 4 }),
@@ -26,6 +27,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
         }}
       />
       <img
+        alt=""
         src={`${apiUrl}/static/ico/harmony/${echoData.harmony}.webp`}
         style={{
           ...setSlotStyle({ w: 40, h: 40, x: 54, y: 124 }),
@@ -59,6 +61,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
         echoData.stats[idx][0] !== null && echoData.stats[idx][1] !== null ? (
           <div key={idx} style={{ alignContent: "center" }}>
             <img
+              alt=""
               src={`${apiUrl}/static/ico/stats/${echoData.stats[idx][0]}.webp`}
               style={{
                 ...setSlotStyle({
@@ -93,6 +96,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
         ) : (
           <div key={idx} style={{ alignContent: "center" }}>
             <img
+              alt=""
               src={`/default.webp`}
               style={{
                 ...setSlotStyle({
@@ -122,6 +126,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
         )
       )}
       <img
+        alt=""
         src={`/default.webp`}
         style={{
           ...setSlotStyle({ w: 140, h: 72.5, x: 4, y: 481 }),
