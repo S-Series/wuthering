@@ -50,7 +50,7 @@ function StatSlot({
           textAlign: "right",
           fontSize: fontSize[1],
         }}>
-        +{textValue[2] ?? "(+12345)"}
+        +{textValue[2] ?? "(+0)"}
       </span>
     </div>
   );

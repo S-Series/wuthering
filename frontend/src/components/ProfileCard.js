@@ -720,7 +720,7 @@ function ProfileCard() {
                     ? finalStats[statId[idx]].toFixed(idx > 2 ? 1 : 0)
                     : finalStats?.[statId[idx] ?? ""]
                 }${idx > 2 ? "%" : ""}`,
-                `${finalStats?.[statId[idx] ?? ""]}${idx > 2 ? "%" : ""}`,
+                `${finalStats?.[`${statId[idx]}Delta` ?? ""]}${idx > 2 ? "%" : ""}`,
               ]}
               fontSize={[`${30 * sizeValue}px`, `${17.5 * sizeValue}px`]}
             />
@@ -988,7 +988,16 @@ function ProfileCard() {
                   style={{
                     ...setSlotStyle({ w: 750, h: 816, x: 1360, y: 20 }),
                     backgroundColor: "#00000033",
-                  }}></div>
+                  }}>
+                  <div
+                    style={{
+                      ...setSlotStyle({ w: 750 - 2, h: 616 - 2, y: 116}),
+                      backgroundColor: "#00000033",
+                      border: "1px dashed #fff",
+                    }}>
+
+                    </div>
+                </div>
               </motion.div>
             ) : null
           )}

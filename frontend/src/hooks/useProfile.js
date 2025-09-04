@@ -29,22 +29,55 @@ export function useProfile() {
   );
   
   const finalStats = useMemo(() => {
-    let stats = { ...ZERO_STATS };
 
     const types = [
       `${characterData?.element ?? "Aero"}Bns`,
       `${characterData?.type ?? "normal"}Bns`
     ]
-    console.log(types);
 
+    let stats = {
+      ...ZERO_STATS,
+      ["hpDelta"]: 0,
+      ["atkDelta"]: 0,
+      ["defDelta"]: 0,
+      ["ResonanceBnsDelta"]: 0,
+      ["CritRateDelta"]: 0,
+      ["CritDmgDelta"]: 0,
+      [`${types[0]}Delta`]: 0,
+      [`${types[1]}Delta`]: 0,
+      dummy: 0
+    };
+    
+    //$ character
     stats.hp = Number(characterStats?.baseHp ?? 0);
-    stats.atk = Number((characterStats?.baseAtk ?? 0) + (weaponStats?.atk ?? 0));
+    stats.atk = Number(characterStats?.baseAtk ?? 0);
     stats.def = Number(characterStats?.baseDef ?? 0);
     stats.ResonanceBns = Number(characterStats?.ResonanceBns ?? 100.0);
     stats.CritRate = Number(characterStats?.CritRate ?? 5.0);
     stats.CritDmg = Number(characterStats?.CritDmg ?? 150.0);
     stats[types[0]] = Number(characterStats?.typeBns[0] ?? 0.0);
     stats[types[1]] = Number(characterStats?.typeBns[1] ?? 0.0);
+    //$ weapon
+    stats.atk += weaponStats?.atk ?? 0;
+    stats[weaponStats?.statType[0] ?? "dummy"] += weaponStats?.value[0] ?? 0;
+    stats[weaponStats?.statType[1] ?? "dummy"] += weaponStats?.value[1] ?? 0;
+    //$ echos
+    for (let i = 0; i < 5; i++){
+
+    }
+    //$ extra stats
+    stats.hpDelta = Math.round(stats.hp * ((stats.hpPct ?? 0) / 100));
+    stats.atkDelta = Math.round(stats.atk * ((stats.atkPct ?? 0) / 100));
+    stats.defDelta = Math.round(stats.def * ((stats.defPct ?? 0) / 100));
+
+    stats.hp += stats.hpDelta;
+    stats.atk += stats.atkDelta;
+    stats.def += stats.defDelta;
+    stats.ResonanceBns += stats.ResonanceBnsDelta;
+    stats.CritRate += stats.CritRateDelta;
+    stats.CritDmg += stats.CritDmgDelta;
+    stats[types[0]] += stats[`${types[0]}Delta`]
+    stats[types[1]] += stats[`${types[1]}Delta`]
 
     console.log(stats);
 
