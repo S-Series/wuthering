@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { createEmptyEcho } from "../data/Echo";
-import { calculateFinalStats } from "../utils/calcFinalStats.js";
 import { character, characterStat } from "../data/Character";
 import { weapon, weaponStat } from "../data/Weapon";
 import { FixedStats } from "../data/Stats.js";
@@ -15,6 +14,17 @@ export function useProfile() {
       .fill(null)
       .map(() => createEmptyEcho())
   );
+
+  function EditEcholist(index, newValue){
+    setEchoList((prev) => {
+      const copy = [...prev];
+      copy[index] = {
+        ...copy[index],
+        ...newValue
+      };
+      return copy;
+    });
+  };
 
   //$ Edit in Inside
   const [characterData, setCharacterData] = useState(null);
@@ -134,15 +144,6 @@ export function useProfile() {
     }
   }, [weaponId, characterData]);
 
-  useEffect(() => {
-    if (!characterStats || !weaponStats || !echoList) return;
-    const result = calculateFinalStats({
-      characterStats,
-      weaponStats,
-      echoList,
-    });
-  }, [characterStats, weaponStats, echoList]);
-
   return {
     characterId,
     setCharacterId,
@@ -152,6 +153,7 @@ export function useProfile() {
     setConstellation,
     echoList,
     setEchoList,
+    EditEcholist,
     characterData,
     weaponData,
     characterStats,

@@ -1,5 +1,5 @@
 function StatSlot({
-  styles = [{}, {}],
+  styles = [{}, {}, {}],
   imgPath,
   textValue = ["", "", ""],
   fontSize,
@@ -20,20 +20,34 @@ function StatSlot({
           aspectRatio: "1/1",
           marginLeft: "1.5%",
         }}
-        onError={e =>{
+        onError={(e) => {
           e.currentTarget.onerror = null;
           e.currentTarget.src = "/default.webp";
         }}
       />
-      <span
-        style={{
-          ...styles[1],
-          color: "#fff",
-          textAlign: "left",
-          fontSize: fontSize[0],
-        }}>
-        {textValue[0]}
-      </span>
+      {textValue[0].includes("Attack Damage") ? (
+        <span
+          style={{
+            ...styles[1], //$ 여기 속성값 수정해서 적용하기
+            color: "#fff",
+            textAlign: "left",
+            fontSize: `${8}px`,
+            whiteSpace: "pre-wrap",
+          }}>
+          {textValue[0].replace("Attack Damage", "Attack\nDamage")}
+        </span>
+      ) : (
+        <span
+          style={{
+            ...styles[1],
+            color: "#fff",
+            textAlign: "left",
+            fontSize: fontSize[0],
+            whiteSpace: "pre-wrap",
+          }}>
+          {textValue[0]}
+        </span>
+      )}
       <span
         style={{
           ...styles[1],

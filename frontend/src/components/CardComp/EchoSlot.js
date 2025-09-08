@@ -1,25 +1,23 @@
 import { echoDict } from "../../data/Echo";
 import { userdata } from "../../data/userData";
 import EchoData from "../../data/userData";
+import ProfileCard from "../ProfileCard";
+import { useStyleHelper } from "../../hooks/useStyleHelpers";
 
 function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
-  const apiUrl = process.env.REACT_APP_API_URL;
 
-  const setSlotStyle = ({ w = null, h = null, x = 0, y = 0 }) => {
-    return {
-      position: "absolute",
-      width: `${w === null ? "100%" : `calc(${w}px * ${sizeValue})`}`,
-      height: `${h === null ? "100%" : `calc(${h}px * ${sizeValue})`}`,
-      top: `calc(${y}px * ${sizeValue})`,
-      left: `calc(${x}px * ${sizeValue})`,
-    };
-  };
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const { setSlotStyle } = useStyleHelper(sizeValue);
 
   return (
     <div>
+      {console.log(echoData)}
       <img
         alt=""
-        src={`${apiUrl}/static/ico/echos/${echoData.echoId}.webp`}
+        src={echoData?.echoId && echoData?.echoId !== "default"
+          ? `${apiUrl}/static/ico/echos/${echoData.echoId}.webp`
+          : "/default.webp"
+        }
         style={{
           ...setSlotStyle({ w: 140 - 2, h: 140 - 2, x: 4, y: 4 }),
           border: "1px solid #000",
@@ -120,7 +118,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
                 transform: `translateY(-${4 * sizeValue}px)`,
                 fontSize: `${30 * sizeValue}px`,
               }}>
-              NaN
+              - - - -
             </span>
           </div>
         )
@@ -153,7 +151,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
             transform: `translateY(-${4 * sizeValue}px)`,
             fontSize: `${28 * sizeValue}px`,
           }}>
-          56.7pt
+          0pt
         </span>
         <span
           style={{
@@ -173,7 +171,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
             transform: `translateY(-${4 * sizeValue}px)`,
             fontSize: `${28 * sizeValue}px`,
           }}>
-          123.4pt
+          0pt
         </span>
       </div>
     </div>

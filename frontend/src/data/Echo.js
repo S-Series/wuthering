@@ -2,10 +2,10 @@ import { FixedStats } from "./Stats";
 
 export function createEmptyEcho(){
   return {
-    echoId: "default",
-    harmont: "None",
+    echoId: "asdf",
+    harmony: "None",
     cost: 1,
-    stats: Array(7).fill([null, null])
+    stats: Array(7).fill(["dummy", 0])
   }
 }
 
@@ -16,63 +16,81 @@ export const harmony = {
     en: "Freezing Frost",
     kr: "야밤의 서리",
     jp: "夜にこびり付く白霜",
-    zh: "凝夜白霜"
+    zh: "凝夜白霜",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Rift: {
     id: "Rift",
     en: "Molten Rift",
     kr: "솟구치는 용암",
     jp: "山を轟かせる崩火",
-    zh: "熔山裂谷"
+    zh: "熔山裂谷",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Thunder: {
     id: "Thunder",
     en: "Void Thunder",
     kr: "울려퍼지는 뇌음",
     jp: "空を切り裂く冥雷",
-    zh: "彻空冥雷"
+    zh: "彻空冥雷",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Gale: {
     id: "Gale",
     en: "Sierra Gale",
     kr: "스쳐가는 바람",
     jp: "谷を突き抜ける長風",
-    zh: "啸谷长风"
+    zh: "啸谷长风",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Light: {
     id: "Light",
     en: "Celestial Light",
     kr: "빛나는 별",
     jp: "闇を取り払う浮星",
-    zh: "浮星祛暗"
+    zh: "浮星祛暗",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Eclipse: {
     id: "Eclipse",
     en: "Sun-sinking Eclipse",
     kr: "빛을 삼키는 해",
     jp: "二度と輝かない沈日",
-    zh: "沉日劫明"
+    zh: "沉日劫明",
+    optionCount: [2, 5],
+    colorCode: "#cc99cc",
   },
   Rejuvent: {
     id: "Rejuvent",
     en: "Rejuvenating Glow",
     kr: "찬란한 광휘",
     jp: "喧騒に隠す回光",
-    zh: "隐世回光"
+    zh: "隐世回光",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Clouds: {
     id: "Clouds",
     en: "Moonlit Clouds",
     kr: "떠오르는 구름",
     jp: "月を窺う軽雲",
-    zh: "轻云出月"
+    zh: "轻云出月",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Tunes: {
     id: "Tunes",
     en: "Lingering Tunes",
     kr: "끊임없는 잔향",
     jp: "絶えない余韻",
-    zh: "不绝余音"
+    zh: "不绝余音",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   //#endregion
   //#region Ver2.0 Echos
@@ -81,56 +99,72 @@ export const harmony = {
     en: "Frosty Resolve",
     kr: "냉철한 결단",
     jp: "フロステッド・ハート",
-    zh: "凌冽决断之心"
+    zh: "凌冽决断之心",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Radiance: {
     id: "Radiance",
     en: "Eternal Radiance",
     kr: "영원의 광채",
     jp: "エターナル・ライト",
-    zh: "此间永驻之光"
+    zh: "此间永驻之光",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Veil: {
     id: "Veil",
     en: "Midnight Veil",
     kr: "어둠의 장막",
     jp: "ミッドナイト・ベール",
-    zh: "幽夜隐匿之帷"
+    zh: "幽夜隐匿之帷",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Empyrean: {
     id: "Empyrean",
     en: "Empyrean Anthem",
     kr: "하늘의 합주곡",
     jp: "セレッシャル・アンサム",
-    zh: "高天共奏之曲"
+    zh: "高天共奏之曲",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Courage: {
     id: "Courage",
     en: "Tidebreaking Courage",
     kr: "파도에 맞선 용기",
     jp: "タイズターニング・ヴァラ",
-    zh: "无惧浪涛之勇"
+    zh: "无惧浪涛之勇",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   Welkin: {
     id: "Welkin",
     en: "Gusts of Welkin",
     kr: "끝없는 하늘",
     jp: "バウンドレス・スカイ",
-    zh: "流云逝尽之空"
+    zh: "流云逝尽之空",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   UnKnownEcho01: {
     id: "UnKnownEcho01",
     en: "UnKnown",
     kr: "영광이 깃든 바람",
     jp: "グロリアス・ウィンド",
-    zh: "愿戴荣光之旅"
+    zh: "愿戴荣光之旅",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   UnKnownEcho02: {
     id: "UnKnownEcho02",
     en: "UnKnown",
     kr: "울부짖는 불꽃",
     jp: "ハウリング・フレイム",
-    zh: "奔狼燎原之焰"
+    zh: "奔狼燎原之焰",
+    optionCount: [2, 5],
+    colorCode: "",
   },
   //#endregion
   //#region Ver3.0 Echos

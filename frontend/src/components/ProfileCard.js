@@ -11,11 +11,13 @@ import { profileData, userdata } from "../data/userData";
 import { echoDict, harmony } from "../data/Echo";
 // hooks
 import { useProfile } from "../hooks/useProfile";
+import { useStyleHelper } from "../hooks/useStyleHelpers";
 // utils
 import ImageDrag from "../utils/ImageDrag";
 // others
 import StatSlot from "./CardComp/StatSlot";
 import EchoSlot from "./CardComp/EchoSlot";
+import EchoStatDrop from "./EchoStatDrop";
 
 function ProfileCard() {
   //#region Refs
@@ -37,6 +39,14 @@ function ProfileCard() {
   const [filterElement, setFilterElement] = useState(null);
 
   const [selectedEchoIdx, setSelectedEchoIdx] = useState(0);
+  const echoSlotBorderPos = useMemo(() => {
+    return {
+      w: 148 + 10,
+      h: 620 + 10,
+      x: 1320 + 163 * selectedEchoIdx - 5 - 2,
+      y: 300 - 5 - 2
+    };
+  }, [selectedEchoIdx])
 
   
 
@@ -120,15 +130,7 @@ function ProfileCard() {
     };
     return strings[lang] || strings["en"];
   };
-  const setSlotStyle = ({ w = null, h = null, x = 0, y = 0 }) => {
-    return {
-      position: "absolute",
-      width: `${w === null ? "100%" : `calc(${w}px * ${sizeValue})`}`,
-      height: `${h === null ? "100%" : `calc(${h}px * ${sizeValue})`}`,
-      top: `calc(${y}px * ${sizeValue})`,
-      left: `calc(${x}px * ${sizeValue})`,
-    };
-  };
+  const { setSlotStyle } = useStyleHelper(sizeValue);
   function capitalizeFirst(str) {
     if (!str) return "";
     return str[0].toUpperCase() + str.slice(1).toLowerCase();
@@ -644,11 +646,12 @@ function ProfileCard() {
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
             }}>
+              {console.log(lang)}
+              {console.log(weaponId)}
             {characterData && weaponId
-              ? weapon[characterData.weapon].find((w) => w.id === weaponId)?.[
-                  lang ?? "en"
-                ] ?? ""
-              : ""}
+              ? weapon[characterData.weapon].find(
+                (item) => item.id === weaponId)?.[lang == "en" ? "id" : lang] ?? ""
+              : "error"}
           </span>
           {/* //$ Weapon Sub Stat */}
           <img
@@ -720,7 +723,9 @@ function ProfileCard() {
                     ? finalStats[statId[idx]].toFixed(idx > 2 ? 1 : 0)
                     : finalStats?.[statId[idx] ?? ""]
                 }${idx > 2 ? "%" : ""}`,
-                `${finalStats?.[`${statId[idx]}Delta` ?? ""]}${idx > 2 ? "%" : ""}`,
+                `${finalStats?.[`${statId[idx]}Delta` ?? ""]}${
+                  idx > 2 ? "%" : ""
+                }`,
               ]}
               fontSize={[`${30 * sizeValue}px`, `${17.5 * sizeValue}px`]}
             />
@@ -860,6 +865,12 @@ function ProfileCard() {
             />
           </div>
         ))}
+        <div className=""
+        style={{
+          ...setSlotStyle(echoSlotBorderPos),
+          border: "1px solid #ffffff",
+          backgroundColor: "#ffffff33"
+        }}/>
       </div>
       <div className="profile-ocr-slot">
         <div
@@ -991,12 +1002,14 @@ function ProfileCard() {
                   }}>
                   <div
                     style={{
-                      ...setSlotStyle({ w: 750 - 2, h: 616 - 2, y: 116}),
+                      ...setSlotStyle({ w: 750 - 2, h: 700 - 2, y: 116 }),
                       backgroundColor: "#00000033",
                       border: "1px dashed #fff",
                     }}>
-
-                    </div>
+                    <EchoStatDrop
+                      index = {idx}
+                    />
+                  </div>
                 </div>
               </motion.div>
             ) : null
@@ -1005,5 +1018,7 @@ function ProfileCard() {
       </div>
     </div>
   );
+  return { setSlotStyle };
 }
 export default ProfileCard;
+

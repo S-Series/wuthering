@@ -253,7 +253,7 @@ export const FixedStats = {
   },
   HavocBns: {
     id: "HavocBns",
-    en: "Davoc Attack Damage Bonus",
+    en: "Havoc Attack Damage Bonus",
     kr: "인멸 피해 보너스",
     jp: "消滅ダメージアップ",
     zh: "湮滅傷害加成",
