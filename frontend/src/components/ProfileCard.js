@@ -876,7 +876,7 @@ function ProfileCard() {
         <div
           className="ocr-select-slot"
           style={{
-            ...setSlotStyle({ w: 500, h: 816, x: 20, y: 20 }),
+            ...setSlotStyle({ w: 550, h: 816, x: 20, y: 20 }),
             backgroundColor: "#00000033",
           }}>
           <span
@@ -896,7 +896,7 @@ function ProfileCard() {
                 key={idx}
                 style={{
                   ...setSlotStyle({
-                    w: 500,
+                    w: 550,
                     h: 120,
                     x: 0,
                     y: 100 + idx * 150,
@@ -906,7 +906,7 @@ function ProfileCard() {
                 <div
                   className="ocr-react-select-slot"
                   style={{
-                    ...setSlotStyle({ w: 260, h: 80, x: 15, y: 20 }),
+                    ...setSlotStyle({ w: 300, h: 80, x: 15, y: 20 }),
                   }}>
                   <Select
                     className="ocr-cost-select"
@@ -948,7 +948,7 @@ function ProfileCard() {
                 <button
                   className="ocr-react-select-btn"
                   style={{
-                    ...setSlotStyle({ w: 180, h: 80, x: 300, y: 20 }),
+                    ...setSlotStyle({ w: 180, h: 80, x: 350, y: 20 }),
                     backgroundColor: `${
                       idx === selectedEchoIdx ? "#99ccff" : "#fff"
                     }`,
@@ -982,12 +982,12 @@ function ProfileCard() {
                 <div
                   className="ocr-input-slot ocr"
                   style={{
-                    ...setSlotStyle({ w: 800, h: 816, x: 540, y: 20 }),
+                    ...setSlotStyle({ w: 900, h: 816, x: 590, y: 20 }),
                     backgroundColor: "#00000033",
                   }}>
                   <div
                     style={{
-                      ...setSlotStyle({ w: 750 - 2, h: 616 - 2, x: 25, y: 25 }),
+                      ...setSlotStyle({ w: 850 - 2, h: 616 - 2, x: 25, y: 25 }),
                       backgroundColor: "#00000033",
                       border: "1px dashed #fff",
                     }}>
@@ -997,17 +997,17 @@ function ProfileCard() {
                 <div
                   className="ocr-input-slot dropdown"
                   style={{
-                    ...setSlotStyle({ w: 750, h: 816, x: 1360, y: 20 }),
+                    ...setSlotStyle({ w: 600, h: 816, x: 1510, y: 20 }),
                     backgroundColor: "#00000033",
                   }}>
                   <div
                     style={{
-                      ...setSlotStyle({ w: 750 - 2, h: 700 - 2, y: 116 }),
+                      ...setSlotStyle({ w: 600 - 2, h: 816 - 2, y: 0 }),
                       backgroundColor: "#00000033",
-                      border: "1px dashed #fff",
                     }}>
                     <EchoStatDrop
                       index = {idx}
+                      sizeValue = {sizeValue}
                     />
                   </div>
                 </div>

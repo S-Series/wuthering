@@ -1,6 +1,6 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
-export function useStyleHelper(sizeValue = 0) {
+export function useStyleHelper(sizeValue = 1) {
   const setSlotStyle = useCallback(
     ({ w = null, h = null, x = 0, y = 0 }) => ({
       position: "absolute",
@@ -11,6 +11,7 @@ export function useStyleHelper(sizeValue = 0) {
     }),
     [sizeValue]
   );
+
 
   return {
     setSlotStyle,
