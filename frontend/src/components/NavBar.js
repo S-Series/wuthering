@@ -2,16 +2,12 @@ import "./NavBar.css";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useProfile } from "../hooks/useProfile";
 
 function NavBar() {
-  const backend = "https://wuthering-v1in.onrender.com/static";
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const { lang, setLang } = useProfile();
   const navigate = useNavigate();
-  const [language, setLanguage] = useState("kr");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("lang");
-    if (saved) setLanguage(saved);
-  }, []);
 
   const getStringInfo = (lang) => {
   const strings = {
@@ -57,7 +53,7 @@ function NavBar() {
     { value: "jp", label: "日本語" },
     { value: "zh", label: "中文" },
   ];
-  const selectedOption = languageOptions.find((opt) => opt.value === language);
+  const selectedOption = languageOptions.find((opt) => opt.value === lang);
 
   const customLangSelectStyles = {
     control: (base, state) => ({
@@ -87,12 +83,12 @@ function NavBar() {
     <nav className="navbar">
       <div className="nav-left">
         <button className="home-button" onClick={() => navigate("/")}>
-          <img src={`${backend}/default.webp`} className="main-icon"></img>
-          {getStringInfo(language)[0]}
+          <img src={`${apiUrl}/default.webp`} className="main-icon"></img>
+          {getStringInfo(lang)[0]}
         </button>
         <div className="nav-left text-box">
-          <span className="nav-left text">{getStringInfo(language)[1]}</span>
-          <span className="nav-left text">{getStringInfo(language)[2]}</span>
+          <span className="nav-left text">{getStringInfo(lang)[1]}</span>
+          <span className="nav-left text">{getStringInfo(lang)[2]}</span>
         </div>
       </div>
       <div className="nav-right">
@@ -101,8 +97,7 @@ function NavBar() {
           value={selectedOption}
           onChange={(selected) => {
             const value = selected.value;
-            setLanguage(value);
-            localStorage.setItem("lang", value);
+            setLang(value);
             window.location.reload();
           }}
           options={languageOptions}
@@ -110,22 +105,22 @@ function NavBar() {
           isSearchable={false}
         />
         <button className="nav-button" onClick={() => navigate()}>
-          <img src={`${backend}/info.png`} className="icon"></img>
-          <span className="nav-text">{getStringInfo(language)[3]}</span>
+          <img src={`${apiUrl}/info.png`} className="icon"></img>
+          <span className="nav-text">{getStringInfo(lang)[3]}</span>
         </button>
         <button
           className="nav-button"
           onClick={() =>
             window.open("https://github.com/S-Series/wuthering", "_blank")
           }>
-          <img src={`${backend}/github.png`} className="icon"></img>
-          <span className="nav-text">{getStringInfo(language)[4]}</span>
+          <img src={`${apiUrl}/github.png`} className="icon"></img>
+          <span className="nav-text">{getStringInfo(lang)[4]}</span>
         </button>
         <button
           className="nav-button"
           onClick={() => window.open("https://ko-fi.com/sseries", "_blank")}>
-          <img src={`${backend}/kofi.png`} className="icon"></img>
-          <span className="nav-text">{getStringInfo(language)[5]}</span>
+          <img src={`${apiUrl}/kofi.png`} className="icon"></img>
+          <span className="nav-text">{getStringInfo(lang)[5]}</span>
         </button>
       </div>
     </nav>

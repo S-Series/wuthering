@@ -28,8 +28,6 @@ function ProfileCard() {
   //#region Variables
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  const [initKey, setInitKey] = useState(true);
-  const [lang, setLang] = useState("en");
   const [sizeValue, setSizeValue] = useState(1.0);
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
 
@@ -73,6 +71,7 @@ function ProfileCard() {
   }));
 
   const {
+    lang,
     characterId,
     setCharacterId,
     weaponId,
@@ -93,7 +92,7 @@ function ProfileCard() {
       `${characterData?.element ?? ""}Bns`,
       `${characterData?.type ?? ""}Bns`,
     ];
-  }, [finalStats]);
+  }, [characterData?.element, characterData?.type]);
   //#endregion
 
   //#region Functions
@@ -140,8 +139,6 @@ function ProfileCard() {
   //#region Initialize
   //$ OnLoad
   useEffect(() => {
-    setLang(localStorage.getItem("lang"));
-
     function handleResize() {
       const w = ProfileCardSlotRef.current.offsetWidth;
       const h = ProfileCardSlotRef.current.offsetHeight;
@@ -171,6 +168,7 @@ function ProfileCard() {
   //#endregion
 
   //#region React Select Options
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weaponTypes = [
     { kr: null, en: null, jp: null, zh: null },
     { kr: "직검", en: "sword", jp: "", zh: "" },
@@ -212,8 +210,9 @@ function ProfileCard() {
         </div>
       ),
     }));
-  }, [lang, reloadKey]);
+  }, [apiUrl, lang, sizeValue, weaponTypes]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const elements = [
     { en: null, kr: null, jp: null, zh: null },
     { kr: "기류", en: "Aero", jp: "", zh: "" },
@@ -256,7 +255,7 @@ function ProfileCard() {
         </div>
       ),
     }));
-  }, [lang, reloadKey]);
+  }, [apiUrl, elements, lang, sizeValue]);
 
   const characterOptions = useMemo(() => {
     const filtered_W = weaponFilter
@@ -299,7 +298,7 @@ function ProfileCard() {
         </div>
       ),
     }));
-  }, [elementFilter, lang, sizeValue, weaponFilter]);
+  }, [apiUrl, elementFilter, lang, sizeValue, weaponFilter]);
   const weaponOptions = useMemo(() => {
     const filtered = characterData ? weapon[characterData.weapon] : [];
 
@@ -340,7 +339,7 @@ function ProfileCard() {
   //#endregion
 
   return (
-    <div className="profile-portrait">
+    <div key={lang} className="profile-portrait">
       <div className="profile-select-slot">
         <Select
           className="weapon-select-dropdown"
@@ -369,6 +368,7 @@ function ProfileCard() {
           onChange={(item) => {
             setWeaponFilter(item.value);
           }}
+          defaultValue={weaponTypeOptions[0]}
         />
         <div className="empty-select-dropdown" />
         <Select
@@ -582,7 +582,6 @@ function ProfileCard() {
             options={W_ConstellationOption}
             onChange={(item) => {
               profileData.constellation = item.value;
-              setInitKey((prev) => !prev);
             }}
             styles={{
               control: (base) => ({
@@ -646,11 +645,9 @@ function ProfileCard() {
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
             }}>
-              {console.log(lang)}
-              {console.log(weaponId)}
             {characterData && weaponId
               ? weapon[characterData.weapon].find(
-                (item) => item.id === weaponId)?.[lang == "en" ? "id" : lang] ?? ""
+                (item) => item.id === weaponId)?.[lang === "en" ? "id" : lang] ?? ""
               : "error"}
           </span>
           {/* //$ Weapon Sub Stat */}
@@ -1018,7 +1015,6 @@ function ProfileCard() {
       </div>
     </div>
   );
-  return { setSlotStyle };
 }
 export default ProfileCard;
 

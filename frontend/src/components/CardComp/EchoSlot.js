@@ -11,7 +11,6 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
 
   return (
     <div>
-      {console.log(echoData)}
       <img
         alt=""
         src={echoData?.echoId && echoData?.echoId !== "default"
