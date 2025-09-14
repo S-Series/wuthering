@@ -1,4 +1,4 @@
-import { echoDict } from "../../data/Echo";
+import { echoDict, harmony } from "../../data/Echo";
 import { userdata } from "../../data/userData";
 import EchoData from "../../data/userData";
 import ProfileCard from "../ProfileCard";
@@ -13,9 +13,10 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
     <div>
       <img
         alt=""
-        src={echoData?.echoId && echoData?.echoId !== "default"
-          ? `${apiUrl}/static/ico/echos/${echoData.echoId}.webp`
-          : "/default.webp"
+        src={
+          echoData?.echoId && echoData?.echoId !== "default"
+            ? `${apiUrl}/static/ico/echos/${echoData.echoId}.webp`
+            : "/default.webp"
         }
         style={{
           ...setSlotStyle({ w: 140 - 2, h: 140 - 2, x: 4, y: 4 }),
@@ -30,12 +31,18 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
           ...setSlotStyle({ w: 40, h: 40, x: 54, y: 124 }),
           zIndex: 200,
         }}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/default.webp";
+        }}
       />
       <div>
         <div
           style={{
             ...setSlotStyle({ w: 148, h: 4, x: 0, y: 142 }),
-            backgroundColor: "#cc99cc",
+            backgroundColor: `${
+              harmony[echoData?.harmony]?.colorCode || "#fff"
+            }`,
             zIndex: 100,
           }}
         />
@@ -55,7 +62,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
         />
       </div>
       {echoData.stats.map((item, idx) =>
-        echoData.stats[idx][0] !== null && echoData.stats[idx][1] !== null ? (
+        echoData.stats[idx][0] !== "dummy" && echoData.stats[idx][1] !== 0 ? (
           <div key={idx} style={{ alignContent: "center" }}>
             <img
               alt=""
@@ -82,12 +89,11 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
                 transform: `translateY(-${3 * sizeValue}px)`,
                 fontSize: `${30 * sizeValue}px`,
               }}>
-              {echoData.stats[idx][1].toFixed(1)}
-              {echoData.stats[idx][0].includes("Crit") ||
-              echoData.stats[idx][0].includes("bns") ||
-              echoData.stats[idx][0].includes("pct")
-                ? "%"
-                : ""}
+              {["Crit", "bns", "pct"].some((item) =>
+                echoData.stats[idx][0].includes(item)
+              )
+                ? `${echoData.stats[idx][1].toFixed(1)}%`
+                : `${Math.round(echoData.stats[idx][1])}`}
             </span>
           </div>
         ) : (
@@ -117,7 +123,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
                 transform: `translateY(-${4 * sizeValue}px)`,
                 fontSize: `${30 * sizeValue}px`,
               }}>
-              - - - -
+              ----
             </span>
           </div>
         )

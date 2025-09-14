@@ -42,11 +42,9 @@ function ProfileCard() {
       w: 148 + 10,
       h: 620 + 10,
       x: 1320 + 163 * selectedEchoIdx - 5 - 2,
-      y: 300 - 5 - 2
+      y: 300 - 5 - 2,
     };
-  }, [selectedEchoIdx])
-
-  
+  }, [selectedEchoIdx]);
 
   const C_ConstellationList = [
     { value: 0, label: "C0" },
@@ -88,7 +86,13 @@ function ProfileCard() {
   } = useProfile();
 
   const statId = useMemo(() => {
-    return ["hp", "atk", "def", "ResonanceBns", "CritRate", "CritDmg", 
+    return [
+      "hp",
+      "atk",
+      "def",
+      "ResonanceBns",
+      "CritRate",
+      "CritDmg",
       `${characterData?.element ?? ""}Bns`,
       `${characterData?.type ?? ""}Bns`,
     ];
@@ -96,38 +100,34 @@ function ProfileCard() {
   //#endregion
 
   //#region Functions
-  const getStringInfo = (lang) => {
+  const getStringInfo = (lang, idx) => {
     const strings = {
       kr: [
-        "캐릭터 선택",
-        "무기 선택",
-        "* 캐릭터 및 무기 Lv90 기준",
-        "* 모든 조건부 스텟은 적용되지 않습니다",
-        "프로필 배경 이미지",
+        "무기 분류",
+        "화음",
+        "* 모든 조건부 능력치는 적용되지 않습니다",
+        "* 캐릭터와 무기 90레벨, 모든 노드 개방 기준",
       ],
       jp: [
-        "キャラ選択",
-        "武器選択",
-        "* キャラと武器はLv90基準",
-        "* 条件付きステータスは適用されません",
-        "プロフィール背景画像",
+        "武器分類",
+        "ハーモニー",
+        "* すべての条件付きステータスは適用されません",
+        "* キャラクターと武器はLv90、全ノード解放基準",
       ],
       zh: [
-        "角色选择",
-        "武器选择",
-        "* 角色和武器以90级为基准",
-        "* 所有条件属性不会被应用",
-        "档案背景图像",
+        "武器分类",
+        "合鳴",
+        "* 所有条件属性不适用",
+        "* 基于角色与武器90级，所有节点解锁",
       ],
       en: [
-        "Select Character",
-        "Select Weapon",
-        "* Based on Lv90 character and weapon",
-        "* Conditional stats are not applied",
-        "Profile Background Image",
+        "Equipment",
+        "Sonata",
+        "* All conditional stats are not applied",
+        "* Based on Lv90 character and weapon, all nodes unlocked",
       ],
     };
-    return strings[lang] || strings["en"];
+    return strings[lang][idx] || strings["en"][idx];
   };
   const { setSlotStyle } = useStyleHelper(sizeValue);
   function capitalizeFirst(str) {
@@ -187,14 +187,14 @@ function ProfileCard() {
             display: "flex",
             alignItems: "center",
             gap: `${10 * sizeValue}px`,
-          }}
-        >
+          }}>
           <img
             alt=""
             src={`${apiUrl}/static/ico/weapon_type/${e.en}.webp`}
             style={{
               width: `${75 * sizeValue}px`,
               height: `${75 * sizeValue}px`,
+              filter: "drop-shadow(0px 0px 8px rgba(0,0,0,1))",
             }}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -203,8 +203,7 @@ function ProfileCard() {
           />
           <span
             className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}
-          >
+            style={{ fontSize: `${32 * sizeValue}px` }}>
             {e[lang ?? "en"] ?? "All"}
           </span>
         </div>
@@ -232,14 +231,14 @@ function ProfileCard() {
             display: "flex",
             alignItems: "center",
             gap: `${10 * sizeValue}px`,
-          }}
-        >
+          }}>
           <img
             alt=""
             src={`${apiUrl}/static/ico/element/${e?.en?.toLowerCase()}.png`}
             style={{
               width: `${75 * sizeValue}px`,
               height: `${75 * sizeValue}px`,
+              filter: "drop-shadow(0px 0px 8px rgba(0,0,0,1))",
             }}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -248,8 +247,7 @@ function ProfileCard() {
           />
           <span
             className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}
-          >
+            style={{ fontSize: `${32 * sizeValue}px` }}>
             {e[lang ?? "en"] ?? "All"}
           </span>
         </div>
@@ -274,15 +272,14 @@ function ProfileCard() {
             display: "flex",
             alignItems: "center",
             gap: `${10 * sizeValue}px`,
-          }}
-        >
+          }}>
           <img
             alt=""
             src={`${apiUrl}/static/character/${item?.id}/ico.webp`}
             style={{
               width: `${75 * sizeValue}px`,
               height: `${75 * sizeValue}px`,
-              transform: `translateX(-${10 * sizeValue}px)`,
+              filter: "drop-shadow(0px 0px 4px rgba(0,0,0,1))",
             }}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -291,8 +288,7 @@ function ProfileCard() {
           />
           <span
             className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}
-          >
+            style={{ fontSize: `${32 * sizeValue}px` }}>
             {item[lang === "en" ? "id" : lang] ?? "error"}
           </span>
         </div>
@@ -310,8 +306,7 @@ function ProfileCard() {
             display: "flex",
             alignItems: "center",
             gap: `${10 * sizeValue}px`,
-          }}
-        >
+          }}>
           <img
             alt=""
             src={`${apiUrl}/static/weapon/${characterData.weapon}/${item?.imgKey}.png`}
@@ -319,6 +314,7 @@ function ProfileCard() {
               width: `${75 * sizeValue}px`,
               height: `${75 * sizeValue}px`,
               transform: `translateX(-${10 * sizeValue}px)`,
+              filter: "drop-shadow(0px 0px 4px rgba(0,0,0,0.5))",
             }}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -327,129 +323,265 @@ function ProfileCard() {
           />
           <span
             className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}
-          >
+            style={{ fontSize: `${32 * sizeValue}px` }}>
             {item[lang === "en" ? "id" : lang] ?? "error"}
           </span>
         </div>
       ),
     }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterData, lang, sizeValue]);
   //#endregion
 
   return (
     <div key={lang} className="profile-portrait">
       <div className="profile-select-slot">
-        <Select
-          className="weapon-select-dropdown"
-          menuPlacement="auto"
-          options={weaponTypeOptions}
-          placeholder="W-Filter"
-          styles={{
-            control: (base, state) => ({
-              ...base,
-              width: `${300 * sizeValue}px`,
-              height: `${100 * sizeValue}px`,
-              backgroundColor: "#cccccc",
-            }),
-            menu: (base) => ({
-              ...base,
-              zIndex: 9999,
-              backgroundColor: "#666666",
-            }),
-            option: (base) => ({
-              ...base,
-              transform: `translateX(-${10 * sizeValue}px)`,
-              color: "#ffffff",
-              backgroundColor: "#666666",
-            }),
-          }}
-          onChange={(item) => {
-            setWeaponFilter(item.value);
-          }}
-          defaultValue={weaponTypeOptions[0]}
-        />
+        <div>
+          <Select
+            className="weapon-select-dropdown"
+            menuPlacement="auto"
+            options={weaponTypeOptions}
+            placeholder={
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <img
+                  src="/default.webp"
+                  alt=""
+                  style={{
+                    width: `${75 * sizeValue}px`,
+                    height: `${75 * sizeValue}px`,
+                    filter: "drop-shadow(0px 0px 4px rgba(0,0,0,1))",
+                  }}
+                />
+                <span
+                  className={`${lang}Font`}
+                  style={{ fontSize: `${28 * sizeValue}px` }}>
+                  {getStringInfo(lang, 0)}
+                </span>
+              </div>
+            }
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                width: `${350 * sizeValue}px`,
+                height: `${100 * sizeValue}px`,
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 9999,
+              }),
+              option: (base) => ({
+                ...base,
+                transform: `translateX(${-10 * sizeValue}px)`,
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                height: "100%",
+                overflow: "visible",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                overflow: "visible",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }),
+            }}
+            onChange={(item) => {
+              setWeaponFilter(item.value);
+            }}
+          />
+        </div>
         <div className="empty-select-dropdown" />
-        <Select
-          className="element-select-dropdown"
-          menuPlacement="auto"
-          options={elementOptions}
-          placeholder="E-Filter"
-          styles={{
-            control: (base, state) => ({
-              ...base,
-              width: `${300 * sizeValue}px`,
-              height: `${100 * sizeValue}px`,
-              backgroundColor: "#cccccc",
-            }),
-            menu: (base) => ({
-              ...base,
-              zIndex: 9999,
-              backgroundColor: "#666666",
-            }),
-            option: (base) => ({
-              ...base,
-              transform: `translateX(-${10 * sizeValue}px)`,
-              color: "#ffffff",
-              backgroundColor: "#666666",
-            }),
-          }}
-          onChange={(item) => {
-            setElementFilter(item.value);
-          }}
-        />
+        <div>
+          <Select
+            className="element-select-dropdown"
+            menuPlacement="auto"
+            options={elementOptions}
+            placeholder={
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <img
+                  src="/default.webp"
+                  alt=""
+                  style={{
+                    width: `${75 * sizeValue}px`,
+                    height: `${75 * sizeValue}px`,
+                    filter: "drop-shadow(0px 0px 4px rgba(0,0,0,1))",
+                  }}
+                />
+                <span
+                  className={`${lang}Font`}
+                  style={{ fontSize: `${28 * sizeValue}px` }}>
+                  {getStringInfo(lang, 1)}
+                </span>
+              </div>
+            }
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                width: `${350 * sizeValue}px`,
+                height: `${100 * sizeValue}px`,
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 9999,
+              }),
+              option: (base) => ({
+                ...base,
+                transform: `translateX(-${10 * sizeValue}px)`,
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                height: "100%",
+                overflow: "visible",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                overflow: "visible",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }),
+            }}
+            onChange={(item) => {
+              setElementFilter(item.value);
+            }}
+          />
+        </div>
         <div className="empty-select-dropdown" />
-        <Select
-          className="character-select-dropdown"
-          menuPlacement="auto"
-          options={characterOptions}
-          placeholder="Character Option"
-          styles={{
-            control: (base, state) => ({
-              ...base,
-              width: `${400 * sizeValue}px`,
-              height: `${100 * sizeValue}px`,
-            }),
-            menu: (base) => ({
-              ...base,
-              zIndex: 9999,
-            }),
-            option: (base) => ({
-              ...base,
-            }),
-          }}
-          onChange={(item) => {
-            setCharacterId(item.value);
-          }}
-        />
+        <div>
+          <Select
+            className="character-select-dropdown"
+            menuPlacement="auto"
+            options={characterOptions}
+            placeholder={
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <img
+                  alt=""
+                  src={`${apiUrl}/static/character/${characterData?.id}/ico.webp`}
+                  style={{
+                    width: `${75 * sizeValue}px`,
+                    height: `${75 * sizeValue}px`,
+                    overflow: "visible",
+                  }}
+                />
+                <span
+                  className={`${lang}Font`}
+                  style={{ fontSize: `${32 * sizeValue}px` }}>
+                  {`${
+                    characterData?.[
+                      lang === "en" ? "id" : lang ?? "Character"
+                    ] || {Set}
+                  }`}
+                </span>
+              </div>
+            }
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                width: `${400 * sizeValue}px`,
+                height: `${100 * sizeValue}px`,
+                overflow: "visible",
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 9999,
+              }),
+              option: (base) => ({
+                ...base,
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                height: "100%",
+                overflow: "visible",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                overflow: "visible",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }),
+            }}
+            onChange={(item) => {
+              setCharacterId(item.value);
+            }}
+          />
+        </div>
         <div className="empty-select-dropdown" />
-        <Select
-          className="weapon-select-dropdown"
-          menuPlacement="auto"
-          options={weaponOptions}
-          placeholder="Weapon Option"
-          styles={{
-            control: (base, state) => ({
-              ...base,
-              width: `${400 * sizeValue}px`,
-              height: `${100 * sizeValue}px`,
-            }),
-            menu: (base) => ({
-              ...base,
-              zIndex: 9999,
-            }),
-            option: (base) => ({
-              ...base,
-            }),
-          }}
-          onChange={(item) => {
-            setWeaponId(item.value);
-          }}
-        />
+        <div>
+          <Select
+            className="weapon-select-dropdown"
+            menuPlacement="auto"
+            options={weaponOptions}
+            placeholder={
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <img
+                  alt=""
+                  src={
+                    `
+                    ${apiUrl}/static/weapon/${characterData?.weapon}/${weaponData?.imgKey}.png` ||
+                    "default.webp"
+                  }
+                  style={{
+                    width: `${75 * sizeValue}px`,
+                    height: `${75 * sizeValue}px`,
+                    overflow: "visible",
+                  }}
+                />
+                <span
+                  className={`${lang}Font`}
+                  style={{ fontSize: `${32 * sizeValue}px` }}>
+                  {characterData && weaponId
+                    ? weapon[characterData.weapon].find(
+                        (item) => item.id === weaponId
+                      )?.[lang === "en" ? "id" : lang] ?? ""
+                    : "error"}
+                </span>
+              </div>
+            }
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                width: `${400 * sizeValue}px`,
+                height: `${100 * sizeValue}px`,
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 9999,
+              }),
+              option: (base) => ({
+                ...base,
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                height: "100%",
+                overflow: "visible",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                overflow: "visible",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }),
+            }}
+            onChange={(item) => {
+              setWeaponId(item.value);
+            }}
+          />
+        </div>
       </div>
-      <div
-        className="profile-card-slot"
+      <div className="profile-option-alert">
+        <div className={`${lang}Font profile-alert-text`}>
+            <span style={{
+              fontSize: `${24 * sizeValue}px`,
+              marginBottom: `${15 * sizeValue}px`
+            }}>
+              {`${getStringInfo(lang, 2)}\n${getStringInfo(lang, 3)}`}
+            </span>
+        </div>
+      </div>
+      <div className="profile-card-slot"
         ref={ProfileCardSlotRef}
         style={{ backgroundImage: `url("/asdf2.jpg")` }}>
         {/* //$ Character Image */}
@@ -647,7 +779,8 @@ function ProfileCard() {
             }}>
             {characterData && weaponId
               ? weapon[characterData.weapon].find(
-                (item) => item.id === weaponId)?.[lang === "en" ? "id" : lang] ?? ""
+                  (item) => item.id === weaponId
+                )?.[lang === "en" ? "id" : lang] ?? ""
               : "error"}
           </span>
           {/* //$ Weapon Sub Stat */}
@@ -709,7 +842,7 @@ function ProfileCard() {
               key={idx}
               styles={[
                 setSlotStyle({ w: 570, h: 50, x: 15, y: 15 + idx * 70 }),
-                setSlotStyle({ w: 422.5, h: 50, x: 65, y: 2.5 }),
+                setSlotStyle({ w: 425, h: 50, x: 60, y: 2.5 }),
                 setSlotStyle({ w: 80, h: 35, x: 482.5, y: 16 }),
               ]}
               imgPath={`${apiUrl}/static/ico/stats/${statId[idx]}.webp`}
@@ -849,25 +982,24 @@ function ProfileCard() {
           }}>
           wwaves.dev/profile
         </span>
-        {profileData.echoData.map((item, idx) => (
+        {echoList.map((item, idx) => (
           <div
             key={idx}
             className="profile-card-echo-slot profile-slot"
             style={{
               ...setSlotStyle({ w: 148, h: 620, x: 1320 + 163 * idx, y: 300 }),
             }}>
-            <EchoSlot
-              echoData={profileData.echoData[idx]}
-              sizeValue={sizeValue}
-            />
+            <EchoSlot echoData={echoList[idx]} sizeValue={sizeValue} />
           </div>
         ))}
-        <div className=""
-        style={{
-          ...setSlotStyle(echoSlotBorderPos),
-          border: "1px solid #ffffff",
-          backgroundColor: "#ffffff33"
-        }}/>
+        <div
+          className=""
+          style={{
+            ...setSlotStyle(echoSlotBorderPos),
+            border: "1px solid #ffffff",
+            backgroundColor: "#ffffff33",
+          }}
+        />
       </div>
       <div className="profile-ocr-slot">
         <div
@@ -1002,10 +1134,7 @@ function ProfileCard() {
                       ...setSlotStyle({ w: 600 - 2, h: 816 - 2, y: 0 }),
                       backgroundColor: "#00000033",
                     }}>
-                    <EchoStatDrop
-                      index = {idx}
-                      sizeValue = {sizeValue}
-                    />
+                    <EchoStatDrop index={idx} sizeValue={sizeValue} />
                   </div>
                 </div>
               </motion.div>
@@ -1017,4 +1146,3 @@ function ProfileCard() {
   );
 }
 export default ProfileCard;
-

@@ -18,7 +18,7 @@ function StatSlot({
           display: "block",
           height: "90%",
           aspectRatio: "1/1",
-          marginLeft: "1.5%",
+          marginLeft: "1.1%",
         }}
         onError={(e) => {
           e.currentTarget.onerror = null;

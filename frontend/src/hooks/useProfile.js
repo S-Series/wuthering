@@ -20,9 +20,13 @@ export function useProfile() {
 
   const [constellation, setConstellation] = useState([0, 0]);
   const [echoList, setEchoList] = useState(
-    Array(5)
-      .fill(null)
-      .map(() => createEmptyEcho())
+    [
+      createEmptyEcho(4),
+      createEmptyEcho(3),
+      createEmptyEcho(3),
+      createEmptyEcho(1),
+      createEmptyEcho(1)
+    ]
   );
 
   function EditEcholist(index, newValue) {

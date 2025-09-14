@@ -56,6 +56,17 @@
     z-index: 250;
 }
 
+.profile-alert-text {
+    display: flex;
+    align-self: center;
+    justify-self: flex-end;
+    font-weight: 400;
+    white-space: pre-wrap;
+    text-align: right;
+    line-height: 1.5;
+    color: #00000099;
+}
+
 .profile-slot {
     display: block;
     position: absolute;
@@ -109,7 +120,8 @@
 .profile-select-slot {
     display: flex;
     position: relative;
-    margin: 25px;
+    margin-top: 25px;
+    margin-bottom: 15px;
     width: calc(100% - 50px);
     min-width: 856px;
     align-items: center;

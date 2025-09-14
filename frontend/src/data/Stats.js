@@ -136,7 +136,7 @@ export const FixedStats = {
   },
   normalBns: {
     id: "normalBns",
-    en: "Base Attack Bns.",
+    en: "Basic Attack DMG Bonus",
     kr: "일반공격 피해보너스",
     jp: "通常攻撃ダメージアップ",
     zh: "普攻伤害加成",
@@ -154,7 +154,7 @@ export const FixedStats = {
   },
   heavyBns: {
     id: "heavyBns",
-    en: "Heavy Attack Bns.",
+    en: "Heavy Attack DMG Bonus",
     kr: "강공격 피해보너스",
     jp: "重撃ダメージアップ",
     zh: "重击伤害加成",
@@ -172,7 +172,7 @@ export const FixedStats = {
   },
   skillBns: {
     id: "skillBns",
-    en: "Skill Attack Bns.",
+    en: "Skill DMG Bonus",
     kr: "공명스킬 피해보너스",
     jp: "共鳴スキルダメージアップ",
     zh: "共鸣技能伤害加成",
@@ -190,7 +190,7 @@ export const FixedStats = {
   },
   ultBns: {
     id: "ultBns",
-    en: "Ultimate Attack Bns.",
+    en: "Liberation DMG Bonus",
     kr: "공명해방 피해보너스",
     jp: "共鳴解放ダメージアップ",
     zh: "共鸣解放伤害加成",
@@ -208,7 +208,7 @@ export const FixedStats = {
   },
   GlacioBns: {
     id: "GlacioBns",
-    en: "Glacio Attack Bns.",
+    en: "Glacio DMG Bonus",
     kr: "응결 피해 보너스",
     jp: "凝縮ダメージアップ",
     zh: "冷凝伤害加成",
@@ -217,7 +217,7 @@ export const FixedStats = {
   },
   FusionBns: {
     id: "FusionBns",
-    en: "Fusion Attack Bns.",
+    en: "Fusion DMG Bonus",
     kr: "융용 피해 보너스",
     jp: "焦熱ダメージアップ",
     zh: "热熔伤害加成",
@@ -226,7 +226,7 @@ export const FixedStats = {
   },
   ElectroBns: {
     id: "ElectroBns",
-    en: "Electro Attack Bns.",
+    en: "Electro DMG Bonus",
     kr: "전도 피해 보너스",
     jp: "電導ダメージアップ",
     zh: "导电伤害加成",
@@ -235,7 +235,7 @@ export const FixedStats = {
   },
   AeroBns: {
     id: "AeroBns",
-    en: "Aero Attack Bns.",
+    en: "Aero DMG Bonus",
     kr: "기류 피해 보너스",
     jp: "気動ダメージアップ",
     zh: "氣動傷害加成",
@@ -244,7 +244,7 @@ export const FixedStats = {
   },
   SpectroBns: {
     id: "SpectroBns",
-    en: "Spectro Attack Bns.",
+    en: "Spectro DMG Bonus",
     kr: "회절 피해 보너스",
     jp: "回折ダメージアップ",
     zh: "衍射傷害加成",
@@ -253,7 +253,7 @@ export const FixedStats = {
   },
   HavocBns: {
     id: "HavocBns",
-    en: "Havoc Attack Bns.",
+    en: "Havoc DMG Bonus",
     kr: "인멸 피해 보너스",
     jp: "消滅ダメージアップ",
     zh: "湮滅傷害加成",
