@@ -1,29 +1,18 @@
 import { useMemo, useState } from "react";
-import Select, { components } from "react-select";
+import Select from "react-select";
 import { useProfile } from "../hooks/useProfile";
 import { useStyleHelper } from "../hooks/useStyleHelpers";
-
-import { FixedStats, FixedStatsMain4, FixedStatsMain3, FixedStatsMain1 } from "../data/Stats";
+import { FixedStats } from "../data/Stats";
 
 function EchoStatDrop({ index = 0, sizeValue = 1 }) {
-  const apiUrl = process.env.REACT_APP_API_URL;
-
   const lang = useProfile();
   const { setSlotStyle } = useStyleHelper(sizeValue);
-  const {echoList, EditEchoList} = useProfile();
-  const echoData = useMemo(() => {
-    return echoList[index];
-  }, [echoList]);
 
-  const dataIndex = useMemo(() => {
-    if (echoData.cost === 1) return 2;
-    else if (echoData.cost === 3) return 1;
-    else return 0; 
-  }, [echoData])
+  console.log(Object.values(FixedStats).map((stat) => stat.kr));
 
   const statsSelectOption = useMemo(() => {
-    return Object.values(FixedStats).map((item) => ({
-      value: item.id,
+    return Object.values(FixedStats).map((stat) => ({
+      value: stat.id,
       label: (
         <div
           style={{
@@ -49,22 +38,55 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
             className={`${lang}Font`}
             style={{ fontSize: `${32 * sizeValue}px` }}
           >
-            {item[lang === "en" ? "id" : lang] ?? "error"}
+            {stat[lang === "en" ? "id" : lang] ?? "error"}
           </span>
         </div>
       ),
     }));
   }, [lang, sizeValue]);
 
-  console.log(statsSelectOption);
+  const [primarySel, setPrimarySel] = useState(Array(5).fill(null));
+  const [secondarySel, setSecondarySel] = useState(Array(5).fill(null));
 
-  // size is 600 * 816
+  const makeValue = (val) =>
+    val == null ? null : statsSelectOption.find((o) => o.value === val) ?? null;
+
+  const isDisabledPrimary = (rowIndex) => (option) => {
+    if (secondarySel[rowIndex] === option.value) return true;
+    for (let i = 0; i < primarySel.length; i++) {
+      if (i !== rowIndex && primarySel[i] === option.value) return true;
+    }
+    return false;
+  };
+
+  const isDisabledSecondary = (rowIndex) => (option) => {
+    if (primarySel[rowIndex] === option.value) return true;
+    for (let i = 0; i < secondarySel.length; i++) {
+      if (i !== rowIndex && secondarySel[i] === option.value) return true;
+    }
+    return false;
+  };
+
+  const onChangePrimary = (rowIndex) => (opt) => {
+    const v = opt?.value ?? null;
+    setPrimarySel((prev) => {
+      const next = [...prev];
+      next[rowIndex] = v;
+      return next;
+    });
+  };
+
+  const onChangeSecondary = (rowIndex) => (opt) => {
+    const v = opt?.value ?? null;
+    setSecondarySel((prev) => {
+      const next = [...prev];
+      next[rowIndex] = v;
+      return next;
+    });
+  };
+
   return (
-    <div
-      style={{
-        pointerEvents: "auto",
-      }}
-    >
+    <div style={{ pointerEvents: "auto" }}>
       <div
         className="divider"
         style={{
@@ -73,24 +95,31 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         }}
       />
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="">
-          <div
-            style={{
-              ...setSlotStyle({ w: 300, h: 50, x: 15, y: 232 + i * 116 }),
-            }}
-          >
-            <Select options={statsSelectOption} />
+        <div key={i}>
+          <div style={{ ...setSlotStyle({ w: 300, h: 50, x: 15, y: 232 + i * 116 }) }}>
+            <Select
+              options={statsSelectOption}
+              value={makeValue(primarySel[i])}
+              onChange={onChangePrimary(i)}
+              isClearable
+              placeholder="Type"
+              isOptionDisabled={isDisabledPrimary(i)}
+            />
           </div>
-          <div
-            style={{
-              ...setSlotStyle({ w: 250, h: 50, x: 335, y: 232 + i * 116 }),
-            }}
-          >
-            <Select options={statsSelectOption} />
+          <div style={{ ...setSlotStyle({ w: 250, h: 50, x: 335, y: 232 + i * 116 }) }}>
+            <Select
+              options={statsSelectOption}
+              value={makeValue(secondarySel[i])}
+              onChange={onChangeSecondary(i)}
+              isClearable
+              placeholder="Element"
+              isOptionDisabled={isDisabledSecondary(i)}
+            />
           </div>
         </div>
       ))}
     </div>
   );
 }
+
 export default EchoStatDrop;

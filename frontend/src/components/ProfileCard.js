@@ -186,7 +186,7 @@ function ProfileCard() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: `${10 * sizeValue}px`,
+            gap: `${20 * sizeValue}px`,
           }}>
           <img
             alt=""
@@ -230,7 +230,7 @@ function ProfileCard() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: `${10 * sizeValue}px`,
+            gap: `${20 * sizeValue}px`,
           }}>
           <img
             alt=""
@@ -271,7 +271,7 @@ function ProfileCard() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: `${10 * sizeValue}px`,
+            gap: `${20 * sizeValue}px`,
           }}>
           <img
             alt=""
@@ -305,7 +305,7 @@ function ProfileCard() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: `${10 * sizeValue}px`,
+            gap: `${20 * sizeValue}px`,
           }}>
           <img
             alt=""
@@ -313,7 +313,6 @@ function ProfileCard() {
             style={{
               width: `${75 * sizeValue}px`,
               height: `${75 * sizeValue}px`,
-              transform: `translateX(-${10 * sizeValue}px)`,
               filter: "drop-shadow(0px 0px 4px rgba(0,0,0,0.5))",
             }}
             onError={(e) => {
@@ -342,7 +341,7 @@ function ProfileCard() {
             menuPlacement="auto"
             options={weaponTypeOptions}
             placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: `${25 * sizeValue}px` }}>
                 <img
                   src="/default.webp"
                   alt=""
@@ -354,7 +353,10 @@ function ProfileCard() {
                 />
                 <span
                   className={`${lang}Font`}
-                  style={{ fontSize: `${28 * sizeValue}px` }}>
+                  style={{ 
+                    fontSize: `${28 * sizeValue}px`,
+                    whiteSpace: "pre-wrap"
+                  }}>
                   {getStringInfo(lang, 0)}
                 </span>
               </div>
@@ -371,12 +373,10 @@ function ProfileCard() {
               }),
               option: (base) => ({
                 ...base,
-                transform: `translateX(${-10 * sizeValue}px)`,
               }),
               valueContainer: (base) => ({
                 ...base,
                 height: "100%",
-                overflow: "visible",
               }),
               singleValue: (base) => ({
                 ...base,
@@ -398,7 +398,7 @@ function ProfileCard() {
             menuPlacement="auto"
             options={elementOptions}
             placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: `${25 * sizeValue}px` }}>
                 <img
                   src="/default.webp"
                   alt=""
@@ -418,7 +418,7 @@ function ProfileCard() {
             styles={{
               control: (base, state) => ({
                 ...base,
-                width: `${350 * sizeValue}px`,
+                width: `${375 * sizeValue}px`,
                 height: `${100 * sizeValue}px`,
               }),
               menu: (base) => ({
@@ -432,7 +432,6 @@ function ProfileCard() {
               valueContainer: (base) => ({
                 ...base,
                 height: "100%",
-                overflow: "visible",
               }),
               singleValue: (base) => ({
                 ...base,
@@ -454,7 +453,7 @@ function ProfileCard() {
             menuPlacement="auto"
             options={characterOptions}
             placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: `${25 * sizeValue}px` }}>
                 <img
                   alt=""
                   src={`${apiUrl}/static/character/${characterData?.id}/ico.webp`}
@@ -478,7 +477,7 @@ function ProfileCard() {
             styles={{
               control: (base, state) => ({
                 ...base,
-                width: `${400 * sizeValue}px`,
+                width: `${450 * sizeValue}px`,
                 height: `${100 * sizeValue}px`,
                 overflow: "visible",
               }),
@@ -492,7 +491,6 @@ function ProfileCard() {
               valueContainer: (base) => ({
                 ...base,
                 height: "100%",
-                overflow: "visible",
               }),
               singleValue: (base) => ({
                 ...base,
@@ -514,7 +512,7 @@ function ProfileCard() {
             menuPlacement="auto"
             options={weaponOptions}
             placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: `${20 * sizeValue}px` }}>
                 <img
                   alt=""
                   src={
@@ -530,7 +528,10 @@ function ProfileCard() {
                 />
                 <span
                   className={`${lang}Font`}
-                  style={{ fontSize: `${32 * sizeValue}px` }}>
+                  style={{ 
+                    fontSize: `${28 * sizeValue}px`,
+                    whiteSpace: "pre-wrap"
+                  }}>
                   {characterData && weaponId
                     ? weapon[characterData.weapon].find(
                         (item) => item.id === weaponId
@@ -542,7 +543,7 @@ function ProfileCard() {
             styles={{
               control: (base, state) => ({
                 ...base,
-                width: `${400 * sizeValue}px`,
+                width: `${550 * sizeValue}px`,
                 height: `${100 * sizeValue}px`,
               }),
               menu: (base) => ({
@@ -555,14 +556,14 @@ function ProfileCard() {
               valueContainer: (base) => ({
                 ...base,
                 height: "100%",
-                overflow: "visible",
+                textOverflow: "clip"
               }),
               singleValue: (base) => ({
                 ...base,
                 overflow: "visible",
                 display: "flex",
                 alignItems: "center",
-                gap: 8,
+                textOverflow: "ellipsis"
               }),
             }}
             onChange={(item) => {
@@ -1142,6 +1143,7 @@ function ProfileCard() {
           )}
         </AnimatePresence>
       </div>
+      <div style={{height: `${1000 * sizeValue}px`}}/>
     </div>
   );
 }
