@@ -2,6 +2,7 @@
 import "./ProfileCard.css";
 import { useRef, useState, useEffect, useLayoutEffect, useMemo } from "react";
 import Select, { components } from "react-select";
+import Toggle from "react-toggle";
 import { motion, AnimatePresence } from "framer-motion";
 // data
 import { character, characterStat } from "../data/Character";
@@ -168,7 +169,6 @@ function ProfileCard() {
   //#endregion
 
   //#region React Select Options
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weaponTypes = [
     { kr: null, en: null, jp: null, zh: null },
     { kr: "직검", en: "sword", jp: "", zh: "" },
@@ -177,41 +177,7 @@ function ProfileCard() {
     { kr: "권갑", en: "gauntlet", jp: "", zh: "" },
     { kr: "증폭기", en: "rectifier", jp: "", zh: "" },
   ];
-  const [weaponFilter, setWeaponFilter] = useState(null);
-  const weaponTypeOptions = useMemo(() => {
-    return weaponTypes.map((e) => ({
-      value: e.en,
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: `${20 * sizeValue}px`,
-          }}>
-          <img
-            alt=""
-            src={`${apiUrl}/static/ico/weapon_type/${e.en}.webp`}
-            style={{
-              width: `${75 * sizeValue}px`,
-              height: `${75 * sizeValue}px`,
-              filter: "drop-shadow(0px 0px 8px rgba(0,0,0,1))",
-            }}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/default.webp";
-            }}
-          />
-          <span
-            className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}>
-            {e[lang ?? "en"] ?? "All"}
-          </span>
-        </div>
-      ),
-    }));
-  }, [apiUrl, lang, sizeValue, weaponTypes]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [weaponFilter, setWeaponFilter] = useState([]);
   const elements = [
     { en: null, kr: null, jp: null, zh: null },
     { kr: "기류", en: "Aero", jp: "", zh: "" },
@@ -221,239 +187,30 @@ function ProfileCard() {
     { kr: "회절", en: "Spectro", jp: "", zh: "" },
     { kr: "인멸", en: "Havoc", jp: "", zh: "" },
   ];
-  const [elementFilter, setElementFilter] = useState(null);
-  const elementOptions = useMemo(() => {
-    return elements.map((e) => ({
-      value: e.en,
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: `${20 * sizeValue}px`,
-          }}>
-          <img
-            alt=""
-            src={`${apiUrl}/static/ico/element/${e?.en?.toLowerCase()}.png`}
-            style={{
-              width: `${75 * sizeValue}px`,
-              height: `${75 * sizeValue}px`,
-              filter: "drop-shadow(0px 0px 8px rgba(0,0,0,1))",
-            }}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/default.webp";
-            }}
-          />
-          <span
-            className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}>
-            {e[lang ?? "en"] ?? "All"}
-          </span>
-        </div>
-      ),
-    }));
-  }, [apiUrl, elements, lang, sizeValue]);
-
-  const characterOptions = useMemo(() => {
-    const filtered_W = weaponFilter
-      ? character.filter((item) => item.weapon === weaponFilter)
-      : character;
-
-    const filtered_WE = elementFilter
-      ? filtered_W.filter((item) => item.element === elementFilter)
-      : filtered_W;
-
-    return filtered_WE.map((item) => ({
-      value: item.id,
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: `${20 * sizeValue}px`,
-          }}>
-          <img
-            alt=""
-            src={`${apiUrl}/static/character/${item?.id}/ico.webp`}
-            style={{
-              width: `${75 * sizeValue}px`,
-              height: `${75 * sizeValue}px`,
-              filter: "drop-shadow(0px 0px 4px rgba(0,0,0,1))",
-            }}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/default.webp";
-            }}
-          />
-          <span
-            className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}>
-            {item[lang === "en" ? "id" : lang] ?? "error"}
-          </span>
-        </div>
-      ),
-    }));
-  }, [apiUrl, elementFilter, lang, sizeValue, weaponFilter]);
-  const weaponOptions = useMemo(() => {
-    const filtered = characterData ? weapon[characterData.weapon] : [];
-
-    return filtered.map((item) => ({
-      value: item.id,
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: `${20 * sizeValue}px`,
-          }}>
-          <img
-            alt=""
-            src={`${apiUrl}/static/weapon/${characterData.weapon}/${item?.imgKey}.png`}
-            style={{
-              width: `${75 * sizeValue}px`,
-              height: `${75 * sizeValue}px`,
-              filter: "drop-shadow(0px 0px 4px rgba(0,0,0,0.5))",
-            }}
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = "/default.webp";
-            }}
-          />
-          <span
-            className={`${lang}Font`}
-            style={{ fontSize: `${32 * sizeValue}px` }}>
-            {item[lang === "en" ? "id" : lang] ?? "error"}
-          </span>
-        </div>
-      ),
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [characterData, lang, sizeValue]);
+  const [elementFilter, setElementFilter] = useState([]);
   //#endregion
 
   return (
     <div key={lang} className="profile-portrait">
+      <div className="profile-filter-slot">
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          
+        </div>
+      </div>
       <div className="profile-select-slot">
-        <div>
-          <Select
-            className="weapon-select-dropdown"
-            menuPlacement="auto"
-            options={weaponTypeOptions}
-            placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: `${25 * sizeValue}px` }}>
-                <img
-                  src="/default.webp"
-                  alt=""
-                  style={{
-                    width: `${75 * sizeValue}px`,
-                    height: `${75 * sizeValue}px`,
-                    filter: "drop-shadow(0px 0px 4px rgba(0,0,0,1))",
-                  }}
-                />
-                <span
-                  className={`${lang}Font`}
-                  style={{ 
-                    fontSize: `${28 * sizeValue}px`,
-                    whiteSpace: "pre-wrap"
-                  }}>
-                  {getStringInfo(lang, 0)}
-                </span>
-              </div>
-            }
-            styles={{
-              control: (base, state) => ({
-                ...base,
-                width: `${350 * sizeValue}px`,
-                height: `${100 * sizeValue}px`,
-              }),
-              menu: (base) => ({
-                ...base,
-                zIndex: 9999,
-              }),
-              option: (base) => ({
-                ...base,
-              }),
-              valueContainer: (base) => ({
-                ...base,
-                height: "100%",
-              }),
-              singleValue: (base) => ({
-                ...base,
-                overflow: "visible",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }),
-            }}
-            onChange={(item) => {
-              setWeaponFilter(item.value);
-            }}
-          />
-        </div>
-        <div className="empty-select-dropdown" />
-        <div>
-          <Select
-            className="element-select-dropdown"
-            menuPlacement="auto"
-            options={elementOptions}
-            placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: `${25 * sizeValue}px` }}>
-                <img
-                  src="/default.webp"
-                  alt=""
-                  style={{
-                    width: `${75 * sizeValue}px`,
-                    height: `${75 * sizeValue}px`,
-                    filter: "drop-shadow(0px 0px 4px rgba(0,0,0,1))",
-                  }}
-                />
-                <span
-                  className={`${lang}Font`}
-                  style={{ fontSize: `${28 * sizeValue}px` }}>
-                  {getStringInfo(lang, 1)}
-                </span>
-              </div>
-            }
-            styles={{
-              control: (base, state) => ({
-                ...base,
-                width: `${375 * sizeValue}px`,
-                height: `${100 * sizeValue}px`,
-              }),
-              menu: (base) => ({
-                ...base,
-                zIndex: 9999,
-              }),
-              option: (base) => ({
-                ...base,
-                transform: `translateX(-${10 * sizeValue}px)`,
-              }),
-              valueContainer: (base) => ({
-                ...base,
-                height: "100%",
-              }),
-              singleValue: (base) => ({
-                ...base,
-                overflow: "visible",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-              }),
-            }}
-            onChange={(item) => {
-              setElementFilter(item.value);
-            }}
-          />
-        </div>
         <div className="empty-select-dropdown" />
         <div>
           <Select
             className="character-select-dropdown"
             menuPlacement="auto"
-            options={characterOptions}
+            //options={characterOptions}
             placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: `${25 * sizeValue}px` }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: `${25 * sizeValue}px`,
+                }}>
                 <img
                   alt=""
                   src={`${apiUrl}/static/character/${characterData?.id}/ico.webp`}
@@ -469,7 +226,7 @@ function ProfileCard() {
                   {`${
                     characterData?.[
                       lang === "en" ? "id" : lang ?? "Character"
-                    ] || {Set}
+                    ] || { Set }
                   }`}
                 </span>
               </div>
@@ -510,9 +267,14 @@ function ProfileCard() {
           <Select
             className="weapon-select-dropdown"
             menuPlacement="auto"
-            options={weaponOptions}
+            //options={weaponOptions}
             placeholder={
-              <div style={{ display: "flex", alignItems: "center", gap: `${20 * sizeValue}px` }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: `${20 * sizeValue}px`,
+                }}>
                 <img
                   alt=""
                   src={
@@ -528,9 +290,9 @@ function ProfileCard() {
                 />
                 <span
                   className={`${lang}Font`}
-                  style={{ 
+                  style={{
                     fontSize: `${28 * sizeValue}px`,
-                    whiteSpace: "pre-wrap"
+                    whiteSpace: "pre-wrap",
                   }}>
                   {characterData && weaponId
                     ? weapon[characterData.weapon].find(
@@ -556,14 +318,14 @@ function ProfileCard() {
               valueContainer: (base) => ({
                 ...base,
                 height: "100%",
-                textOverflow: "clip"
+                textOverflow: "clip",
               }),
               singleValue: (base) => ({
                 ...base,
                 overflow: "visible",
                 display: "flex",
                 alignItems: "center",
-                textOverflow: "ellipsis"
+                textOverflow: "ellipsis",
               }),
             }}
             onChange={(item) => {
@@ -572,19 +334,19 @@ function ProfileCard() {
           />
         </div>
       </div>
-      <div className="profile-option-alert">
-        <div className={`${lang}Font profile-alert-text`}>
-            <span style={{
-              fontSize: `${24 * sizeValue}px`,
-              marginBottom: `${15 * sizeValue}px`
-            }}>
-              {`${getStringInfo(lang, 2)}\n${getStringInfo(lang, 3)}`}
-            </span>
-        </div>
-      </div>
-      <div className="profile-card-slot"
+      <div
+        className="profile-card-slot"
         ref={ProfileCardSlotRef}
         style={{ backgroundImage: `url("/asdf2.jpg")` }}>
+        <div className={`${lang}Font profile-alert-text`}>
+          <span
+            style={{
+              ...setSlotStyle({ w: 1000, h: 80, x: 1130, y: -100 }),
+              fontSize: `${28 * sizeValue}px`,
+            }}>
+            {`${getStringInfo(lang, 2)}\n${getStringInfo(lang, 3)}`}
+          </span>
+        </div>
         {/* //$ Character Image */}
         <div
           className="profile-card-character-view profile-slot"
@@ -1143,7 +905,7 @@ function ProfileCard() {
           )}
         </AnimatePresence>
       </div>
-      <div style={{height: `${1000 * sizeValue}px`}}/>
+      <div style={{ height: `${1000 * sizeValue}px` }} />
     </div>
   );
 }
