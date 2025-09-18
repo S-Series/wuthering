@@ -41,6 +41,15 @@
     flex-direction: column;
 }
 
+.profile-filter-slot {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-width: 856px;
+    aspect-ratio: 10 / 1;
+    background-color: #00000033;
+}
+
 .profile-card-slot {
     display: block;
     position: relative;
