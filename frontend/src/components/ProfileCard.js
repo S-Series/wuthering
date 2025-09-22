@@ -792,8 +792,7 @@ function ProfileCard() {
         />
       </div>
       <div className="profile-ocr-slot">
-        <div
-          className="ocr-select-slot"
+        <div className="ocr-select-slot"
           style={{
             ...setSlotStyle({ w: 550, h: 816, x: 20, y: 20 }),
             backgroundColor: "#00000033",
