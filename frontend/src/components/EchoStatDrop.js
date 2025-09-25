@@ -5,12 +5,12 @@ import { useStyleHelper } from "../hooks/useStyleHelpers";
 import { FixedStats } from "../data/Stats";
 
 function EchoStatDrop({ index = 0, sizeValue = 1 }) {
-  const lang = useProfile();
+  const { lang } = useProfile();
   const { setSlotStyle } = useStyleHelper(sizeValue);
 
-  const [statFilter, setStatFilter] = useState(() => []);
+  const [statFilter, setStatFilter] = useState(() => Array(5).fill(FixedStats.dummy));
   const statOption = useMemo(() => {
-    return statFilter.map((item) => ({
+    return Object.values(FixedStats).filter(item => item.id !== "dummy").map((item) => ({
       value: item.id,
       label: (
         <div>
@@ -21,6 +21,9 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       ),
     }));
   }, [statFilter]);
+  const statValueOption = useMemo(() => {
+
+  })
 
   return (
     <div style={{ pointerEvents: "auto" }}>

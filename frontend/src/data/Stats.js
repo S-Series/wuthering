@@ -1,4 +1,9 @@
 export const FixedStats = {
+  dummy: {
+    id: "dummy",
+    ValueMain: [],
+    ValueSub: [],
+  },
   hp: {
     id: "hp",
     en: "HP",
@@ -209,7 +214,7 @@ export const FixedStats = {
   GlacioBns: {
     id: "GlacioBns",
     en: "Glacio DMG Bonus",
-    kr: "응결 피해 보너스",
+    kr: "응결 피해보너스",
     jp: "凝縮ダメージアップ",
     zh: "冷凝伤害加成",
     ValueMain: [null, "30.0%", null],
@@ -218,7 +223,7 @@ export const FixedStats = {
   FusionBns: {
     id: "FusionBns",
     en: "Fusion DMG Bonus",
-    kr: "융용 피해 보너스",
+    kr: "융용 피해보너스",
     jp: "焦熱ダメージアップ",
     zh: "热熔伤害加成",
     ValueMain: [null, "30.0%", null],
@@ -227,7 +232,7 @@ export const FixedStats = {
   ElectroBns: {
     id: "ElectroBns",
     en: "Electro DMG Bonus",
-    kr: "전도 피해 보너스",
+    kr: "전도 피해보너스",
     jp: "電導ダメージアップ",
     zh: "导电伤害加成",
     ValueMain: [null, "30.0%", null],
@@ -236,7 +241,7 @@ export const FixedStats = {
   AeroBns: {
     id: "AeroBns",
     en: "Aero DMG Bonus",
-    kr: "기류 피해 보너스",
+    kr: "기류 피해보너스",
     jp: "気動ダメージアップ",
     zh: "氣動傷害加成",
     ValueMain: [null, "30.0%", null],
@@ -245,7 +250,7 @@ export const FixedStats = {
   SpectroBns: {
     id: "SpectroBns",
     en: "Spectro DMG Bonus",
-    kr: "회절 피해 보너스",
+    kr: "회절 피해보너스",
     jp: "回折ダメージアップ",
     zh: "衍射傷害加成",
     ValueMain: [null, "30.0%", null],
@@ -254,7 +259,7 @@ export const FixedStats = {
   HavocBns: {
     id: "HavocBns",
     en: "Havoc DMG Bonus",
-    kr: "인멸 피해 보너스",
+    kr: "인멸 피해보너스",
     jp: "消滅ダメージアップ",
     zh: "湮滅傷害加成",
     ValueMain: [null, "30.0%", null],
