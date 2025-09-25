@@ -46,8 +46,10 @@
     position: relative;
     width: 100%;
     min-width: 856px;
-    aspect-ratio: 10 / 1;
+    aspect-ratio: 20 / 1;
+    /*
     background-color: #00000033;
+    */
 }
 
 .profile-card-slot {

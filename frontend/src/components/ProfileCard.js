@@ -27,6 +27,7 @@ function ProfileCard() {
 
   //#region Variables
   const apiUrl = process.env.REACT_APP_API_URL;
+  const UI_COLOR = "#333366ff";
 
   const [sizeValue, setSizeValue] = useState(1.0);
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
@@ -168,32 +169,137 @@ function ProfileCard() {
   //#endregion
 
   //#region React Select Options
-  const weaponTypes = [
-    { kr: null, en: null, jp: null, zh: null },
-    { kr: "직검", en: "sword", jp: "", zh: "" },
-    { kr: "대검", en: "broadblade", jp: "", zh: "" },
-    { kr: "권총", en: "pistol", jp: "", zh: "" },
-    { kr: "권갑", en: "gauntlet", jp: "", zh: "" },
-    { kr: "증폭기", en: "rectifier", jp: "", zh: "" },
+  const WEAPON_TYPES = [
+    { value : "sword", kr: "직검", en: "sword", jp: "", zh: "" },
+    { value : "broadblade", kr: "대검", en: "broadblade", jp: "", zh: "" },
+    { value : "pistol", kr: "권총", en: "pistol", jp: "", zh: "" },
+    { value : "gauntlet", kr: "권갑", en: "gauntlet", jp: "", zh: "" },
+    { value : "rectifier", kr: "증폭기", en: "rectifier", jp: "", zh: "" },
   ];
   const [weaponFilter, setWeaponFilter] = useState([]);
-  const elements = [
-    { en: null, kr: null, jp: null, zh: null },
-    { kr: "기류", en: "Aero", jp: "", zh: "" },
-    { kr: "융용", en: "Fusion", jp: "", zh: "" },
-    { kr: "전도", en: "Electro", jp: "", zh: "" },
-    { kr: "응결", en: "Glacio", jp: "", zh: "" },
-    { kr: "회절", en: "Spectro", jp: "", zh: "" },
-    { kr: "인멸", en: "Havoc", jp: "", zh: "" },
+
+  const ELEMENT_TYPES = [
+    { value: "aero", kr: "기류", en: "Aero", jp: "", zh: "" },
+    { value: "fusion", kr: "융용", en: "Fusion", jp: "", zh: "" },
+    { value: "electro", kr: "전도", en: "Electro", jp: "", zh: "" },
+    { value: "glacio", kr: "응결", en: "Glacio", jp: "", zh: "" },
+    { value: "spectro", kr: "회절", en: "Spectro", jp: "", zh: "" },
+    { value: "havoc", kr: "인멸", en: "Havoc", jp: "", zh: "" },
   ];
   const [elementFilter, setElementFilter] = useState([]);
+
+  const CHARACTER_ALL =Object.values(character).map(item => ({
+    value: item.id,
+    weapon: item.weapon,
+    element: item.element,
+    label: (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: `${25 * sizeValue}px`,
+        }}>
+        <img
+          alt=""
+          src={`${apiUrl}/static/character/${item.id}/ico.webp`}
+          style={{
+            width: `${75 * sizeValue}px`,
+            height: `${75 * sizeValue}px`,
+            overflow: "visible",
+          }}
+        />
+        <span
+          className={`${lang}Font`}
+          style={{ fontSize: `${32 * sizeValue}px` }}>
+          {`${item[lang === "en" ? "id" : lang ?? "Character"] || { Set }}`}
+        </span>
+      </div>
+    ),
+  }));
+  const characterOption = useMemo(() => {
+    const temp = !weaponFilter || weaponFilter.length === 0
+      ? CHARACTER_ALL
+      : CHARACTER_ALL.filter(item => !weaponFilter.includes(item.weapon));
+
+    return !elementFilter || elementFilter.length === 0
+      ? temp : temp.filter(item => !elementFilter.includes(item.element));
+  }, [sizeValue, weaponFilter, elementFilter]);
+
+  const weaponOption = useMemo(() => {
+    return Object.values(weapon[characterData?.weapon || "sword"]).map(item => ({
+      value: item.id,
+      label: (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: `${25 * sizeValue}px`,
+        }}>
+        <img
+          alt=""
+          src={`${apiUrl}/static/weapon/${characterData?.weapon}/${item.imgKey}.png`}
+          style={{
+            width: `${75 * sizeValue}px`,
+            height: `${75 * sizeValue}px`,
+            overflow: "visible",
+          }}
+        />
+        <span
+          className={`${lang}Font`}
+          style={{ fontSize: `${32 * sizeValue}px` }}>
+          {`${item[lang === "en" ? "id" : lang ?? "Character"] || { Set }}`}
+        </span>
+      </div>
+    ),
+    }))
+  }, [sizeValue, characterData])
+
   //#endregion
 
   return (
     <div key={lang} className="profile-portrait">
       <div className="profile-filter-slot">
-        <button style={setSlotStyle({w: 180, h: 60,})}>
-          <span className={`${lang}Font`} style={{fontSize: `${20 * sizeValue}px`}}>All</span>
+        {Object.values(WEAPON_TYPES).map((item, idx) => (
+          <button style={{
+              ...setSlotStyle({w: 70, h: 70, x: 50 + 90 * idx, y: 50}),
+              backgroundColor: UI_COLOR,
+            }}
+            onClick={() => {
+              
+            }}>
+            <img style={{
+              ...setSlotStyle({w: 63, h: 63, x: 0, y: 0}),
+              filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
+            }}
+              src={`${apiUrl}/static/ico/weapon_type/${item.value}.webp`}/>
+          </button>
+        ))}
+        {Object.values(ELEMENT_TYPES).map((item, idx) => (
+          <button style={{
+              ...setSlotStyle({w: 70, h: 70, x: 500 + 90 * idx, y: 50}),
+              backgroundColor: UI_COLOR,
+            }}
+            onClick={() => {
+              
+            }}>
+            <img style={{
+              ...setSlotStyle({w: 63, h: 63, x: 0, y: 0}),
+              filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
+            }}
+              src={`${apiUrl}/static/ico/element/${item.value}.png`}/>
+          </button>
+        ))}
+        <button style={{
+          ...setSlotStyle({w: 160, h: 70, x: 1040, y: 50}),
+          backgroundColor: UI_COLOR,
+        }}>
+          <span className={`${lang}Font`}
+            style={{
+              fontWeight: "100",
+              fontSize: `${30 * sizeValue}px`,
+              color: "#fff"
+            }}
+          >Reset</span>
         </button>
       </div>
       <div className="profile-select-slot">
@@ -202,7 +308,7 @@ function ProfileCard() {
           <Select
             className="character-select-dropdown"
             menuPlacement="auto"
-            //options={characterOptions}
+            options={characterOption}
             placeholder={
               <div
                 style={{
@@ -268,7 +374,7 @@ function ProfileCard() {
           <Select
             className="weapon-select-dropdown"
             menuPlacement="auto"
-            //options={weaponOptions}
+            options={weaponOption}
             placeholder={
               <div
                 style={{

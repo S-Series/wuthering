@@ -35,12 +35,14 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         <div key={i}>
           <div style={{ ...setSlotStyle({ w: 300, h: 50, x: 15, y: 232 + i * 116 }) }}>
             <Select
+              options={statOption}
               isClearable
               placeholder="Type"
             />
           </div>
           <div style={{ ...setSlotStyle({ w: 250, h: 50, x: 335, y: 232 + i * 116 }) }}>
             <Select
+              options={statOption}
               isClearable
               placeholder="Element"
             />
