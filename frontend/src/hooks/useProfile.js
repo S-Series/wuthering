@@ -3,6 +3,7 @@ import { createEmptyEcho } from "../data/Echo";
 import { character, characterStat } from "../data/Character";
 import { weapon, weaponStat } from "../data/Weapon";
 import { FixedStats } from "../data/Stats.js";
+import EchoData from "../data/userData.js";
 
 export function useProfile() {
   const normalize = (value) => (value && value !== "undefined" ? value : undefined);
@@ -19,8 +20,7 @@ export function useProfile() {
   );
 
   const [constellation, setConstellation] = useState([0, 0]);
-  const [echoList, setEchoList] = useState(
-    [
+  const [echoList, setEchoList] = useState([
       createEmptyEcho(4),
       createEmptyEcho(3),
       createEmptyEcho(3),
@@ -28,16 +28,17 @@ export function useProfile() {
       createEmptyEcho(1)
     ]
   );
-
-  function EditEcholist(index, newValue) {
-    setEchoList((prev) => {
-      const copy = [...prev];
-      copy[index] = {
-        ...copy[index],
-        ...newValue,
-      };
-      return copy;
-    });
+  function PatchEchoStat(echoIndex, statIndex, patch) {
+    setEchoList((prev) =>
+      prev.map((echo, i) =>
+        i !== echoIndex
+          ? echo
+          : {
+              ...echo,
+              stats: echo.stats.map((p, j) => (j === statIndex ? patch : p)),
+            }
+      )
+    );
   }
 
   //$ Edit in Inside
@@ -57,6 +58,8 @@ export function useProfile() {
       `${characterData?.element ?? "Aero"}Bns`,
       `${characterData?.type ?? "normal"}Bns`,
     ];
+
+    console.log(echoList[0].stats);
 
     let stats = {
       ...ZERO_STATS,
@@ -85,10 +88,16 @@ export function useProfile() {
     stats[types[1]] = Number(characterStats?.typeBns[1] ?? 0.0);
     //$ weapon
     stats.atk += weaponStats?.atk ?? 0;
-    stats[weaponStats?.statType[0] ?? "dummy"] += weaponStats?.value[0] ?? 0;
-    stats[weaponStats?.statType[1] ?? "dummy"] += weaponStats?.value[1] ?? 0;
+    stats[weaponStats?.statType[0]] += weaponStats?.value[0] ?? 0;
+    stats[weaponStats?.statType[1]] += weaponStats?.value[1] ?? 0;
     //$ echos
-    for (let i = 0; i < 5; i++) {}
+    echoList.forEach((echoData) =>
+      echoData.stats.forEach(([id, val]) => {
+        if (stats[id] !== undefined) stats[id] 
+          += parseFloat(FixedStats[id].ValueSub[val] ?? 0);
+        if (id !== "dummy" && val !== -1) console.log(id, FixedStats[id].ValueSub[val]);
+      })
+    )
     //$ extra stats
     stats.hpDelta = Math.floor(stats.hp * ((stats.hpPct ?? 0) / 100));
     stats.atkDelta = Math.floor(stats.atk * ((stats.atkPct ?? 0) / 100));
@@ -104,7 +113,7 @@ export function useProfile() {
     stats[types[1]] += stats[`${types[1]}Delta`] * (1 + constellation[1] * 0.2);
 
     return stats;
-  }, [characterId, characterData, characterStats, weaponStats]);
+  }, [characterId, characterData, characterStats, weaponStats, echoList]);
 
 useEffect(() => {
   if (lang) localStorage.setItem("lastLanguage", lang);
@@ -156,7 +165,7 @@ useEffect(() => {
     setConstellation,
     echoList,
     setEchoList,
-    EditEcholist,
+    PatchEchoStat,
     characterData,
     weaponData,
     characterStats,

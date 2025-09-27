@@ -20,7 +20,7 @@ export const FixedStats = {
     jp: "HP%",
     zh: "生命%",
     ValueMain: ["33.0%", "30.0%", "22.8%"],
-    SubValue: [
+    ValueSub: [
       "6.4%",
       "7.1%",
       "7.9%",
@@ -38,7 +38,7 @@ export const FixedStats = {
     jp: "攻撃力",
     zh: "攻击",
     ValueMain: [null, null, null],
-    SubValue: [30, 40, 50, 60],
+    ValueSub: [30, 40, 50, 60],
   },
   atkPct: {
     id: "atkPct",
@@ -47,7 +47,7 @@ export const FixedStats = {
     jp: "攻撃力%",
     zh: "攻击%",
     ValueMain: ["33.0%", "30.0%", "18.0%"],
-    SubValue: [
+    ValueSub: [
       "6.4%",
       "7.1%",
       "7.9%",
@@ -65,7 +65,7 @@ export const FixedStats = {
     jp: "防御力",
     zh: "防御",
     ValueMain: [null, null, null],
-    SubValue: [40, 50, 60],
+    ValueSub: [40, 50, 60],
   },
   defPct: {
     id: "defPct",
@@ -74,7 +74,7 @@ export const FixedStats = {
     jp: "防御力%",
     zh: "防御%",
     ValueMain: ["41.5%", "38.0%", "18.0%"],
-    SubValue: [
+    ValueSub: [
       "8.1%",
       "9.0%",
       "10.0%",
@@ -92,7 +92,7 @@ export const FixedStats = {
     jp: "クリティカル",
     zh: "暴击",
     ValueMain: ["22.0%", null, null],
-    SubValue: ["6.3%", "6.9%", "7.5%", "8.1%", "8.7%", "9.3%", "9.9%", "10.5%"],
+    ValueSub: ["6.3%", "6.9%", "7.5%", "8.1%", "8.7%", "9.3%", "9.9%", "10.5%"],
   },
   CritDmg: {
     id: "CritDmg",
@@ -101,15 +101,15 @@ export const FixedStats = {
     jp: "クリティカルダメージ",
     zh: "暴击伤害",
     ValueMain: ["44.0%", null, null],
-    SubValue: [
+    ValueSub: [
       "12.6%",
       "13.8%",
-      "15%",
+      "15.0%",
       "16.2%",
       "17.4%",
       "18.6%",
       "19.8%",
-      "21%",
+      "21.0%",
     ],
   },
   healBns: {
@@ -119,7 +119,7 @@ export const FixedStats = {
     jp: "HP回復効果アップ",
     zh: "治療效果加成",
     ValueMain: ["26.4%", null, null],
-    SubValue: null,
+    ValueSub: null,
   },
   ResonanceBns: {
     id: "ResonanceBns",
@@ -128,12 +128,12 @@ export const FixedStats = {
     jp: "共鳴効率",
     zh: "共鳴効率",
     ValueMain: [null, "32.0%", null],
-    SubValue: [
+    ValueSub: [
       "6.8%",
       "7.6%",
       "8.4%",
       "9.2%",
-      "10%",
+      "10.0%",
       "10.8%",
       "11.6%",
       "12.4%",
@@ -146,7 +146,7 @@ export const FixedStats = {
     jp: "通常攻撃ダメージアップ",
     zh: "普攻伤害加成",
     ValueMain: [null, null, null],
-    SubValue: [
+    ValueSub: [
       "6.4%",
       "7.1%",
       "7.9%",
@@ -164,7 +164,7 @@ export const FixedStats = {
     jp: "重撃ダメージアップ",
     zh: "重击伤害加成",
     ValueMain: [null, null, null],
-    SubValue: [
+    ValueSub: [
       "6.4%",
       "7.1%",
       "7.9%",
@@ -182,7 +182,7 @@ export const FixedStats = {
     jp: "共鳴スキルダメージアップ",
     zh: "共鸣技能伤害加成",
     ValueMain: [null, null, null],
-    SubValue: [
+    ValueSub: [
       "6.4%",
       "7.1%",
       "7.9%",
@@ -200,7 +200,7 @@ export const FixedStats = {
     jp: "共鳴解放ダメージアップ",
     zh: "共鸣解放伤害加成",
     ValueMain: [null, null, null],
-    SubValue: [
+    ValueSub: [
       "6.4%",
       "7.1%",
       "7.9%",
@@ -218,7 +218,7 @@ export const FixedStats = {
     jp: "凝縮ダメージアップ",
     zh: "冷凝伤害加成",
     ValueMain: [null, "30.0%", null],
-    SubValue: null,
+    ValueSub: null,
   },
   FusionBns: {
     id: "FusionBns",
@@ -227,7 +227,7 @@ export const FixedStats = {
     jp: "焦熱ダメージアップ",
     zh: "热熔伤害加成",
     ValueMain: [null, "30.0%", null],
-    SubValue: null,
+    ValueSub: null,
   },
   ElectroBns: {
     id: "ElectroBns",
@@ -236,7 +236,7 @@ export const FixedStats = {
     jp: "電導ダメージアップ",
     zh: "导电伤害加成",
     ValueMain: [null, "30.0%", null],
-    SubValue: null,
+    ValueSub: null,
   },
   AeroBns: {
     id: "AeroBns",
@@ -245,7 +245,7 @@ export const FixedStats = {
     jp: "気動ダメージアップ",
     zh: "氣動傷害加成",
     ValueMain: [null, "30.0%", null],
-    SubValue: null,
+    ValueSub: null,
   },
   SpectroBns: {
     id: "SpectroBns",
@@ -254,7 +254,7 @@ export const FixedStats = {
     jp: "回折ダメージアップ",
     zh: "衍射傷害加成",
     ValueMain: [null, "30.0%", null],
-    SubValue: null,
+    ValueSub: null,
   },
   HavocBns: {
     id: "HavocBns",
@@ -263,7 +263,7 @@ export const FixedStats = {
     jp: "消滅ダメージアップ",
     zh: "湮滅傷害加成",
     ValueMain: [null, "30.0%", null],
-    SubValue: null,
+    ValueSub: null,
   },
 };
 
@@ -280,7 +280,7 @@ export const FixedStatsMain1 = Object.fromEntries(
 );
 
 export const FixedStatsSub = Object.fromEntries(
-  Object.entries(FixedStats).filter(([_, stat]) => stat.SubValue !== null)
+  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueSub !== null)
 );
 
 export const FixedMainSub = {

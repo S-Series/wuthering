@@ -27,7 +27,7 @@ function ProfileCard() {
 
   //#region Variables
   const apiUrl = process.env.REACT_APP_API_URL;
-  const UI_COLOR = "#333366ff";
+  const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
 
   const [sizeValue, setSizeValue] = useState(1.0);
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
@@ -188,7 +188,7 @@ function ProfileCard() {
   ];
   const [elementFilter, setElementFilter] = useState([]);
 
-  const CHARACTER_ALL =Object.values(character).map(item => ({
+  const CHARACTER_ALL = Object.values(character).map(item => ({
     value: item.id,
     weapon: item.weapon,
     element: item.element,
@@ -197,6 +197,7 @@ function ProfileCard() {
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "flex-start",
           gap: `${25 * sizeValue}px`,
         }}>
         <img
@@ -205,12 +206,12 @@ function ProfileCard() {
           style={{
             width: `${75 * sizeValue}px`,
             height: `${75 * sizeValue}px`,
-            overflow: "visible",
+            alignSelf: "center",
           }}
         />
         <span
           className={`${lang}Font`}
-          style={{ fontSize: `${32 * sizeValue}px` }}>
+          style={{ fontSize: `${32 * sizeValue}px`, color: "#fff"}}>
           {`${item[lang === "en" ? "id" : lang ?? "Character"] || { Set }}`}
         </span>
       </div>
@@ -233,7 +234,7 @@ function ProfileCard() {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: `${25 * sizeValue}px`,
+          gap: `${15 * sizeValue}px`,
         }}>
         <img
           alt=""
@@ -246,7 +247,8 @@ function ProfileCard() {
         />
         <span
           className={`${lang}Font`}
-          style={{ fontSize: `${32 * sizeValue}px` }}>
+          style={{ fontSize: `${32 * sizeValue}px`, 
+          color: "#fff"}}>
           {`${item[lang === "en" ? "id" : lang ?? "Character"] || { Set }}`}
         </span>
       </div>
@@ -260,46 +262,51 @@ function ProfileCard() {
     <div key={lang} className="profile-portrait">
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (
-          <button style={{
-              ...setSlotStyle({w: 70, h: 70, x: 50 + 90 * idx, y: 50}),
-              backgroundColor: UI_COLOR,
+          <button
+            style={{
+              ...setSlotStyle({ w: 70, h: 70, x: 50 + 90 * idx, y: 50 }),
+              background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
             }}
-            onClick={() => {
-              
-            }}>
-            <img style={{
-              ...setSlotStyle({w: 63, h: 63, x: 0, y: 0}),
-              filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
-            }}
-              src={`${apiUrl}/static/ico/weapon_type/${item.value}.webp`}/>
+            onClick={() => {}}>
+            <img
+              style={{
+                ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
+                filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
+              }}
+              src={`${apiUrl}/static/ico/weapon_type/${item.value}.webp`}
+            />
           </button>
         ))}
         {Object.values(ELEMENT_TYPES).map((item, idx) => (
-          <button style={{
-              ...setSlotStyle({w: 70, h: 70, x: 500 + 90 * idx, y: 50}),
-              backgroundColor: UI_COLOR,
+          <button
+            style={{
+              ...setSlotStyle({ w: 70, h: 70, x: 500 + 90 * idx, y: 50 }),
+              background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
             }}
-            onClick={() => {
-              
-            }}>
-            <img style={{
-              ...setSlotStyle({w: 63, h: 63, x: 0, y: 0}),
-              filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
-            }}
-              src={`${apiUrl}/static/ico/element/${item.value}.png`}/>
+            onClick={() => {}}>
+            <img
+              style={{
+                ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
+                filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
+              }}
+              src={`${apiUrl}/static/ico/element/${item.value}.png`}
+            />
           </button>
         ))}
-        <button style={{
-          ...setSlotStyle({w: 160, h: 70, x: 1040, y: 50}),
-          backgroundColor: UI_COLOR,
-        }}>
-          <span className={`${lang}Font`}
+        <button
+          style={{
+            ...setSlotStyle({ w: 160, h: 70, x: 1040, y: 50 }),
+            background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+          }}>
+          <span
+            className={`${lang}Font`}
             style={{
               fontWeight: "100",
               fontSize: `${30 * sizeValue}px`,
-              color: "#fff"
-            }}
-          >Reset</span>
+              color: "#fff",
+            }}>
+            Reset
+          </span>
         </button>
       </div>
       <div className="profile-select-slot">
@@ -315,8 +322,7 @@ function ProfileCard() {
                   display: "flex",
                   alignItems: "center",
                   gap: `${25 * sizeValue}px`,
-                }}
-              >
+                }}>
                 <img
                   alt=""
                   src={`${apiUrl}/static/character/${characterData?.id}/ico.webp`}
@@ -328,8 +334,7 @@ function ProfileCard() {
                 />
                 <span
                   className={`${lang}Font`}
-                  style={{ fontSize: `${32 * sizeValue}px` }}
-                >
+                  style={{ fontSize: `${32 * sizeValue}px` }}>
                   {`${
                     characterData?.[
                       lang === "en" ? "id" : lang ?? "Character"
@@ -344,6 +349,7 @@ function ProfileCard() {
                 width: `${450 * sizeValue}px`,
                 height: `${100 * sizeValue}px`,
                 overflow: "visible",
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
               }),
               menu: (base) => ({
                 ...base,
@@ -351,6 +357,12 @@ function ProfileCard() {
               }),
               option: (base) => ({
                 ...base,
+                height: `${100 * sizeValue}px`,
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              }),
+              menuList: (prev) => ({
+                ...prev,
+                backgroundColor: UI_COLOR[2],
               }),
               valueContainer: (base) => ({
                 ...base,
@@ -381,8 +393,7 @@ function ProfileCard() {
                   display: "flex",
                   alignItems: "center",
                   gap: `${20 * sizeValue}px`,
-                }}
-              >
+                }}>
                 <img
                   alt=""
                   src={
@@ -401,8 +412,7 @@ function ProfileCard() {
                   style={{
                     fontSize: `${28 * sizeValue}px`,
                     whiteSpace: "pre-wrap",
-                  }}
-                >
+                  }}>
                   {characterData && weaponId
                     ? weapon[characterData.weapon].find(
                         (item) => item.id === weaponId
@@ -416,13 +426,19 @@ function ProfileCard() {
                 ...base,
                 width: `${550 * sizeValue}px`,
                 height: `${100 * sizeValue}px`,
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
               }),
               menu: (base) => ({
                 ...base,
                 zIndex: 9999,
               }),
+              menuList: (prev) => ({
+                ...prev,
+                backgroundColor: UI_COLOR[2],
+              }),
               option: (base) => ({
                 ...base,
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
               }),
               valueContainer: (base) => ({
                 ...base,
@@ -445,15 +461,13 @@ function ProfileCard() {
       </div>
       <div className="profile-card-slot"
         ref={ProfileCardSlotRef}
-        style={{ backgroundImage: `url("/asdf2.jpg")` }}
-      >
+        style={{ backgroundImage: `url("/asdf2.jpg")` }}>
         <div className={`${lang}Font profile-alert-text`}>
           <span
             style={{
               ...setSlotStyle({ w: 1000, h: 80, x: 1130, y: -100 }),
               fontSize: `${28 * sizeValue}px`,
-            }}
-          >
+            }}>
             {`${getStringInfo(lang, 2)}\n${getStringInfo(lang, 3)}`}
           </span>
         </div>
@@ -465,8 +479,7 @@ function ProfileCard() {
             boxShadow: "5px 5px 0px rgba(0,0,0,1)",
             borderTopLeftRadius: `calc(40px * ${sizeValue})`,
             overflow: "hidden",
-          }}
-        >
+          }}>
           <ImageDrag
             path={
               characterId
@@ -481,8 +494,7 @@ function ProfileCard() {
           className="profile-card-character-info"
           style={{
             ...setSlotStyle({ w: 650, h: 120, x: 20, y: 820 }),
-          }}
-        >
+          }}>
           {/* //$ Left */}
           <span
             className={`profile-card-text ${lang}Font`}
@@ -491,8 +503,7 @@ function ProfileCard() {
               left: `calc(15px * ${sizeValue})`,
               color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
-            }}
-          >
+            }}>
             Asia
           </span>
           <span
@@ -502,8 +513,7 @@ function ProfileCard() {
               left: `calc(15px * ${sizeValue})`,
               color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
-            }}
-          >
+            }}>
             Lv.79 SSeries
           </span>
           <span
@@ -513,8 +523,7 @@ function ProfileCard() {
               left: `calc(15px * ${sizeValue})`,
               color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
-            }}
-          >
+            }}>
             uid. 812 345 678
           </span>
           {/* Right */}
@@ -565,8 +574,7 @@ function ProfileCard() {
               right: "0px",
               color: "#ffffff",
               fontSize: `calc(46px * ${sizeValue})`,
-            }}
-          >
+            }}>
             {lang === "en"
               ? capitalizeFirst(characterData?.id) ?? ""
               : characterData?.[lang] ?? ""}
@@ -579,8 +587,7 @@ function ProfileCard() {
             backgroundColor: "#969696",
             border: `calc(5px * ${sizeValue}) solid #323232`,
             zIndex: 250,
-          }}
-        >
+          }}>
           <img
             alt=""
             className="profile-card-icon"
@@ -643,8 +650,7 @@ function ProfileCard() {
           className="profile-card-weapon profile-slot"
           style={{
             ...setSlotStyle({ w: 600, h: 140, x: 700, y: 70 }),
-          }}
-        >
+          }}>
           {/* //$ Weapon Name */}
           <span
             className={`profile-card-text ${lang}Font`}
@@ -657,8 +663,7 @@ function ProfileCard() {
               left: `${175 * sizeValue}px`,
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
-            }}
-          >
+            }}>
             {characterData && weaponId
               ? weapon[characterData.weapon].find(
                   (item) => item.id === weaponId
@@ -683,8 +688,7 @@ function ProfileCard() {
               textAlign: "right",
               alignContent: "center",
               ...setSlotStyle({ w: 170, h: 60, x: 165, y: 75 }),
-            }}
-          >
+            }}>
             {weaponStats?.atk ?? ""}
           </span>
           {/* //$ Weapon Main Stat */}
@@ -709,8 +713,7 @@ function ProfileCard() {
               textAlign: "right",
               alignContent: "center",
               ...setSlotStyle({ w: 195, h: 60, x: 380, y: 75 }),
-            }}
-          >
+            }}>
             {weaponStats?.value?.[0].toFixed(1) ?? ""}%
           </span>
         </div>
@@ -720,8 +723,7 @@ function ProfileCard() {
           style={{
             ...setSlotStyle({ w: 600, h: 710, x: 700, y: 210 }),
             backgroundColor: "#00000033",
-          }}
-        >
+          }}>
           {statId.map((item, idx) => (
             <StatSlot
               key={idx}
@@ -755,8 +757,7 @@ function ProfileCard() {
               flexDirection: "row",
               alignContent: "center",
               justifyContent: "center",
-            }}
-          >
+            }}>
             {profileData.harmony === null ? null : (
               <div
                 style={{
@@ -765,8 +766,7 @@ function ProfileCard() {
                   height: "100%",
                   padding: "0px 0.75%",
                   backgroundColor: "#ffffff33",
-                }}
-              >
+                }}>
                 <img
                   alt=""
                   src={`${apiUrl}/static/ico/harmony/${profileData.harmony}.webp`}
@@ -790,8 +790,7 @@ function ProfileCard() {
                     color: "#ffffff",
                     textAlign: "center",
                     whiteSpace: "nowrap",
-                  }}
-                >
+                  }}>
                   {`${harmony[profileData.harmony]?.[lang]}`}
                 </span>
                 <div style={{ width: `${10 * sizeValue}px` }} />
@@ -804,20 +803,17 @@ function ProfileCard() {
               display: "flex",
               flexDirection: "row",
               ...setSlotStyle({ w: 600, h: 50, y: 635 }),
-            }}
-          >
+            }}>
             {profileData.statScore.map((item, idx) => (
               <div className="stat-score-slot" key={idx}>
                 <span
                   className="stat-score-text title"
-                  style={{ fontSize: `${42 * sizeValue}px` }}
-                >
+                  style={{ fontSize: `${42 * sizeValue}px` }}>
                   {idx === 0 ? "AV." : "CV."}
                 </span>
                 <span
                   className="stat-score-text value"
-                  style={{ fontSize: `${36 * sizeValue}px` }}
-                >
+                  style={{ fontSize: `${36 * sizeValue}px` }}>
                   12
                   {profileData.statScore[idx]}
                   .3pt
@@ -830,8 +826,7 @@ function ProfileCard() {
           className="profile-card-total-info profile-slot"
           style={{
             ...setSlotStyle({ w: 800, h: 215, x: 1320, y: 70 }),
-          }}
-        >
+          }}>
           <img
             alt=""
             src={`/default.webp`}
@@ -848,8 +843,7 @@ function ProfileCard() {
               color: "#fff",
               textAlign: "center",
               fontSize: `${36 * sizeValue}px`,
-            }}
-          >
+            }}>
             Av. 567.8pt
           </span>
           <div
@@ -860,8 +854,7 @@ function ProfileCard() {
               overflow: "hidden",
               ...setSlotStyle({ w: 540, h: 195, x: 250, y: 10 }),
               backgroundColor: "#00000033",
-            }}
-          >
+            }}>
             <ImageDrag path={""} sizeValue={sizeValue} />
           </div>
         </div>
@@ -873,8 +866,7 @@ function ProfileCard() {
             fontSize: `${30 * sizeValue}px`,
             alignContent: "flex-end",
             justifyContent: "flex-end",
-          }}
-        >
+          }}>
           wwaves.dev/profile
         </span>
         {echoList.map((item, idx) => (
@@ -883,8 +875,7 @@ function ProfileCard() {
             className="profile-card-echo-slot profile-slot"
             style={{
               ...setSlotStyle({ w: 148, h: 620, x: 1320 + 163 * idx, y: 300 }),
-            }}
-          >
+            }}>
             <EchoSlot echoData={echoList[idx]} sizeValue={sizeValue} />
           </div>
         ))}
@@ -898,12 +889,12 @@ function ProfileCard() {
         />
       </div>
       <div className="profile-ocr-slot">
-        <div className="ocr-select-slot"
+        <div
+          className="ocr-select-slot"
           style={{
             ...setSlotStyle({ w: 550, h: 816, x: 20, y: 20 }),
             backgroundColor: "#00000033",
-          }}
-        >
+          }}>
           <span
             className="ocr-text title"
             style={{
@@ -911,8 +902,7 @@ function ProfileCard() {
               fontSize: `${56 * sizeValue}px`,
               alignContent: "center",
               textAlign: "center",
-            }}
-          >
+            }}>
             Echo Data
           </span>
           {echoList.map((item, idx) => {
@@ -928,14 +918,12 @@ function ProfileCard() {
                     y: 100 + idx * 150,
                   }),
                   backgroundColor: "#00000033",
-                }}
-              >
+                }}>
                 <div
                   className="ocr-react-select-slot"
                   style={{
                     ...setSlotStyle({ w: 300, h: 80, x: 15, y: 20 }),
-                  }}
-                >
+                  }}>
                   <Select
                     className="ocr-cost-select"
                     options={[
@@ -983,8 +971,7 @@ function ProfileCard() {
                   }}
                   onClick={() => {
                     setSelectedEchoIdx(idx);
-                  }}
-                >
+                  }}>
                   <span className={`${lang}Font`}>Select</span>
                 </button>
               </div>
@@ -1006,22 +993,19 @@ function ProfileCard() {
                   width: "100%",
                   height: "100%",
                   pointerEvents: "none",
-                }}
-              >
+                }}>
                 <div
                   className="ocr-input-slot ocr"
                   style={{
                     ...setSlotStyle({ w: 900, h: 816, x: 590, y: 20 }),
                     backgroundColor: "#00000033",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       ...setSlotStyle({ w: 850 - 2, h: 616 - 2, x: 25, y: 25 }),
                       backgroundColor: "#00000033",
                       border: "1px dashed #fff",
-                    }}
-                  >
+                    }}>
                     <ImageDrag inputable={true} sizeValue={sizeValue} />
                   </div>
                 </div>
@@ -1030,14 +1014,12 @@ function ProfileCard() {
                   style={{
                     ...setSlotStyle({ w: 600, h: 816, x: 1510, y: 20 }),
                     backgroundColor: "#00000033",
-                  }}
-                >
+                  }}>
                   <div
                     style={{
                       ...setSlotStyle({ w: 600 - 2, h: 816 - 2, y: 0 }),
                       backgroundColor: "#00000033",
-                    }}
-                  >
+                    }}>
                     <EchoStatDrop index={idx} sizeValue={sizeValue} />
                   </div>
                 </div>

@@ -6,15 +6,15 @@ export function createEmptyEcho(cost = 1){
     harmony: "default",
     cost: cost,
     stats: [
-      ["dummy", 0],
+      ["dummy", -1],
       cost === 1 
-        ? [FixedStats.hp.id, 2200] 
-        : [FixedStats.atk.id, cost === 3 ? 100 : 150],
-      ["dummy", 0],
-      ["dummy", 0],
-      ["dummy", 0],
-      ["dummy", 0],
-      ["dummy", 0],
+        ? [FixedStats.hp.id, 1] 
+        : [FixedStats.atk.id, 1],
+      ["dummy", -1],
+      ["dummy", -1],
+      ["dummy", -1],
+      ["dummy", -1],
+      ["dummy", -1],
     ]
   }
 }

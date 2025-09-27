@@ -83,7 +83,7 @@ function NavBar() {
     <nav className="navbar">
       <div className="nav-left">
         <button className="home-button" onClick={() => navigate("/")}>
-          <img src={`${apiUrl}/default.webp`} className="main-icon"></img>
+          <img src={`${apiUrl}/static/default.webp`} className="main-icon"></img>
           {getStringInfo(lang)[0]}
         </button>
         <div className="nav-left text-box">
@@ -105,7 +105,7 @@ function NavBar() {
           isSearchable={false}
         />
         <button className="nav-button" onClick={() => navigate()}>
-          <img src={`${apiUrl}/info.png`} className="icon"></img>
+          <img src={`${apiUrl}/static/info.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(lang)[3]}</span>
         </button>
         <button
@@ -113,13 +113,13 @@ function NavBar() {
           onClick={() =>
             window.open("https://github.com/S-Series/wuthering", "_blank")
           }>
-          <img src={`${apiUrl}/github.png`} className="icon"></img>
+          <img src={`${apiUrl}/static/github.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(lang)[4]}</span>
         </button>
         <button
           className="nav-button"
           onClick={() => window.open("https://ko-fi.com/sseries", "_blank")}>
-          <img src={`${apiUrl}/kofi.png`} className="icon"></img>
+          <img src={`${apiUrl}/static/kofi.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(lang)[5]}</span>
         </button>
       </div>

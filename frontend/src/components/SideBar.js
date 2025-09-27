@@ -23,16 +23,16 @@ function SideBar() {
   }, []);
 
   return (
-    <nav className="sidebar">
-    {routes.map((path, i) => (
-      <div className="side-button-slot" key={path}>
-        <button className="side-button" onClick={() => navigate(path)}>
-          <span className="side-text">{getStringInfo(lang)[i]}</span>
-        </button>
-        <div className="sidebar-divider" />
-      </div>
-    ))}
-  </nav>
+    <div className="sidebar">
+      {routes.map((path, i) => (
+        <div className="side-button-slot">
+          <button className="side-button" onClick={() => navigate(path)}>
+            <span className="side-text">{getStringInfo(lang)[i]}</span>
+          </button>
+          <div className="sidebar-divider" />
+        </div>
+      ))}
+    </div>
   );
 }
 
