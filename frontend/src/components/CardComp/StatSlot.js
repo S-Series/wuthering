@@ -1,9 +1,14 @@
-function StatSlot({
-  styles = [{}, {}, {}],
-  imgPath,
-  textValue = ["", "", ""],
-  fontSize,
-}) {
+import { useEffect } from "react";
+import { FixedStats } from "../../data/Stats";
+import { useProfile } from "../../hooks/useProfile";
+
+function StatSlot({ styles = [{}, {}, {}], imgPath, statId = "", fontSize }) {
+  const { lang, finalStats } = useProfile();
+
+  useEffect(() => {
+    console.log("StatSlot Rendered", statId, finalStats[statId]);
+  }, [statId, JSON.stringify(finalStats)]);
+
   return (
     <div
       style={{
@@ -25,29 +30,16 @@ function StatSlot({
           e.currentTarget.src = "/default.webp";
         }}
       />
-      {textValue[0].includes("Attack Damage") ? (
-        <span
-          style={{
-            ...styles[1], //$ 여기 속성값 수정해서 적용하기
-            color: "#fff",
-            textAlign: "left",
-            fontSize: `${8}px`,
-            whiteSpace: "pre-wrap",
-          }}>
-          {textValue[0].replace("Attack Damage", "Attack\nDamage")}
-        </span>
-      ) : (
-        <span
-          style={{
-            ...styles[1],
-            color: "#fff",
-            textAlign: "left",
-            fontSize: fontSize[0],
-            whiteSpace: "pre-wrap",
-          }}>
-          {textValue[0]}
-        </span>
-      )}
+      <span
+        style={{
+          ...styles[1],
+          color: "#fff",
+          textAlign: "left",
+          fontSize: fontSize[0],
+          whiteSpace: "pre-wrap",
+        }}>
+        {FixedStats[statId]?.[lang]}
+      </span>
       <span
         style={{
           ...styles[1],
@@ -55,7 +47,9 @@ function StatSlot({
           textAlign: "right",
           fontSize: fontSize[0],
         }}>
-        {textValue[1] ? textValue[1] : "asdf"}
+        {statId.includes("Bns") || statId.includes("Crit")
+          ? `${finalStats[statId]?.toFixed(1)}%`
+          : finalStats[statId]}
       </span>
       <span
         style={{
@@ -64,7 +58,10 @@ function StatSlot({
           textAlign: "right",
           fontSize: fontSize[1],
         }}>
-        +{textValue[2] ?? "(+0)"}
+        +
+        {statId.includes("Bns") || statId.includes("Crit")
+          ? `${finalStats[`${statId}Delta`]?.toFixed(1)}%`
+          : finalStats[`${statId}Delta`]}
       </span>
     </div>
   );

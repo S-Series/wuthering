@@ -11,7 +11,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
 
   const [statFilter, setStatFilter] = useState(() =>
-    Array(7).fill([FixedStats.dummy.id, 0])
+    Array(5).fill([FixedStats.dummy.id, 0])
   );
    
   const statOption = useMemo(() => {
@@ -96,7 +96,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               menuPlacement="auto"
               placeholder={
                 Object.values(FixedStats).find(
-                  (item) => item.id === echoList[index].stats[2][0]
+                  (item) => item.id === echoList[index].subStats[idx][0]
                 ).id === "dummy" ? (
                   <span className={`${lang}Font`}>Sub Stats</span>
                 ) : (
@@ -108,7 +108,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                     <img
                       alt=""
                       src={`${apiUrl}/static/ico/stats/${
-                        echoList[index].stats[idx + 2][0]
+                        echoList[index].subStats[idx][0]
                       }.webp`}
                       style={{
                         width: `${50 * sizeValue}px`,
@@ -122,7 +122,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                       {
                         Object.values(FixedStats).find(
                           (item) =>
-                            item.id === echoList[index].stats[idx + 2][0]
+                            item.id === echoList[index].subStats[idx][0]
                         )[lang]
                       }
                     </span>
@@ -165,7 +165,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                 setStatFilter((prev) =>
                   prev.map((v, i) => (i === idx ? newId : v))
                 );
-                PatchEchoStat(index, idx + 2, [newId, -1]);
+                PatchEchoStat(index, idx, [newId, -1]);
               }}
             />
           </div>
@@ -178,7 +178,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               menuPlacement="auto"
               placeholder={
                 Object.values(FixedStats).find(
-                  (item) => item.id === echoList[index].stats[2][0]
+                  (item) => item.id === echoList[index].subStats[idx][0]
                 ).id === "dummy" ? (
                   <span className={`${lang}Font`}>Values</span>
                 ) : (
@@ -190,7 +190,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                     <img
                       alt=""
                       src={`${apiUrl}/static/ico/stats/${
-                        echoList[index].stats[idx + 2][0]
+                        echoList[index].subStats[idx][0]
                       }.webp`}
                       style={{
                         width: `${50 * sizeValue}px`,
@@ -204,7 +204,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                       {
                         (Object.values(FixedStats).find(
                           (item) =>
-                            item.id === echoList[index].stats[idx + 2][1]
+                            item.id === echoList[index].subStats[idx][1]
                         ) ?? "dummy")[lang]
                       }
                     </span>
@@ -229,9 +229,9 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               }}
               onChange={(opt) => {
                 console.log("sub value changed");
-                const statId = echoList[index].stats[idx + 2][0];
+                const statId = echoList[index].subStats[idx][0];
                 const newVal = opt ? opt.value : -1;
-                PatchEchoStat(index, idx + 2, [statId, FixedStats[statId].ValueSub.findIndex(item => item === newVal)]);
+                PatchEchoStat(index, idx, [statId, FixedStats[statId].ValueSub.findIndex(item => item === newVal)]);
               }}
             />
           </div>

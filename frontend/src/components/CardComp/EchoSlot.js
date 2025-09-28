@@ -61,12 +61,12 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
           }}
         />
       </div>
-      {echoData.stats.map((item, idx) =>
-        echoData.stats[idx][0] !== "dummy" && echoData.stats[idx][1] !== 0 ? (
+      {echoData?.subStats.map((item, idx) =>
+        echoData?.subStats[idx][0] !== "dummy" && echoData?.subStats[idx][1] !== 0 ? (
           <div key={idx} style={{ alignContent: "center" }}>
             <img
               alt=""
-              src={`${apiUrl}/static/ico/stats/${echoData.stats[idx][0]}.webp`}
+              src={`${apiUrl}/static/ico/stats/${echoData?.subStats[idx][0]}.webp`}
               style={{
                 ...setSlotStyle({
                   w: 35,
@@ -90,10 +90,10 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
                 fontSize: `${30 * sizeValue}px`,
               }}>
               {["Crit", "bns", "pct"].some((item) =>
-                echoData.stats[idx][0].includes(item)
+                echoData.subStats[idx][0].includes(item)
               )
-                ? `${echoData.stats[idx][1].toFixed(1)}%`
-                : `${Math.round(echoData.stats[idx][1])}`}
+                ? `${echoData.subStats[idx][1].toFixed(1)}%`
+                : `${Math.round(echoData.subStats[idx][1])}`}
             </span>
           </div>
         ) : (

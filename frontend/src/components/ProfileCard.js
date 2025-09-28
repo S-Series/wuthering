@@ -1,6 +1,6 @@
 // basic
 import "./ProfileCard.css";
-import { useRef, useState, useEffect, useLayoutEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useLayoutEffect, useMemo, use } from "react";
 import Select, { components } from "react-select";
 import { motion, AnimatePresence } from "framer-motion";
 // data
@@ -84,20 +84,10 @@ function ProfileCard() {
     characterStats,
     weaponStats,
     finalStats,
+    statId,
+    StatText,
   } = useProfile();
 
-  const statId = useMemo(() => {
-    return [
-      "hp",
-      "atk",
-      "def",
-      "ResonanceBns",
-      "CritRate",
-      "CritDmg",
-      `${characterData?.element ?? ""}Bns`,
-      `${characterData?.type ?? ""}Bns`,
-    ];
-  }, [characterData?.element, characterData?.type]);
   //#endregion
 
   //#region Functions
@@ -459,7 +449,8 @@ function ProfileCard() {
           />
         </div>
       </div>
-      <div className="profile-card-slot"
+      <div
+        className="profile-card-slot"
         ref={ProfileCardSlotRef}
         style={{ backgroundImage: `url("/asdf2.jpg")` }}>
         <div className={`${lang}Font profile-alert-text`}>
@@ -657,7 +648,7 @@ function ProfileCard() {
             style={{
               color: "#ffffff",
               ref: { WeaponNameTextRef },
-              fontSize: `calc(44px * ${sizeValue})`,
+              fontSize: `${36 * sizeValue}px`,
               alignContent: "center",
               top: `${5 * sizeValue}px`,
               left: `${175 * sizeValue}px`,
@@ -729,21 +720,11 @@ function ProfileCard() {
               key={idx}
               styles={[
                 setSlotStyle({ w: 570, h: 50, x: 15, y: 15 + idx * 70 }),
-                setSlotStyle({ w: 425, h: 50, x: 60, y: 2.5 }),
-                setSlotStyle({ w: 80, h: 35, x: 482.5, y: 16 }),
+                setSlotStyle({ w: 432.5, h: 50, x: 60, y: 5 }),
+                setSlotStyle({ w: 80, h: 50, x: 482.5, y: 16 }),
               ]}
-              imgPath={`${apiUrl}/static/ico/stats/${statId[idx]}.webp`}
-              textValue={[
-                FixedStats[statId[idx]]?.[lang] ?? "",
-                `${
-                  typeof finalStats?.[statId[idx] ?? ""] === "number"
-                    ? finalStats[statId[idx]].toFixed(idx > 2 ? 1 : 0)
-                    : finalStats?.[statId[idx] ?? ""]
-                }${idx > 2 ? "%" : ""}`,
-                `${finalStats?.[`${statId[idx]}Delta` ?? ""]}${
-                  idx > 2 ? "%" : ""
-                }`,
-              ]}
+              imgPath={`${apiUrl}/static/ico/stats/${item}.webp`}
+              statId={statId[idx]}
               fontSize={[`${30 * sizeValue}px`, `${17.5 * sizeValue}px`]}
             />
           ))}

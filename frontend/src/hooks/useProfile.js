@@ -1,11 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
-import { createEmptyEcho } from "../data/Echo";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import { character, characterStat } from "../data/Character";
 import { weapon, weaponStat } from "../data/Weapon";
 import { FixedStats } from "../data/Stats.js";
-import EchoData from "../data/userData.js";
+import { createEmptyEcho } from "../data/Echo";
 
-export function useProfile() {
+const ProfileContext = createContext(null);
+
+export function ProfileProvider({ children }) {
   const normalize = (value) => (value && value !== "undefined" ? value : undefined);
 
   //$ Edit in Outside
@@ -20,26 +21,24 @@ export function useProfile() {
   );
 
   const [constellation, setConstellation] = useState([0, 0]);
-  const [echoList, setEchoList] = useState([
-      createEmptyEcho(4),
-      createEmptyEcho(3),
-      createEmptyEcho(3),
-      createEmptyEcho(1),
-      createEmptyEcho(1)
-    ]
-  );
-  function PatchEchoStat(echoIndex, statIndex, patch) {
-    setEchoList((prev) =>
-      prev.map((echo, i) =>
-        i !== echoIndex
-          ? echo
-          : {
-              ...echo,
-              stats: echo.stats.map((p, j) => (j === statIndex ? patch : p)),
-            }
-      )
-    );
-  }
+  const [echoList, setEchoList] = useState(
+    () => normalize(JSON.parse(localStorage.getItem(`${characterId}EchoData`))) ?? [
+    createEmptyEcho(4),
+    createEmptyEcho(3),
+    createEmptyEcho(3),
+    createEmptyEcho(1),
+    createEmptyEcho(1),
+  ]);
+  const PatchEchoStat = useCallback((ei, si, patch /* [id?, val?] */) => {
+    setEchoList(prev => prev.map((e, i) =>
+      i !== ei ? e : { ...e, subStats: e.subStats.map((p, j) => j !== si ? p : [patch?.[0] ?? p[0], patch?.[1] ?? p[1]]) }
+    ));
+  }, []);
+  const PatchEchoMainStat = useCallback((ei, partial /* {id?, val?} */) => {
+    setEchoList(prev => prev.map((e, i) =>
+      i !== ei ? e : { ...e, mainStat: [partial?.id ?? e.mainStat[0], partial?.val ?? e.mainStat[1]] }
+    ));
+  }, []);
 
   //$ Edit in Inside
   const [characterData, setCharacterData] = useState(null);
@@ -47,31 +46,32 @@ export function useProfile() {
 
   const [weaponData, setWeaponData] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
-
+  
   const ZERO_STATS = useMemo(
     () => Object.fromEntries(Object.keys(FixedStats).map((k) => [k, 0])),
     []
   );
-
+  
   const finalStats = useMemo(() => {
     const types = [
       `${characterData?.element ?? "Aero"}Bns`,
       `${characterData?.type ?? "normal"}Bns`,
     ];
 
-    console.log(echoList[0].stats);
-
     let stats = {
       ...ZERO_STATS,
       hpDelta: 0,
+      hpPctDelta: 0,
       atkDelta: 0,
+      atkPctDelta: 0,
       defDelta: 0,
+      defPctDelta: 0,
       ResonanceBnsDelta: 0,
       CritRateDelta: 0,
       CritDmgDelta: 0,
       [`${types[0]}Delta`]: 0,
       [`${types[1]}Delta`]: 0,
-      dummy: 0,
+      dummyDelta: 0,
     };
 
     //$ character
@@ -88,24 +88,27 @@ export function useProfile() {
     stats[types[1]] = Number(characterStats?.typeBns[1] ?? 0.0);
     //$ weapon
     stats.atk += weaponStats?.atk ?? 0;
-    stats[weaponStats?.statType[0]] += weaponStats?.value[0] ?? 0;
-    stats[weaponStats?.statType[1]] += weaponStats?.value[1] ?? 0;
+    stats[weaponStats?.statType[0]] += Number(weaponStats?.value[0] ?? 0);
+    stats[weaponStats?.statType[1]] += Number(weaponStats?.value[1] ?? 0);
     //$ echos
-    echoList.forEach((echoData) =>
-      echoData.stats.forEach(([id, val]) => {
-        if (stats[id] !== undefined) stats[id] 
-          += parseFloat(FixedStats[id].ValueSub[val] ?? 0);
-        if (id !== "dummy" && val !== -1) console.log(id, FixedStats[id].ValueSub[val]);
+    echoList?.forEach((echoData) =>
+      echoData.subStats.forEach(([id, val]) => {
+        if (stats[id] !== undefined)
+          stats[`${id}Delta`] += parseFloat(FixedStats[id].ValueSub[val] ?? 0);
       })
-    )
+    );
     //$ extra stats
-    stats.hpDelta = Math.floor(stats.hp * ((stats.hpPct ?? 0) / 100));
-    stats.atkDelta = Math.floor(stats.atk * ((stats.atkPct ?? 0) / 100));
-    stats.defDelta = Math.floor(stats.def * ((stats.defPct ?? 0) / 100));
+    const hpExtra = Math.floor(stats.hp * ((stats.hpPct ?? 0) / 100));
+    const atkExtra = Math.floor(stats.atk * ((stats.atkPct ?? 0) / 100));
+    const defExtra = Math.floor(stats.def * ((stats.defPct ?? 0) / 100));
 
-    stats.hp += stats.hpDelta;
-    stats.atk += stats.atkDelta;
-    stats.def += stats.defDelta;
+    stats.hpDelta = Math.floor(stats.hp * ((stats.hpPctDelta ?? 0) / 100));
+    stats.atkDelta = Math.floor(stats.atk * ((stats.atkPctDelta ?? 0) / 100));
+    stats.defDelta = Math.floor(stats.def * ((stats.defPctDelta ?? 0) / 100));
+
+    stats.hp += stats.hpDelta + hpExtra;
+    stats.atk += stats.atkDelta + atkExtra;
+    stats.def += stats.defDelta + defExtra;
     stats.ResonanceBns += stats.ResonanceBnsDelta;
     stats.CritRate += stats.CritRateDelta;
     stats.CritDmg += stats.CritDmgDelta;
@@ -113,19 +116,36 @@ export function useProfile() {
     stats[types[1]] += stats[`${types[1]}Delta`] * (1 + constellation[1] * 0.2);
 
     return stats;
-  }, [characterId, characterData, characterStats, weaponStats, echoList]);
+  }, [characterId, characterData, characterStats, weaponStats, echoList, constellation]);
 
-useEffect(() => {
-  if (lang) localStorage.setItem("lastLanguage", lang);
-}, [lang]);
+  const statId = useMemo(() => {
+    return [
+      "hp",
+      "atk",
+      "def",
+      "ResonanceBns",
+      "CritRate",
+      "CritDmg",
+      `${characterData?.element ?? ""}Bns`,
+      `${characterData?.type ?? ""}Bns`
+    ];
+  }, [characterData?.element, characterData?.type]);
 
-useEffect(() => {
-  if (characterId) localStorage.setItem("lastCharacter", characterId);
-}, [characterId]);
+  useEffect(() => {
+    console.log("Final Stats Updated", finalStats);
+  }, [JSON.stringify(finalStats)]); 
 
-useEffect(() => {
-  localStorage.setItem("lastWeapon", weaponId ?? "");
-}, [weaponId]);
+  useEffect(() => {
+    if (lang) localStorage.setItem("lastLanguage", lang);
+  }, [lang]);
+
+  useEffect(() => {
+    if (characterId) localStorage.setItem("lastCharacter", characterId);
+  }, [characterId]);
+
+  useEffect(() => {
+    localStorage.setItem("lastWeapon", weaponId ?? "");
+  }, [weaponId]);
 
   useEffect(() => {
     if (!characterId) return;
@@ -154,22 +174,26 @@ useEffect(() => {
     }
   }, [weaponId, characterData]);
 
-  return {
-    lang,
-    setLang,
-    characterId,
-    setCharacterId,
-    weaponId,
-    setWeaponId,
-    constellation,
-    setConstellation,
-    echoList,
-    setEchoList,
-    PatchEchoStat,
-    characterData,
-    weaponData,
-    characterStats,
-    weaponStats,
-    finalStats,
-  };
+  useEffect(() => {
+    if (echoList) localStorage.setItem(`${characterId}EchoData`, JSON.stringify(echoList));
+  }, [echoList]);
+
+  const value = useMemo(() => ({
+    lang, setLang,
+    characterId, setCharacterId,
+    weaponId, setWeaponId,
+    constellation, setConstellation,
+    echoList, setEchoList,
+    characterData, weaponData, characterStats, weaponStats,
+    finalStats, statId,
+    PatchEchoStat, PatchEchoMainStat
+  }), [lang, characterId, weaponId, constellation, echoList, characterData, weaponData, characterStats, weaponStats, finalStats, PatchEchoStat, PatchEchoMainStat]);
+
+  return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;
+}
+
+export function useProfile() {
+  const ctx = useContext(ProfileContext);
+  if (!ctx) throw new Error("useProfile() must be used inside <ProfileProvider>.");
+  return ctx;
 }
