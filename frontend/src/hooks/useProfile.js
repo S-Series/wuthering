@@ -31,14 +31,29 @@ export function ProfileProvider({ children }) {
 
   const [constellation, setConstellation] = useState([0, 0]);
   const [echoList, setEchoList] = useState(() => getEchoData());
-  const PatchEchoStat = useCallback((ei, si, patch /* [id?, val?] */) => {
+  const PatchEchoID = useCallback((echoIndex, newId) => {
     setEchoList(prev => prev.map((e, i) =>
-      i !== ei ? e : { ...e, subStats: e.subStats.map((p, j) => j !== si ? p : [patch?.[0] ?? p[0], patch?.[1] ?? p[1]]) }
+      i !== echoIndex ? e : { ...e, echoId: newId }
     ));
   }, []);
-  const PatchEchoMainStat = useCallback((ei, partial /* {id?, val?} */) => {
+  const PatchEchoCost = useCallback((echoIndex, newCost) => {
     setEchoList(prev => prev.map((e, i) =>
-      i !== ei ? e : { ...e, mainStat: [partial?.id ?? e.mainStat[0], partial?.val ?? e.mainStat[1]] }
+      i !== echoIndex ? e : { ...e, cost: newCost }
+    ));
+  }, []);
+  const PatchEchoHarmony = useCallback((echoIndex, newHarmony) => {
+    setEchoList(prev => prev.map((e, i) =>
+      i !== echoIndex ? e : { ...e, harmony: newHarmony }
+    ));
+  }, []);
+  const PatchEchoMainStat = useCallback((echoIndex, partial /* {id?, val?} */) => {
+    setEchoList(prev => prev.map((e, i) =>
+      i !== echoIndex ? e : { ...e, mainStat: [partial?.id ?? e.mainStat[0], partial?.val ?? e.mainStat[1]] }
+    ));
+  }, []);
+  const PatchEchoStat = useCallback((echoIndex, si, patch /* [id?, val?] */) => {
+    setEchoList(prev => prev.map((e, i) =>
+      i !== echoIndex ? e : { ...e, subStats: e.subStats.map((p, j) => j !== si ? p : [patch?.[0] ?? p[0], patch?.[1] ?? p[1]]) }
     ));
   }, []);
 
@@ -188,7 +203,8 @@ export function ProfileProvider({ children }) {
     echoList, setEchoList,
     characterData, weaponData, characterStats, weaponStats,
     finalStats, statId,
-    PatchEchoStat, PatchEchoMainStat
+    PatchEchoID, PatchEchoCost, PatchEchoHarmony,
+    PatchEchoStat, PatchEchoMainStat,
   }), [lang, characterId, weaponId, constellation, echoList, characterData, weaponData, characterStats, weaponStats, finalStats, PatchEchoStat, PatchEchoMainStat]);
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;
