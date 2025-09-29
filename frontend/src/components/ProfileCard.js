@@ -857,7 +857,7 @@ function ProfileCard() {
             style={{
               ...setSlotStyle({ w: 148, h: 620, x: 1320 + 163 * idx, y: 300 }),
             }}>
-            <EchoSlot echoData={echoList[idx]} sizeValue={sizeValue} />
+            <EchoSlot index={idx} sizeValue={sizeValue} />
           </div>
         ))}
         <div

@@ -3,19 +3,30 @@ import { userdata } from "../../data/userData";
 import EchoData from "../../data/userData";
 import ProfileCard from "../ProfileCard";
 import { useStyleHelper } from "../../hooks/useStyleHelpers";
+import { useProfile } from "../../hooks/useProfile";
 
-function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
+function EchoSlot({ index = 0, sizeValue = 0 }) {
 
   const apiUrl = process.env.REACT_APP_API_URL;
   const { setSlotStyle } = useStyleHelper(sizeValue);
+  const { echoList } = useProfile();
+  
+  function subStyleValue(idx, isText) {
+    return {
+      w: isText ? 130 : 35,
+      h: 35,
+      x: 9,
+      y: 264 + 42 * idx,
+    };
+  }
 
   return (
     <div>
       <img
         alt=""
         src={
-          echoData?.echoId && echoData?.echoId !== "default"
-            ? `${apiUrl}/static/ico/echos/${echoData.echoId}.webp`
+          echoList[index]?.echoId && echoList[index]?.echoId !== "default"
+            ? `${apiUrl}/static/ico/echos/${echoList[index].echoId}.webp`
             : "/default.webp"
         }
         style={{
@@ -26,7 +37,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
       />
       <img
         alt=""
-        src={`${apiUrl}/static/ico/harmony/${echoData.harmony}.webp`}
+        src={`${apiUrl}/static/ico/harmony/${echoList[index].harmony}.webp`}
         style={{
           ...setSlotStyle({ w: 40, h: 40, x: 54, y: 124 }),
           zIndex: 200,
@@ -41,7 +52,7 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
           style={{
             ...setSlotStyle({ w: 148, h: 4, x: 0, y: 142 }),
             backgroundColor: `${
-              harmony[echoData?.harmony]?.colorCode || "#fff"
+              harmony[echoList[index]?.harmony]?.colorCode || "#fff"
             }`,
             zIndex: 100,
           }}
@@ -61,39 +72,28 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
           }}
         />
       </div>
-      {echoData?.subStats.map((item, idx) =>
-        echoData?.subStats[idx][0] !== "dummy" && echoData?.subStats[idx][1] !== 0 ? (
+      {echoList[index]?.subStats.map((item, idx) =>
+        echoList[index]?.subStats[idx][0] !== "dummy" &&
+        echoList[index]?.subStats[idx][1] !== 0 ? (
           <div key={idx} style={{ alignContent: "center" }}>
             <img
               alt=""
-              src={`${apiUrl}/static/ico/stats/${echoData?.subStats[idx][0]}.webp`}
-              style={{
-                ...setSlotStyle({
-                  w: 35,
-                  h: 35,
-                  x: 9,
-                  y: 165 + 42 * idx + (idx < 2 ? 0 : 15),
-                }),
-              }}
+              src={`${apiUrl}/static/ico/stats/${echoList[index]?.subStats[idx][0]}.webp`}
+              style={setSlotStyle(subStyleValue(idx, false))}
             />
             <span
               style={{
-                ...setSlotStyle({
-                  w: 130,
-                  h: 35,
-                  x: 9,
-                  y: 165 + 42 * idx + (idx < 2 ? 0 : 15),
-                }),
+                ...setSlotStyle(subStyleValue(idx, true)),
                 color: "#fff",
                 textAlign: "right",
                 transform: `translateY(-${3 * sizeValue}px)`,
                 fontSize: `${30 * sizeValue}px`,
               }}>
               {["Crit", "bns", "pct"].some((item) =>
-                echoData.subStats[idx][0].includes(item)
+                echoList[index].subStats[idx][0].includes(item)
               )
-                ? `${echoData.subStats[idx][1].toFixed(1)}%`
-                : `${Math.round(echoData.subStats[idx][1])}`}
+                ? `${echoList[index].subStats[idx][1].toFixed(1)}%`
+                : `${Math.round(echoList[index].subStats[idx][1])}`}
             </span>
           </div>
         ) : (
@@ -101,23 +101,11 @@ function EchoSlot({ echoData = new EchoData(), sizeValue = 0 }) {
             <img
               alt=""
               src={`/default.webp`}
-              style={{
-                ...setSlotStyle({
-                  w: 35,
-                  h: 35,
-                  x: 9,
-                  y: 165 + 42 * idx + (idx < 2 ? 0 : 15),
-                }),
-              }}
+              style={setSlotStyle(subStyleValue(idx, false))}
             />
             <span
               style={{
-                ...setSlotStyle({
-                  w: 130,
-                  h: 35,
-                  x: 9,
-                  y: 165 + 42 * idx + (idx < 2 ? 0 : 15),
-                }),
+                ...setSlotStyle(subStyleValue(idx, true)),
                 color: "#fff",
                 textAlign: "right",
                 transform: `translateY(-${4 * sizeValue}px)`,

@@ -6,7 +6,7 @@ import { FixedStats } from "../data/Stats";
 
 function EchoStatDrop({ index = 0, sizeValue = 1 }) {
   const apiUrl = process.env.REACT_APP_API_URL;
-  const { lang, echoList, PatchEchoStat } = useProfile();
+  const { lang, echoList, PatchEchoStat, PatchEchoMainStat } = useProfile();
   const { setSlotStyle } = useStyleHelper(sizeValue);
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
 
@@ -78,8 +78,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
 
   return (
     <div style={{ pointerEvents: "auto" }}>
-      <div
-        className="divider"
+      <div className="divider"
         style={{
           ...setSlotStyle({ w: 575, h: 2, x: 12.5, y: 200 }),
           backgroundColor: "#ffffff33",
@@ -222,9 +221,18 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                   ...prev,
                   overflow: "visible",
                 }),
+                menuList: (prev) => ({
+                  ...prev,
+                  backgroundColor: UI_COLOR[2],
+                }),
+                option: (prev) => ({
+                  ...prev,
+                  whiteSpace: "nowrap",
+                  background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+                }),
                 control: (prev) => ({
                   ...prev,
-                  background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+                  background: `linear-gradient(0deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
                 }),
               }}
               onChange={(opt) => {
