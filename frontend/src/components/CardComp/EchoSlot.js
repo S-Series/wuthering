@@ -4,6 +4,7 @@ import EchoData from "../../data/userData";
 import ProfileCard from "../ProfileCard";
 import { useStyleHelper } from "../../hooks/useStyleHelpers";
 import { useProfile } from "../../hooks/useProfile";
+import { FixedStats } from "../../data/Stats";
 
 function EchoSlot({ index = 0, sizeValue = 0 }) {
 
@@ -88,12 +89,20 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
                 textAlign: "right",
                 transform: `translateY(-${3 * sizeValue}px)`,
                 fontSize: `${30 * sizeValue}px`,
-              }}>
-              {["Crit", "bns", "pct"].some((item) =>
-                echoList[index].subStats[idx][0].includes(item)
-              )
-                ? `${echoList[index].subStats[idx][1].toFixed(1)}%`
-                : `${Math.round(echoList[index].subStats[idx][1])}`}
+              }}
+            >
+              {`${
+                FixedStats[echoList[index].subStats[idx][0]].ValueSub[
+                  echoList[index].subStats[idx][1]
+                ] || 0
+              }` +
+                `${
+                  ["Crit", "Bns", "Pct"].some((item) =>
+                    echoList[index].subStats[idx][0].includes(item)
+                  )
+                    ? "%"
+                    : ""
+                }`}
             </span>
           </div>
         ) : (
@@ -110,7 +119,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
                 textAlign: "right",
                 transform: `translateY(-${4 * sizeValue}px)`,
                 fontSize: `${30 * sizeValue}px`,
-              }}>
+              }}
+            >
               ----
             </span>
           </div>
@@ -133,7 +143,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             textAlign: "left",
             transform: `translateY(-${4 * sizeValue}px)`,
             fontSize: `${28 * sizeValue}px`,
-          }}>
+          }}
+        >
           Cv.
         </span>
         <span
@@ -143,7 +154,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             textAlign: "right",
             transform: `translateY(-${4 * sizeValue}px)`,
             fontSize: `${28 * sizeValue}px`,
-          }}>
+          }}
+        >
           0pt
         </span>
         <span
@@ -153,7 +165,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             textAlign: "left",
             transform: `translateY(-${4 * sizeValue}px)`,
             fontSize: `${28 * sizeValue}px`,
-          }}>
+          }}
+        >
           Av.
         </span>
         <span
@@ -163,7 +176,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             textAlign: "right",
             transform: `translateY(-${4 * sizeValue}px)`,
             fontSize: `${28 * sizeValue}px`,
-          }}>
+          }}
+        >
           0pt
         </span>
       </div>

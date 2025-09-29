@@ -13,6 +13,17 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
   const [statFilter, setStatFilter] = useState(() =>
     Array(5).fill([FixedStats.dummy.id, 0])
   );
+
+  useEffect(() => {
+    const filterData = [
+      echoList[index].subStats[0][0],
+      echoList[index].subStats[1][0],
+      echoList[index].subStats[2][0],
+      echoList[index].subStats[3][0],
+      echoList[index].subStats[4][0],
+    ]
+    setStatFilter(filterData);
+  }, [index, echoList])
    
   const statOption = useMemo(() => {
     return Object.values(FixedStats)
@@ -42,7 +53,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           </div>
         ),
       }));
-  }, [lang, statFilter, sizeValue]);
+  }, [statFilter, apiUrl, sizeValue, lang]);
   const statValueOption = useMemo(() => {
     return [0, 1, 2, 3, 4].map((index) => {
       const target = Object.values(FixedStats).find(
@@ -74,7 +85,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         ),
       }));
     });
-  }, [lang, statFilter, sizeValue]);
+  }, [statFilter, apiUrl, sizeValue, lang]);
 
   return (
     <div style={{ pointerEvents: "auto" }}>
@@ -93,6 +104,9 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
             <Select
               options={statOption}
               menuPlacement="auto"
+              value={statFilter[idx] === FixedStats.dummy.id ? null : (
+                <div></div>
+              )}
               placeholder={
                 Object.values(FixedStats).find(
                   (item) => item.id === echoList[index].subStats[idx][0]

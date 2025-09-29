@@ -5,10 +5,6 @@ import { useProfile } from "../../hooks/useProfile";
 function StatSlot({ styles = [{}, {}, {}], imgPath, statId = "", fontSize }) {
   const { lang, finalStats } = useProfile();
 
-  useEffect(() => {
-    console.log("StatSlot Rendered", statId, finalStats[statId]);
-  }, [statId, JSON.stringify(finalStats)]);
-
   return (
     <div
       style={{

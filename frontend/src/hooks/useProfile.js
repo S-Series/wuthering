@@ -20,15 +20,17 @@ export function ProfileProvider({ children }) {
     () => normalize(localStorage.getItem("lastWeapon")) ?? null
   );
 
-  const [constellation, setConstellation] = useState([0, 0]);
-  const [echoList, setEchoList] = useState(
-    () => normalize(JSON.parse(localStorage.getItem(`${characterId}EchoData`))) ?? [
+  function getEchoData() {
+    return normalize(JSON.parse(localStorage.getItem(`${characterId}EchoData`))) ?? [
     createEmptyEcho(4),
     createEmptyEcho(3),
     createEmptyEcho(3),
     createEmptyEcho(1),
     createEmptyEcho(1),
-  ]);
+  ]};
+
+  const [constellation, setConstellation] = useState([0, 0]);
+  const [echoList, setEchoList] = useState(() => getEchoData());
   const PatchEchoStat = useCallback((ei, si, patch /* [id?, val?] */) => {
     setEchoList(prev => prev.map((e, i) =>
       i !== ei ? e : { ...e, subStats: e.subStats.map((p, j) => j !== si ? p : [patch?.[0] ?? p[0], patch?.[1] ?? p[1]]) }
@@ -116,6 +118,7 @@ export function ProfileProvider({ children }) {
     stats[types[1]] += stats[`${types[1]}Delta`] * (1 + constellation[1] * 0.2);
 
     return stats;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterId, characterData, characterStats, weaponStats, echoList, constellation]);
 
   const statId = useMemo(() => {
@@ -132,15 +135,14 @@ export function ProfileProvider({ children }) {
   }, [characterData?.element, characterData?.type]);
 
   useEffect(() => {
-    console.log("Final Stats Updated", finalStats);
-  }, [JSON.stringify(finalStats)]); 
-
-  useEffect(() => {
     if (lang) localStorage.setItem("lastLanguage", lang);
   }, [lang]);
 
   useEffect(() => {
-    if (characterId) localStorage.setItem("lastCharacter", characterId);
+    if (characterId) {
+      setEchoList(getEchoData());
+      localStorage.setItem("lastCharacter", characterId);
+    }
   }, [characterId]);
 
   useEffect(() => {
