@@ -154,6 +154,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
     setHovered(isOvered);
   }
   function handleDoubleClick() {
+    console.log("double click");
     if (!inputable) return;
     if (fileInputRef.current) fileInputRef.current.click();
   }

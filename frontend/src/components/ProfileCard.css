@@ -60,7 +60,6 @@
     aspect-ratio: 2140 / 940;
     box-shadow: 0px 10px 30px #000000;
     border: 1px solid #999999ff;
-    background-color: #00000033;
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -136,6 +135,10 @@
     width: calc(100% - 50px);
     min-width: 856px;
     align-items: center;
+}
+
+.profile-card-character-constellation{
+    pointer-events: none;
 }
 
 .empty-select-dropdown {

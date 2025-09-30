@@ -49,6 +49,10 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       ...prev,
       backgroundColor: UI_COLOR[2],
     }),
+    valueContainer: (prev) => ({
+      ...prev,
+      paddingLeft: `${15 * sizeValue}px`,
+    }),
   };
   function costToIndex(cost) {
     if (cost === 4) return 0;
@@ -118,8 +122,6 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
     });
   }, [statFilter, apiUrl, sizeValue, lang]);
 
-  console.log(`Cost${echoList[index]?.cost}`);
-
   const ECHO_SELECT_OPTION = Object.values(
     echoDict[`Cost${echoList[index]?.cost}`] || []
   ).map((item) => ({
@@ -130,7 +132,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-start",
-          gap: `${25 * sizeValue}px`,
+          gap: `${15 * sizeValue}px`,
         }}>
         <img
           alt=""
@@ -212,36 +214,27 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
 
   return (
     <div style={{ pointerEvents: "auto", zIndex: 750, position: "absolute" }}>
-      <div style={setSlotStyle({ w: 350, h: 140, x: 0, y: 0 })}>
+      <div style={setSlotStyle({ w: 600, h: 140, x: 0, y: 0 })}>
         <Select
           options={ECHO_SELECT_OPTION}
           isClearable={true}
           menuPlacement="auto"
-          placeholder={<span className={`${lang}Font`}>Echo</span>}
+          placeholder={<span className={`${lang}Font`}>&nbsp;&nbsp;Echo</span>}
           styles={{
             ...defaultSelectOption,
             control: (base) => ({
               ...base,
               overflow: "visible",
-              width: `${350 * sizeValue}px`,
-              height: `${120 * sizeValue}px`,
               background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
             }),
-            menu: (prev) => ({
+            valueContainer: (prev) => ({
               ...prev,
-              width: "fit-content",
-              minWidth: "100%",
-              maxWidth: "200%",
-              backgroundColor: UI_COLOR[2],
-              overflowX: "hidden",
+              paddingLeft: 0,
             }),
           }}
         />
       </div>
-      <div
-        style={{
-          ...setSlotStyle({ w: 235, h: 80, x: 365, y: 20 }),
-        }}>
+      <div style={setSlotStyle({ w: 235, h: 80, x: 365, y: 110 })}>
         <Select
           options={HARMONY_SELECT_OPTION}
           isClearable={true}
@@ -268,7 +261,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           }}
         />
       </div>
-      <div style={setSlotStyle({ w: 350, h: 80, x: 0, y: 140 })}>
+      <div style={setSlotStyle({ w: 350, h: 80, x: 0, y: 110 })}>
         <Select
           options={MAIN_STAT_OPTION}
           isClearable={true}
@@ -290,7 +283,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       <div
         className="divider"
         style={{
-          ...setSlotStyle({ w: 575, h: 2, x: 12.5, y: 220 }),
+          ...setSlotStyle({ w: 575, h: 2, x: 12.5, y: 210 }),
           backgroundColor: "#ffffff33",
         }}
       />
@@ -298,7 +291,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         <div key={idx}>
           <div
             style={{
-              ...setSlotStyle({ w: 350, h: 50, x: 0, y: 240 + idx * 100 }),
+              ...setSlotStyle({ w: 350, h: 50, x: 0, y: 230 + idx * 100 }),
             }}>
             <Select
               options={statOption}
@@ -360,9 +353,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
             />
           </div>
           <div
-            style={{
-              ...setSlotStyle({ w: 235, h: 50, x: 365, y: 240 + idx * 100 }),
-            }}>
+            style={setSlotStyle({ w: 235, h: 80, x: 365, y: 230 + idx * 100 })}>
             <Select
               options={statValueOption[idx]}
               menuPlacement="auto"

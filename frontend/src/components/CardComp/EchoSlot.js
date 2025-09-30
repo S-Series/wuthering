@@ -26,18 +26,6 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
     else return 2;
   }
 
-  console.log(echoList[index]?.mainStat);
-  console.log(FixedStats[echoList[index]?.mainStat]?.ValueMain[costToIndex(4)]);
-
-  function getMainStatTextValue(isFirst) {
-    if (isFirst)
-      return (
-        FixedStats[echoList[index]?.mainStat]?.ValueMain[costToIndex(echoList[index]?.cost)] ||
-        "----"
-      );
-    else return FixedMainSub[costToIndex(echoList[index]?.cost)][1] || "----";
-  }
-
   return (
     <div>
       <div className="echo-image-frame">

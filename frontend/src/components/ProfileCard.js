@@ -28,6 +28,14 @@ function ProfileCard() {
   //#region Variables
   const apiUrl = process.env.REACT_APP_API_URL;
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
+  const BUTTON_POS = [
+    { w: 75, h: 70, x: 540, y: 490 },
+    { w: 70, h: 80, x: 465, y: 560 },
+    { w: 60, h: 95, x: 380, y: 610 },
+    { w: 65, h: 110, x: 280, y: 647.5 },
+    { w: 60, h: 115, x: 180, y: 670 },
+    { w: 55, h: 115, x: 78, y: 676 },
+  ];
 
   const [sizeValue, setSizeValue] = useState(1.0);
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
@@ -479,6 +487,27 @@ function ProfileCard() {
             }
             sizeValue={sizeValue}
           />
+        </div>
+        {/* //$ Character Constellation */}
+        <div className="profile-card-character-constellation profile-slot">
+          <img
+            alt=""
+            src={`./ui/CharacterC0.png`}
+            style={{
+              ...setSlotStyle({ w: 650, h: 800, x: 20, y: 20 }),
+            }}
+          />
+          {BUTTON_POS.map((item, idx) => (
+            <button
+              style={{
+                ...setSlotStyle(item),
+                opacity: 0,
+                pointerEvents: "auto",
+              }}
+              onClick={() => {console.log("Button Action", idx + 1);}}>
+              <img />
+            </button>
+          ))}
         </div>
         {/* //$ Character Info */}
         <div
@@ -983,9 +1012,10 @@ function ProfileCard() {
                   }}>
                   <div
                     style={{
-                      ...setSlotStyle({ w: 850 - 2, h: 616 - 2, x: 25, y: 25 }),
+                      ...setSlotStyle({ w: 900 - 2, h: 630 - 2, x: 0, y: 0 }),
                       backgroundColor: "#00000033",
                       border: "1px dashed #fff",
+                      pointerEvents: "auto",
                     }}>
                     <ImageDrag inputable={true} sizeValue={sizeValue} />
                   </div>
