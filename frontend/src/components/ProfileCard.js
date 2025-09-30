@@ -29,12 +29,12 @@ function ProfileCard() {
   const apiUrl = process.env.REACT_APP_API_URL;
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
   const BUTTON_POS = [
-    { w: 75, h: 70, x: 540, y: 490 },
-    { w: 70, h: 80, x: 465, y: 560 },
-    { w: 60, h: 95, x: 380, y: 610 },
-    { w: 65, h: 110, x: 280, y: 647.5 },
-    { w: 60, h: 115, x: 180, y: 670 },
-    { w: 55, h: 115, x: 78, y: 676 },
+    [{ w: 75, h: 70,  x: 540,   y: 490   }, { w: 45, h: 45, x: 555,   y: 502.5 }],
+    [{ w: 70, h: 80,  x: 465,   y: 560   }, { w: 45, h: 45, x: 480, y: 575 }],
+    [{ w: 60, h: 95,  x: 380,   y: 610   }, { w: 45, h: 45, x: 387.5, y: 635   }],
+    [{ w: 65, h: 110, x: 280,   y: 647.5 }, { w: 45, h: 45, x: 292.5,   y: 677.5   }],
+    [{ w: 60, h: 115, x: 180,   y: 670   }, { w: 45, h: 45, x: 187.5, y: 705   }],
+    [{ w: 55, h: 115, x: 78,    y: 676   }, { w: 45, h: 45, x: 83,    y: 711   }],
   ];
 
   const [sizeValue, setSizeValue] = useState(1.0);
@@ -478,6 +478,10 @@ function ProfileCard() {
             boxShadow: "5px 5px 0px rgba(0,0,0,1)",
             borderTopLeftRadius: `calc(40px * ${sizeValue})`,
             overflow: "hidden",
+            backgroundImage: `url(${apiUrl}/static/character/${characterId}/art.png)`,
+            backgroundSize: "cover",
+            backgroundPosition: "center center",
+            backgroundRepeat: "no-repeat",
           }}>
           <ImageDrag
             path={
@@ -492,21 +496,32 @@ function ProfileCard() {
         <div className="profile-card-character-constellation profile-slot">
           <img
             alt=""
-            src={`./ui/CharacterC0.png`}
+            src={`./ui/CharacterC${constellation[0]}.png`}
             style={{
               ...setSlotStyle({ w: 650, h: 800, x: 20, y: 20 }),
             }}
           />
           {BUTTON_POS.map((item, idx) => (
-            <button
-              style={{
-                ...setSlotStyle(item),
-                opacity: 0,
-                pointerEvents: "auto",
-              }}
-              onClick={() => {console.log("Button Action", idx + 1);}}>
-              <img />
-            </button>
+            <div>
+              <button
+                style={{
+                  ...setSlotStyle(item[0]),
+                  opacity: 0,
+                  pointerEvents: "auto",
+                }}
+                onClick={() => {
+                  console.log("Button Action", idx + 1);
+                }}
+              />
+              <img
+                src={`${apiUrl}/static/character/${characterId}/C${
+                  idx + 1
+                }.png`}
+                style={{
+                  ...setSlotStyle(item[1]),
+                }}
+              />
+            </div>
           ))}
         </div>
         {/* //$ Character Info */}

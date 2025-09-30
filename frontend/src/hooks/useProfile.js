@@ -29,7 +29,7 @@ export function ProfileProvider({ children }) {
     createEmptyEcho(1),
   ]};
 
-  const [constellation, setConstellation] = useState([0, 0]);
+  const [constellation, setConstellation] = useState([4, 0]);
   const [echoList, setEchoList] = useState(() => getEchoData());
   const PatchEchoID = useCallback((echoIndex, newId) => {
     setEchoList(prev => prev.map((e, i) =>
