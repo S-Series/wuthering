@@ -29,7 +29,9 @@ export function ProfileProvider({ children }) {
     createEmptyEcho(1),
   ]};
 
-  const [constellation, setConstellation] = useState([4, 0]);
+  const [constellation, setConstellation] = useState(
+    normalize(JSON.parse(localStorage.getItem(`${characterId}Constellation`))) ?? [0, 0]
+  );
   const [echoList, setEchoList] = useState(() => getEchoData());
   const PatchEchoID = useCallback((echoIndex, newId) => {
     setEchoList(prev => prev.map((e, i) =>
@@ -190,6 +192,10 @@ export function ProfileProvider({ children }) {
       localStorage.setItem("lastWeapon", data?.id);
     }
   }, [weaponId, characterData]);
+
+  useEffect(() => {
+    if (constellation) localStorage.setItem(`${characterId}Constellation`, JSON.stringify(constellation));
+  }, [constellation])
 
   useEffect(() => {
     if (echoList) localStorage.setItem(`${characterId}EchoData`, JSON.stringify(echoList));

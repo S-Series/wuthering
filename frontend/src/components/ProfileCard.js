@@ -2,7 +2,7 @@
 import "./ProfileCard.css";
 import { useRef, useState, useEffect, useLayoutEffect, useMemo, use } from "react";
 import Select, { components } from "react-select";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, color } from "framer-motion";
 // data
 import { character, characterStat } from "../data/Character";
 import { weapon, weaponStat } from "../data/Weapon";
@@ -29,13 +29,32 @@ function ProfileCard() {
   const apiUrl = process.env.REACT_APP_API_URL;
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
   const BUTTON_POS = [
-    [{ w: 75, h: 70,  x: 540,   y: 490   }, { w: 45, h: 45, x: 555,   y: 502.5 }],
-    [{ w: 70, h: 80,  x: 465,   y: 560   }, { w: 45, h: 45, x: 480, y: 575 }],
-    [{ w: 60, h: 95,  x: 380,   y: 610   }, { w: 45, h: 45, x: 387.5, y: 635   }],
-    [{ w: 65, h: 110, x: 280,   y: 647.5 }, { w: 45, h: 45, x: 292.5,   y: 677.5   }],
-    [{ w: 60, h: 115, x: 180,   y: 670   }, { w: 45, h: 45, x: 187.5, y: 705   }],
-    [{ w: 55, h: 115, x: 78,    y: 676   }, { w: 45, h: 45, x: 83,    y: 711   }],
+    { w: 85, h: 80, x: 576.25, y: 524 },
+    { w: 70, h: 90, x: 501.25, y: 598.25 },
+    { w: 70, h: 100, x: 410, y: 657.5 },
+    { w: 70, h: 110, x: 313.75, y: 701.25 },
+    { w: 70, h: 115, x: 210, y: 725.25 },
+    { w: 70, h: 115, x: 103.75, y: 732.5 },
   ];
+
+  const {
+    lang,
+    characterId,
+    setCharacterId,
+    weaponId,
+    setWeaponId,
+    constellation,
+    setConstellation,
+    echoList,
+    setEchoList,
+    characterData,
+    weaponData,
+    characterStats,
+    weaponStats,
+    finalStats,
+    statId,
+    StatText,
+  } = useProfile();
 
   const [sizeValue, setSizeValue] = useState(1.0);
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
@@ -74,27 +93,20 @@ function ProfileCard() {
   ];
   const W_ConstellationOption = W_ConstellationList.map((item) => ({
     value: item.value,
-    label: item.label,
+    label: (
+      <span
+        className={`${lang}Font`}
+        style={{
+          fontSize: `${24 * sizeValue}px`,
+          alignSelf: "flex-end",
+          color: "#fff",
+        }}>
+        {item.label}
+      </span>
+    ),
   }));
 
-  const {
-    lang,
-    characterId,
-    setCharacterId,
-    weaponId,
-    setWeaponId,
-    constellation,
-    setConstellation,
-    echoList,
-    setEchoList,
-    characterData,
-    weaponData,
-    characterStats,
-    weaponStats,
-    finalStats,
-    statId,
-    StatText,
-  } = useProfile();
+
 
   //#endregion
 
@@ -474,16 +486,27 @@ function ProfileCard() {
         <div
           className="profile-card-character-view profile-slot"
           style={{
-            ...setSlotStyle({ w: 650, h: 800, x: 20, y: 20 }),
+            ...setSlotStyle({ w: 650 - 2, h: 800 - 2, x: 20, y: 20 }),
+            border: "1px solid #666666",
             boxShadow: "5px 5px 0px rgba(0,0,0,1)",
             borderTopLeftRadius: `calc(40px * ${sizeValue})`,
             overflow: "hidden",
-            backgroundImage: `url(${apiUrl}/static/character/${characterId}/art.png)`,
-            backgroundSize: "cover",
             backgroundPosition: "center center",
-            backgroundRepeat: "no-repeat",
           }}>
+          <img
+            src={`${apiUrl}/static/character/${characterId}/art.png`}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              height: "104%",
+              width: "auto",
+              filter: "brightness(0.75)",
+            }}
+          />
           <ImageDrag
+            inputable = {true}
             path={
               characterId
                 ? `${apiUrl}/static/character/${characterId}/stand.png`
@@ -501,25 +524,55 @@ function ProfileCard() {
               ...setSlotStyle({ w: 650, h: 800, x: 20, y: 20 }),
             }}
           />
+          <button
+            style={{
+              ...setSlotStyle({ w: 100, h: 30, x: 560, y: 35 }),
+              pointerEvents: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              visibility: constellation[0] !== 0 ? "visible" : "hidden",
+            }}
+            onClick={() => setConstellation((prev) => [0, prev[1]])}>
+            <span
+              className={`${lang}Font`}
+              style={{
+                fontSize: `${20 * sizeValue}px`,
+                whiteSpace: "nowrap",
+              }}>
+              Reset C0
+            </span>
+          </button>
           {BUTTON_POS.map((item, idx) => (
             <div>
               <button
+                className="constel-btn"
                 style={{
-                  ...setSlotStyle(item[0]),
+                  ...setSlotStyle(item),
                   opacity: 0,
+                  backgroundColor: "#ffffff01",
                   pointerEvents: "auto",
+                  transform: "translate(-50%, -50%)",
                 }}
-                onClick={() => {
-                  console.log("Button Action", idx + 1);
-                }}
+                onClick={() => setConstellation((prev) => [idx + 1, prev[1]])}
               />
               <img
                 src={`${apiUrl}/static/character/${characterId}/C${
                   idx + 1
                 }.png`}
-                style={{
-                  ...setSlotStyle(item[1]),
-                }}
+                style={
+                  idx + 1 > constellation[0]
+                    ? {
+                        ...setSlotStyle({ ...item, w: 30, h: 30 }),
+                        opacity: 0.5,
+                        transform: "translate(-50%, -50%)",
+                      }
+                    : {
+                        ...setSlotStyle({ ...item, w: 45, h: 45 }),
+                        opacity: 1,
+                        transform: "translate(-50%, -50%)",
+                      }
+                }
               />
             </div>
           ))}
@@ -554,9 +607,9 @@ function ProfileCard() {
           <span
             className={`profile-card-text ${lang}Font`}
             style={{
+              color: "#ffffff",
               bottom: `calc(10px * ${sizeValue})`,
               left: `calc(15px * ${sizeValue})`,
-              color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
             }}>
             uid. 812 345 678
@@ -635,48 +688,84 @@ function ProfileCard() {
           <Select
             options={W_ConstellationOption}
             onChange={(item) => {
-              profileData.constellation = item.value;
+              setConstellation((prev) => [prev[0], item.value]);
+            }}
+            value={{
+              value: 0,
+              label: (
+                <span
+                  className={`${lang}Font`}
+                  style={{
+                    fontSize: `${24 * sizeValue}px`,
+                    alignSelf: "flex-end",
+                    justifySelf: "center",
+                    color: "#fff",
+                  }}>
+                  C{constellation[1]}
+                </span>
+              ),
             }}
             styles={{
-              control: (base) => ({
-                ...base,
-                ...setSlotStyle({ w: 150, h: 40, x: 30, y: -57.5 }),
-                transform: `scale(${sizeValue})`,
+              container: (b) => ({
+                ...b,
+                width: `calc(130px * ${sizeValue})`,
+                top: "0%",
+                left: "50%",
+                transform: "translate(-50%, 15%)",
               }),
-              option: (base) => ({
-                ...base,
-                width: `${130 * sizeValue}px`,
-                fontSize: `${20 * sizeValue}px`,
+              control: (b, s) => ({
+                ...b,
+                minHeight: 10,
+                height: `${36 * sizeValue}px`,
+                border: "none",
+                borderRadius: 0,
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
               }),
-              valueContainer: (base) => ({
-                ...base,
-                width: `${130 * sizeValue}px`,
-                height: "100%",
-                fontSize: `${36 * sizeValue}px`,
-              }),
-              input: (base) => ({
-                ...base,
-                fontSize: `${20 * sizeValue}px`,
-              }),
-              singleValue: (base) => ({
-                ...base,
-                fontSize: `${36 * sizeValue}px`,
-              }),
-              indicatorsContainer: (base) => ({
-                ...base,
+              valueContainer: (b) => ({
+                ...b,
                 padding: 0,
-                width: `${30 * sizeValue}px`,
-                height: `100%`,
+                paddingLeft: `${10 * sizeValue}px`,
+                transform: "translate(0%, -6%)",
               }),
-              dropdownIndicator: (base) => ({
-                ...base,
+              input: (b) => ({
+                ...b,
+                margin: 0,
                 padding: 0,
-                fontSize: `${30 * sizeValue}px`,
-                svg: {
-                  width: `${30 * sizeValue}px`,
-                  height: `${30 * sizeValue}px`,
-                },
               }),
+              indicatorsContainer: (b) => ({
+                ...b,
+                height: `${36 * sizeValue}px`,
+                aspectRatio: "1/1",
+              }),
+              dropdownIndicator: (b) => ({
+                ...b,
+                padding: 0,
+              }),
+              clearIndicator: (b) => ({
+                ...b,
+                padding: 2,
+              }),
+              menu: (b) => ({
+                ...b,
+                marginTop: 4,
+                width: "max-content",
+                minWidth: "100%",
+              }),
+              menuList: (b) => ({
+                ...b,
+                paddingTop: 0,
+                paddingBottom: 0,
+                maxHeight: 240,
+              }),
+              option: (b, s) => ({
+                ...b,
+                fontSize: 12,
+                minHeight: 24,
+                padding: "4px 8px",
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              }),
+              singleValue: (b) => ({ ...b, fontSize: 12 }),
+              placeholder: (b) => ({ ...b, fontSize: 12 }),
             }}
           />
         </div>
@@ -880,7 +969,7 @@ function ProfileCard() {
               ...setSlotStyle({ w: 540, h: 195, x: 250, y: 10 }),
               backgroundColor: "#00000033",
             }}>
-            <ImageDrag path={""} sizeValue={sizeValue} />
+            <ImageDrag inputable={true} sizeValue={sizeValue} />
           </div>
         </div>
         <span

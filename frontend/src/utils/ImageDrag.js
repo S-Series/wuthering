@@ -198,7 +198,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
           userSelect: "none",
           WebkitUserSelect: "none",
         }}
-        onChange={handleFileChange}
+        onChange={handleFileChange} 
       />
       <img
         className="image-drag-slot-content"

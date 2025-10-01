@@ -12,7 +12,8 @@ export function createEmptyEcho(cost = 1){
       ["dummy", -1],
       ["dummy", -1],
       ["dummy", -1],
-    ]
+    ],
+    score: [0.0, 0.0]
   }
 }
 
