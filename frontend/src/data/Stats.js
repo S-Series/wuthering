@@ -283,4 +283,4 @@ export const FixedStatsSub = Object.fromEntries(
   Object.entries(FixedStats).filter(([_, stat]) => stat.ValueSub !== null)
 );
 
-export const FixedMainSub = [[FixedStats.atk.id, 150], [FixedStats.atk.id, 100], [FixedStats.hp.id, 2200]]; // 4, 3, 1
+export const FixedMainSub = [[FixedStats.atk.id, 150], [FixedStats.atk.id, 100], [FixedStats.hp.id, 2280]]; // 4, 3, 1

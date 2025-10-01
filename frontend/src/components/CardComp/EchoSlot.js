@@ -83,9 +83,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
       <div className="echo-main-stats">
         <img
           alt=""
-          src={`${apiUrl}/static/ico/stats/${
-            echoList[index]?.mainStat || "dummy"
-          }.webp`}
+          src={`${apiUrl}/static/ico/stats/${echoList[index]?.mainStat}.webp`}
           style={setSlotStyle({ w: 35, h: 35, x: 9, y: 165 })}
         />
         <span
@@ -98,7 +96,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
           }}>
           {FixedStats[echoList[index]?.mainStat]?.ValueMain[
             costToIndex(echoList[index]?.cost)
-          ] || "----"}
+          ] || "----"}%
         </span>
         <img
           alt=""
@@ -121,7 +119,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
       <div className="echo-sub-stats">
         {echoList[index]?.subStats.map((item, idx) =>
           echoList[index]?.subStats[idx][0] !== "dummy" &&
-          echoList[index]?.subStats[idx][1] !== 0 ? (
+          echoList[index]?.subStats[idx][1] >= 0 ? (
             <div key={idx} style={{ alignContent: "center" }}>
               <img
                 alt=""

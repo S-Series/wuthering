@@ -29,6 +29,12 @@ export function ProfileProvider({ children }) {
     createEmptyEcho(1),
   ]};
 
+  const costToIndex = useCallback((cost) => {
+    if (cost === 4) return 0;
+    else if (cost === 3) return 1;
+    else return 2;
+  }, [])
+
   const [constellation, setConstellation] = useState(
     normalize(JSON.parse(localStorage.getItem(`${characterId}Constellation`))) ?? [0, 0]
   );
@@ -50,7 +56,7 @@ export function ProfileProvider({ children }) {
   }, []);
   const PatchEchoMainStat = useCallback((echoIndex, partial /* {id?, val?} */) => {
     setEchoList(prev => prev.map((e, i) =>
-      i !== echoIndex ? e : { ...e, mainStat: [partial?.id ?? e.mainStat[0], partial?.val ?? e.mainStat[1]] }
+      i !== echoIndex ? e : { ...e, mainStat: partial ?? FixedStats.dummy.id }
     ));
   }, []);
   const PatchEchoStat = useCallback((echoIndex, si, patch /* [id?, val?] */) => {
@@ -110,20 +116,38 @@ export function ProfileProvider({ children }) {
     stats[weaponStats?.statType[0]] += Number(weaponStats?.value[0] ?? 0);
     stats[weaponStats?.statType[1]] += Number(weaponStats?.value[1] ?? 0);
     //$ echos
-    echoList?.forEach((echoData) =>
+    echoList?.forEach((echoData) => {
+      stats[`${echoData.mainStat}Delta`] += parseFloat(
+        FixedStats[echoData.mainStat].ValueMain[costToIndex(echoData.cost)]
+      );
+      console.log(echoData.cost);
+      switch (echoData.cost) {
+        case 4:
+          console.log("Cost4 runned");
+          stats.atkDelta += 150.0;
+          break;
+        case 3:
+          console.log("Cost3 runned");
+          stats.atkDelta += 100.0;
+          break;
+        case 1:
+          console.log("Cost1 runned");
+          stats.hpDelta += 2280.0;
+          break;
+      }
       echoData.subStats.forEach(([id, val]) => {
         if (stats[id] !== undefined)
           stats[`${id}Delta`] += parseFloat(FixedStats[id].ValueSub[val] ?? 0);
       })
-    );
+    });
     //$ extra stats
-    const hpExtra = Math.floor(stats.hp * ((stats.hpPct ?? 0) / 100));
-    const atkExtra = Math.floor(stats.atk * ((stats.atkPct ?? 0) / 100));
-    const defExtra = Math.floor(stats.def * ((stats.defPct ?? 0) / 100));
+    const hpExtra = Math.ceil(stats.hp * ((stats.hpPct ?? 0) / 100));
+    const atkExtra = Math.ceil(stats.atk * ((stats.atkPct ?? 0) / 100));
+    const defExtra = Math.ceil(stats.def * ((stats.defPct ?? 0) / 100));
 
-    stats.hpDelta = Math.floor(stats.hp * ((stats.hpPctDelta ?? 0) / 100));
-    stats.atkDelta = Math.floor(stats.atk * ((stats.atkPctDelta ?? 0) / 100));
-    stats.defDelta = Math.floor(stats.def * ((stats.defPctDelta ?? 0) / 100));
+    stats.hpDelta += Math.ceil(stats.hp * ((stats.hpPctDelta ?? 0) / 100));
+    stats.atkDelta += Math.ceil(stats.atk * ((stats.atkPctDelta ?? 0) / 100));
+    stats.defDelta += Math.ceil(stats.def * ((stats.defPctDelta ?? 0) / 100));
 
     stats.hp += stats.hpDelta + hpExtra;
     stats.atk += stats.atkDelta + atkExtra;
@@ -202,7 +226,7 @@ export function ProfileProvider({ children }) {
   }, [echoList]);
 
   const value = useMemo(() => ({
-    lang, setLang,
+    lang, setLang, costToIndex,
     characterId, setCharacterId,
     weaponId, setWeaponId,
     constellation, setConstellation,

@@ -423,7 +423,7 @@ export const characterStat = {
   },
   carlotta: {
     baseHp: 12450,
-    baseAtk: 463,
+    baseAtk: 462,
     baseDef: 1198,
 
     CritRate: 13.0,

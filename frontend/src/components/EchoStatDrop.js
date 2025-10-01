@@ -7,7 +7,16 @@ import { echoDict, harmony } from "../data/Echo";
 
 function EchoStatDrop({ index = 0, sizeValue = 1 }) {
   const apiUrl = process.env.REACT_APP_API_URL;
-  const { lang, echoList, PatchEchoStat, PatchEchoMainStat } = useProfile();
+  const {
+    lang,
+    echoList,
+    PatchEchoStat,
+    PatchEchoID,
+    PatchEchoMainStat,
+    PatchEchoHarmony,
+    costToIndex
+  } = useProfile();
+
   const { setSlotStyle } = useStyleHelper(sizeValue);
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
 
@@ -54,12 +63,11 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       paddingLeft: `${15 * sizeValue}px`,
     }),
   };
-  function costToIndex(cost) {
-    if (cost === 4) return 0;
-    else if (cost === 3) return 1;
-    else return 2;
-  }
    
+  console.log(echoList[index].echoId);
+  console.log(echoDict[`Cost${echoList[index].cost}`]);
+  console.log(Object.values(echoDict[`Cost${echoList[index].cost}`]).some(item => item.id === echoList[index].echoId));
+
   const statOption = useMemo(() => {
     return Object.values(FixedStats)
       .filter((item) => item.id !== "dummy")
@@ -160,20 +168,20 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
     .map((item) => ({
       value: item.id,
       label: (
-      <div
+        <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-start",
-          gap: `${25 * sizeValue}px`,
         }}>
         <img
           alt=""
           src={`${apiUrl}/static/ico/stats/${item.id ?? "default"}.webp`}
           style={{
-            width: `${50 * sizeValue}px`,
-            height: `${50 * sizeValue}px`,
+            width: `${40 * sizeValue}px`,
+            height: `${40 * sizeValue}px`,
             alignSelf: "center",
+            transform: `translateX(-${10 * sizeValue}px)`,
           }}
         />
         <span
@@ -182,7 +190,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           {`${item[lang] || { Set }}`}
         </span>
       </div>
-    ),
+      ),
     }));
   const HARMONY_SELECT_OPTION = Object.values(harmony).map((item) => ({
     value: item.id,
@@ -220,6 +228,49 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           isClearable={true}
           menuPlacement="auto"
           placeholder={<span className={`${lang}Font`}>&nbsp;&nbsp;Echo</span>}
+          value={
+            echoList[index].echoId === "default" ||
+            !Object.values(echoDict[`Cost${echoList[index].cost}`]).some(
+              (item) => item.id === echoList[index].echoId
+            )
+              ? null
+              : {
+                  value: echoList[index].echoId,
+                  label: (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        gap: `${15 * sizeValue}px`,
+                      }}>
+                      <img
+                        alt=""
+                        src={`${apiUrl}/static/ico/echos/${
+                          echoList[index].echoId ?? "default"
+                        }.webp`}
+                        style={{
+                          width: `${75 * sizeValue}px`,
+                          height: `${75 * sizeValue}px`,
+                          alignSelf: "center",
+                        }}
+                      />
+                      <span
+                        className={`${lang}Font`}
+                        style={{
+                          fontSize: `${32 * sizeValue}px`,
+                          color: "#fff",
+                        }}>
+                        {`${
+                          echoDict[`Cost${echoList[index].cost}`][
+                            echoList[index].echoId
+                          ][lang] || { Set }
+                        }`}
+                      </span>
+                    </div>
+                  ),
+                }
+          }
           styles={{
             ...defaultSelectOption,
             control: (base) => ({
@@ -232,6 +283,9 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               paddingLeft: 0,
             }),
           }}
+          onChange={(item) => {
+            PatchEchoID(index, item ? item.value : "default");
+          }}
         />
       </div>
       <div style={setSlotStyle({ w: 235, h: 80, x: 365, y: 110 })}>
@@ -240,6 +294,42 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           isClearable={true}
           menuPlacement="auto"
           placeholder={<span className={`${lang}Font`}>Harmony</span>}
+          value={
+            echoList[index].harmony === "default"
+              ? null
+              : {
+                  value: "dummy",
+                  label: (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        gap: `${25 * sizeValue}px`,
+                      }}>
+                      <img
+                        alt=""
+                        src={`${apiUrl}/static/ico/harmony/${
+                          echoList[index].harmony ?? "default"
+                        }.webp`}
+                        style={{
+                          width: `${50 * sizeValue}px`,
+                          height: `${50 * sizeValue}px`,
+                          alignSelf: "center",
+                        }}
+                      />
+                      <span
+                        className={`${lang}Font`}
+                        style={{
+                          fontSize: `${32 * sizeValue}px`,
+                          color: "#fff",
+                        }}>
+                        {`${harmony[echoList[index].harmony][lang] || { Set }}`}
+                      </span>
+                    </div>
+                  ),
+                }
+          }
           styles={{
             ...defaultSelectOption,
             control: (base) => ({
@@ -259,6 +349,9 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               overflowX: "hidden",
             }),
           }}
+          onChange={(item) => {
+            PatchEchoHarmony(index, item ? item.value : "default");
+          }}
         />
       </div>
       <div style={setSlotStyle({ w: 350, h: 80, x: 0, y: 110 })}>
@@ -267,6 +360,43 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           isClearable={true}
           menuPlacement="auto"
           placeholder={<span className={`${lang}Font`}>Main Stats</span>}
+          value={
+            echoList[index].mainStat === FixedStats.dummy.id
+              ? null
+              : {
+                  value: "dummy",
+                  label: (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                      }}>
+                      <img
+                        alt=""
+                        src={`${apiUrl}/static/ico/stats/${
+                          echoList[index].mainStat ?? "default"
+                        }.webp`}
+                        style={{
+                          width: `${50 * sizeValue}px`,
+                          height: `${50 * sizeValue}px`,
+                          alignSelf: "center",
+                          transform: `translateX(-${10 * sizeValue}px)`,
+                        }}
+                      />
+                      <span
+                        className={`${lang}Font`}
+                        style={{
+                          fontSize: `${32 * sizeValue}px`,
+                          color: "#fff",
+                        }}>
+                        {FixedStats?.[echoList[index].mainStat]?.[lang] ||
+                          "error"}
+                      </span>
+                    </div>
+                  ),
+                }
+          }
           styles={{
             ...defaultSelectOption,
             menu: (prev) => ({
@@ -277,6 +407,10 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               backgroundColor: UI_COLOR[2],
               overflowX: "hidden",
             }),
+          }}
+          onChange={(item) => {
+            console.log(item.value);
+            PatchEchoMainStat(index, item ? item.value : FixedStats.dummy.id);
           }}
         />
       </div>
@@ -384,7 +518,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                             style={{ color: "#fff" }}>
                             {FixedStats?.[statFilter?.[idx]]?.ValueSub[
                               echoList[index].subStats[idx][1]
-                            ] || "error"}
+                            ] || "0"}
                           </span>
                         </div>
                       ),

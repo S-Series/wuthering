@@ -46,14 +46,11 @@ function ProfileCard() {
     constellation,
     setConstellation,
     echoList,
-    setEchoList,
     characterData,
     weaponData,
-    characterStats,
     weaponStats,
-    finalStats,
     statId,
-    StatText,
+    PatchEchoCost
   } = useProfile();
 
   const [sizeValue, setSizeValue] = useState(1.0);
@@ -105,9 +102,6 @@ function ProfileCard() {
       </span>
     ),
   }));
-
-
-
   //#endregion
 
   //#region Functions
@@ -1072,6 +1066,9 @@ function ProfileCard() {
                         ...base,
                         height: "100%",
                       }),
+                    }}
+                    onChange={(item) => {
+                      PatchEchoCost(idx, item.value);
                     }}
                   />
                 </div>
