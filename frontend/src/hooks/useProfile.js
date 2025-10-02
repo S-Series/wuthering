@@ -118,7 +118,7 @@ export function ProfileProvider({ children }) {
     //$ echos
     echoList?.forEach((echoData) => {
       stats[`${echoData.mainStat}Delta`] += parseFloat(
-        FixedStats[echoData.mainStat].ValueMain[costToIndex(echoData.cost)]
+        FixedStats[echoData.mainStat]?.ValueMain[costToIndex(echoData.cost)]
       );
       console.log(echoData.cost);
       switch (echoData.cost) {
@@ -134,6 +134,7 @@ export function ProfileProvider({ children }) {
           console.log("Cost1 runned");
           stats.hpDelta += 2280.0;
           break;
+        default: break;
       }
       echoData.subStats.forEach(([id, val]) => {
         if (stats[id] !== undefined)

@@ -10,11 +10,11 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
   const {
     lang,
     echoList,
-    PatchEchoStat,
+    costToIndex,
     PatchEchoID,
     PatchEchoMainStat,
+    PatchEchoStat,
     PatchEchoHarmony,
-    costToIndex
   } = useProfile();
 
   const { setSlotStyle } = useStyleHelper(sizeValue);

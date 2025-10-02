@@ -2,7 +2,7 @@ import "./App.css";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 
-import ImageDrag from "../utils/ImageDrag";
+import OcrRequest from "../utils/OcrRequest";
 
 function Character() {
   return (
@@ -12,11 +12,7 @@ function Character() {
         <SideBar />
         <div className="main-content">
           <div style={{ width: "80%", height: "800px" }}>
-            <ImageDrag
-              path="/bg.jpg"
-              pos={{ x: 0, y: 0, s: 1 }}
-              onChange={(v) => console.log(v)}
-            />
+            <OcrRequest isTesting={true} />
           </div>
         </div>
       </div>
