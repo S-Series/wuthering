@@ -344,7 +344,6 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               width: "fit-content",
               right: 0,
               minWidth: "100%",
-              maxWidth: "200%",
               backgroundColor: UI_COLOR[2],
               overflowX: "hidden",
             }),

@@ -1056,7 +1056,7 @@ export const characterStat = {
     typeBns: [0, 0.0],
   },
   qiuyuan: {
-        baseHp: 10000,
+    baseHp: 10000,
     baseAtk: 500,
     baseDef: 1000,
 
