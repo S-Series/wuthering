@@ -109,8 +109,9 @@ export function ProfileProvider({ children }) {
     stats.ResonanceBns = Number(characterStats?.ResonanceBns ?? 100.0);
     stats.CritRate = Number(characterStats?.CritRate ?? 5.0);
     stats.CritDmg = Number(characterStats?.CritDmg ?? 150.0);
-    stats[types[0]] = Number(characterStats?.typeBns[0] ?? 0.0);
-    stats[types[1]] = Number(characterStats?.typeBns[1] ?? 0.0);
+    // ReadMe: The order in the data file differs from the type sorting process
+    stats[types[0]] = Number(characterStats?.typeBns[1] ?? 0.0);
+    stats[types[1]] = Number(characterStats?.typeBns[0] ?? 0.0);
     //$ weapon
     stats.atk += weaponStats?.atk ?? 0;
     stats[weaponStats?.statType[0]] += Number(weaponStats?.value[0] ?? 0);

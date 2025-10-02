@@ -319,13 +319,100 @@ export const character = [
     element: "Glacio",
     type: "skill",
   },
+  //$ After Cartethyia
+  {
+    id: "cartethyia",
+    kr: "카르티시아",
+    jp: "カルテジア",
+    zh: "卡提希娅",
+    hasSkin: false,
+    weapon: "sword",
+    element: "Aero",
+    type: "ult",
+  },
+  {
+    id: "lupa",
+    kr: "루파",
+    jp: "ルパ",
+    zh: "露帕",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "Fusion",
+    type: "ult",
+  },
+  {
+    id: "phrolova",
+    kr: "플로로",
+    jp: "フローヴァ",
+    zh: "弗洛洛",
+    hasSkin: false,
+    weapon: "rectifier",
+    element: "Havoc",
+    type: "skill",
+  },
+  {
+    id: "augusta",
+    kr: "아우구스타",
+    jp: "オーガスタ",
+    zh: "奥古斯塔",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "Electro",
+    type: "heavy",
+  },
+  {
+    id: "iuno",
+    kr: "유노",
+    jp: "ユーノ",
+    zh: "尤诺",
+    hasSkin: false,
+    weapon: "gauntlet",
+    element: "Aero",
+    type: "ult",
+  },
+  {
+    id: "galbrena",
+    kr: "갈브레나",
+    jp: "ガルブレーナ",
+    zh: "嘉贝莉娜",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "Fusion",
+    type: "skiheavyll",
+  },
+  {
+    id: "qiuyuan",
+    kr: "구원",
+    jp: "仇遠",
+    zh: "仇远",
+    hasSkin: false,
+    weapon: "sword",
+    element: "Aero",
+    type: "heavy",
+  },
+  /*{
+    id: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "",
+    element: "",
+    type: "",
+  },
+  {
+    id: === en value
+    weapon: [sword, broadblade, pistol, gauntlet, rectifier]
+    element: [Aero, Fusion, Glacio, Electro, Spectro, Havoc]
+    type: [normal, heavy, skill, ult, heal]
+  },*/
 ];
 
 export const characterStat = {
   aalto: {
     baseHp: 9850,
-    baseAtk: 263,
-    baseDef: 1076,
+    baseAtk: 262,
+    baseDef: 1075,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -339,8 +426,8 @@ export const characterStat = {
     typeBns: [0, 12.0],
   },
   baizhi: {
-    baseHp: 12813,
-    baseAtk: 213,
+    baseHp: 12812,
+    baseAtk: 212,
     baseDef: 1002,
 
     CritRate: 5.0,
@@ -357,7 +444,7 @@ export const characterStat = {
   brant: {
     baseHp: 11675,
     baseAtk: 375,
-    baseDef: 1308,
+    baseDef: 1307,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -376,8 +463,8 @@ export const characterStat = {
   },
   calcharo: {
     baseHp: 10500,
-    baseAtk: 438,
-    baseDef: 1186,
+    baseAtk: 437,
+    baseDef: 1185,
 
     CritRate: 5.0,
     CritDmg: 166.0,
@@ -408,7 +495,7 @@ export const characterStat = {
   cantarella: {
     baseHp: 11600,
     baseAtk: 400,
-    baseDef: 1100,
+    baseDef: 1099,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -424,7 +511,7 @@ export const characterStat = {
   carlotta: {
     baseHp: 12450,
     baseAtk: 462,
-    baseDef: 1198,
+    baseDef: 1197,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -439,8 +526,8 @@ export const characterStat = {
   },
   changli: {
     baseHp: 10388,
-    baseAtk: 463,
-    baseDef: 1100,
+    baseAtk: 462,
+    baseDef: 1099,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -454,9 +541,9 @@ export const characterStat = {
     typeBns: [0, 0.0],
   },
   chiaccona: {
-    baseHp: 12238,
+    baseHp: 12237,
     baseAtk: 375,
-    baseDef: 1198,
+    baseDef: 1197,
 
     CritRate: 5.0,
     CritDmg: 166.0,
@@ -470,7 +557,7 @@ export const characterStat = {
     typeBns: [0, 0.0],
   },
   chixia: {
-    baseHp: 9088,
+    baseHp: 9087,
     baseAtk: 300,
     baseDef: 953,
 
@@ -486,9 +573,9 @@ export const characterStat = {
     typeBns: [0, 12.0],
   },
   danjin: {
-    baseHp: 9438,
-    baseAtk: 263,
-    baseDef: 1149,
+    baseHp: 9437,
+    baseAtk: 262,
+    baseDef: 1148,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -502,9 +589,9 @@ export const characterStat = {
     typeBns: [0, 12.0],
   },
   encore: {
-    baseHp: 10513,
+    baseHp: 10512,
     baseAtk: 425,
-    baseDef: 1247,
+    baseDef: 1246,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -518,11 +605,11 @@ export const characterStat = {
     typeBns: [0, 12.0],
   },
   jianxin: {
-    baseHp: 14113,
-    baseAtk: 338,
+    baseHp: 14112,
+    baseAtk: 337,
     baseDef: 1124,
 
-    CritRate: 5.0,
+    CritRate: 13.0,
     CritDmg: 150.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
@@ -535,8 +622,8 @@ export const characterStat = {
   },
   jinhsi: {
     baseHp: 10825,
-    baseAtk: 413,
-    baseDef: 1259,
+    baseAtk: 412,
+    baseDef: 1258,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -550,9 +637,9 @@ export const characterStat = {
     typeBns: [0, 20.0],
   },
   jiyan: {
-    baseHp: 10488,
-    baseAtk: 438,
-    baseDef: 1186,
+    baseHp: 10487,
+    baseAtk: 437,
+    baseDef: 1185,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -566,9 +653,9 @@ export const characterStat = {
     typeBns: [0, 0.0],
   },
   lingyang: {
-    baseHp: 10388,
-    baseAtk: 438,
-    baseDef: 1210,
+    baseHp: 10387,
+    baseAtk: 437,
+    baseDef: 1209,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -583,8 +670,8 @@ export const characterStat = {
   },
   lumi: {
     baseHp: 8500,
-    baseAtk: 338,
-    baseDef: 880,
+    baseAtk: 337,
+    baseDef: 879,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -600,7 +687,7 @@ export const characterStat = {
   mortefi: {
     baseHp: 10025,
     baseAtk: 250,
-    baseDef: 1137,
+    baseDef: 1136,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -615,8 +702,8 @@ export const characterStat = {
   },
   phoebe: {
     baseHp: 10825,
-    baseAtk: 413,
-    baseDef: 1259,
+    baseAtk: 412,
+    baseDef: 1258,
 
     CritRate: 5.0,
     CritDmg: 166.0,
@@ -632,7 +719,7 @@ export const characterStat = {
   roccia: {
     baseHp: 12250,
     baseAtk: 375,
-    baseDef: 1198,
+    baseDef: 1197,
 
     CritRate: 5.0,
     CritDmg: 166.0,
@@ -649,7 +736,7 @@ export const characterStat = {
     spectro: {
       baseHp: 11400,
       baseAtk: 375,
-      baseDef: 1369,
+      baseDef: 1368,
 
       CritRate: 5.0,
       CritDmg: 150.0,
@@ -664,8 +751,8 @@ export const characterStat = {
     },
     havoc: {
       baseHp: 10825,
-      baseAtk: 413,
-      baseDef: 1259,
+      baseAtk: 412,
+      baseDef: 1258,
 
       CritRate: 5.0,
       CritDmg: 150.0,
@@ -680,8 +767,8 @@ export const characterStat = {
     },
     aero: {
       baseHp: 10775,
-      baseAtk: 438,
-      baseDef: 1137,
+      baseAtk: 437,
+      baseDef: 1136,
 
       CritRate: 5.0,
       CritDmg: 150.0,
@@ -696,7 +783,7 @@ export const characterStat = {
     },
   },
   sanhua: {
-    baseHp: 10063,
+    baseHp: 10062,
     baseAtk: 275,
     baseDef: 941,
 
@@ -712,9 +799,9 @@ export const characterStat = {
     typeBns: [0, 12.0],
   },
   shorekeeper: {
-    baseHp: 16713,
-    baseAtk: 288,
-    baseDef: 1100,
+    baseHp: 16712,
+    baseAtk: 287,
+    baseDef: 1099,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -744,9 +831,9 @@ export const characterStat = {
     typeBns: [0, 12.0],
   },
   verina: {
-    baseHp: 14238,
-    baseAtk: 338,
-    baseDef: 1100,
+    baseHp: 14237,
+    baseAtk: 337,
+    baseDef: 1099,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -778,7 +865,7 @@ export const characterStat = {
   yangyang: {
     baseHp: 10200,
     baseAtk: 250,
-    baseDef: 1100,
+    baseDef: 1099,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -809,7 +896,7 @@ export const characterStat = {
   },
   youhu: {
     baseHp: 9975,
-    baseAtk: 263,
+    baseAtk: 262,
     baseDef: 1051,
 
     CritRate: 13.0,
@@ -826,7 +913,7 @@ export const characterStat = {
   yuanwu: {
     baseHp: 8525,
     baseAtk: 225,
-    baseDef: 1638,
+    baseDef: 1637,
 
     CritRate: 5.0,
     CritDmg: 150.0,
@@ -841,8 +928,8 @@ export const characterStat = {
   },
   zani: {
     baseHp: 10775,
-    baseAtk: 438,
-    baseDef: 1137,
+    baseAtk: 437,
+    baseDef: 1136,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -858,7 +945,7 @@ export const characterStat = {
   zhezhi: {
     baseHp: 12250,
     baseAtk: 375,
-    baseDef: 1198,
+    baseDef: 1197,
 
     CritRate: 13.0,
     CritDmg: 150.0,
@@ -866,6 +953,119 @@ export const characterStat = {
     ResonanceBns: 100.0,
 
     atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  //$ After Cartethyia
+  cartethyia: {
+    baseHp: 14800,
+    baseAtk: 312,
+    baseDef: 611,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 12.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  lupa: {
+    baseHp: 11912,
+    baseAtk: 387,
+    baseDef: 1185,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  phrolova: {
+    baseHp: 10775,
+    baseAtk: 437,
+    baseDef: 1136,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  augusta: {
+    baseHp: 10300,
+    baseAtk: 462,
+    baseDef: 1112,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  iuno: {
+    baseHp: 10525,
+    baseAtk: 450,
+    baseDef: 1124,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  galbrena: {
+    baseHp: 10000,
+    baseAtk: 500,
+    baseDef: 1000,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  qiuyuan: {
+        baseHp: 10000,
+    baseAtk: 500,
+    baseDef: 1000,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
     hpPct: 0.0,
     defPct: 0.0,
 
