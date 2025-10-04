@@ -64,10 +64,6 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
     }),
   };
    
-  console.log(echoList[index].echoId);
-  console.log(echoDict[`Cost${echoList[index].cost}`]);
-  console.log(Object.values(echoDict[`Cost${echoList[index].cost}`]).some(item => item.id === echoList[index].echoId));
-
   const statOption = useMemo(() => {
     return Object.values(FixedStats)
       .filter((item) => item.id !== "dummy")
@@ -134,6 +130,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
     echoDict[`Cost${echoList[index]?.cost}`] || []
   ).map((item) => ({
     value: item.id,
+    list: item.type,
     label: (
       <div
         style={{
@@ -224,7 +221,13 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
     <div style={{ pointerEvents: "auto", zIndex: 750, position: "absolute" }}>
       <div style={setSlotStyle({ w: 600, h: 140, x: 0, y: 0 })}>
         <Select
-          options={ECHO_SELECT_OPTION}
+          options={
+            echoList[index].harmony === "default"
+              ? ECHO_SELECT_OPTION
+              : ECHO_SELECT_OPTION.filter((item) =>
+                  Object.values(item.list).includes(echoList[index].harmony)
+                )
+          }
           isClearable={true}
           menuPlacement="auto"
           placeholder={<span className={`${lang}Font`}>&nbsp;&nbsp;Echo</span>}
@@ -290,7 +293,21 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       </div>
       <div style={setSlotStyle({ w: 235, h: 80, x: 365, y: 110 })}>
         <Select
-          options={HARMONY_SELECT_OPTION}
+          options={(() => {
+            const eid = echoList[index].echoId;
+            const cost = echoList[index].cost;
+
+            if (eid === "default") return HARMONY_SELECT_OPTION;
+
+            const echo = echoDict[`Cost${cost}`]?.[eid];
+
+            if (echo && Array.isArray(echo.type)) {
+              return HARMONY_SELECT_OPTION.filter((opt) =>
+                echo.type.includes(opt.value)
+              );
+            }
+            return HARMONY_SELECT_OPTION;
+          })()}
           isClearable={true}
           menuPlacement="auto"
           placeholder={<span className={`${lang}Font`}>Harmony</span>}
@@ -408,7 +425,6 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
             }),
           }}
           onChange={(item) => {
-            console.log(item.value);
             PatchEchoMainStat(index, item ? item.value : FixedStats.dummy.id);
           }}
         />
@@ -476,7 +492,6 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                 }),
               }}
               onChange={(opt) => {
-                console.log("main stat changed");
                 const newId = opt ? opt.value : FixedStats.dummy.id;
                 setStatFilter((prev) =>
                   prev.map((v, i) => (i === idx ? newId : v))
@@ -528,7 +543,6 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                 ...defaultSelectOption,
               }}
               onChange={(opt) => {
-                console.log("sub value changed");
                 const statId = echoList[index].subStats[idx][0];
                 const newVal = opt ? opt.value : -1;
                 PatchEchoStat(index, idx, [

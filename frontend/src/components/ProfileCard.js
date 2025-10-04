@@ -1034,6 +1034,10 @@ function ProfileCard() {
                   }}>
                   <Select
                     className="ocr-cost-select"
+                    value={({
+                      value: echoList[idx].cost,
+                      label: `${echoList[idx].cost}Cost`
+                    })}
                     options={[
                       { value: 4, label: "4Cost" },
                       { value: 3, label: "3Cost" },

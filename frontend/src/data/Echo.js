@@ -503,7 +503,7 @@ export const echoDict = {
       kr: "트랜스카",
       jp: "恐刃の車",
       zh: "车刃镰",
-      type: [harmony.Game.id, harmony.Clouds.id],
+      type: [harmony.Gale.id, harmony.Clouds.id],
       stats: [{}],
     },
     X53: {

@@ -1,6 +1,9 @@
+import { FixedStats } from "./Stats";
+
 export const weapon = {
   //$ Count: 13
   sword: [
+    //$ 5-Starts
     {
       id: "Emerald of Genesis",
       kr: "천년의 회류",
@@ -36,6 +39,21 @@ export const weapon = {
       zh: "血誓盟约",
       imgKey: "ico005",
     },
+    {
+      id: "Defier's Thorn",
+      kr: "숙명에 맞서는 관",
+      jp: "定めを覆す荊冠",
+      zh: "不屈命定之冠",
+      imgKey: "ico006",
+    },
+    {
+      id: "Emerald Sentence",
+      kr: "푸른 의지",
+      jp: "破敵の鋭竹",
+      zh: "裁竹",
+      imgKey: "ico007",
+    },
+    //$ 4-Starts
     {
       id: "Somnoire Anchor",
       kr: "마음의 닻",
@@ -92,9 +110,17 @@ export const weapon = {
       zh: "风流的寓言诗",
       imgKey: "ico108",
     },
+    {
+      id: "Feather Edge",
+      kr: "예리한 날개깃",
+      jp: "鋭利な翼",
+      zh: "翼锋",
+      imgKey: "ico109",
+    },
   ],
   //$ Count: 10
   broadblade: [
+    //$ 5-Starts
     {
       id: "Lutrous Razor",
       kr: "푸른 물결의 빛",
@@ -116,6 +142,21 @@ export const weapon = {
       zh: "时和岁稔",
       imgKey: "ico003",
     },
+    { 
+      id: "Wildfire Mark",
+      kr: "불길",
+      jp: "闘炎の爪痕",
+      zh: "焰痕",
+      imgKey: "ico004",
+    },
+    {
+      id: "Thunderflare Dominion",
+      kr: "천둥벼락을 다스리는 권능",
+      jp: "雷霆を統べし王剣",
+      zh: "驭冕铸雷之权",
+      imgKey: "ico005",
+    },
+    //$ 4-Starts
     {
       id: "Discord",
       kr: "기묘한 울림",
@@ -165,9 +206,17 @@ export const weapon = {
       zh: "容赦的沉思录",
       imgKey: "ico107",
     },
+    {
+      id: "Aureate Zenith",
+      kr: "금빛 하늘",
+      jp: "金の天穹",
+      zh: "金穹",
+      imgKey: "ico108",
+    },
   ],
   //$ Count: 11
   gauntlet: [
+    //$ 5-Starts
     {
       id: "Abyss Surges",
       kr: "물결의 파동",
@@ -196,6 +245,14 @@ export const weapon = {
       zh: "焰光裁定",
       imgKey: "ico004",
     },
+    {
+      id: "Moongazer's Sigil",
+      kr: "세상 만물의 진리",
+      jp: "万物持存的注释",
+      zh: "万物持存的注释",
+      imgKey: "ico005",
+    },
+    //$ 4-Starts
     {
       id: "Marcato",
       kr: "바람의 악센트",
@@ -245,9 +302,17 @@ export const weapon = {
       zh: "酩酊的英雄志",
       imgKey: "ico107",
     },
+    {
+      id: "Aether Strike",
+      kr: "거침없는 비상",
+      jp: "舞い上がる大空",
+      zh: "凌空",
+      imgKey: "ico108",
+    },
   ],
   //$ Count: 10
   pistol: [
+    //$ 5-Starts
     {
       id: "Static Mist",
       kr: "부동의 안개",
@@ -269,6 +334,14 @@ export const weapon = {
       zh: "林间的咏叹调",
       imgKey: "ico003",
     },
+    {
+      id: "Lux & Umbra",
+      kr: "얽혀진 빛과 그림자",
+      jp: "ルクス＆アンブラ",
+      zh: "光影双生",
+      imgKey: "ico004",
+    },
+    //$ 4-Starts
     {
       id: "Cadenza",
       kr: "화려한 악곡",
@@ -318,9 +391,17 @@ export const weapon = {
       zh: "叙别的罗曼史",
       imgKey: "ico107",
     },
+    {
+      id: "Solar Flame",
+      kr: "태양 불꽃",
+      jp: "別れのメロス",
+      zh: "紅炎",
+      imgKey: "ico108",
+    },
   ],
   //$ Count: 15
   rectifier: [
+    //$ 5-Starts
     {
       id: "Cosmic Ripples",
       kr: "파도의 기록",
@@ -363,6 +444,14 @@ export const weapon = {
       zh: "海的呢喃",
       imgKey: "ico006",
     },
+    {
+      id: "Lethean Elegy",
+      kr: "잊혀진 피안의 슬픈 악장",
+      jp: "幽冥の忘憂曲",
+      zh: "幽冥的忘忧章",
+      imgKey: "ico007",
+    },
+    //$ 4-Starts
     {
       id: "Call of the Abyss",
       kr: "심해의 메아리",
@@ -426,6 +515,13 @@ export const weapon = {
       zh: "虚饰的华尔兹",
       imgKey: "ico109",
     },
+    {
+      id: "Radiant Dawn",
+      kr: "눈부신 빛",
+      jp: "弾む輝き",
+      zh: "曜光",
+      imgKey: "ico110",
+    },
   ],
 };
 export const weaponStat = {
@@ -455,6 +551,17 @@ export const weaponStat = {
     value: [38.8, 0],
     statType: ["ResonanceBns", "atk"],
   },
+  "Defier's Thorn": {
+    atk: 412,
+    value: [72.2, 12],
+    statType: [FixedStats.hpPct.id, FixedStats.hpPct.id],
+  },
+  "Emerald Sentence": {
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  //$ --------------------------------------
   "Somnoire Anchor": {
     atk: 462,
     value: [18.2, 0],
@@ -495,6 +602,11 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
   },
+  "Fables of Wisdom": {
+    atk: 412,
+    value: [20.2, 0],
+    statType: [FixedStats.CritRate.id, FixedStats.dummy.id],
+  },
   //#endregion
 
   //#region GreatSword
@@ -513,6 +625,17 @@ export const weaponStat = {
     value: [24.3, 12],
     statType: ["CritRate", "typeBns"],
   },
+  "Wildfire Mark": {
+    atk: 587,
+    value: [48.6, 12],
+    statType: [FixedStats.CritDmg.id, FixedStats.atkPct.id],
+  },
+  "Thunderflare Dominion": {
+    atk: 675,
+    value: [12.1, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  //$ --------------------------------------------------
   Discord: {
     atk: 337,
     value: [51.8, 0],
@@ -548,6 +671,11 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
   },
+  "Aureate Zenith": {
+    atk: 412,
+    value: [40.5, 0],
+    statType: [FixedStats.CritDmg.id, FixedStats.dummy.id],
+  },
   //#endregion
 
   //#region Gauntlet
@@ -571,6 +699,12 @@ export const weaponStat = {
     value: [48.6, 12],
     statType: ["CritDmg", "atkPct"],
   },
+  "Moongazer's Sigil": {
+    atk: 500,
+    value: [36.0, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  //$ ---------------------------------------
   Marcato: {
     atk: 337,
     value: [51.8, 0],
@@ -606,6 +740,11 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
   },
+  "Legend of Drunken Hero": {
+    atk: 412,
+    value: [40.5, 0],
+    statType: [FixedStats.CritDmg.id, FixedStats.dummy.id],
+  },
   //#endregion
 
   //#region Firearm
@@ -624,6 +763,12 @@ export const weaponStat = {
     value: [36, 12],
     statType: ["CritRate", "atkPct"],
   },
+  "Lux & Umbra": {
+    atk: 587,
+    value: [48.6, 12],
+    statType: [FixedStats.CritDmg.id, FixedStats.atkPct.id],
+  },
+  //$ -------------------------------------------
   Cadenza: {
     atk: 337,
     value: [51.8, 0],
@@ -659,6 +804,11 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["aktPct", "atk"],
   },
+  "Solar Flame": {
+    atk: 412,
+    value: [20.2, 0],
+    statType: [FixedStats.CritRate.id, FixedStats.dummy.id],
+  },
   //#endregion
 
   //#region Amplifter
@@ -692,6 +842,12 @@ export const weaponStat = {
     value: [72, 12],
     statType: ["CritDmg", "atkPct"],
   },
+  "Lethean Elegy": {
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  //$ -----------------------------------------------
   "Call of the Abyss": {
     atk: 337,
     value: [51.8, 0],
@@ -736,6 +892,11 @@ export const weaponStat = {
     atk: 462,
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
-  }
+  },
+  "Radiant Dawn": {
+    atk: 412,
+    value: [40.5, 0],
+    statType: [FixedStats.CritDmg.id, FixedStats.dummy.id],
+  },
   //#endregion
 };

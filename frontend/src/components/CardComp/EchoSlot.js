@@ -1,7 +1,4 @@
 import { echoDict, harmony } from "../../data/Echo";
-import { userdata } from "../../data/userData";
-import EchoData from "../../data/userData";
-import ProfileCard from "../ProfileCard";
 import { useStyleHelper } from "../../hooks/useStyleHelpers";
 import { useProfile } from "../../hooks/useProfile";
 import { FixedStats, FixedMainSub } from "../../data/Stats";
