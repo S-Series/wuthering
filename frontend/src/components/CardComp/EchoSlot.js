@@ -1,11 +1,13 @@
-import { echoDict, harmony } from "../../data/Echo";
+import { echoDict, harmony } from "../../data/Echos";
 import { useStyleHelper } from "../../hooks/useStyleHelpers";
 import { useProfile } from "../../hooks/useProfile";
+import { useApi } from "../../hooks/useApi";
 import { FixedStats, FixedMainSub } from "../../data/Stats";
 
 function EchoSlot({ index = 0, sizeValue = 0 }) {
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const { assetApiUrl } = useApi();
+  
   const { setSlotStyle } = useStyleHelper(sizeValue);
   const { echoList } = useProfile();
   
@@ -30,7 +32,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
           alt=""
           src={
             echoList[index]?.echoId && echoList[index]?.echoId !== "default"
-              ? `${apiUrl}/static/ico/echos/${echoList[index].echoId}.webp`
+              ? `${assetApiUrl}/ico/echos/${echoList[index].echoId}.webp`
               : "/default.webp"
           }
           style={{
@@ -41,7 +43,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
         />
         <img
           alt=""
-          src={`${apiUrl}/static/ico/harmony/${echoList[index].harmony}.webp`}
+          src={`${assetApiUrl}/ico/harmony/${echoList[index].harmony}.webp`}
           style={{
             ...setSlotStyle({ w: 40, h: 40, x: 54, y: 124 }),
             zIndex: 200,
@@ -80,7 +82,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
       <div className="echo-main-stats">
         <img
           alt=""
-          src={`${apiUrl}/static/ico/stats/${echoList[index]?.mainStat}.webp`}
+          src={`${assetApiUrl}/ico/stats/${echoList[index]?.mainStat}.webp`}
           style={setSlotStyle({ w: 35, h: 35, x: 9, y: 165 })}
         />
         <span
@@ -97,7 +99,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
         </span>
         <img
           alt=""
-          src={`${apiUrl}/static/ico/stats/${
+          src={`${assetApiUrl}/ico/stats/${
             FixedMainSub[costToIndex(echoList[index]?.cost)][0]
           }.webp`}
           style={setSlotStyle({ w: 35, h: 35, x: 9, y: 207 })}
@@ -120,7 +122,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             <div key={idx} style={{ alignContent: "center" }}>
               <img
                 alt=""
-                src={`${apiUrl}/static/ico/stats/${echoList[index]?.subStats[idx][0]}.webp`}
+                src={`${assetApiUrl}/ico/stats/${echoList[index]?.subStats[idx][0]}.webp`}
                 style={setSlotStyle(subStyleValue(idx, false))}
               />
               <span

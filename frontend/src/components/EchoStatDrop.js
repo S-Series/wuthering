@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import { useProfile } from "../hooks/useProfile";
+import { useApi } from "../hooks/useApi";
 import { useStyleHelper } from "../hooks/useStyleHelpers";
 import { FixedStats } from "../data/Stats";
-import { echoDict, harmony } from "../data/Echo";
+import { echoDict, harmony } from "../data/Echos";
 
 function EchoStatDrop({ index = 0, sizeValue = 1 }) {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const { assetApiUrl } = useApi();
   const {
     lang,
     echoList,
@@ -30,9 +31,9 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       echoList[index].subStats[2][0],
       echoList[index].subStats[3][0],
       echoList[index].subStats[4][0],
-    ]
+    ];
     setStatFilter(filterData);
-  }, [index, echoList])
+  }, [index, echoList]);
   const defaultSelectOption = {
     control: (base) => ({
       ...base,
@@ -63,7 +64,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       paddingLeft: `${15 * sizeValue}px`,
     }),
   };
-   
+
   const statOption = useMemo(() => {
     return Object.values(FixedStats)
       .filter((item) => item.id !== "dummy")
@@ -79,7 +80,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
             }}>
             <img
               alt=""
-              src={`${apiUrl}/static/ico/stats/${item.id}.webp`}
+              src={`${assetApiUrl}/ico/stats/${item.id}.webp`}
               style={{
                 width: `${50 * sizeValue}px`,
                 height: `${50 * sizeValue}px`,
@@ -88,11 +89,13 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                 overflow: "visible",
               }}
             />
-            <span className={`${lang}Font`} style={{color: "#fff"}}>{item[lang] ?? "error"}</span>
+            <span className={`${lang}Font`} style={{ color: "#fff" }}>
+              {item[lang] ?? "error"}
+            </span>
           </div>
         ),
       }));
-  }, [statFilter, apiUrl, sizeValue, lang]);
+  }, [statFilter, assetApiUrl, sizeValue, lang]);
   const statValueOption = useMemo(() => {
     return [0, 1, 2, 3, 4].map((index) => {
       const target = Object.values(FixedStats).find(
@@ -110,7 +113,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
             }}>
             <img
               alt=""
-              src={`${apiUrl}/static/ico/stats/${target.id}.webp`}
+              src={`${assetApiUrl}/ico/stats/${target.id}.webp`}
               style={{
                 width: `${50 * sizeValue}px`,
                 height: `${50 * sizeValue}px`,
@@ -119,12 +122,14 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                 overflow: "visible",
               }}
             />
-            <span className={`${lang}Font`} style={{color: "#fff"}}>{subValue}</span>
+            <span className={`${lang}Font`} style={{ color: "#fff" }}>
+              {subValue}
+            </span>
           </div>
         ),
       }));
     });
-  }, [statFilter, apiUrl, sizeValue, lang]);
+  }, [statFilter, assetApiUrl, sizeValue, lang]);
 
   const ECHO_SELECT_OPTION = Object.values(
     echoDict[`Cost${echoList[index]?.cost}`] || []
@@ -141,7 +146,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         }}>
         <img
           alt=""
-          src={`${apiUrl}/static/ico/echos/${item.id ?? "default"}.webp`}
+          src={`${assetApiUrl}/ico/echos/${item.id ?? "default"}.webp`}
           style={{
             width: `${75 * sizeValue}px`,
             height: `${75 * sizeValue}px`,
@@ -150,7 +155,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         />
         <span
           className={`${lang}Font`}
-          style={{ fontSize: `${32 * sizeValue}px`, color: "#fff"}}>
+          style={{ fontSize: `${32 * sizeValue}px`, color: "#fff" }}>
           {`${item[lang] || { Set }}`}
         </span>
       </div>
@@ -166,27 +171,27 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       value: item.id,
       label: (
         <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-start",
-        }}>
-        <img
-          alt=""
-          src={`${apiUrl}/static/ico/stats/${item.id ?? "default"}.webp`}
           style={{
-            width: `${40 * sizeValue}px`,
-            height: `${40 * sizeValue}px`,
-            alignSelf: "center",
-            transform: `translateX(-${10 * sizeValue}px)`,
-          }}
-        />
-        <span
-          className={`${lang}Font`}
-          style={{ fontSize: `${32 * sizeValue}px`, color: "#fff"}}>
-          {`${item[lang] || { Set }}`}
-        </span>
-      </div>
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+          }}>
+          <img
+            alt=""
+            src={`${assetApiUrl}/ico/stats/${item.id ?? "default"}.webp`}
+            style={{
+              width: `${40 * sizeValue}px`,
+              height: `${40 * sizeValue}px`,
+              alignSelf: "center",
+              transform: `translateX(-${10 * sizeValue}px)`,
+            }}
+          />
+          <span
+            className={`${lang}Font`}
+            style={{ fontSize: `${32 * sizeValue}px`, color: "#fff" }}>
+            {`${item[lang] || { Set }}`}
+          </span>
+        </div>
       ),
     }));
   const HARMONY_SELECT_OPTION = Object.values(harmony).map((item) => ({
@@ -201,7 +206,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         }}>
         <img
           alt=""
-          src={`${apiUrl}/static/ico/harmony/${item.id ?? "default"}.webp`}
+          src={`${assetApiUrl}/ico/harmony/${item.id ?? "default"}.webp`}
           style={{
             width: `${50 * sizeValue}px`,
             height: `${50 * sizeValue}px`,
@@ -210,7 +215,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
         />
         <span
           className={`${lang}Font`}
-          style={{ fontSize: `${32 * sizeValue}px`, color: "#fff"}}>
+          style={{ fontSize: `${32 * sizeValue}px`, color: "#fff" }}>
           {`${item[lang] || { Set }}`}
         </span>
       </div>
@@ -249,7 +254,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                       }}>
                       <img
                         alt=""
-                        src={`${apiUrl}/static/ico/echos/${
+                        src={`${assetApiUrl}/ico/echos/${
                           echoList[index].echoId ?? "default"
                         }.webp`}
                         style={{
@@ -326,7 +331,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                       }}>
                       <img
                         alt=""
-                        src={`${apiUrl}/static/ico/harmony/${
+                        src={`${assetApiUrl}/ico/harmony/${
                           echoList[index].harmony ?? "default"
                         }.webp`}
                         style={{
@@ -390,7 +395,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                       }}>
                       <img
                         alt=""
-                        src={`${apiUrl}/static/ico/stats/${
+                        src={`${assetApiUrl}/ico/stats/${
                           echoList[index].mainStat ?? "default"
                         }.webp`}
                         style={{
@@ -458,7 +463,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                           }}>
                           <img
                             alt=""
-                            src={`${apiUrl}/static/ico/stats/${statFilter[idx]}.webp`}
+                            src={`${assetApiUrl}/ico/stats/${statFilter[idx]}.webp`}
                             style={{
                               width: `${50 * sizeValue}px`,
                               height: `${50 * sizeValue}px`,
@@ -518,7 +523,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                           }}>
                           <img
                             alt=""
-                            src={`${apiUrl}/static/ico/stats/${statFilter[idx]}.webp`}
+                            src={`${assetApiUrl}/ico/stats/${statFilter[idx]}.webp`}
                             style={{
                               width: `${50 * sizeValue}px`,
                               height: `${50 * sizeValue}px`,

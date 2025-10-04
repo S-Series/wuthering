@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { character, characterStat } from "../data/Character";
-import { weapon, weaponStat } from "../data/Weapon";
+import { character, characterStat } from "../data/Characters.js";
+import { weapon, weaponStat } from "../data/Weapons.js";
 import { FixedStats } from "../data/Stats.js";
-import { createEmptyEcho } from "../data/Echo";
+import { createEmptyEcho } from "../data/Echos.js";
 
 const ProfileContext = createContext(null);
 
@@ -68,9 +68,9 @@ export function ProfileProvider({ children }) {
   //$ Edit in Inside
   const [characterData, setCharacterData] = useState(null);
   const [characterStats, setCharacterStats] = useState(null);
-
   const [weaponData, setWeaponData] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
+  const [harmonyOption, setHarmonyOption] = useState(null);
   
   const ZERO_STATS = useMemo(
     () => Object.fromEntries(Object.keys(FixedStats).map((k) => [k, 0])),
@@ -224,7 +224,8 @@ export function ProfileProvider({ children }) {
   }, [constellation])
 
   useEffect(() => {
-    if (echoList) localStorage.setItem(`${characterId}EchoData`, JSON.stringify(echoList));
+    if (echoList)
+      localStorage.setItem(`${characterId}EchoData`, JSON.stringify(echoList));
   }, [echoList]);
 
   const value = useMemo(() => ({

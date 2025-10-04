@@ -3,9 +3,12 @@ import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useProfile } from "../hooks/useProfile";
+import { useApi } from "../hooks/useApi";
+import { useUserData } from "../hooks/useUserData";
+
 
 function NavBar() {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const { assetApiUrl } = useApi();
   const { lang, setLang } = useProfile();
   const navigate = useNavigate();
 
@@ -83,7 +86,7 @@ function NavBar() {
     <nav className="navbar">
       <div className="nav-left">
         <button className="home-button" onClick={() => navigate("/")}>
-          <img src={`${apiUrl}/static/default.webp`} className="main-icon"></img>
+          <img src={`${assetApiUrl}/default.webp`} className="main-icon"></img>
           {getStringInfo(lang)[0]}
         </button>
         <div className="nav-left text-box">
@@ -105,7 +108,7 @@ function NavBar() {
           isSearchable={false}
         />
         <button className="nav-button" onClick={() => navigate()}>
-          <img src={`${apiUrl}/static/info.png`} className="icon"></img>
+          <img src={`${assetApiUrl}/info.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(lang)[3]}</span>
         </button>
         <button
@@ -113,14 +116,19 @@ function NavBar() {
           onClick={() =>
             window.open("https://github.com/S-Series/wuthering", "_blank")
           }>
-          <img src={`${apiUrl}/static/github.png`} className="icon"></img>
+          <img src={`${assetApiUrl}/github.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(lang)[4]}</span>
         </button>
         <button
           className="nav-button"
           onClick={() => window.open("https://ko-fi.com/sseries", "_blank")}>
-          <img src={`${apiUrl}/static/kofi.png`} className="icon"></img>
+          <img src={`${assetApiUrl}/kofi.png`} className="icon"></img>
           <span className="nav-text">{getStringInfo(lang)[5]}</span>
+        </button>
+        <button
+          className="nav-button"
+          onClick={() => window.open("/user-info")}>
+          [임시 로그인창 버튼]
         </button>
       </div>
     </nav>

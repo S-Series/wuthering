@@ -11,9 +11,9 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
   const [reloadKey, setReloadKey] = useState(false);
   const [resizeKey, setResizeKey] = useState(false);
 
+  const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [doubleClicked, setDoubleClicked] = useState(false);
 
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [imageTrans, setImageTrans] = useState({ x: 0, y: 0, s: 1 });
@@ -28,9 +28,17 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
     function handleResize() {
       setReloadKey((prev) => !prev);
     }
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (imageSlotRef.current && !imageSlotRef.current.contains(e.target)) {
+        setFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   useEffect(() => {
     setImgPath(path);
@@ -128,6 +136,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
     if (!inputable) return;
 
     const handlePaste = (e) => {
+      if (!focused) return;
       const items = e.clipboardData?.items;
       if (!items) return;
 
@@ -146,7 +155,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
 
     window.addEventListener("paste", handlePaste);
     return () => window.removeEventListener("paste", handlePaste);
-  }, [inputable]);
+  }, [inputable, focused]);
 
   useLayoutEffect(() => {}, []);
 
@@ -154,7 +163,6 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
     setHovered(isOvered);
   }
   function handleDoubleClick() {
-    console.log("double click");
     if (!inputable) return;
     if (fileInputRef.current) fileInputRef.current.click();
   }
@@ -176,10 +184,11 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
       src={imgPath ? imgPath : null}
       onMouseEnter={() => boxHovered(true)}
       onMouseLeave={() => boxHovered(false)}
-      onMouseDown={() => setDragging(true)}
-      onDoubleClick={() => {
-        handleDoubleClick();
+      onMouseDown={() => {
+        setFocused(true);
+        setDragging(true);
       }}
+      onDoubleClick={() => handleDoubleClick()}
       onError={(e) => {
         e.currentTarget.onerror = null;
         e.currentTarget.src = "none";
@@ -198,7 +207,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
           userSelect: "none",
           WebkitUserSelect: "none",
         }}
-        onChange={handleFileChange} 
+        onChange={handleFileChange}
       />
       <img
         className="image-drag-slot-content"

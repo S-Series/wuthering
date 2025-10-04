@@ -4,12 +4,13 @@ import { useRef, useState, useEffect, useLayoutEffect, useMemo, use } from "reac
 import Select, { components } from "react-select";
 import { motion, AnimatePresence, color } from "framer-motion";
 // data
-import { character, characterStat } from "../data/Character";
-import { weapon, weaponStat } from "../data/Weapon";
+import { character, characterStat } from "../data/Characters";
+import { weapon, weaponStat } from "../data/Weapons";
 import { FixedStats } from "../data/Stats";
 import { profileData, userdata } from "../data/userData";
-import { echoDict, harmony } from "../data/Echo";
+import { echoDict, harmony } from "../data/Echos";
 // hooks
+import { useUserData } from "../hooks/useUserData";
 import { useProfile } from "../hooks/useProfile";
 import { useStyleHelper } from "../hooks/useStyleHelpers";
 // utils
@@ -26,7 +27,8 @@ function ProfileCard() {
   //#endregion
 
   //#region Variables
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const { userData, currentUser } = useUserData();
+  const assetApiUrl = process.env.REACT_APP_ASSET_API_URL;
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
   const BUTTON_POS = [
     { w: 85, h: 80, x: 576.25, y: 524 },
@@ -206,7 +208,7 @@ function ProfileCard() {
         }}>
         <img
           alt=""
-          src={`${apiUrl}/static/character/${item.id}/ico.webp`}
+          src={`${assetApiUrl}/character/${item.id}/ico.webp`}
           style={{
             width: `${75 * sizeValue}px`,
             height: `${75 * sizeValue}px`,
@@ -242,7 +244,7 @@ function ProfileCard() {
         }}>
         <img
           alt=""
-          src={`${apiUrl}/static/weapon/${characterData?.weapon}/${item.imgKey}.png`}
+          src={`${assetApiUrl}/weapon/${characterData?.weapon}/${item.imgKey}.png`}
           style={{
             width: `${75 * sizeValue}px`,
             height: `${75 * sizeValue}px`,
@@ -277,7 +279,7 @@ function ProfileCard() {
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
                 filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
               }}
-              src={`${apiUrl}/static/ico/weapon_type/${item.value}.webp`}
+              src={`${assetApiUrl}/ico/weapon_type/${item.value}.webp`}
             />
           </button>
         ))}
@@ -293,7 +295,7 @@ function ProfileCard() {
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
                 filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
               }}
-              src={`${apiUrl}/static/ico/element/${item.value}.png`}
+              src={`${assetApiUrl}/ico/element/${item.value}.png`}
             />
           </button>
         ))}
@@ -329,7 +331,7 @@ function ProfileCard() {
                 }}>
                 <img
                   alt=""
-                  src={`${apiUrl}/static/character/${characterData?.id}/ico.webp`}
+                  src={`${assetApiUrl}/character/${characterData?.id}/ico.webp`}
                   style={{
                     width: `${75 * sizeValue}px`,
                     height: `${75 * sizeValue}px`,
@@ -402,7 +404,7 @@ function ProfileCard() {
                   alt=""
                   src={
                     `
-                    ${apiUrl}/static/weapon/${characterData?.weapon}/${weaponData?.imgKey}.png` ||
+                    ${assetApiUrl}/weapon/${characterData?.weapon}/${weaponData?.imgKey}.png` ||
                     "default.webp"
                   }
                   style={{
@@ -488,7 +490,7 @@ function ProfileCard() {
             backgroundPosition: "center center",
           }}>
           <img
-            src={`${apiUrl}/static/character/${characterId}/art.png`}
+            src={`${assetApiUrl}/character/${characterId}/art.png`}
             style={{
               position: "absolute",
               top: "50%",
@@ -503,7 +505,7 @@ function ProfileCard() {
             inputable = {true}
             path={
               characterId
-                ? `${apiUrl}/static/character/${characterId}/stand.png`
+                ? `${assetApiUrl}/character/${characterId}/stand.png`
                 : ""
             }
             sizeValue={sizeValue}
@@ -551,7 +553,7 @@ function ProfileCard() {
                 onClick={() => setConstellation((prev) => [idx + 1, prev[1]])}
               />
               <img
-                src={`${apiUrl}/static/character/${characterId}/C${
+                src={`${assetApiUrl}/character/${characterId}/C${
                   idx + 1
                 }.png`}
                 style={
@@ -586,7 +588,7 @@ function ProfileCard() {
               color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
             }}>
-            Asia
+            {userData?.gameServer ?? "Guest Server"}
           </span>
           <span
             className={`profile-card-text ${lang}Font`}
@@ -596,7 +598,7 @@ function ProfileCard() {
               color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
             }}>
-            Lv.79 SSeries
+            {`Lv.${userData?.gameLevel ?? "--"} ${currentUser?.displayName}`}
           </span>
           <span
             className={`profile-card-text ${lang}Font`}
@@ -606,13 +608,13 @@ function ProfileCard() {
               left: `calc(15px * ${sizeValue})`,
               fontSize: `calc(24px * ${sizeValue})`,
             }}>
-            uid. 812 345 678
+            {`uid. ${userData?.gameUid ?? "--- --- ---"}`}
           </span>
           {/* Right */}
           <img
             alt=""
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/element/${characterData?.element?.toLowerCase()}.png`}
+            src={`${assetApiUrl}/ico/element/${characterData?.element?.toLowerCase()}.png`}
             style={setSlotStyle({ w: 50, h: 50, x: 470, y: 10 })}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -622,7 +624,7 @@ function ProfileCard() {
           <img
             alt=""
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/stats/atk.webp`}
+            src={`${assetApiUrl}/ico/stats/atk.webp`}
             style={setSlotStyle({ w: 40, h: 40, x: 520, y: 15 })}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -632,7 +634,7 @@ function ProfileCard() {
           <img
             alt=""
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/stats/${characterData?.type}Bns.webp`}
+            src={`${assetApiUrl}/ico/stats/${characterData?.type}Bns.webp`}
             style={setSlotStyle({ w: 40, h: 40, x: 565, y: 15 })}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -642,7 +644,7 @@ function ProfileCard() {
           <img
             alt=""
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/weapon_type/${characterData?.weapon}.webp`}
+            src={`${assetApiUrl}/ico/weapon_type/${characterData?.weapon}.webp`}
             style={setSlotStyle({ w: 40, h: 40, x: 610, y: 15 })}
             onError={(e) => {
               e.currentTarget.onerror = null;
@@ -675,7 +677,7 @@ function ProfileCard() {
             className="profile-card-icon"
             src={
               characterData && weaponData
-                ? `${apiUrl}/static/weapon/${characterData.weapon}/${weaponData.imgKey}.png`
+                ? `${assetApiUrl}/weapon/${characterData.weapon}/${weaponData.imgKey}.png`
                 : null
             }
           />
@@ -792,7 +794,7 @@ function ProfileCard() {
           <img
             alt=""
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/stats/atk.webp`}
+            src={`${assetApiUrl}/ico/stats/atk.webp`}
             style={{
               ...setSlotStyle({ w: 55, h: 55, x: 175, y: 75 }),
             }}
@@ -813,7 +815,7 @@ function ProfileCard() {
           <img
             alt=""
             className="profile-card-icon"
-            src={`${apiUrl}/static/ico/stats/${weaponStats?.statType[0]}.webp`}
+            src={`${assetApiUrl}/ico/stats/${weaponStats?.statType[0]}.webp`}
             style={{
               ...setSlotStyle({ w: 55, h: 55, x: 385, y: 75 }),
             }}
@@ -850,7 +852,7 @@ function ProfileCard() {
                 setSlotStyle({ w: 432.5, h: 50, x: 60, y: 5 }),
                 setSlotStyle({ w: 80, h: 50, x: 482.5, y: 16 }),
               ]}
-              imgPath={`${apiUrl}/static/ico/stats/${item}.webp`}
+              imgPath={`${assetApiUrl}/ico/stats/${item}.webp`}
               statId={statId[idx]}
               fontSize={[`${30 * sizeValue}px`, `${17.5 * sizeValue}px`]}
             />
@@ -877,7 +879,7 @@ function ProfileCard() {
                 }}>
                 <img
                   alt=""
-                  src={`${apiUrl}/static/ico/harmony/${profileData.harmony}.webp`}
+                  src={`${assetApiUrl}/ico/harmony/${profileData.harmony}.webp`}
                   style={{
                     display: "flex",
                     width: `${37.5 * sizeValue}px`,
