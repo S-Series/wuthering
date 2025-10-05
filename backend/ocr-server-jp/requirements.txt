@@ -1,0 +1,13 @@
+# --- Core server ---
+fastapi
+uvicorn[standard]
+python-multipart
+
+# --- OCR Engine ---
+easyocr==1.7.1
+torch==2.0.1
+torchvision==0.15.2
+Pillow
+
+# --- Optional (for debugging or numpy-based pre-processing) ---
+numpy

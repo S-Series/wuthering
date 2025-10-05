@@ -2,5 +2,4 @@ fastapi
 uvicorn
 easyocr
 pillow
-numpy
 python-multipart

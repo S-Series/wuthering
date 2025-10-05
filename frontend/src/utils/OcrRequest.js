@@ -4,6 +4,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 function OcrRequest({ imgUrl = "", isTesting = false }) {
   const [file, setFile] = useState(null);
+  const [resultImg, setResultImg] = useState("/default.webp");
 
   useEffect(() => {
     if (!imgUrl) return;
@@ -17,7 +18,7 @@ function OcrRequest({ imgUrl = "", isTesting = false }) {
         const fd = new FormData();
         fd.append("file", fileObj);
 
-        const ocrRes = await fetch(`${apiUrl}/ocr?lang=kr`, {
+        const ocrRes = await fetch(`http://127.0.0.1:8000/ocr`, {
           method: "POST",
           body: fd,
         });
@@ -31,7 +32,6 @@ function OcrRequest({ imgUrl = "", isTesting = false }) {
     })();
   }, [imgUrl]);
 
-  // 테스트 모드에서 직접 업로드한 파일을 OCR 요청
   useEffect(() => {
     if (!file) return;
 
@@ -40,16 +40,23 @@ function OcrRequest({ imgUrl = "", isTesting = false }) {
         const fd = new FormData();
         fd.append("file", file);
 
-        const ocrRes = await fetch(`${apiUrl}/ocr?lang=kr`, {
+        const ocrRes = await fetch(`https://sseries-wuthering-ocr-kr.hf.space/ocr`, {
           method: "POST",
           body: fd,
         });
 
         if (!ocrRes.ok) throw new Error(`HTTP ${ocrRes.status}`);
+
         const data = await ocrRes.json();
-        console.log("OCR 결과 (업로드):", data);
+        console.log(data);
+
+        if (data.image_base64) {
+          setResultImg(`data:image/jpeg;base64,${data.image_base64}`);
+        } else {
+          setResultImg(null);
+        }
       } catch (err) {
-        console.error("OCR 업로드 실패:", err);
+        setResultImg(null);
       }
     })();
   }, [file]);
@@ -69,6 +76,7 @@ function OcrRequest({ imgUrl = "", isTesting = false }) {
           />
         </div>
       )}
+      <img src={resultImg} />
     </div>
   );
 }

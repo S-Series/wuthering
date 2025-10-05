@@ -26,7 +26,6 @@ function Userinfo() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 프로필 편집 상태
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     displayName: "",
@@ -48,9 +47,9 @@ function Userinfo() {
     }
   }, [currentUser, userData]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (currentUser) {
-      console.log("=== 🔥 Firebase Auth User ===");
+      console.log("=== Firebase Auth User ===");
       console.log("UID:", currentUser.uid);
       console.log("Email:", currentUser.email);
       console.log("Display Name:", currentUser.displayName);
@@ -62,7 +61,7 @@ function Userinfo() {
     }
 
     if (userData) {
-      console.log("\n=== 📦 Firestore User Data ===");
+      console.log("\n=== Firestore User Data ===");
       console.log(userData);
       console.log("\n사용 가능한 데이터:");
       console.log("- userData.gameUid:", userData.gameUid);
@@ -71,9 +70,8 @@ function Userinfo() {
       console.log("- userData.subscription:", userData.subscription);
       console.log("- userData.userLevel:", userData.userLevel);
     }
-  }, [currentUser, userData]);
+  }, [currentUser, userData]);*/
 
-  // 이메일 인증 발송
   const handleSendVerification = async () => {
     setError("");
     setMessage("");
@@ -89,13 +87,11 @@ function Userinfo() {
     setLoading(false);
   };
 
-  // 프로필 저장
   const handleSaveProfile = async () => {
     setError("");
     setMessage("");
     setLoading(true);
 
-    // Firebase Auth 프로필 업데이트 (닉네임, 프로필사진)
     const authUpdate = await updateUserProfile({
       displayName: editForm.displayName,
       photoURL: editForm.photoURL,
@@ -107,7 +103,6 @@ function Userinfo() {
       return;
     }
 
-    // Firestore 데이터 업데이트 (게임 정보)
     const dataUpdate = await updateUserData({
       displayName: editForm.displayName,
       photoURL: editForm.photoURL,
@@ -126,7 +121,6 @@ function Userinfo() {
     setLoading(false);
   };
 
-  // 편집 취소
   const handleCancelEdit = () => {
     setIsEditing(false);
     setEditForm({
@@ -148,14 +142,11 @@ function Userinfo() {
         <div className="main-content">
           <div className="userinfo-container">
             {!currentUser ? (
-              // 로그인 안된 상태
               <LoginSection />
             ) : (
-              // 로그인된 상태 - 프로필 편집
               <div className="user-profile">
                 <h2>내 프로필</h2>
                 <div className="profile-card">
-                  {/* 프로필 아바타 */}
                   <div className="profile-avatar-section">
                     {isEditing ? (
                       <div className="avatar-edit">
@@ -191,7 +182,6 @@ function Userinfo() {
                     )}
                   </div>
 
-                  {/* 기본 정보 */}
                   <div className="profile-info">
                     {isEditing ? (
                       <input
@@ -210,7 +200,6 @@ function Userinfo() {
                     <p className="email">{currentUser.email}</p>
                     <p className="user-id">UID: {currentUser.uid}</p>
 
-                    {/* 이메일 인증 */}
                     <div className="email-verification">
                       {currentUser.emailVerified ? (
                         <span className="verified-badge">✅ 이메일 인증 완료</span>
@@ -300,11 +289,9 @@ function Userinfo() {
                   )}
                 </div>
 
-                {/* 메시지 */}
                 {error && <p className="error-message">{error}</p>}
                 {message && <p className="success-message">{message}</p>}
 
-                {/* 버튼들 */}
                 <div className="action-buttons">
                   {isEditing ? (
                     <>
