@@ -12,13 +12,11 @@ export function ApiProvider({ children }) {
     zh: process.env.REACT_APP_OCR_ZH_API_URL,
   };
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => ({
       assetApiUrl,
       imgMakeApiUrl,
       ocrApiUrl,
-    }),
-    []
+    }),[]
   );
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;

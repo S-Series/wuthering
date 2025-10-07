@@ -34,6 +34,7 @@ app.add_middleware(
 # ---------------------------
 # PaddleOCR Lazy Loading
 # ---------------------------
+setLang = 'en' #korean en japan ch ch_tra
 ocr = None
 
 def get_ocr():
@@ -41,13 +42,11 @@ def get_ocr():
     global ocr
     if ocr is None:
         try:
-            logger.info("🔄 Initializing PaddleOCR (Korean)...")
+            logger.info("Initializing PaddleOCR (Korean)...")
             
-            # ⭐ /tmp 사용 (항상 쓰기 권한 있음)
             model_dir = '/tmp/.paddleocr'
             os.makedirs(model_dir, exist_ok=True)
             
-            # 환경 변수 설정
             os.environ['HOME'] = '/tmp'
             os.environ['PPOCR_HOME'] = model_dir
             
@@ -56,16 +55,16 @@ def get_ocr():
             logger.info(f"PPOCR_HOME: {os.environ.get('PPOCR_HOME')}")
             
             ocr = PaddleOCR(
-                lang='korean',
+                lang=setLang,
                 use_angle_cls=True,
                 use_gpu=False,
                 show_log=False,
-                use_mp=False,  # 멀티프로세싱 비활성화
-                enable_mkldnn=False  # 안정성 향상
+                use_mp=False,   #disable multy processing
+                enable_mkldnn=False
             )
-            logger.info("✅ PaddleOCR initialized successfully!")
+            logger.info("PaddleOCR initialized successfully!")
         except Exception as e:
-            logger.error(f"❌ PaddleOCR initialization failed: {str(e)}")
+            logger.error(f"PaddleOCR initialization failed: {str(e)}")
             import traceback
             logger.error(traceback.format_exc())
             raise
@@ -79,11 +78,22 @@ def process_and_crop_image(image: Image.Image):
 
     if w <= 640:
         return image
+    
+    target_ratio = 16 / 9
+    current_ratio = w / h
+
+    if current_ratio > target_ratio:
+       new_w = int(h * target_ratio)
+       cw = w - new_w
+       right_cut = round(80 * (h / 1080))
+       left_cut = cw - right_cut
+       image = image.crop((left_cut, 0, w - right_cut, h))
+       w, h = image.size
 
     left = w * (2 / 3)
-    upper = 90
+    upper = 90 * (w / 1920)
     right = w
-    lower = 540
+    lower = 540  * (w / 1920)
 
     upper = max(0, min(upper, h))
     lower = max(0, min(lower, h))
@@ -94,28 +104,13 @@ def process_and_crop_image(image: Image.Image):
 @app.get("/")
 def home():
     status = "initialized" if ocr is not None else "not_loaded"
-    return {
-        "message": "OCR API Running (PaddleOCR)",
-        "ocr_status": status,
-        "language": "korean",
-        "note": "Model loads on first request"
-    }
-
-@app.get("/health")
-def health_check():
-    return {
-        "status": "healthy",
-        "ocr_initialized": ocr is not None,
-        "language": "korean"
-    }
-
+    return {"message": "OCR API Running (PaddleOCR)"}
 # ---------------------------
 # OCR endpoint
 # ---------------------------
 @app.post("/ocr")
 async def ocr_process(file: UploadFile = File(...)):
     try:
-        # 첫 요청 시 OCR 초기화
         ocr_engine = get_ocr()
         
         contents = await file.read()
@@ -127,13 +122,11 @@ async def ocr_process(file: UploadFile = File(...)):
         processed.save(buffered, format="JPEG")
         encoded_image = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-        # PaddleOCR 실행
         np_img = np.array(processed)
 
-        logger.info("🔍 Running OCR...")
+        logger.info("Running OCR...")
         results = ocr_engine.ocr(np_img, cls=True)
         
-        # 결과 파싱
         texts = []
         if results and results[0]:
             for line in results[0]:
@@ -142,7 +135,7 @@ async def ocr_process(file: UploadFile = File(...)):
                     texts.append(text)
         
         full_text = "\n".join(texts)
-        logger.info(f"✅ Found {len(texts)} text regions")
+        logger.info(f"Found {len(texts)} text regions")
         
         return {
             "success": True,
@@ -152,7 +145,7 @@ async def ocr_process(file: UploadFile = File(...)):
         }
 
     except Exception as e:
-        logger.error(f"❌ OCR error: {str(e)}")
+        logger.error(f"OCR error: {str(e)}")
         import traceback
         logger.error(traceback.format_exc())
         return {

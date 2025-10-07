@@ -5,14 +5,14 @@ import { useNavigate } from "react-router-dom";
 function SideBar() {
   const navigate = useNavigate();
   const [lang, setLang] = useState("en");
-  const routes = ["/", "/profile", "/character", "/weapon", "/echos"];
+  const routes = ["/", "/character", "/weapon", "/echos"];
 
   const getStringInfo = (lang) => {
     const strings = {
-      kr: ["홈", "프로필", "캐릭터", "무기", "에코"],
-      en: ["Home", "Profile", "Character", "Weapon", "Echos"],
-      jp: ["ホーム", "プロフィール", "キャラクター", "武器", "エコー"],
-      zh: ["主页", "档案", "角色", "武器", "回声"],
+      kr: ["프로필", "캐릭터", "무기", "에코"],
+      en: ["Profile", "Character", "Weapon", "Echos"],
+      jp: ["プロフィール", "キャラクター", "武器", "エコー"],
+      zh: ["档案", "角色", "武器", "回声"],
     };
     return strings[lang] || strings["en"];
   };

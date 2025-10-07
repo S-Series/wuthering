@@ -5,50 +5,51 @@ import { useState, useEffect } from "react";
 import { useProfile } from "../hooks/useProfile";
 import { useApi } from "../hooks/useApi";
 import { useUserData } from "../hooks/useUserData";
-
+import { useFirebase } from "../hooks/useFirebase";
 
 function NavBar() {
   const { assetApiUrl } = useApi();
   const { lang, setLang } = useProfile();
+  const {currentUser} = useFirebase();
   const navigate = useNavigate();
 
   const getStringInfo = (lang) => {
-  const strings = {
-    kr: [
-      "띵조 DEV",
-      "* 모든 기능은 개발 중입니다",
-      "* 오류나 제안은 inweag80@gmail.com 으로 보내주세요",
-      "도움말",
-      "SSeries",
-      "커피 후원"
-    ],
-    jp: [
-      "ウェザウェ DEV",
-      "* すべての機能は開発中です",
-      "* 不具合や提案があれば inweag80@gmail.com までご連絡ください",
-      "ヘルプ",
-      "SSeries",
-      "Ko-Fi"
-    ],
-    zh: [
-      "名潮 DEV",
-      "* 所有功能仍在开发中",
-      "* 如有任何问题或建议，请联系 inweag80@gmail.com",
-      "帮助",
-      "SSeries",
-      "Ko-Fi"
-    ],
-    en: [
-      "WuWa DEV",
-      "* All features are currently under development",
-      "* Found a bug or have feedback? Email: inweag80@gmail.com",
-      "Help",
-      "SSeries",
-      "Ko-Fi"
-    ],
+    const strings = {
+      kr: [
+        "띵조 DEV",
+        "* 모든 기능은 개발 중입니다",
+        "* 오류나 제안은 inweag80@gmail.com 으로 보내주세요",
+        "도움말",
+        "SSeries",
+        "커피 후원",
+      ],
+      jp: [
+        "ウェザウェ DEV",
+        "* すべての機能は開発中です",
+        "* 不具合や提案があれば inweag80@gmail.com までご連絡ください",
+        "ヘルプ",
+        "SSeries",
+        "Ko-Fi",
+      ],
+      zh: [
+        "名潮 DEV",
+        "* 所有功能仍在开发中",
+        "* 如有任何问题或建议，请联系 inweag80@gmail.com",
+        "帮助",
+        "SSeries",
+        "Ko-Fi",
+      ],
+      en: [
+        "WuWa DEV",
+        "* All features are currently under development",
+        "* Found a bug or have feedback? Email: inweag80@gmail.com",
+        "Help",
+        "SSeries",
+        "Ko-Fi",
+      ],
+    };
+    return strings[lang] || strings["en"];
   };
-  return strings[lang] || strings["en"];
-};
 
   const languageOptions = [
     { value: "kr", label: "한국어" },
@@ -78,8 +79,8 @@ function NavBar() {
     }),
     option: (base) => ({
       ...base,
-      fontSize: "14px"
-    })
+      fontSize: "14px",
+    }),
   };
 
   return (
@@ -127,8 +128,9 @@ function NavBar() {
         </button>
         <button
           className="nav-button"
-          onClick={() => window.open("/user-info")}>
-          [임시 로그인창 버튼]
+          onClick={() => navigate("/user-info")}>
+          <img className="icon profile" src={`${currentUser?.photoURL || "./default.webp"}`}/>
+          <span className="nav-text">{currentUser?.displayName || "Log-in"}</span>
         </button>
       </div>
     </nav>

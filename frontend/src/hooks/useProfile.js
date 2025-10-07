@@ -64,6 +64,13 @@ export function ProfileProvider({ children }) {
       i !== echoIndex ? e : { ...e, subStats: e.subStats.map((p, j) => j !== si ? p : [patch?.[0] ?? p[0], patch?.[1] ?? p[1]]) }
     ));
   }, []);
+  const PatchEcho = useCallback((echoIndex, newEcho) => {
+    setEchoList((prev) => {
+      const updated = [...prev];
+      updated[echoIndex] = newEcho;
+      return updated;
+    });
+  }, []);
 
   //$ Edit in Inside
   const [characterData, setCharacterData] = useState(null);
@@ -121,18 +128,14 @@ export function ProfileProvider({ children }) {
       stats[`${echoData.mainStat}Delta`] += parseFloat(
         FixedStats[echoData.mainStat]?.ValueMain[costToIndex(echoData.cost)]
       );
-      console.log(echoData.cost);
       switch (echoData.cost) {
         case 4:
-          console.log("Cost4 runned");
           stats.atkDelta += 150.0;
           break;
         case 3:
-          console.log("Cost3 runned");
           stats.atkDelta += 100.0;
           break;
         case 1:
-          console.log("Cost1 runned");
           stats.hpDelta += 2280.0;
           break;
         default: break;
@@ -237,7 +240,7 @@ export function ProfileProvider({ children }) {
     characterData, weaponData, characterStats, weaponStats,
     finalStats, statId,
     PatchEchoID, PatchEchoCost, PatchEchoHarmony,
-    PatchEchoStat, PatchEchoMainStat,
+    PatchEchoStat, PatchEchoMainStat, PatchEcho
   }), [lang, characterId, weaponId, constellation, echoList, characterData, weaponData, characterStats, weaponStats, finalStats, PatchEchoStat, PatchEchoMainStat]);
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;

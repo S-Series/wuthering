@@ -296,7 +296,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           }}
         />
       </div>
-      <div style={setSlotStyle({ w: 235, h: 80, x: 365, y: 110 })}>
+      <div style={setSlotStyle({ w: 235, h: 80, x: 365, y: 100 })}>
         <Select
           options={(() => {
             const eid = echoList[index].echoId;
@@ -375,7 +375,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           }}
         />
       </div>
-      <div style={setSlotStyle({ w: 350, h: 80, x: 0, y: 110 })}>
+      <div style={setSlotStyle({ w: 350, h: 80, x: 0, y: 100 })}>
         <Select
           options={MAIN_STAT_OPTION}
           isClearable={true}
@@ -437,7 +437,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       <div
         className="divider"
         style={{
-          ...setSlotStyle({ w: 575, h: 2, x: 12.5, y: 210 }),
+          ...setSlotStyle({ w: 575, h: 2, x: 12.5, y: 150 }),
           backgroundColor: "#ffffff33",
         }}
       />

@@ -18,10 +18,6 @@ function Userinfo() {
 
   const { userData, updateUserData } = useUserData();
 
-  console.log("=== DEBUG ==="); //$ << 여기서부터도 디버깅이 안떠
-  console.log("currentUser:", currentUser);
-  console.log("userData:", userData);
-
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);

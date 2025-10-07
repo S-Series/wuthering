@@ -13,12 +13,14 @@ import { echoDict, harmony } from "../data/Echos";
 import { useUserData } from "../hooks/useUserData";
 import { useProfile } from "../hooks/useProfile";
 import { useStyleHelper } from "../hooks/useStyleHelpers";
+import { useFirebase } from "../hooks/useFirebase";
 // utils
 import ImageDrag from "../utils/ImageDrag";
 // others
 import StatSlot from "./CardComp/StatSlot";
 import EchoSlot from "./CardComp/EchoSlot";
 import EchoStatDrop from "./EchoStatDrop";
+import OcrRequest from "../utils/OcrRequest";
 
 function ProfileCard() {
   //#region Refs
@@ -27,7 +29,8 @@ function ProfileCard() {
   //#endregion
 
   //#region Variables
-  const { userData, currentUser } = useUserData();
+  const { userData } = useUserData();
+  const { currentUser } = useFirebase();
   const assetApiUrl = process.env.REACT_APP_ASSET_API_URL;
   const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
   const BUTTON_POS = [
@@ -502,7 +505,7 @@ function ProfileCard() {
             }}
           />
           <ImageDrag
-            inputable = {true}
+            inputable={true}
             path={
               characterId
                 ? `${assetApiUrl}/character/${characterId}/stand.png`
@@ -553,9 +556,7 @@ function ProfileCard() {
                 onClick={() => setConstellation((prev) => [idx + 1, prev[1]])}
               />
               <img
-                src={`${assetApiUrl}/character/${characterId}/C${
-                  idx + 1
-                }.png`}
+                src={`${assetApiUrl}/character/${characterId}/C${idx + 1}.png`}
                 style={
                   idx + 1 > constellation[0]
                     ? {
@@ -668,7 +669,7 @@ function ProfileCard() {
         <div
           style={{
             ...setSlotStyle({ w: 140, h: 140, x: 710, y: 20 }),
-            backgroundColor: "#969696",
+            background: `linear-gradient(210deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
             border: `calc(5px * ${sizeValue}) solid #323232`,
             zIndex: 250,
           }}>
@@ -1036,10 +1037,10 @@ function ProfileCard() {
                   }}>
                   <Select
                     className="ocr-cost-select"
-                    value={({
+                    value={{
                       value: echoList[idx].cost,
-                      label: `${echoList[idx].cost}Cost`
-                    })}
+                      label: `${echoList[idx].cost}Cost`,
+                    }}
                     options={[
                       { value: 4, label: "4Cost" },
                       { value: 3, label: "3Cost" },
@@ -1119,12 +1120,11 @@ function ProfileCard() {
                   }}>
                   <div
                     style={{
-                      ...setSlotStyle({ w: 900 - 2, h: 630 - 2, x: 0, y: 0 }),
+                      ...setSlotStyle({ w: 900, h: 816, x: 0, y: 0 }),
                       backgroundColor: "#00000033",
-                      border: "1px dashed #fff",
                       pointerEvents: "auto",
                     }}>
-                    <ImageDrag inputable={true} sizeValue={sizeValue} />
+                    <OcrRequest sizeValue={sizeValue} index={idx} isDebug={true} />
                   </div>
                 </div>
                 <div
