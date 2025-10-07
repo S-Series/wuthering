@@ -103,7 +103,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
       );
       if (!target) return [];
 
-      return target.ValueSub.map((subValue, idx) => ({
+      return target.ValueSub?.map((subValue, idx) => ({
         value: subValue,
         label: (
           <div
@@ -123,7 +123,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
               }}
             />
             <span className={`${lang}Font`} style={{ color: "#fff" }}>
-              {subValue}
+              {subValue || ""}
             </span>
           </div>
         ),
@@ -229,17 +229,17 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
           options={
             echoList[index].harmony === "default"
               ? ECHO_SELECT_OPTION
-              : ECHO_SELECT_OPTION.filter((item) =>
-                  Object.values(item.list).includes(echoList[index].harmony)
+              : ECHO_SELECT_OPTION?.filter((item) =>
+                  Object.values(item?.list)?.includes(echoList?.[index]?.harmony)
                 )
           }
           isClearable={true}
           menuPlacement="auto"
           placeholder={<span className={`${lang}Font`}>&nbsp;&nbsp;Echo</span>}
           value={
-            echoList[index].echoId === "default" ||
-            !Object.values(echoDict[`Cost${echoList[index].cost}`]).some(
-              (item) => item.id === echoList[index].echoId
+            (echoList[index]?.echoId ?? "") === "default" ||
+            !Object.values((echoDict[`Cost${echoList?.[index]?.cost}` ?? "Cost4"]) ?? [])?.some(
+              (item) => item?.id === (echoList?.[index]?.echoId || "")
             )
               ? null
               : {
@@ -270,8 +270,8 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                           color: "#fff",
                         }}>
                         {`${
-                          echoDict[`Cost${echoList[index].cost}`][
-                            echoList[index].echoId
+                          echoDict[`Cost${echoList[index]?.cost}`][
+                            echoList[index]?.echoId
                           ][lang] || { Set }
                         }`}
                       </span>
@@ -535,8 +535,8 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                           <span
                             className={`${lang}Font`}
                             style={{ color: "#fff" }}>
-                            {FixedStats?.[statFilter?.[idx]]?.ValueSub[
-                              echoList[index].subStats[idx][1]
+                            {FixedStats?.[statFilter?.[idx]]?.ValueSub?.[
+                              echoList[index]?.subStats[idx]?.[1]
                             ] || "0"}
                           </span>
                         </div>
@@ -548,13 +548,14 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
                 ...defaultSelectOption,
               }}
               onChange={(opt) => {
-                const statId = echoList[index].subStats[idx][0];
+                const statId =
+                  echoList[index].subStats[idx][0] || FixedStats.dummy.id;
                 const newVal = opt ? opt.value : -1;
                 PatchEchoStat(index, idx, [
                   statId,
-                  FixedStats[statId].ValueSub.findIndex(
+                  FixedStats[statId]?.ValueSub?.findIndex(
                     (item) => item === newVal
-                  ),
+                  ) || 0,
                 ]);
               }}
             />

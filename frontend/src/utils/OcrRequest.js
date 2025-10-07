@@ -112,7 +112,7 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
           const imageUrl = `data:image/jpeg;base64,${data.image_base64}`;
           setImageHolder(index, imageUrl);
         }
-        
+        console.log(data.texts);
         setDebug(JSON.stringify(OcrToStats(data.texts, lang), null, 2));
         setOcrEchoData(OcrToStats(data.texts, lang));
         setOcrStatus("Successed")
@@ -158,12 +158,16 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
               }}
               onChange={handleFileChange}
             />
-            <span className="ocr-request-text">{uiText(2)}</span>
+            <span
+              className="ocr-request-text"
+              style={{ fontSize: `${26 * sizeValue}px` }}>
+              {uiText(2)}
+            </span>
             <img className="ocr-image focused" src={echoImageBase64[index]} />
           </div>
         ) : (
           <div style={{ width: "100%", height: "100%" }}>
-            <span className="ocr-request-text">Click to start</span>
+            <span className="ocr-request-text" style={{ fontSize: `${26 * sizeValue}px` }}>Click to start</span>
             <img className="ocr-image" src={echoImageBase64[index]} />
           </div>
         )}
@@ -241,8 +245,7 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
           className="ocr-request-button"
           disabled={ocrStatus === "Requested" || ocrStatus === "Successed"}
           onClick={() => {
-            if (ocrStatus !== "Requested" 
-              && ocrStatus !== "Successed")
+            if (ocrStatus !== "Requested" && ocrStatus !== "Successed")
               RequestOCR();
           }}>
           <span className={`${lang}Font`}>{uiText(8)}</span>

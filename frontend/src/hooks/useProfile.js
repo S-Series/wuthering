@@ -141,8 +141,9 @@ export function ProfileProvider({ children }) {
         default: break;
       }
       echoData.subStats.forEach(([id, val]) => {
-        if (stats[id] !== undefined)
-          stats[`${id}Delta`] += parseFloat(FixedStats[id].ValueSub[val] ?? 0);
+        if (val === -1) ;
+        else if (stats[id] !== undefined)
+          stats[`${id}Delta`] += parseFloat(FixedStats[id]?.ValueSub[val] ?? 0);
       })
     });
     //$ extra stats

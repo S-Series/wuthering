@@ -14,7 +14,7 @@ function similarity(a, b) {
 
 const retouchList = {
   kr: [
-    [/라어용|라어움|라어요|라어워/g, "방어력"],
+    [/라어용|라어움|라어요|라어워|라어운/g, "방어력"],
     [/H위프|H위lI프|H위표|피혜|피해/g, "피해"],
     [/음운/g, "공명"],
   ],
@@ -23,8 +23,7 @@ const retouchList = {
 const checkSim = {
   kr: {
     효율: "ResonanceBns", // 공명 효율
-    치료: "healBns", // 치료 보너스
-    일반: "normalBns", // 일반 공격 피해보너스
+    공격: "normalBns", // 일반 공격 피해보너스
     강공격: "heavyBns", // 강공격 피해보너스
     스킬: "skillBns", // 공명 스킬 피해보너스
     해방: "ultBns", // 공명 해방 피해보너스
@@ -114,7 +113,6 @@ export function useOcrRetouch() {
           return statId;
         }
       }
-
       return null;
     };
 
@@ -169,6 +167,13 @@ export function useOcrRetouch() {
       Stats.shift();
     }
     statData.subStats = Stats.slice(-5);
+    statData.subStats.map((item) => {
+      if (item[0] === null) item[0] = FixedStats.dummy.id;
+      const idx = Object.values(FixedStats[item[0]]?.ValueSub ?? []).findIndex(
+        (v) => Number(v) === item[1]
+      );
+      item[1] = idx;
+    })
 
     return statData;
   }, []);

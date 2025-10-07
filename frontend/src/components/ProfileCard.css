@@ -52,6 +52,20 @@
     */
 }
 
+.profile-image-request {
+    display: flex;
+    width: 100%;
+    aspect-ratio: 20 / 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-image-request-button {
+    height: 80%;
+    aspect-ratio: 3 / 1;
+    margin-right: 1.5%;
+}
+
 .profile-card-slot {
     display: block;
     position: relative;
@@ -153,7 +167,7 @@
     width: calc(100% - 2px);
     min-width: 856px;
     aspect-ratio: 2140 / 856; /* 5 : 2 */
-    margin: 5% 0;
+    margin: 3% 0;
     border: 1px solid #fff;
     border-radius: 10px;
 }

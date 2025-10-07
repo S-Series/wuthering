@@ -999,6 +999,26 @@ function ProfileCard() {
           }}
         />
       </div>
+      <div className="profile-image-request">
+          <div style={{
+            display: "flex",
+            width: `${2000 * sizeValue}px`,
+            height: "100%",
+          }}>
+            <button className="profile-image-request-button"
+              disabled={true}> 
+              <span className={`${lang}Font`}>이미지 생성</span> 
+            </button>
+            <button className="profile-image-request-button"
+              disabled={true}> 
+              <span className={`${lang}Font`}>다운로드</span> 
+            </button>
+            <button className="profile-image-request-button"
+              disabled={true}> 
+              <span className={`${lang}Font`}>제공 예정들인 기능입니다</span> 
+            </button>
+          </div>
+      </div>
       <div className="profile-ocr-slot">
         <div
           className="ocr-select-slot"
