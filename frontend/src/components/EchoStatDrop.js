@@ -25,12 +25,13 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
     Array(5).fill([FixedStats.dummy.id, 0])
   );
   useEffect(() => {
+    const sub = echoList?.[index]?.subStats ?? [];
     const filterData = [
-      echoList[index].subStats[0][0],
-      echoList[index].subStats[1][0],
-      echoList[index].subStats[2][0],
-      echoList[index].subStats[3][0],
-      echoList[index].subStats[4][0],
+      sub?.[0]?.[0] ?? FixedStats.dummy.id,
+      sub?.[1]?.[0] ?? FixedStats.dummy.id,
+      sub?.[2]?.[0] ?? FixedStats.dummy.id,
+      sub?.[3]?.[0] ?? FixedStats.dummy.id,
+      sub?.[4]?.[0] ?? FixedStats.dummy.id,
     ];
     setStatFilter(filterData);
   }, [index, echoList]);
