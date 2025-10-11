@@ -11,6 +11,7 @@ function EchoStatDrop({ index = 0, sizeValue = 1 }) {
   const {
     lang,
     echoList,
+    echoScore,
     costToIndex,
     PatchEchoID,
     PatchEchoMainStat,

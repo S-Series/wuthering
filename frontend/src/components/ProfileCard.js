@@ -51,6 +51,7 @@ function ProfileCard() {
     constellation,
     setConstellation,
     echoList,
+    echoScore,
     characterData,
     weaponData,
     weaponStats,
@@ -86,12 +87,11 @@ function ProfileCard() {
     { value: 6, label: "C6" },
   ];
   const W_ConstellationList = [
-    { value: 0, label: "C0" },
-    { value: 1, label: "C1" },
-    { value: 2, label: "C2" },
-    { value: 3, label: "C3" },
-    { value: 4, label: "C4" },
-    { value: 5, label: "C5" },
+    { value: 0, label: "C1" },
+    { value: 1, label: "C2" },
+    { value: 2, label: "C3" },
+    { value: 3, label: "C4" },
+    { value: 4, label: "C5" },
   ];
   const W_ConstellationOption = W_ConstellationList.map((item) => ({
     value: item.value,
@@ -698,7 +698,7 @@ function ProfileCard() {
                     justifySelf: "center",
                     color: "#fff",
                   }}>
-                  C{constellation[1]}
+                  C{constellation[1] + 1}
                 </span>
               ),
             }}
@@ -915,19 +915,20 @@ function ProfileCard() {
               flexDirection: "row",
               ...setSlotStyle({ w: 600, h: 50, y: 635 }),
             }}>
-            {profileData.statScore.map((item, idx) => (
-              <div className="stat-score-slot" key={idx}>
+            {[0, 1].map((item) => (
+              <div className="stat-score-slot" key={item}>
                 <span
                   className="stat-score-text title"
                   style={{ fontSize: `${42 * sizeValue}px` }}>
-                  {idx === 0 ? "AV." : "CV."}
+                  {item === 0 ? "Cv." : "Av."}
                 </span>
                 <span
                   className="stat-score-text value"
                   style={{ fontSize: `${36 * sizeValue}px` }}>
-                  12
-                  {profileData.statScore[idx]}
-                  .3pt
+                  {echoScore
+                    .reduce((acc, cur) => acc + cur[item], 0)
+                    .toFixed(1)}
+                  pt
                 </span>
               </div>
             ))}
@@ -955,7 +956,9 @@ function ProfileCard() {
               textAlign: "center",
               fontSize: `${36 * sizeValue}px`,
             }}>
-            Av. 567.8pt
+            {`Av. ${echoScore
+              .reduce((acc, cur) => acc + cur[1], 0)
+              .toFixed(1)}pt`}
           </span>
           <div
             style={{
@@ -1000,24 +1003,32 @@ function ProfileCard() {
         />
       </div>
       <div className="profile-image-request">
-          <div style={{
+        <div
+          style={{
             display: "flex",
-            width: `${2000 * sizeValue}px`,
+            width: `${2200 * sizeValue}px`,
             height: "100%",
           }}>
-            <button className="profile-image-request-button"
-              disabled={true}> 
-              <span className={`${lang}Font`}>이미지 생성</span> 
-            </button>
-            <button className="profile-image-request-button"
-              disabled={true}> 
-              <span className={`${lang}Font`}>다운로드</span> 
-            </button>
-            <button className="profile-image-request-button"
-              disabled={true}> 
-              <span className={`${lang}Font`}>제공 예정들인 기능입니다</span> 
-            </button>
-          </div>
+          <button className="profile-image-request-button" disabled={true}>
+            <span className={`${lang}Font`}>이미지 생성</span>
+          </button>
+          <button className="profile-image-request-button" disabled={true}>
+            <span className={`${lang}Font`}>다운로드</span>
+          </button>
+          <button className="profile-image-request-button" disabled={true}>
+            <span className={`${lang}Font`}>제공 예정들인 기능입니다</span>
+          </button>
+          <button
+            className="profile-image-request-button data"
+            onClick={() =>
+              window.open(
+                "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029",
+                "_blank"
+              )
+            }>
+            <span className={`${lang}Font`}>점수 기준표</span>
+          </button>
+        </div>
       </div>
       <div className="profile-ocr-slot">
         <div
@@ -1144,7 +1155,11 @@ function ProfileCard() {
                       backgroundColor: "#00000033",
                       pointerEvents: "auto",
                     }}>
-                    <OcrRequest sizeValue={sizeValue} index={idx} isDebug={true} />
+                    <OcrRequest
+                      sizeValue={sizeValue}
+                      index={idx}
+                      isDebug={false}
+                    />
                   </div>
                 </div>
                 <div

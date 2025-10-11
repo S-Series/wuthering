@@ -9,7 +9,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
   const { assetApiUrl } = useApi();
   
   const { setSlotStyle } = useStyleHelper(sizeValue);
-  const { echoList } = useProfile();
+  const { echoList, echoScore } = useProfile();
   
   function subStyleValue(idx, isText) {
     return {
@@ -197,7 +197,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
               transform: `translateY(-${4 * sizeValue}px)`,
               fontSize: `${28 * sizeValue}px`,
             }}>
-            0pt
+            {echoScore[index][0]}pt
           </span>
           <span
             style={{
@@ -217,7 +217,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
               transform: `translateY(-${4 * sizeValue}px)`,
               fontSize: `${28 * sizeValue}px`,
             }}>
-            0pt
+            {echoScore[index][1]}pt
           </span>
         </div>
       </div>

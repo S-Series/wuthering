@@ -61,9 +61,33 @@
 }
 
 .profile-image-request-button {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    appearance: none;
+
     height: 80%;
     aspect-ratio: 3 / 1;
     margin-right: 1.5%;
+    color: #fff;
+    background: linear-gradient(330deg, #333366ff 0%, #0b0b44ff 100%);
+    z-index: 500;
+
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.profile-image-request-button.data {
+    margin-left: auto;
+}
+
+.profile-image-request-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.profile-image-request-button:hover {
+    background: linear-gradient(330deg, #666699ff 0%, #0b0b88ff 100%);
 }
 
 .profile-card-slot {

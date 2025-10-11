@@ -174,6 +174,9 @@ export function useOcrRetouch() {
       );
       item[1] = idx;
     })
+    while (statData.subStats.length < 5) {
+      statData.subStats.push([FixedStats.dummy.id, -1]);
+    }
 
     return statData;
   }, []);
