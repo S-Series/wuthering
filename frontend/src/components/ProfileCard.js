@@ -32,7 +32,13 @@ function ProfileCard() {
   const { userData } = useUserData();
   const { currentUser } = useFirebase();
   const assetApiUrl = process.env.REACT_APP_ASSET_API_URL;
-  const UI_COLOR = ["#333366ff", "#0b0b44ff", "#0b0b44ff"];
+  const UI_COLOR = [
+    "#333366ff",
+    "#0b0b44ff",
+    "#0b0b44ff",
+    "#666699ff",
+    "#0b0b88ff",
+  ];
   const BUTTON_POS = [
     { w: 85, h: 80, x: 576.25, y: 524 },
     { w: 70, h: 90, x: 501.25, y: 598.25 },
@@ -64,8 +70,8 @@ function ProfileCard() {
 
   const [reloadKey, setReloadKey] = useState(0);
 
-  const [filterWeapon, setFilterWeapon] = useState(null);
-  const [filterElement, setFilterElement] = useState(null);
+  const [filterWeapon, setFilterWeapon] = useState([]);
+  const [filterElement, setFilterElement] = useState([]);
 
   const [selectedEchoIdx, setSelectedEchoIdx] = useState(0);
   const echoSlotBorderPos = useMemo(() => {
@@ -200,7 +206,7 @@ function ProfileCard() {
   const CHARACTER_ALL = Object.values(character).map(item => ({
     value: item.id,
     weapon: item.weapon,
-    element: item.element,
+    element: item.element?.toLowerCase(),
     label: (
       <div
         style={{
@@ -227,12 +233,13 @@ function ProfileCard() {
     ),
   }));
   const characterOption = useMemo(() => {
+    console.log("data", CHARACTER_ALL);
     const temp = !weaponFilter || weaponFilter.length === 0
-      ? CHARACTER_ALL
-      : CHARACTER_ALL.filter(item => !weaponFilter.includes(item.weapon));
+      ? CHARACTER_ALL 
+      : CHARACTER_ALL.filter(item => weaponFilter.includes(item.weapon));
 
     return !elementFilter || elementFilter.length === 0
-      ? temp : temp.filter(item => !elementFilter.includes(item.element));
+      ? temp : temp.filter(item => elementFilter.includes(item.element));
   }, [sizeValue, weaponFilter, elementFilter]);
 
   const weaponOption = useMemo(() => {
@@ -269,14 +276,71 @@ function ProfileCard() {
 
   return (
     <div key={lang} className="profile-portrait">
+      <button
+        onClick={async () => {
+          try {
+            const imageFile = await fetch("/default.webp")
+              .then((res) => res.blob())
+              .then(
+                (blob) =>
+                  new File([blob], "default.webp", { type: "image/webp" })
+              );
+
+            const subFile = null; 
+
+            const imageData = {
+              name: "Aalto",
+              element: "Aero",
+              weapon: "Pistols",
+            };
+            const statData = {
+              atk: 1234,
+              hp: 5678,
+              def: 432,
+              characterName: "Aalto", // 서버에서 기본이미지 로딩용
+            };
+
+            const formData = new FormData();
+            formData.append("image_character", imageFile);
+            if (subFile) {
+              formData.append("image_sub", subFile);
+            }
+            formData.append("image_data", JSON.stringify(imageData));
+            formData.append("stat_data", JSON.stringify(statData));
+
+            const response = await fetch(
+              "http://127.0.0.1:8000/generate_card/",
+              {
+                method: "POST",
+                body: formData,
+              }
+            );
+
+            const result = await response.json();
+            console.log("✅ 서버 응답:", result);
+          } catch (error) {
+            console.error("❌ 요청 실패:", error);
+          }
+        }}>
+        test
+      </button>
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (
           <button
             style={{
               ...setSlotStyle({ w: 70, h: 70, x: 50 + 90 * idx, y: 50 }),
-              background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              background: weaponFilter.includes(item.value)
+                ? `linear-gradient(330deg, ${UI_COLOR[3]} 0%, ${UI_COLOR[4]} 100%)`
+                : `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              opacity: weaponFilter.includes(item.value) ? 1 : 0.25,
             }}
-            onClick={() => {}}>
+            onClick={() => {
+              setWeaponFilter((prev) => {
+                return prev.includes(item.value)
+                  ? prev.filter((v) => v !== item.value)
+                  : [...prev, item.value];
+              });
+            }}>
             <img
               style={{
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
@@ -290,9 +354,18 @@ function ProfileCard() {
           <button
             style={{
               ...setSlotStyle({ w: 70, h: 70, x: 500 + 90 * idx, y: 50 }),
-              background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              background: elementFilter.includes(item.value)
+                ? `linear-gradient(330deg, ${UI_COLOR[3]} 0%, ${UI_COLOR[4]} 100%)`
+                : `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              opacity: elementFilter.includes(item.value) ? 1 : 0.25,
             }}
-            onClick={() => {}}>
+            onClick={() => {
+              setElementFilter((prev) => {
+                return prev.includes(item.value)
+                  ? prev.filter((v) => v !== item.value)
+                  : [...prev, item.value];
+              });
+            }}>
             <img
               style={{
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
@@ -306,6 +379,10 @@ function ProfileCard() {
           style={{
             ...setSlotStyle({ w: 160, h: 70, x: 1040, y: 50 }),
             background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+          }}
+          onClick={() => {
+            setWeaponFilter([]);
+            setElementFilter([]);
           }}>
           <span
             className={`${lang}Font`}

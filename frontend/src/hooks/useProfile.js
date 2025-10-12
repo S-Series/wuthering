@@ -217,6 +217,8 @@ export function ProfileProvider({ children }) {
     stats.ResonanceBns += stats.ResonanceBnsDelta;
     stats.CritRate += stats.CritRateDelta;
     stats.CritDmg += stats.CritDmgDelta;
+    stats[types[0]] += stats[`${types[0]}Delta`];
+    stats[types[1]] += stats[`${types[1]}Delta`];
 
     console.log(stats);
     return stats;

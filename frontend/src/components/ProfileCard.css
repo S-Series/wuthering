@@ -54,8 +54,9 @@
 
 .profile-image-request {
     display: flex;
-    width: 100%;
-    aspect-ratio: 20 / 1;
+    width: 95%;
+    margin-left: 2.5%;
+    aspect-ratio: 19 / 1;
     align-items: center;
     justify-content: center;
 }
@@ -66,12 +67,15 @@
     box-shadow: none;
     appearance: none;
 
-    height: 80%;
-    aspect-ratio: 3 / 1;
+    height: calc(80% - 0px);
+    width: fit-content;
+    min-width: calc(11% - 2px);
     margin-right: 1.5%;
     color: #fff;
+    border: 1px solid #ffffff66;
+    border-top: 0;
     background: linear-gradient(330deg, #333366ff 0%, #0b0b44ff 100%);
-    z-index: 500;
+    z-index: 250;
 
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -79,6 +83,7 @@
 
 .profile-image-request-button.data {
     margin-left: auto;
+    margin-right: 0;
 }
 
 .profile-image-request-button:disabled {
