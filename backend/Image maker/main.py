@@ -4,17 +4,20 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, ImageDraw, ImageFont
 
-import os
-import json
-import uvicorn
+import os, json, uvicorn
 
 app = FastAPI()
+EN_FONT_PATH = "./fonts/en.ttf"
+
+# --------------------------------------------------------
 
 def image_process(img_path, x, y, a, w, h):
     target_img = Image.open(img_path)
     cropped = target_img.crop((x, y, x + (w / a), y + (h / a)))
     resized = cropped.resize((w, h), Image.LANCZOS)
     return resized
+
+# --------------------------------------------------------
 
 def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=None):
     x1, y1, w, h = xy1
@@ -26,7 +29,7 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=
     draw.rectangle((0, radius, w, h), fill=fill)
     draw.rectangle((radius, 0, w, radius), fill=fill)
     draw.pieslice((0, 0, radius * 2, radius * 2), 180, 270, fill=fill)
-
+    # --------------------------------------------------------
     if img_path:
         img = Image.open(img_path).convert("RGBA")
         iw, ih = img.size
@@ -42,8 +45,18 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=
         paste_x = int(cx + x_off - new_w / 2)
         paste_y = int(cy + y_off - new_h / 2)
 
-        rounded.paste(img, (paste_x, paste_y), mask=img)
+        mask = Image.new("L", (w, h), 0)
+        mdraw = ImageDraw.Draw(mask)
+        mdraw.rectangle((0, radius, w, h), fill=255)
+        mdraw.rectangle((radius, 0, w, radius), fill=255)
+        mdraw.pieslice((0, 0, radius * 2, radius * 2), 180, 270, fill=255)
 
+        temp_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        temp_layer.paste(img, (paste_x, paste_y), mask=img)
+        temp_layer.putalpha(mask)
+
+        rounded.alpha_composite(temp_layer)
+    # --------------------------------------------------------
     if border:
         if isinstance(border[0], (tuple, list)):
             color = tuple(int(round(v)) for v in border[0])
@@ -57,8 +70,24 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=
         draw.line([(w, h), (0, h)], fill=color, width=width)        # 하단
         draw.line([(0, h), (0, radius)], fill=color, width=width)   # 좌측
         draw.arc((0, 0, radius * 2, radius * 2), 180, 270, fill=color, width=round(width/1.5))
-
+    # --------------------------------------------------------
     base.alpha_composite(rounded, dest=(x1, y1))
+
+# --------------------------------------------------------
+
+def draw_text(base, text, xy, font_path, font_size = 16, color = (255,255,255,255)):
+    draw = ImageDraw.Draw(base)
+    # --------------------------------------------------------
+    try:
+        font = ImageFont.truetype(font_path, font_size)
+    except OSError:
+        print("*Text Load Failed*: ", OSError)
+        font = ImageFont.load_default()
+    # --------------------------------------------------------
+    try:
+        draw.text(xy, text, fill=color, font=font)
+    except OSError:
+        print("*Text Draw Failed*: ", OSError)
 
 # -----------------------------
 # Creating Profile Card
@@ -75,6 +104,8 @@ async def create_profile_card(
 
     data_image = json.loads(image_data)
     data_stat = json.loads(stat_data)
+    #font_path = "./fonts/{lang}.ttf"
+    font_path = "./fonts/kr.ttf"
 
     # --------------------------------------------------------
 
@@ -110,7 +141,7 @@ async def create_profile_card(
 
     draw.rectangle([(25, 25), (25 + 650, 25 + 800)], fill=(0, 0, 0, 255))
     temp_path = "./assets/character/camellya/art.png"
-    draw_rect_topleft_round(
+    """draw_rect_topleft_round(
         base, 
         xy1=(20, 20, 650, 800), 
         xy2=(0, 0, 1.25), 
@@ -118,12 +149,13 @@ async def create_profile_card(
         fill=(255, 255, 255, round(255 * 0.4)), 
         border=((200, 200, 200), 5), 
         img_path=temp_path
-    )
-    base.save("result.png", "PNG")
+    )"""
 
+    draw_text(base, "test", (100, 100), EN_FONT_PATH, 32)
+
+    base.save("result.png", "PNG")
     print("✅ result.jpg 저장 완료")
     return {"status": "ok", "message": "result.jpg created"}
-
 
 # ---------------------------
 # local testing
