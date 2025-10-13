@@ -77,7 +77,7 @@ async def create_profile_card(
     data_stat = json.loads(stat_data)
 
     # --------------------------------------------------------
-    # --------------------------------------------------------
+
     if image_character and image_character.filename:
         input_main = f"./temp/{image_character.filename}"
         with open(input_main, "wb") as f:
@@ -89,7 +89,7 @@ async def create_profile_card(
             input_main = "./assets/default.png"
 
     # --------------------------------------------------------
-    # --------------------------------------------------------
+
     if image_sub and image_sub.filename:
         input_sub = f"./temp/{image_sub.filename}"
         with open(input_sub, "wb") as f:
@@ -98,7 +98,7 @@ async def create_profile_card(
         input_sub = "./assets/default_sub.png" if os.path.exists("./assets/default_sub.png") else None
 
     # --------------------------------------------------------
-    # --------------------------------------------------------
+
     base = Image.open("./assets/BG.jpg").convert("RGBA")
     img_main = Image.open(input_main).convert("RGBA")
 
@@ -109,7 +109,7 @@ async def create_profile_card(
     draw = ImageDraw.Draw(base)
 
     draw.rectangle([(25, 25), (25 + 650, 25 + 800)], fill=(0, 0, 0, 255))
-    temp_path = "./assets/character/camellya/stand.png"
+    temp_path = "./assets/character/camellya/art.png"
     draw_rect_topleft_round(
         base, 
         xy1=(20, 20, 650, 800), 
