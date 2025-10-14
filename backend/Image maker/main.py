@@ -3,11 +3,32 @@ from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
 
-import os, json, uvicorn
+import os, math, json, uvicorn, requests
+import numpy as np
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+KR_FONT_PATH = "./fonts/SUITE-Medium.ttf"
 EN_FONT_PATH = "./fonts/en.ttf"
+JP_FONT_PATH = "./fonts/en.ttf"
+ZH_FONT_PATH = "./fonts/en.ttf"
+NUM_FONT_PATH = "./fonts/Roboto-Medium.ttf"
+
+UI_COLOR = [
+    (51,51,102,255),
+    (11,11,68,255),
+    (102,102,153,255),
+    (11,11,136,255),
+]
 
 # --------------------------------------------------------
 
@@ -16,6 +37,15 @@ def image_process(img_path, x, y, a, w, h):
     cropped = target_img.crop((x, y, x + (w / a), y + (h / a)))
     resized = cropped.resize((w, h), Image.LANCZOS)
     return resized
+
+# --------------------------------------------------------
+
+def draw_rect(base, xy, color):
+    x, y, w, h = xy
+    overlay = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+    draw.rectangle((x, y, x + w, y + h), fill=color)
+    base.alpha_composite(overlay)
 
 # --------------------------------------------------------
 
@@ -31,7 +61,12 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=
     draw.pieslice((0, 0, radius * 2, radius * 2), 180, 270, fill=fill)
     # --------------------------------------------------------
     if img_path:
-        img = Image.open(img_path).convert("RGBA")
+        if img_path:
+            if img_path.startswith("http"):
+                response = requests.get(img_path)
+                img = Image.open(BytesIO(response.content)).convert("RGBA")
+            else:
+                img = Image.open(img_path).convert("RGBA")
         iw, ih = img.size
 
         cx = w / 2
@@ -75,7 +110,7 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=
 
 # --------------------------------------------------------
 
-def draw_text(base, text, xy, font_path, font_size = 16, color = (255,255,255,255)):
+def draw_text(base, text, xy, font_path, font_size = 16, color = (255,255,255,255), anchor="lt"):
     draw = ImageDraw.Draw(base)
     # --------------------------------------------------------
     try:
@@ -85,27 +120,98 @@ def draw_text(base, text, xy, font_path, font_size = 16, color = (255,255,255,25
         font = ImageFont.load_default()
     # --------------------------------------------------------
     try:
-        draw.text(xy, text, fill=color, font=font)
+        draw.text(xy, text, fill=color, font=font, anchor=anchor)
     except OSError:
         print("*Text Draw Failed*: ", OSError)
+
+def draw_image(base, path, xy, opacity=1.0):
+    x, y, w, h = xy
+    try:
+        if path:
+            if path.startswith("http"):
+                response = requests.get(path)
+                overlay = Image.open(BytesIO(response.content)).convert("RGBA")
+            else:
+                overlay = Image.open(path).convert("RGBA")
+        overlay = overlay.resize((w, h), Image.LANCZOS)
+
+        if opacity < 1:
+            alpha = overlay.split()[3]
+            alpha = alpha.point(lambda p: int(p * opacity))
+            overlay.putalpha(alpha)
+
+        base.paste(overlay, (x, y), overlay)
+
+    except Exception as err:
+        print("*Image Load Failed*: ", err)
+
+def draw_gradient(base, xy, color, angle_deg=0):
+    x, y, w, h = xy
+    c1, c2 = [np.array(c, dtype=float) for c in color]
+
+    xv, yv = np.meshgrid(np.linspace(0, 1, w), np.linspace(0, 1, h))
+    angle = math.radians(angle_deg)
+    dir_x, dir_y = math.cos(angle), math.sin(angle)
+
+    t = (xv * dir_x + yv * dir_y)
+    t = (t - t.min()) / (t.max() - t.min())
+
+    gradient = (c1[None, None, :] * (1 - t[:, :, None]) + c2[None, None, :] * t[:, :, None]).astype(np.uint8)
+    gradient_img = Image.fromarray(gradient, mode="RGBA")
+
+    base.alpha_composite(gradient_img, dest=(x, y))
 
 # -----------------------------
 # Creating Profile Card
 # -----------------------------
-@app.post("/generate_card/")
+@app.post("/generate_card")
 async def create_profile_card(
     image_character: UploadFile = None,
     image_sub: UploadFile = None,
     image_data: str = Form(...),
     stat_data: str = Form(...),
 ):
+    """ const statData = {
+    lang: "kr",
+    server: "Asia",
+    lever: 80,
+    player_name: "SSeries",
+    uid: 700695460,
+    c_id: "camellya",
+    c_name: "카멜리아",
+    c_type: ["havoc", "atk", "normalBns", "sword"],
+    w_imgkey: "ico003",
+    w_name: "날카로운 봄",
+    w_stat: [587, 24.3],
+    w_type: "CritRate",
+    constel: [0, 0],
+    stats: [
+        [15665, 5340],
+        [2283, 998],
+        [1309, 149],
+        [136.0, 36],
+        [66.8, 37.5],
+        [270.0, 104.0],
+        [75.0, 60.0],
+        [25.9, 10.9],
+    ],
+    set_option: [["Eclipse", true]],
+    echo_id: ["", "", "", "", ""],
+    echo_stat: [ [], [], [], [], [] ],
+    echo_score: [
+        [28.8, 45.5],
+        [18.6, 50.7],
+        [26.4, 26.4],
+        [28.8, 28.8],
+        [32.4, 32.4],
+    ]};
+    """
     os.makedirs("./temp", exist_ok=True)
     os.makedirs("./assets", exist_ok=True)
 
+    stat_data = json.loads(stat_data)
     data_image = json.loads(image_data)
-    data_stat = json.loads(stat_data)
-    #font_path = "./fonts/{lang}.ttf"
-    font_path = "./fonts/kr.ttf"
+    font_use = KR_FONT_PATH
 
     # --------------------------------------------------------
 
@@ -114,7 +220,7 @@ async def create_profile_card(
         with open(input_main, "wb") as f:
             f.write(await image_character.read())
     else:
-        char_name = data_stat.get("characterName", "default")
+        char_name = stat_data.get("characterName", "default")
         input_main = f"./assets/{char_name}.png"
         if not os.path.exists(input_main):
             input_main = "./assets/default.png"
@@ -139,23 +245,69 @@ async def create_profile_card(
 
     draw = ImageDraw.Draw(base)
 
-    draw.rectangle([(25, 25), (25 + 650, 25 + 800)], fill=(0, 0, 0, 255))
-    temp_path = "./assets/character/camellya/art.png"
-    """draw_rect_topleft_round(
+    draw.rectangle([(27, 27), (27 + 650, 27 + 800)], fill=(0, 0, 0, 255))
+    draw_rect(base, (700, 210, 600, 710), (0, 0, 0, 70))
+    draw_rect(base, (700, 70, 600, 140), (255, 255, 255, 40))
+    draw_rect(base, (1320, 70, 800, 216), (255, 255, 255, 40))
+
+    stats = stat_data.get("stats")
+    stat_name = stat_data.get("stat_name")
+    for i in range(8):
+        draw_rect(base, (720, 235 + 70 * i, 560, 45), (255, 255, 255, 40))
+        draw_text(base, f"{stat_name[i]}", (772, 244 + 70 * i), font_use, 32)
+        if i < 3:
+            draw_text(base, f"{stats[i][0]}", (1205, 247 + 70 * i), NUM_FONT_PATH, 30, anchor="rt")
+            draw_text(base, f"+{stats[i][1]}", (1275, 255 + 70 * i), NUM_FONT_PATH, 16, anchor="rt", color=(221, 170, 0, 255))
+        else :
+            draw_text(base, f"{stats[i][0]:.1f}%", (1205, 247 + 70 * i), NUM_FONT_PATH, 30, anchor="rt")
+            draw_text(base, f"+{stats[i][1]:.1f}%", (1275, 255 + 70 * i), NUM_FONT_PATH, 16, anchor="rt", color=(221, 170, 0, 255))
+    for i in range(5):
+        draw_rect(base, (1320 + 163 * i, 300, 148, 620), (255, 255, 255, 40))
+        
+    character_img_path = f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/character/{stat_data.get("c_id")}/art.png"
+    weapon_img_path = f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/weapon/{stat_data.get("c_type")[3]}/{stat_data.get("w_imgkey")}.png"
+    draw_rect_topleft_round(
         base, 
         xy1=(20, 20, 650, 800), 
-        xy2=(0, 0, 1.25), 
+        xy2=(0, 0, 1.04), 
         radius=40, 
         fill=(255, 255, 255, round(255 * 0.4)), 
         border=((200, 200, 200), 5), 
-        img_path=temp_path
-    )"""
+        img_path=character_img_path
+    )
+    draw_gradient(base, (710, 20, 150, 150), (UI_COLOR[0], UI_COLOR[1]), 210)
+    draw_image(base, weapon_img_path, (710, 20, 150, 150))
+    draw.rectangle((710, 20, 710 + 150, 20 + 150), outline=(100, 100, 100), width=2)
 
-    draw_text(base, "test", (100, 100), EN_FONT_PATH, 32)
+    draw_text(base, f"{stat_data.get("server")}", (35, 845), EN_FONT_PATH, 24)
+    draw_text(base, f"Lv.{stat_data.get("level")} {stat_data.get("player_name")}", (35, 875), EN_FONT_PATH, 24)
+    draw_text(base, f"Uid. {stat_data.get("uid")}", (35, 905), EN_FONT_PATH, 24)
+    draw_text(base, f"{stat_data.get("c_name")}", (665, 870), font_use, 54, anchor="rt")
+    draw_text(base, "Image © Kuro Games 2024", (662, 800), EN_FONT_PATH, 14, anchor="rt", color=(255, 255, 255, 180))
+    
+    draw_text(base, "Unofficial Fan Project: All assets © Kuro Games", (1325, 41), EN_FONT_PATH, 24, color=(255, 255, 255, 180))
+    draw_text(base, "WuWa.dev © 2025", (2120, 41), EN_FONT_PATH, 24, anchor="rt", color=(255, 255, 255, 180))
+    draw_text(base, "powered by. SSeries", (2120, 13), EN_FONT_PATH, 20, anchor="rt", color=(255, 255, 255, 180))
+
+    icon_paths = [
+        "./assets/ico/stats/hp.webp",
+        "./assets/ico/stats/atk.webp",
+        "./assets/ico/stats/def.webp",
+        "./assets/ico/stats/ResonanceBns.webp",
+        "./assets/ico/stats/CritRate.webp",
+        "./assets/ico/stats/CritDmg.webp",
+        "./assets/ico/stats/HavocBns.webp",
+        "./assets/ico/stats/normalBns.webp",
+    ]
+    for i, path in enumerate(icon_paths):
+        draw_image(base, path, (725, 238 + 70 * i, 40, 40))
 
     base.save("result.png", "PNG")
-    print("✅ result.jpg 저장 완료")
-    return {"status": "ok", "message": "result.jpg created"}
+    return FileResponse(
+        path="./result.png",
+        media_type="image/png",
+        filename="result.png"
+    )
 
 # ---------------------------
 # local testing

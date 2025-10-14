@@ -16,6 +16,7 @@ import { useStyleHelper } from "../hooks/useStyleHelpers";
 import { useFirebase } from "../hooks/useFirebase";
 // utils
 import ImageDrag from "../utils/ImageDrag";
+import { MakeStatData } from "../utils/MakeStatData";
 // others
 import StatSlot from "./CardComp/StatSlot";
 import EchoSlot from "./CardComp/EchoSlot";
@@ -59,10 +60,12 @@ function ProfileCard() {
     echoList,
     echoScore,
     characterData,
+    characterStats,
     weaponData,
     weaponStats,
     statId,
-    PatchEchoCost
+    PatchEchoCost,
+    harmonyOption,
   } = useProfile();
 
   const [sizeValue, setSizeValue] = useState(1.0);
@@ -233,7 +236,6 @@ function ProfileCard() {
     ),
   }));
   const characterOption = useMemo(() => {
-    console.log("data", CHARACTER_ALL);
     const temp = !weaponFilter || weaponFilter.length === 0
       ? CHARACTER_ALL 
       : CHARACTER_ALL.filter(item => weaponFilter.includes(item.weapon));
@@ -274,9 +276,11 @@ function ProfileCard() {
 
   //#endregion
 
+  const [generatedImage, setGeneratedImage] = useState("./asdf2.jpg");
+
   return (
     <div key={lang} className="profile-portrait">
-      <button
+      {/*<button
         onClick={async () => {
           try {
             const imageFile = await fetch("/default.webp")
@@ -294,11 +298,109 @@ function ProfileCard() {
               weapon: "Pistols",
             };
             const statData = {
-              atk: 1234,
-              hp: 5678,
-              def: 432,
-              characterName: "Aalto", // 서버에서 기본이미지 로딩용
+              lang: "kr",
+              server: "Asia",
+              level: 80,
+              player_name: "SSeries",
+              uid: 700695460,
+              c_id: "camellya",
+              c_name: "카멜리아",
+              c_type: ["havoc", "atk", "normalBns", "sword"],
+              w_imgkey: "ico003",
+              w_name: "날카로운 봄",
+              w_stat: [587, 24.3],
+              w_type: "CritRate",
+              constel: [0, 0],
+              stats: [
+                [15665, 5340],
+                [2283, 998],
+                [1309, 149],
+                [136.0, 36],
+                [66.8, 37.5],
+                [270.0, 104.0],
+                [75.0, 60.0],
+                [25.9, 10.9],
+              ],
+              stat_name: [
+                "생명력",
+                "공격력",
+                "방어력",
+                "공명 효율",
+                "크리티컬",
+                "크리티컬 피해",
+                "인멸 피해보너스",
+                "일반공격 피해보너스",
+              ],
+              set_option: [["Eclipse", true]],
+              echo_id: ["", "", "", "", ""],
+              echo_stat: [
+                [
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                ],
+                [
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                ],
+                [
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                ],
+                [
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                ],
+                [
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                  [FixedStats.CritDmg.id, 44.0],
+                ],
+              ],
+              echo_score: [
+                [28.8, 45.5],
+                [18.6, 50.7],
+                [26.4, 26.4],
+                [28.8, 28.8],
+                [32.4, 32.4],
+              ],
             };
+
+            const temp = MakeStatData({
+              lang,
+              characterData,
+              characterStats,
+              weaponData,
+              weaponStats,
+              userData,
+              constellation,
+              echoList,
+              harmonyOption,
+            });
+            console.log(temp)
 
             const formData = new FormData();
             formData.append("image_character", imageFile);
@@ -309,21 +411,23 @@ function ProfileCard() {
             formData.append("stat_data", JSON.stringify(statData));
 
             const response = await fetch(
-              "http://127.0.0.1:8000/generate_card/",
+              "http://127.0.0.1:8000/generate_card",
               {
                 method: "POST",
                 body: formData,
               }
             );
 
-            const result = await response.json();
-            console.log("✅ 서버 응답:", result);
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            setGeneratedImage(imageUrl);
           } catch (error) {
             console.error("❌ 요청 실패:", error);
           }
         }}>
         test
       </button>
+      <img src={generatedImage}/>*/}
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (
           <button
@@ -688,7 +792,7 @@ function ProfileCard() {
             }}>
             {`uid. ${userData?.gameUid ?? "--- --- ---"}`}
           </span>
-          {/* Right */}
+          {/* //$ Right */}
           <img
             alt=""
             className="profile-card-icon"
