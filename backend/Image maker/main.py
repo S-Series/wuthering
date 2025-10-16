@@ -370,8 +370,24 @@ async def create_profile_card(
             echo_data[5][1],
             echo_data[6][1],
         ]
-        for j, path in enumerate(icon_paths):
+        #// echo_score = {
+        #//     "total": [0, 0],
+        #//     "echo_datas": stat_data.get("echo_score")
+        #// }
+        for j, (path, value, score) in enumerate(zip(icon_paths, stat_value, echo_score)):
             draw_image(base, icon_paths[j], (1330 + 163 * i, 460 + j * 45 + (15 if j > 1 else 0), 36, 36))
+            draw_text(
+                base,
+                f"{value}{'%' if any(x in path for x in ['Bns', 'Crit', 'Pct']) else ''}",
+                (1330 + 128 + 163 * i, 467 + j * 45 + (15 if j > 1 else 0)),
+                NUM_FONT_PATH,
+                29,
+                anchor="rt"
+            )
+            draw_text(base, "Cv.", (1330 + 163 * i, 865), EN_FONT_PATH, 25)
+            draw_text(base, "Cv.", (1330 + 128 + 163 * i, 865), EN_FONT_PATH, 25, anchor="rt")
+            draw_text(base, "Av.", (1330 + 163 * i, 895), EN_FONT_PATH, 25)
+            draw_text(base, "Av.", (1330 + 128 + 163 * i, 895), EN_FONT_PATH, 25, anchor="rt")
 
     #@ Return Image Generate
     base.save("result.png", "PNG")

@@ -7,7 +7,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "firebase": "^12.3.0",
+    "firebase": "^12.4.0",
     "framer-motion": "^12.11.3",
     "react": "^19.1.0",
     "react-color": "^2.19.3",
