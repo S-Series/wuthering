@@ -1,13 +1,17 @@
 export const FixedStats = {
   dummy: {
     id: "dummy",
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
     ValueMain: [],
     ValueSub: [],
   },
   hp: {
     id: "hp",
     en: "HP",
-    kr: "HP",
+    kr: "생명력",
     jp: "HP",
     zh: "生命",
     ValueMain: [null, null, null],
@@ -16,7 +20,7 @@ export const FixedStats = {
   hpPct: {
     id: "hpPct",
     en: "HP%",
-    kr: "HP%",
+    kr: "생명력%",
     jp: "HP%",
     zh: "生命%",
     ValueMain: ["33.0", "30.0", "22.8"],
@@ -266,21 +270,5 @@ export const FixedStats = {
     ValueSub: null,
   },
 };
-
-export const FixedStatsMain4 = Object.fromEntries(
-  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueMain?.[0] !== null)
-);
-
-export const FixedStatsMain3 = Object.fromEntries(
-  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueMain?.[1] !== null)
-);
-
-export const FixedStatsMain1 = Object.fromEntries(
-  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueMain?.[2] !== null)
-);
-
-export const FixedStatsSub = Object.fromEntries(
-  Object.entries(FixedStats).filter(([_, stat]) => stat.ValueSub !== null)
-);
 
 export const FixedMainSub = [[FixedStats.atk.id, 150], [FixedStats.atk.id, 100], [FixedStats.hp.id, 2280]]; // 4, 3, 1

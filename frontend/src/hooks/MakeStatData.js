@@ -1,19 +1,91 @@
-export function MakeStatData({
-  lang,
-  characterData,
-  characterStats,
-  weaponData,
-  weaponStats,
-  userData,
-  constellation,
-  echoList,
-  harmonyOption,
-}) {
-  if (!lang) return;
-  if (!characterData) return;
-  if (!characterStats) return;
-  if (!weaponData) return;
-  if (!weaponStats) return;
+import React from "react";
+import { characterScoreGuide } from "../data/Characters";
+import { FixedStats } from "../data/Stats";
+
+function getCharacterStatType(id) {
+  const data = characterScoreGuide[id];
+  return ["atkPct", "hpPct", "defPct"].reduce((a, b) =>
+    data[a] > data[b] ? a : b
+  );
+}
+
+function costToIndex(cost){
+  if (cost === 4) return 0;
+  else if (cost === 3) return 1;
+  else return 2;
+}
+function getEchoStats(echoData) {
+  let ret = Array.from({ length: 7 }, () => ["", 0]);
+  ret[0] = [
+    echoData.mainStat,
+    FixedStats[echoData.mainStat].ValueMain[costToIndex(echoData.cost)],
+  ];
+  ret[1] = [
+    echoData.cost === 1 ? FixedStats.hp.id : FixedStats.atk.id,
+    (() => {
+      switch (echoData.cost) {
+        case 4:
+          return 150;
+        case 3:
+          return 100;
+        case 1:
+          return 2280;
+        default:
+          return 0;
+      }
+    })()
+  ];
+  ret[2] = [
+    echoData.subStats[0][0],
+    echoData.subStats[0][1] < 0
+      ? 0
+      : FixedStats[echoData.subStats[0][0]]?.ValueSub[echoData.subStats[0][1]],
+  ];
+  ret[3] = [
+    echoData.subStats[1][0],
+    echoData.subStats[1][1] < 0
+      ? 0
+      : FixedStats[echoData.subStats[1][0]]?.ValueSub[echoData.subStats[1][1]],
+  ];
+  ret[4] = [
+    echoData.subStats[2][0],
+    echoData.subStats[2][1] < 0
+      ? 0
+      : FixedStats[echoData.subStats[2][0]]?.ValueSub[echoData.subStats[2][1]],
+  ];
+  ret[5] = [
+    echoData.subStats[3][0],
+    echoData.subStats[3][1] < 0
+      ? 0
+      : FixedStats[echoData.subStats[3][0]]?.ValueSub[echoData.subStats[3][1]],
+  ];
+  ret[6] = [
+    echoData.subStats[4][0],
+    echoData.subStats[4][1] < 0
+      ? 0
+      : FixedStats[echoData.subStats[4][0]]?.ValueSub[echoData.subStats[4][1]],
+  ];
+  return ret;
+}
+
+export function MakeStatData(data) {
+  const {
+    lang,
+    constellation,
+    characterData,
+    weaponData,
+    weaponStats,
+    echoList,
+    echoScore,
+    statId,
+    finalStats,
+    harmonyOption,
+    userData,
+  } = data;
+
+  const statResult = statId.map((id) => {
+    return [finalStats[id], finalStats[`${id}Delta`]];
+  });
 
   const statData = {
     lang: lang,
@@ -25,7 +97,7 @@ export function MakeStatData({
     c_name: characterData[lang],
     c_type: [
       characterData.element,
-      "atk",
+      getCharacterStatType(characterData.id),
       characterData.type,
       characterData.weapon,
     ],
@@ -34,15 +106,14 @@ export function MakeStatData({
     w_stat: [weaponStats.atk, weaponStats.value[0]],
     w_type: weaponStats.statType[0],
     constel: [constellation[0], constellation[1]],
-    stats: [Array.from({ length: 8 }, () => [,])],
-    stat_name: [Array.from({ length: 8 }, () => [,])],
+    stats: statResult,
+    stat_name: statId.map((item) => FixedStats[item][lang]),
     set_option: [["Eclipse", true]],
-    echo_id: ["", "", "", "", ""],
-    echo_stat: [
-      Array.from({ length: 5 }, () => Array.from({ length: 7 }, () => [,])),
-    ],
-    echo_score: [Array.from({ length: 5 }, () => [,])],
+    echo_id: echoList.map(item => item.echoId),
+    echo_stat: [0, 1, 2, 3, 4].map(idx => getEchoStats(echoList[idx])),
+    echo_score: echoScore,
   };
+
   return statData;
 }
 export default MakeStatData;

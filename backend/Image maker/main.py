@@ -112,6 +112,8 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=
 
 def draw_text(base, text, xy, font_path, font_size = 16, color = (255,255,255,255), anchor="lt"):
     draw = ImageDraw.Draw(base)
+    if not isinstance(text, str):
+        text = str(text) if text is not None else ""
     # --------------------------------------------------------
     try:
         font = ImageFont.truetype(font_path, font_size)
@@ -243,29 +245,17 @@ async def create_profile_card(
         img_sub = Image.open(input_sub).convert("RGBA")
         base.paste(img_sub, (25, 25), img_sub)
 
+    #$ Portarit Init.
     draw = ImageDraw.Draw(base)
-
     draw.rectangle([(27, 27), (27 + 650, 27 + 800)], fill=(0, 0, 0, 255))
     draw_rect(base, (700, 210, 600, 710), (0, 0, 0, 70))
     draw_rect(base, (700, 70, 600, 140), (255, 255, 255, 40))
     draw_rect(base, (1320, 70, 800, 216), (255, 255, 255, 40))
 
-    stats = stat_data.get("stats")
-    stat_name = stat_data.get("stat_name")
-    for i in range(8):
-        draw_rect(base, (720, 235 + 70 * i, 560, 45), (255, 255, 255, 40))
-        draw_text(base, f"{stat_name[i]}", (772, 244 + 70 * i), font_use, 32)
-        if i < 3:
-            draw_text(base, f"{stats[i][0]}", (1205, 247 + 70 * i), NUM_FONT_PATH, 30, anchor="rt")
-            draw_text(base, f"+{stats[i][1]}", (1275, 255 + 70 * i), NUM_FONT_PATH, 16, anchor="rt", color=(221, 170, 0, 255))
-        else :
-            draw_text(base, f"{stats[i][0]:.1f}%", (1205, 247 + 70 * i), NUM_FONT_PATH, 30, anchor="rt")
-            draw_text(base, f"+{stats[i][1]:.1f}%", (1275, 255 + 70 * i), NUM_FONT_PATH, 16, anchor="rt", color=(221, 170, 0, 255))
-    for i in range(5):
-        draw_rect(base, (1320 + 163 * i, 300, 148, 620), (255, 255, 255, 40))
-        
+    # --------------------------------------------------------
+
+    #$ Character Image
     character_img_path = f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/character/{stat_data.get("c_id")}/art.png"
-    weapon_img_path = f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/weapon/{stat_data.get("c_type")[3]}/{stat_data.get("w_imgkey")}.png"
     draw_rect_topleft_round(
         base, 
         xy1=(20, 20, 650, 800), 
@@ -275,20 +265,57 @@ async def create_profile_card(
         border=((200, 200, 200), 5), 
         img_path=character_img_path
     )
+    
+    #$ Weapon Image
+    weapon_img_path = f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/weapon/{stat_data.get("c_type")[3]}/{stat_data.get("w_imgkey")}.png"
     draw_gradient(base, (710, 20, 150, 150), (UI_COLOR[0], UI_COLOR[1]), 210)
     draw_image(base, weapon_img_path, (710, 20, 150, 150))
     draw.rectangle((710, 20, 710 + 150, 20 + 150), outline=(100, 100, 100), width=2)
-
+    
+    #$ Character Data
+    c_type_data = stat_data.get("c_type")
+    print(c_type_data)
+    icon_paths = [
+        f"./assets/ico/element/{c_type_data[0]}.png",
+        f"./assets/ico/stats/{c_type_data[1]}.webp",
+        f"./assets/ico/stats/{c_type_data[2]}Bns.webp",
+        f"./assets/ico/weapon_type/{c_type_data[3]}.webp",
+    ]
     draw_text(base, f"{stat_data.get("server")}", (35, 845), EN_FONT_PATH, 24)
     draw_text(base, f"Lv.{stat_data.get("level")} {stat_data.get("player_name")}", (35, 875), EN_FONT_PATH, 24)
     draw_text(base, f"Uid. {stat_data.get("uid")}", (35, 905), EN_FONT_PATH, 24)
-    draw_text(base, f"{stat_data.get("c_name")}", (665, 870), font_use, 54, anchor="rt")
+    draw_text(base, f"{stat_data.get("c_name")}", (665, 875), font_use, 55, anchor="rt")
     draw_text(base, "Image © Kuro Games 2024", (662, 800), EN_FONT_PATH, 14, anchor="rt", color=(255, 255, 255, 180))
+    for i, path in enumerate(icon_paths):
+        draw_image(base, path, (510 + 40 * i, 833, 35, 35))
     
+    #$ Wapon Data
+    draw_text(base, stat_data.get("w_name"), (875, 95), font_use, 36)
+    draw_text(base, stat_data.get("w_stat")[0], (1030, 160), NUM_FONT_PATH, 44, anchor="rt")
+    draw_text(base, f"{stat_data.get("w_stat")[1]}%", (1275, 160), NUM_FONT_PATH, 44, anchor="rt")
+    draw_image(base, f"./assets/ico/stats/atk.webp", (877, 151, 46, 46))
+    draw_image(base, f"./assets/ico/stats/{stat_data.get("w_type")}.webp", (1085, 149, 50, 50))
+
+    #$ Dev Mark
     draw_text(base, "Unofficial Fan Project: All assets © Kuro Games", (1325, 41), EN_FONT_PATH, 24, color=(255, 255, 255, 180))
     draw_text(base, "WuWa.dev © 2025", (2120, 41), EN_FONT_PATH, 24, anchor="rt", color=(255, 255, 255, 180))
     draw_text(base, "powered by. SSeries", (2120, 13), EN_FONT_PATH, 20, anchor="rt", color=(255, 255, 255, 180))
 
+    #$ Stat Field
+    stats = stat_data.get("stats")
+    stat_name = stat_data.get("stat_name")
+    for i in range(8):
+        draw_rect(base, (720, 235 + 70 * i, 560, 45), (255, 255, 255, 40))
+        draw_text(base, f"{stat_name[i]}", (772, 244 + 70 * i), font_use, 32)
+        if i < 3:
+            draw_text(base, f"{stats[i][0]}", (1205, 247 + 70 * i), NUM_FONT_PATH, 31, anchor="rt")
+            draw_text(base, f"+{stats[i][1]}", (1275, 255 + 70 * i), NUM_FONT_PATH, 17, anchor="rt", color=(221, 170, 0, 255))
+        else :
+            draw_text(base, f"{stats[i][0]:.1f}%", (1205, 247 + 70 * i), NUM_FONT_PATH, 31, anchor="rt")
+            draw_text(base, f"+{stats[i][1]:.1f}%", (1275, 255 + 70 * i), NUM_FONT_PATH, 17, anchor="rt", color=(221, 170, 0, 255))
+    
+
+    #// c_type_data = stat_data.get("c_type")
     icon_paths = [
         "./assets/ico/stats/hp.webp",
         "./assets/ico/stats/atk.webp",
@@ -296,12 +323,57 @@ async def create_profile_card(
         "./assets/ico/stats/ResonanceBns.webp",
         "./assets/ico/stats/CritRate.webp",
         "./assets/ico/stats/CritDmg.webp",
-        "./assets/ico/stats/HavocBns.webp",
-        "./assets/ico/stats/normalBns.webp",
+        f"./assets/ico/stats/{c_type_data[0]}Bns.webp",
+        f"./assets/ico/stats/{c_type_data[2]}Bns.webp",
     ]
     for i, path in enumerate(icon_paths):
         draw_image(base, path, (725, 238 + 70 * i, 40, 40))
 
+    #$ Stat Score
+    echo_score = {
+        "total": [0, 0],
+        "echo_datas": stat_data.get("echo_score")
+    }
+    echo_score["total"] = [sum(col) for col in zip(*echo_score["echo_datas"])]
+    draw_text(base, f"Cv.", (770, 860), EN_FONT_PATH, 36)
+    draw_text(base, f"Av.", (1035, 860), EN_FONT_PATH, 36)
+    draw_text(base, f"{echo_score["total"][0]}pt", (965, 860), EN_FONT_PATH, 36, anchor="rt")
+    draw_text(base, f"{echo_score["total"][1]}pt", (1230, 860), EN_FONT_PATH, 36, anchor="rt")
+
+    #$ Echo Slots
+    for i in range(5):
+        echo_img_path= f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/ico/echos/{stat_data.get("echo_id")[i]}.webp"
+        print(echo_img_path)
+        draw_rect(base, (1320 + 163 * i, 300, 148, 620), (255, 255, 255, 40))
+        draw_rect(base, (1325 + 163 * i, 305, 138, 138), (0, 0, 0, 80))
+        draw_rect(base, (1330 + 163 * i, 551, 128, 1), (255, 255, 255, 180))
+        draw_rect(base, (1330 + 163 * i, 791, 128, 1), (255, 255, 255, 180))
+        draw_image(base, echo_img_path, (1325 + 163 * i, 305, 138, 138))
+        draw.rectangle((1325 + 163 * i, 305, 1325 + 163 * i + 138, 305 + 138), outline=(0, 0, 0), width=1)
+
+        echo_data = stat_data.get("echo_stat")[i]
+        icon_paths=[
+            f"./assets/ico/stats/{echo_data[0][0]}.webp",
+            f"./assets/ico/stats/{echo_data[1][0]}.webp",
+            f"./assets/ico/stats/{echo_data[2][0]}.webp",
+            f"./assets/ico/stats/{echo_data[3][0]}.webp",
+            f"./assets/ico/stats/{echo_data[4][0]}.webp",
+            f"./assets/ico/stats/{echo_data[5][0]}.webp",
+            f"./assets/ico/stats/{echo_data[6][0]}.webp",
+        ]
+        stat_value=[
+            echo_data[0][1],
+            echo_data[1][1],
+            echo_data[2][1],
+            echo_data[3][1],
+            echo_data[4][1],
+            echo_data[5][1],
+            echo_data[6][1],
+        ]
+        for j, path in enumerate(icon_paths):
+            draw_image(base, icon_paths[j], (1330 + 163 * i, 460 + j * 45 + (15 if j > 1 else 0), 36, 36))
+
+    #@ Return Image Generate
     base.save("result.png", "PNG")
     return FileResponse(
         path="./result.png",

@@ -135,7 +135,6 @@ export function ProfileProvider({ children }) {
     () => Object.fromEntries(Object.keys(FixedStats).map((k) => [k, 0])),
     []
   );
-
   const finalStats = useMemo(() => {
     const types = [
       `${characterData?.element ?? "Aero"}Bns`,
@@ -220,7 +219,6 @@ export function ProfileProvider({ children }) {
     stats[types[0]] += stats[`${types[0]}Delta`];
     stats[types[1]] += stats[`${types[1]}Delta`];
 
-    console.log(stats);
     return stats;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -231,7 +229,6 @@ export function ProfileProvider({ children }) {
     echoList,
     constellation,
   ]);
-
   const echoScore = useMemo(() => {
     let score = Array.from({ length: 5 }, () => [0, 0]);
     if (!scoreTable) return score;
@@ -327,8 +324,6 @@ export function ProfileProvider({ children }) {
     return score;
   }, [echoList, scoreTable, characterStats, weaponStats]);
 
-  console.log(echoList);
-
   const statId = useMemo(() => {
     return [
       "hp",
@@ -403,27 +398,32 @@ export function ProfileProvider({ children }) {
       lang,
       setLang,
       costToIndex,
+      //$ character
       characterId,
+      characterData,
+      characterStats,
       setCharacterId,
+      //$ weapon
       weaponId,
       setWeaponId,
-      constellation,
-      setConstellation,
-      echoList,
-      setEchoList,
-      characterData,
       weaponData,
-      characterStats,
       weaponStats,
-      finalStats,
-      statId,
+      //$ echo
+      echoList,
       echoScore,
+      setEchoList,
+      PatchEcho,
       PatchEchoID,
       PatchEchoCost,
-      PatchEchoHarmony,
       PatchEchoStat,
+      PatchEchoHarmony,
       PatchEchoMainStat,
-      PatchEcho,
+      //$ others
+      statId,
+      finalStats,
+      harmonyOption,
+      constellation,
+      setConstellation,
     }),
     [
       lang,

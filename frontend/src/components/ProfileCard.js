@@ -6,7 +6,6 @@ import { motion, AnimatePresence, color } from "framer-motion";
 // data
 import { character, characterStat } from "../data/Characters";
 import { weapon, weaponStat } from "../data/Weapons";
-import { FixedStats } from "../data/Stats";
 import { profileData, userdata } from "../data/userData";
 import { echoDict, harmony } from "../data/Echos";
 // hooks
@@ -16,7 +15,7 @@ import { useStyleHelper } from "../hooks/useStyleHelpers";
 import { useFirebase } from "../hooks/useFirebase";
 // utils
 import ImageDrag from "../utils/ImageDrag";
-import { MakeStatData } from "../utils/MakeStatData";
+import { MakeStatData } from "../hooks/MakeStatData";
 // others
 import StatSlot from "./CardComp/StatSlot";
 import EchoSlot from "./CardComp/EchoSlot";
@@ -51,20 +50,25 @@ function ProfileCard() {
 
   const {
     lang,
-    characterId,
-    setCharacterId,
-    weaponId,
-    setWeaponId,
     constellation,
     setConstellation,
-    echoList,
-    echoScore,
+    //$ character
+    characterId,
+    setCharacterId,
     characterData,
     characterStats,
+    //$ weapon
+    weaponId,
+    setWeaponId,
     weaponData,
     weaponStats,
-    statId,
+    //$ echo
+    echoList,
+    echoScore,
     PatchEchoCost,
+    //$ others
+    statId,
+    finalStats,
     harmonyOption,
   } = useProfile();
 
@@ -297,110 +301,22 @@ function ProfileCard() {
               element: "Aero",
               weapon: "Pistols",
             };
-            const statData = {
-              lang: "kr",
-              server: "Asia",
-              level: 80,
-              player_name: "SSeries",
-              uid: 700695460,
-              c_id: "camellya",
-              c_name: "카멜리아",
-              c_type: ["havoc", "atk", "normalBns", "sword"],
-              w_imgkey: "ico003",
-              w_name: "날카로운 봄",
-              w_stat: [587, 24.3],
-              w_type: "CritRate",
-              constel: [0, 0],
-              stats: [
-                [15665, 5340],
-                [2283, 998],
-                [1309, 149],
-                [136.0, 36],
-                [66.8, 37.5],
-                [270.0, 104.0],
-                [75.0, 60.0],
-                [25.9, 10.9],
-              ],
-              stat_name: [
-                "생명력",
-                "공격력",
-                "방어력",
-                "공명 효율",
-                "크리티컬",
-                "크리티컬 피해",
-                "인멸 피해보너스",
-                "일반공격 피해보너스",
-              ],
-              set_option: [["Eclipse", true]],
-              echo_id: ["", "", "", "", ""],
-              echo_stat: [
-                [
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                ],
-                [
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                ],
-                [
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                ],
-                [
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                ],
-                [
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                  [FixedStats.CritDmg.id, 44.0],
-                ],
-              ],
-              echo_score: [
-                [28.8, 45.5],
-                [18.6, 50.7],
-                [26.4, 26.4],
-                [28.8, 28.8],
-                [32.4, 32.4],
-              ],
-            };
 
-            const temp = MakeStatData({
+            const data = {
               lang,
+              constellation,
               characterData,
-              characterStats,
               weaponData,
               weaponStats,
-              userData,
-              constellation,
               echoList,
+              echoScore,
+              statId,
+              finalStats,
               harmonyOption,
-            });
-            console.log(temp)
+              userData,
+            };
+            const statData = MakeStatData(data);
+            console.log(statData);
 
             const formData = new FormData();
             formData.append("image_character", imageFile);
