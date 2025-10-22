@@ -31,6 +31,10 @@ export function ProfileProvider({ children }) {
   const [weaponId, setWeaponId] = useState(
     () => normalize(localStorage.getItem("lastWeapon")) ?? null
   );
+  const [mainImage, setMainImage] = useState(null);
+  const [subImage, setSubImage] = useState(null);
+  const [mainImageCopyright, setMainImageCopyright] = useState(["Kuro Games", 2024]);
+  const [subImageCopyright, setSubImageCopyright] = useState(["Kuro Games", 2024]);
 
   function getEchoData() {
     const raw = localStorage.getItem(`${characterId}EchoData`);
@@ -398,6 +402,15 @@ export function ProfileProvider({ children }) {
       lang,
       setLang,
       costToIndex,
+      //$ Image Data
+      mainImage,
+      setMainImage,
+      mainImageCopyright,
+      setMainImageCopyright,
+      subImage,
+      setSubImage,
+      subImageCopyright,
+      setSubImageCopyright,
       //$ character
       characterId,
       characterData,

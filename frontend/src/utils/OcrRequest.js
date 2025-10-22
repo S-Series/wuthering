@@ -100,6 +100,8 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
     const formData = new FormData();
     formData.append("file", file);
 
+    //! Loacl Debugging
+    //fetch(`http://127.0.0.1:8000/ocr`, {
     fetch(`${ocrApiUrl[lang]}`, {
       method: "POST",
       body: formData,

@@ -1,7 +1,7 @@
 import "./ImageDrag.css";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 
-function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
+function ImageDrag({ path = null, sizeValue = 1, inputable = false , onClick = {}()}) {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const imageSlotRef = useRef();
@@ -185,6 +185,7 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false }) {
       onMouseEnter={() => boxHovered(true)}
       onMouseLeave={() => boxHovered(false)}
       onMouseDown={() => {
+        onClick();
         setFocused(true);
         setDragging(true);
       }}

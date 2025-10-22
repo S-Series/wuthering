@@ -380,7 +380,7 @@ export const character = [
     hasSkin: false,
     weapon: "pistol",
     element: "Fusion",
-    type: "skiheavyll",
+    type: "heavy",
   },
   {
     id: "qiuyuan",
@@ -1047,7 +1047,7 @@ export const characterStat = {
     baseDef: 1000,
 
     CritRate: 5.0,
-    CritDmg: 150.0,
+    CritDmg: 166.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
 

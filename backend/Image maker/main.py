@@ -2,7 +2,7 @@
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageChops
 from io import BytesIO
 
 import os, math, json, uvicorn, requests
@@ -49,7 +49,7 @@ def draw_rect(base, xy, color):
 
 # --------------------------------------------------------
 
-def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=None):
+def draw_rect_topleft_round(base, xy1, xy2, radius, fill, color_filter=(255,255,255), border=None, img_path=None):
     x1, y1, w, h = xy1
     x_off, y_off, a = xy2
 
@@ -92,6 +92,11 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, border=None, img_path=
 
         rounded.alpha_composite(temp_layer)
     # --------------------------------------------------------
+    if color_filter is not (255, 255, 255):
+        r, g, b = color_filter
+        color_layer = Image.new("RGBA", overlay.size, (r, g, b, 255))
+        overlay = ImageChops.multiply(overlay, color_layer)
+    # --------------------------------------------------------
     if border:
         if isinstance(border[0], (tuple, list)):
             color = tuple(int(round(v)) for v in border[0])
@@ -126,7 +131,7 @@ def draw_text(base, text, xy, font_path, font_size = 16, color = (255,255,255,25
     except OSError:
         print("*Text Draw Failed*: ", OSError)
 
-def draw_image(base, path, xy, opacity=1.0):
+def draw_image(base, path, xy, color_filter = (255, 255, 255), opacity=1.0):
     x, y, w, h = xy
     try:
         if path:
@@ -141,6 +146,11 @@ def draw_image(base, path, xy, opacity=1.0):
             alpha = overlay.split()[3]
             alpha = alpha.point(lambda p: int(p * opacity))
             overlay.putalpha(alpha)
+
+        if color_filter is not (255, 255, 255):
+            r, g, b = color_filter
+            color_layer = Image.new("RGBA", overlay.size, (r, g, b, 255))
+            overlay = ImageChops.multiply(overlay, color_layer)
 
         base.paste(overlay, (x, y), overlay)
 
@@ -274,9 +284,7 @@ async def create_profile_card(
     
     #$ Character Data
     c_type_data = stat_data.get("c_type")
-    print(c_type_data)
     icon_paths = [
-        f"./assets/ico/element/{c_type_data[0]}.png",
         f"./assets/ico/stats/{c_type_data[1]}.webp",
         f"./assets/ico/stats/{c_type_data[2]}Bns.webp",
         f"./assets/ico/weapon_type/{c_type_data[3]}.webp",
@@ -286,8 +294,10 @@ async def create_profile_card(
     draw_text(base, f"Uid. {stat_data.get("uid")}", (35, 905), EN_FONT_PATH, 24)
     draw_text(base, f"{stat_data.get("c_name")}", (665, 875), font_use, 55, anchor="rt")
     draw_text(base, "Image © Kuro Games 2024", (662, 800), EN_FONT_PATH, 14, anchor="rt", color=(255, 255, 255, 180))
+    
+    draw_image(base,f"./assets/ico/element/{c_type_data[0]}.png", (510-5, 833-5, 45, 45))
     for i, path in enumerate(icon_paths):
-        draw_image(base, path, (510 + 40 * i, 833, 35, 35))
+        draw_image(base, path, (550 + 40 * i, 833, 35, 35))
     
     #$ Wapon Data
     draw_text(base, stat_data.get("w_name"), (875, 95), font_use, 36)
@@ -298,10 +308,12 @@ async def create_profile_card(
 
     #$ Dev Mark
     draw_text(base, "Unofficial Fan Project: All assets © Kuro Games", (1325, 41), EN_FONT_PATH, 24, color=(255, 255, 255, 180))
+    draw_rect(base, (1917, 62, 118, 1), (255, 255, 255, 100))
+    draw_image(base, f"./assets/link.png", (1892, 40, 21, 21))
     draw_text(base, "WuWa.dev © 2025", (2120, 41), EN_FONT_PATH, 24, anchor="rt", color=(255, 255, 255, 180))
     draw_text(base, "powered by. SSeries", (2120, 13), EN_FONT_PATH, 20, anchor="rt", color=(255, 255, 255, 180))
 
-    #$ Stat Field
+    #$  Stat Field
     stats = stat_data.get("stats")
     stat_name = stat_data.get("stat_name")
     for i in range(8):
@@ -337,13 +349,19 @@ async def create_profile_card(
     echo_score["total"] = [sum(col) for col in zip(*echo_score["echo_datas"])]
     draw_text(base, f"Cv.", (770, 860), EN_FONT_PATH, 36)
     draw_text(base, f"Av.", (1035, 860), EN_FONT_PATH, 36)
-    draw_text(base, f"{echo_score["total"][0]}pt", (965, 860), EN_FONT_PATH, 36, anchor="rt")
-    draw_text(base, f"{echo_score["total"][1]}pt", (1230, 860), EN_FONT_PATH, 36, anchor="rt")
+    draw_text(base, f"{echo_score["total"][0]:.1f} pt", (965, 860), EN_FONT_PATH, 36, anchor="rt")
+    draw_text(base, f"{echo_score["total"][1]:.1f} pt", (1230, 860), EN_FONT_PATH, 36, anchor="rt")
+
+    #$ User Plate
+    #draw_rect(base, (1320 + 10, 70 + 10, 260, 136), (255, 255, 255, 40))
+    draw_image(base, f"./assets/ico/rank/{4}.png", (1435 - 132, 155 - 78, 262, 156))
+    draw_text(base, "Av.", (1340, 245), EN_FONT_PATH, 36)
+    draw_text(base, f"{echo_score["total"][1]:.1f} pt", (1530, 245), EN_FONT_PATH, 36, anchor="rt")
+    draw_rect(base, (1550, 70 + 10, 560, 196), (255, 255, 255, 40)) 
 
     #$ Echo Slots
     for i in range(5):
         echo_img_path= f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/ico/echos/{stat_data.get("echo_id")[i]}.webp"
-        print(echo_img_path)
         draw_rect(base, (1320 + 163 * i, 300, 148, 620), (255, 255, 255, 40))
         draw_rect(base, (1325 + 163 * i, 305, 138, 138), (0, 0, 0, 80))
         draw_rect(base, (1330 + 163 * i, 551, 128, 1), (255, 255, 255, 180))
@@ -374,7 +392,8 @@ async def create_profile_card(
         #//     "total": [0, 0],
         #//     "echo_datas": stat_data.get("echo_score")
         #// }
-        for j, (path, value, score) in enumerate(zip(icon_paths, stat_value, echo_score)):
+        for j, (path, value) in enumerate(zip(icon_paths, stat_value)):
+            draw_image(base, "./assets/accent.png", (1320 + 163 * i, 453 + j * 45 + (15 if j > 1 else 0), 148, 50), color_filter=(255, 255, 0), opacity=0.5)
             draw_image(base, icon_paths[j], (1330 + 163 * i, 460 + j * 45 + (15 if j > 1 else 0), 36, 36))
             draw_text(
                 base,
@@ -384,10 +403,20 @@ async def create_profile_card(
                 29,
                 anchor="rt"
             )
-            draw_text(base, "Cv.", (1330 + 163 * i, 865), EN_FONT_PATH, 25)
-            draw_text(base, "Cv.", (1330 + 128 + 163 * i, 865), EN_FONT_PATH, 25, anchor="rt")
-            draw_text(base, "Av.", (1330 + 163 * i, 895), EN_FONT_PATH, 25)
-            draw_text(base, "Av.", (1330 + 128 + 163 * i, 895), EN_FONT_PATH, 25, anchor="rt")
+        
+        icon_paths=[
+            f"./assets/ico/rank/{0}.png",
+            f"./assets/ico/rank/{1}.png",
+            f"./assets/ico/rank/{2}.png",
+            f"./assets/ico/rank/{3}.png",
+            f"./assets/ico/rank/{4}.png",
+        ]
+        draw_image(base, icon_paths[4], (1344 + 163 * i, 798, 100, 60))
+        draw_text(base, "Cv.", (1330 + 163 * i, 863), EN_FONT_PATH, 25)
+        draw_text(base, f"{echo_score["echo_datas"][i][0]:.1f} pt", (1330 + 128 + 163 * i, 863), EN_FONT_PATH, 25, anchor="rt")
+        draw_text(base, "Av.", (1330 + 163 * i, 893), EN_FONT_PATH, 25)
+        draw_text(base, f"{echo_score["echo_datas"][i][1]:.1f} pt", (1330 + 128 + 163 * i, 893), EN_FONT_PATH, 25, anchor="rt")
+        draw.rectangle((1320 + 163 * i, 300, 1320 + 163 * i + 148, 300 + 620), outline=(0, 0, 0), width=2)
 
     #@ Return Image Generate
     base.save("result.png", "PNG")

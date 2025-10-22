@@ -1,7 +1,7 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from paddleocr import PaddleOCR
-from PIL import Image
+from PIL import Image, ImageEnhance
 import numpy as np
 import uvicorn
 import io
@@ -34,7 +34,7 @@ app.add_middleware(
 # ---------------------------
 # PaddleOCR Lazy Loading
 # ---------------------------
-setLang = 'en' #korean en japan ch ch_tra
+setLang = 'korean' #korean en japan ch ch_tra
 ocr = None
 
 def get_ocr():
@@ -116,6 +116,11 @@ async def ocr_process(file: UploadFile = File(...)):
         contents = await file.read()
         image = Image.open(io.BytesIO(contents)).convert("RGB")
 
+        enhancer = ImageEnhance.Color(image)
+        image = enhancer.enhance(0)
+        enhancer = ImageEnhance.Contrast(image)
+        image = enhancer.enhance(2)
+
         processed = process_and_crop_image(image)
 
         buffered = io.BytesIO()
@@ -153,6 +158,8 @@ async def ocr_process(file: UploadFile = File(...)):
             "error": str(e),
             "error_type": type(e).__name__
         }
+    
+    logger.info(f"OCR raw result: {results}")
 
 # ---------------------------
 # local testing

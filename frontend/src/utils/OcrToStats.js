@@ -14,9 +14,12 @@ function similarity(a, b) {
 
 const retouchList = {
   kr: [
-    [/라어용|라어움|라어요|라어워|라어운/g, "방어력"],
-    [/H위프|H위lI프|H위표|피혜|피해/g, "피해"],
+    [/라어용|라어움|라어요|라어워|라어운|라o운/g, "방어력"],
+    [/H위프|H위lI프|H위표|피혜|피해|H위l표/g, "피해"],
     [/음운/g, "공명"],
+    [/ㄱ릉|균릉|눈운공릉|눈운릉/g, "일반"],
+    [/유우/g, "해방"],
+    [/H위l프룸콩/g, "인멸피해"],
   ],
 };
 
@@ -50,6 +53,7 @@ function applyRetouch(texts, lang) {
 export function useOcrRetouch() {
   const OcrToStats = useCallback((texts, lang = "kr") => {
     if (!texts || !Array.isArray(texts)) return createEmptyEcho(4);
+    /* Old Retouch Algorithm
     const refinedTexts = applyRetouch(texts, lang);
 
     const statData = createEmptyEcho(4);
@@ -176,7 +180,38 @@ export function useOcrRetouch() {
     })
     while (statData.subStats.length < 5) {
       statData.subStats.push([FixedStats.dummy.id, -1]);
-    }
+    }*/
+
+    let statData = createEmptyEcho();
+    let result = [], temp = [], echoData = [];
+
+    const retouch = retouchList[lang];
+    const fixedTexts = texts.map((texts) => {
+      let result = texts;
+      for (const [pat, rep] of retouch ?? []) result = result.replace(pat, rep);
+      return result;
+    });
+
+    fixedTexts.forEach((item) => {
+      if (/\d/.test(item)) {
+        const key = temp.join("").replace(/\s/g, "");
+        const value = item.replace(/[^\d.&%-]/g, "");
+        if (key) {
+          if (/COST/i.test(key)) {
+            const [before, after] = key.split(/COST/i);
+            if (before) echoData.push({ echoName: before });
+            echoData.push({ cost: value });
+          } else {
+            result.push([ key, value ]);
+          }
+        }
+        temp = [];
+      } else {
+        temp.push(item);
+      }
+    });
+
+    console.log("re:init", echoData, result);
 
     return statData;
   }, []);

@@ -119,7 +119,7 @@ export const FixedStats = {
   healBns: {
     id: "healBns",
     en: "Heal Bonus",
-    kr: "치료 보너스",
+    kr: "치료 효과 보너스",
     jp: "HP回復効果アップ",
     zh: "治療效果加成",
     ValueMain: ["26.4", null, null],

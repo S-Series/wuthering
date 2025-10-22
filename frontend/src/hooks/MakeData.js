@@ -116,7 +116,13 @@ export function MakeStatData(data) {
 
   return statData;
 }
-export default MakeStatData;
+export function MakeImageData(data) {
+  const imageData = {
+    auther: ["", ""],
+    img_xyz_main: [0, 0, 1],
+    img_xyz_sub: [0, 0, 1],
+  }
+}
 
 /*
 const statData = {

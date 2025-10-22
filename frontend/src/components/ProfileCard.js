@@ -15,7 +15,7 @@ import { useStyleHelper } from "../hooks/useStyleHelpers";
 import { useFirebase } from "../hooks/useFirebase";
 // utils
 import ImageDrag from "../utils/ImageDrag";
-import { MakeStatData } from "../hooks/MakeStatData";
+import { MakeStatData, MakeImageData } from "../hooks/MakeData";
 // others
 import StatSlot from "./CardComp/StatSlot";
 import EchoSlot from "./CardComp/EchoSlot";
@@ -52,6 +52,15 @@ function ProfileCard() {
     lang,
     constellation,
     setConstellation,
+    //$ Image Data
+    mainImage,
+    setMainImage,
+    mainImageCopyright,
+    setMainImageCopyright,
+    subImage,
+    setSubImage,
+    subImageCopyright,
+    setSubImageCopyright,
     //$ character
     characterId,
     setCharacterId,
@@ -157,6 +166,13 @@ function ProfileCard() {
     if (!str) return "";
     return str[0].toUpperCase() + str.slice(1).toLowerCase();
   }
+
+  const handleResize = () => {
+    const w = ProfileCardSlotRef.current.offsetWidth;
+    const h = ProfileCardSlotRef.current.offsetHeight;
+    setSlotSize({ width: w, height: h });
+    setSizeValue(w / 2140);
+  };
   //#endregion
 
   //#region Initialize
@@ -284,7 +300,7 @@ function ProfileCard() {
 
   return (
     <div key={lang} className="profile-portrait">
-      <button
+      {/*<button
         onClick={async () => {
           try {
             const imageFile = await fetch("/default.webp")
@@ -294,7 +310,7 @@ function ProfileCard() {
                   new File([blob], "default.webp", { type: "image/webp" })
               );
 
-            const subFile = null; 
+            const subFile = null;
 
             const imageData = {
               name: "Aalto",
@@ -343,7 +359,7 @@ function ProfileCard() {
         }}>
         test
       </button>
-      <img src={generatedImage}/>
+      <img src={generatedImage} />*/}
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (
           <button
@@ -565,6 +581,42 @@ function ProfileCard() {
           />
         </div>
       </div>
+      {/* //$ Card Top Info Field */}
+      <div className="profile-data-slot">
+        <button className="profile-image-request-button top">
+          <span></span>
+        </button>
+        <div className="profile-image-request-slot top end">
+          <input
+            style={{
+              display: "flex",
+              width: `${350 * sizeValue}px`,
+              height: `${35 * sizeValue}px`,
+              margin: `0 ${10 * sizeValue}px`,
+            }}
+            defaultValue="Kuro Games"
+            onChange={(value) => {
+              console.log(value.target.value);
+            }}
+          />
+          <input
+            type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            style={{
+              display: "flex",
+              width: `${125 * sizeValue}px`,
+              height: `${35 * sizeValue}px`,
+              margin: `0 ${10 * sizeValue}px`,
+            }}
+            defaultValue="2024"
+            onChange={(value) => {
+              console.log(value.target.value);
+            }}
+          />
+        </div>
+      </div>
+      {/* //$ Profile Card */}
       <div
         className="profile-card-slot"
         ref={ProfileCardSlotRef}
@@ -572,7 +624,7 @@ function ProfileCard() {
         <div className={`${lang}Font profile-alert-text`}>
           <span
             style={{
-              ...setSlotStyle({ w: 1000, h: 80, x: 1130, y: -100 }),
+              ...setSlotStyle({ w: 670, h: 80, x: 1410, y: -200 }),
               fontSize: `${28 * sizeValue}px`,
             }}>
             {`${getStringInfo(lang, 2)}\n${getStringInfo(lang, 3)}`}
@@ -609,6 +661,7 @@ function ProfileCard() {
                 : ""
             }
             sizeValue={sizeValue}
+            onClick={handleResize}
           />
         </div>
         {/* //$ Character Constellation */}
@@ -760,6 +813,16 @@ function ProfileCard() {
             {lang === "en"
               ? capitalizeFirst(characterData?.id) ?? ""
               : characterData?.[lang] ?? ""}
+          </span>
+          <span
+            className={`profile-card-text ${lang}Font`}
+            style={{
+              ...setSlotStyle({ w: 645, h: 20, x: 0, y: -23 }),
+              textAlign: "end",
+              color: "#ffffff99",
+              fontSize: `calc(18px * ${sizeValue})`,
+            }}>
+            {`Image © ${mainImageCopyright[0]}${mainImageCopyright[1]}`}
           </span>
         </div>
         {/* //$ Weapon Icon */}
@@ -1066,8 +1129,22 @@ function ProfileCard() {
               ...setSlotStyle({ w: 540, h: 195, x: 250, y: 10 }),
               backgroundColor: "#00000033",
             }}>
-            <ImageDrag inputable={true} sizeValue={sizeValue} />
+            <ImageDrag
+              inputable={true}
+              sizeValue={sizeValue}
+              onClick={handleResize}
+            />
           </div>
+          <span
+            className={`profile-card-text ${lang}Font`}
+            style={{
+              ...setSlotStyle({ w: 540 - 3, h: 20, x: 250, y: 185 }),
+              textAlign: "end",
+              color: "#ffffff99",
+              fontSize: `calc(15px * ${sizeValue})`,
+            }}>
+            {`Image © ${mainImageCopyright[0]}${mainImageCopyright[1]}`}
+          </span>
         </div>
         <span
           style={{
@@ -1099,34 +1176,58 @@ function ProfileCard() {
           }}
         />
       </div>
-      <div className="profile-image-request">
-        <div
-          style={{
-            display: "flex",
-            width: `${2200 * sizeValue}px`,
-            height: "100%",
-          }}>
-          <button className="profile-image-request-button" disabled={true}>
-            <span className={`${lang}Font`}>이미지 생성</span>
-          </button>
-          <button className="profile-image-request-button" disabled={true}>
-            <span className={`${lang}Font`}>다운로드</span>
-          </button>
-          <button className="profile-image-request-button" disabled={true}>
-            <span className={`${lang}Font`}>제공 예정들인 기능입니다</span>
-          </button>
-          <button
-            className="profile-image-request-button data"
-            onClick={() =>
-              window.open(
-                "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029",
-                "_blank"
-              )
-            }>
-            <span className={`${lang}Font`}>점수 기준표</span>
-          </button>
+      {/* //$ Card Bottom Info Field */}
+      <div className="profile-data-slot">
+        <div className="profile-image-request-slot bottom">
+          <input
+            style={{
+              display: "flex",
+              width: `${350 * sizeValue}px`,
+              height: `${35 * sizeValue}px`,
+              margin: `0 ${10 * sizeValue}px`,
+            }}
+            defaultValue="Kuro Games"
+            onChange={(value) => {
+              console.log(value.target.value);
+            }}
+          />
+          <input
+            type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            style={{
+              display: "flex",
+              width: `${125 * sizeValue}px`,
+              height: `${35 * sizeValue}px`,
+              margin: `0 ${10 * sizeValue}px`,
+            }}
+            defaultValue="2024"
+            onChange={(value) => {
+              console.log(value.target.value);
+            }}
+          />
         </div>
+        <button className="profile-image-request-button bottom" disabled={true}>
+          <span className={`${lang}Font`}>이미지 생성</span>
+        </button>
+        <button className="profile-image-request-button bottom" disabled={true}>
+          <span className={`${lang}Font`}>다운로드</span>
+        </button>
+        <button className="profile-image-request-button bottom" disabled={true}>
+          <span className={`${lang}Font`}>제공 예정들인 기능입니다</span>
+        </button>
+        <button
+          className="profile-image-request-button bottom end"
+          onClick={() =>
+            window.open(
+              "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029",
+              "_blank"
+            )
+          }>
+          <span className={`${lang}Font`}>점수 기준표</span>
+        </button>
       </div>
+      {/* //$ OCR Slot */}
       <div className="profile-ocr-slot">
         <div
           className="ocr-select-slot"
@@ -1255,7 +1356,7 @@ function ProfileCard() {
                     <OcrRequest
                       sizeValue={sizeValue}
                       index={idx}
-                      isDebug={false}
+                      isDebug={true}
                     />
                   </div>
                 </div>
