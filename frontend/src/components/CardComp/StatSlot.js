@@ -27,9 +27,13 @@ function StatSlot({ styles = [{}, {}, {}], imgPath, statId = "", fontSize }) {
         }}
       />
       <span
+        className={`${lang}Font`}
         style={{
           ...styles[1],
+          display: "flex",
           color: "#fff",
+          alignItems: "center",
+          justifyContent: "flex-start",
           textAlign: "left",
           fontSize: fontSize[0],
           whiteSpace: "pre-wrap",
@@ -37,9 +41,13 @@ function StatSlot({ styles = [{}, {}, {}], imgPath, statId = "", fontSize }) {
         {FixedStats[statId]?.[lang]}
       </span>
       <span
+        className="numFont"
         style={{
           ...styles[1],
+          display: "flex",
           color: "#fff",
+          alignItems: "center",
+          justifyContent: "flex-end",
           textAlign: "right",
           fontSize: fontSize[0],
         }}>
@@ -48,11 +56,17 @@ function StatSlot({ styles = [{}, {}, {}], imgPath, statId = "", fontSize }) {
           : finalStats[statId]}
       </span>
       <span
+        className="numFont"
         style={{
           ...styles[2],
+          display: "flex",
           color: "#ddaa00",
-          textAlign: "right",
+          alignItems: "center",
+          justifyContent: "flex-end",
           fontSize: fontSize[1],
+          WebkitFontSmoothing: "antialiased",
+          MozOsxFontSmoothing: "grayscale",
+          textRendering: "optimizeLegibility",
         }}>
         +
         {statId.includes("Bns") || statId.includes("Crit")

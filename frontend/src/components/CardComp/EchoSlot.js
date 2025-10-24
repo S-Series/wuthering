@@ -86,16 +86,19 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
           style={setSlotStyle({ w: 35, h: 35, x: 9, y: 165 })}
         />
         <span
+          className="numFont"
           style={{
             ...setSlotStyle({ w: 130, h: 35, x: 9, y: 165 }),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
             color: "#fff",
-            textAlign: "right",
-            transform: `translateY(-${3 * sizeValue}px)`,
-            fontSize: `${30 * sizeValue}px`,
+            fontSize: `${28 * sizeValue}px`,
           }}>
           {FixedStats[echoList[index]?.mainStat]?.ValueMain[
             costToIndex(echoList[index]?.cost)
-          ] || "----"}%
+          ] || "----"}
+          %
         </span>
         <img
           alt=""
@@ -105,12 +108,14 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
           style={setSlotStyle({ w: 35, h: 35, x: 9, y: 207 })}
         />
         <span
+          className="numFont"
           style={{
             ...setSlotStyle({ w: 130, h: 35, x: 9, y: 207 }),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
             color: "#fff",
-            textAlign: "right",
-            transform: `translateY(-${3 * sizeValue}px)`,
-            fontSize: `${30 * sizeValue}px`,
+            fontSize: `${28 * sizeValue}px`,
           }}>
           {FixedMainSub[costToIndex(echoList[index]?.cost)][1] || "----"}
         </span>
@@ -126,12 +131,14 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
                 style={setSlotStyle(subStyleValue(idx, false))}
               />
               <span
+                className="numFont"
                 style={{
                   ...setSlotStyle(subStyleValue(idx, true)),
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
                   color: "#fff",
-                  textAlign: "right",
-                  transform: `translateY(-${3 * sizeValue}px)`,
-                  fontSize: `${30 * sizeValue}px`,
+                  fontSize: `${28 * sizeValue}px`,
                 }}>
                 {`${
                   FixedStats[echoList[index].subStats[idx][0]].ValueSub[
@@ -155,11 +162,13 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
                 style={setSlotStyle(subStyleValue(idx, false))}
               />
               <span
+                className="numFont"
                 style={{
                   ...setSlotStyle(subStyleValue(idx, true)),
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
                   color: "#fff",
-                  textAlign: "right",
-                  transform: `translateY(-${4 * sizeValue}px)`,
                   fontSize: `${30 * sizeValue}px`,
                 }}>
                 ----
@@ -180,6 +189,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
         />
         <div className="cv-av">
           <span
+            className="numFont"
             style={{
               ...setSlotStyle({ w: 135, h: 35, x: 6.5, y: 553 }),
               color: "#fff",
@@ -190,6 +200,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             Cv.
           </span>
           <span
+            className="numFont"
             style={{
               ...setSlotStyle({ w: 135, h: 35, x: 6.5, y: 553 }),
               color: "#fff",
@@ -200,6 +211,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             {echoScore[index][0]}pt
           </span>
           <span
+            className="numFont"
             style={{
               ...setSlotStyle({ w: 135, h: 35, x: 6.5, y: 585 }),
               color: "#fff",
@@ -210,6 +222,7 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             Av.
           </span>
           <span
+            className="numFont"
             style={{
               ...setSlotStyle({ w: 135, h: 35, x: 6.5, y: 585 }),
               color: "#fff",

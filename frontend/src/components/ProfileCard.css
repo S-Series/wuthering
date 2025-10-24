@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: 'kr-font';
-    src: url('../../assets/fonts/kr.ttf') format('truetype');
+    src: url('../../assets/fonts/SUITE-Medium.ttf') format('truetype');
 }
 
 @font-face {
@@ -16,6 +16,11 @@
 @font-face {
     font-family: 'zh-font';
     src: url('../../assets/fonts/zh.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'num-font';
+    src: url('../../assets/fonts/Roboto-Medium.ttf') format('truetype');
 }
 
 .enFont {
@@ -32,6 +37,9 @@
 
 .zhFont {
     font-family: "zh-font", sans-serif;
+}
+.numFont {
+    font-family: "num-font", sans-serif;
 }
 
 .profile-portrait {
@@ -54,9 +62,9 @@
 
 .profile-data-slot {
     display: flex;
-    width: 95%;
-    margin-left: 2.5%;
-    aspect-ratio: 19 / 1;
+    width: 97%;
+    margin-left: 1.5%;
+    aspect-ratio: 21 / 1;
     align-items: center;
     justify-content: center;
 }

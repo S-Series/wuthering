@@ -347,10 +347,10 @@ async def create_profile_card(
         "echo_datas": stat_data.get("echo_score")
     }
     echo_score["total"] = [sum(col) for col in zip(*echo_score["echo_datas"])]
-    draw_text(base, f"Cv.", (770, 860), EN_FONT_PATH, 36)
-    draw_text(base, f"Av.", (1035, 860), EN_FONT_PATH, 36)
-    draw_text(base, f"{echo_score["total"][0]:.1f} pt", (965, 860), EN_FONT_PATH, 36, anchor="rt")
-    draw_text(base, f"{echo_score["total"][1]:.1f} pt", (1230, 860), EN_FONT_PATH, 36, anchor="rt")
+    draw_text(base, f"Cv.", (770, 870), EN_FONT_PATH, 36)
+    draw_text(base, f"Av.", (1035, 870), EN_FONT_PATH, 36)
+    draw_text(base, f"{echo_score["total"][0]:.1f} pt", (965, 870), EN_FONT_PATH, 36, anchor="rt")
+    draw_text(base, f"{echo_score["total"][1]:.1f} pt", (1230, 870), EN_FONT_PATH, 36, anchor="rt")
 
     #$ User Plate
     #draw_rect(base, (1320 + 10, 70 + 10, 260, 136), (255, 255, 255, 40))

@@ -35,6 +35,28 @@ export function ProfileProvider({ children }) {
   const [subImage, setSubImage] = useState(null);
   const [mainImageCopyright, setMainImageCopyright] = useState(["Kuro Games", 2024]);
   const [subImageCopyright, setSubImageCopyright] = useState(["Kuro Games", 2024]);
+  const imageCopyrightText = useMemo(() => {
+    return [
+      `Image © ${mainImageCopyright[0] ?? ""} ${mainImageCopyright[1] ?? ""}`,
+      `Image © ${subImageCopyright[0] ?? ""} ${subImageCopyright[1] ?? ""}`
+    ]
+  }, [mainImageCopyright, subImageCopyright])
+
+  //$ 이건 콘솔 출력됨
+  useEffect(() => {console.log(imageCopyrightText)},[imageCopyrightText])
+
+  const PatchImageCopyright = useCallback((isMain, isValue, value) => {
+    if (isMain) {
+      setMainImageCopyright((prev) =>
+        isValue ? [prev[0], value] : [value, prev[1]]
+      );
+    }
+    else {
+      setSubImageCopyright((prev) =>
+        isValue ? [prev[0], value] : [value, prev[1]]
+      );
+    }
+  })
 
   function getEchoData() {
     const raw = localStorage.getItem(`${characterId}EchoData`);
@@ -405,12 +427,10 @@ export function ProfileProvider({ children }) {
       //$ Image Data
       mainImage,
       setMainImage,
-      mainImageCopyright,
-      setMainImageCopyright,
       subImage,
       setSubImage,
-      subImageCopyright,
-      setSubImageCopyright,
+      imageCopyrightText,
+      PatchImageCopyright,
       //$ character
       characterId,
       characterData,
@@ -440,17 +460,41 @@ export function ProfileProvider({ children }) {
     }),
     [
       lang,
+      setLang,
+      costToIndex,
+      //$ Image Data
+      mainImage,
+      setMainImage,
+      subImage,
+      setSubImage,
+      imageCopyrightText,
+      PatchImageCopyright,
+      //$ character
       characterId,
-      weaponId,
-      constellation,
-      echoList,
       characterData,
-      weaponData,
       characterStats,
+      setCharacterId,
+      //$ weapon
+      weaponId,
+      setWeaponId,
+      weaponData,
       weaponStats,
-      finalStats,
+      //$ echo
+      echoList,
+      echoScore,
+      setEchoList,
+      PatchEcho,
+      PatchEchoID,
+      PatchEchoCost,
       PatchEchoStat,
+      PatchEchoHarmony,
       PatchEchoMainStat,
+      //$ others
+      statId,
+      finalStats,
+      harmonyOption,
+      constellation,
+      setConstellation,
     ]
   );
 
