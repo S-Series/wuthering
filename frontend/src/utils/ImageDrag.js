@@ -1,12 +1,15 @@
+import { useProfile } from "../hooks/useProfile";
 import "./ImageDrag.css";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 
-function ImageDrag({ path = null, sizeValue = 1, inputable = false , onClick = {}()}) {
+function ImageDrag({ isMain, path = null, sizeValue = 1, inputable = false , onClick = {}()}) {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const imageSlotRef = useRef();
   const imageContRef = useRef();
   const fileInputRef = useRef();
+
+  const {setMainImage, setSubImage} = useProfile();
 
   const [reloadKey, setReloadKey] = useState(false);
   const [resizeKey, setResizeKey] = useState(false);
@@ -22,7 +25,8 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false , onClick = {
   const [maxTrans, setMaxTrans] = useState({ x: 0, y: 0 });
   const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
 
-  const [imgPath, setImgPath] = useState("");
+  const defaultPath = path;
+  const [imgPath, setImgPath] = useState(defaultPath);
 
   useEffect(() => {
     function handleResize() {
@@ -43,6 +47,16 @@ function ImageDrag({ path = null, sizeValue = 1, inputable = false , onClick = {
   useEffect(() => {
     setImgPath(path);
   }, [path]);
+  useEffect(() => {
+    (async () => {
+      const imgFile = await fetch("/default.webp")
+      .then((res) => res.blob())
+      .then((blob) => new File([blob], "default.webp", { type: "image/webp" }));
+      
+      if (isMain) setMainImage(imgFile);
+      else setSubImage(imgFile);
+    })();
+  }, [imgPath])
   useEffect(() => {
     if (imageSize.width == 0 || imageSize.height == 0) return;
 

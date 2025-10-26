@@ -64,33 +64,34 @@ function ProfileCard() {
   ];
   const UI_TEXT = {
     kr: [
+      "ⓘ 도움말",
       "이미지 생성 요청",
       "이미지 다운로드",
-      "제공 예정인 기능입니다",
       "명함 이미지 초기화",
       "캐릭터 이미지 초기화",
       "모든 에코 데이터 초기화",
       "에코 점수표",
     ],
     en: [
+      "ⓘ Help",
       "Request Image Generation",
       "Download Image",
-      "Feature Coming Soon",
       "Reset Profile Image",
       "Reset Character Image",
       "Reset All Echo Data",
       "Echo Scoreboard",
     ],
     jp: [
+      "ⓘ ヘルプ",
       "画像生成をリクエスト",
       "画像をダウンロード",
-      "近日公開予定の機能です",
       "名刺画像をリセット",
       "キャラクター画像をリセット",
       "すべてのエコーデータをリセット",
       "エコースコア表",
     ],
     zh: [
+      "ⓘ 帮助",
       "请求生成图片",
       "下载图片",
       "功能即将上线",
@@ -358,14 +359,11 @@ function ProfileCard() {
       <button
         onClick={async () => {
           try {
-            const imageFile = await fetch("/default.webp")
-              .then((res) => res.blob())
-              .then(
-                (blob) =>
-                  new File([blob], "default.webp", { type: "image/webp" })
-              );
+            const imageFile = mainImage;
+            const subFile = subImage;
 
-            const subFile = null;
+            console.log(mainImage);
+            console.log(subImage);
 
             const imageData = {
               name: "Aalto",
@@ -663,11 +661,12 @@ function ProfileCard() {
           style={{ marginLeft: `${25 * sizeValue}px` }}>
           <span className="enFont">&nbsp; © &nbsp;</span>
           <input
+            className="white-square-input"
             ref={CopyrightInputfield[0]}
             style={{
               display: "flex",
               width: `${350 * sizeValue}px`,
-              height: `${35 * sizeValue}px`,
+              height: `${50 * sizeValue}px`,
             }}
             defaultValue="Kuro Games"
             onChange={(e) => {
@@ -677,6 +676,7 @@ function ProfileCard() {
           />
           &nbsp;&nbsp;
           <input
+            className="white-square-input"
             ref={CopyrightInputfield[1]}
             type="number"
             inputMode="numeric"
@@ -684,7 +684,7 @@ function ProfileCard() {
             style={{
               display: "flex",
               width: `${125 * sizeValue}px`,
-              height: `${35 * sizeValue}px`,
+              height: `${50 * sizeValue}px`,
             }}
             defaultValue="2024"
             onChange={(e) => {
@@ -732,6 +732,7 @@ function ProfileCard() {
             }}
           />
           <ImageDrag
+            isMain={true}
             inputable={true}
             path={
               characterId
@@ -762,7 +763,7 @@ function ProfileCard() {
             }}
             onClick={() => setConstellation((prev) => [0, prev[1]])}>
             <span
-              className={`${lang}Font`}
+              className={`enFont`}
               style={{
                 fontSize: `${20 * sizeValue}px`,
                 whiteSpace: "nowrap",
@@ -1018,7 +1019,7 @@ function ProfileCard() {
               ref: { WeaponNameTextRef },
               fontSize: `${36 * sizeValue}px`,
               alignContent: "center",
-              top: `${5 * sizeValue}px`,
+              top: `${10 * sizeValue}px`,
               left: `${175 * sizeValue}px`,
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
@@ -1239,6 +1240,18 @@ function ProfileCard() {
               objectPosition: "center",
             }}
           />
+          <img
+            src="/link.png"
+            style={{
+              ...setSlotStyle({ w: 20, h: 20, x: 570, y: -31 }),
+            }}
+          />
+          <div
+            style={{
+              ...setSlotStyle({ w: 120, h: 2, x: 594, y: -10 }),
+              backgroundColor: "#ffffff66",
+            }}
+          />
           <span
             className="enFont"
             style={{
@@ -1264,6 +1277,7 @@ function ProfileCard() {
               backgroundColor: "#00000033",
             }}>
             <ImageDrag
+              isMain={false}
               inputable={true}
               sizeValue={sizeValue}
               onClick={handleResize}
@@ -1283,7 +1297,7 @@ function ProfileCard() {
         <span
           className="enFont"
           style={{
-            ...setSlotStyle({ w: 800, h: 50, x: 1325, y: 23 }),
+            ...setSlotStyle({ w: 800, h: 50, x: 1325, y: 25 }),
             display: "flex",
             color: "#ffffff99",
             fontSize: `${25 * sizeValue}px`,
@@ -1307,7 +1321,7 @@ function ProfileCard() {
         <span
           className="enFont"
           style={{
-            ...setSlotStyle({ w: 800, h: 50, x: 1320, y: 23 }),
+            ...setSlotStyle({ w: 800, h: 50, x: 1320, y: 25 }),
             display: "flex",
             color: "#ffffff99",
             fontSize: `${25 * sizeValue}px`,
@@ -1343,11 +1357,12 @@ function ProfileCard() {
         <div className="profile-image-request-slot bottom">
           <span className="enFont">&nbsp; © &nbsp;</span>
           <input
+            className="white-square-input"
             ref={CopyrightInputfield[2]}
             style={{
               display: "flex",
               width: `${350 * sizeValue}px`,
-              height: `${35 * sizeValue}px`,
+              height: `${50 * sizeValue}px`,
             }}
             defaultValue="Kuro Games"
             onChange={(e) => {
@@ -1356,6 +1371,7 @@ function ProfileCard() {
           />
           &nbsp;&nbsp;
           <input
+            className="white-square-input"
             ref={CopyrightInputfield[3]}
             type="number"
             inputMode="numeric"
@@ -1363,7 +1379,7 @@ function ProfileCard() {
             style={{
               display: "flex",
               width: `${125 * sizeValue}px`,
-              height: `${35 * sizeValue}px`,
+              height: `${50 * sizeValue}px`,
             }}
             defaultValue="2024"
             onChange={(e) => {

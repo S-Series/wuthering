@@ -30,3 +30,15 @@ html {
   justify-content: center;
   width: min(90%, 1080px);
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+* {
+  -ms-overflow-style: none;
+}

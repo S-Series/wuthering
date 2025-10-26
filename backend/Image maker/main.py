@@ -227,25 +227,20 @@ async def create_profile_card(
 
     # --------------------------------------------------------
 
-    if image_character and image_character.filename:
+    if image_character:
         input_main = f"./temp/{image_character.filename}"
         with open(input_main, "wb") as f:
             f.write(await image_character.read())
     else:
-        char_name = stat_data.get("characterName", "default")
-        input_main = f"./assets/{char_name}.png"
-        if not os.path.exists(input_main):
-            input_main = "./assets/default.png"
+        input_main = "./assets/default.png" 
 
-    # --------------------------------------------------------
-
-    if image_sub and image_sub.filename:
+    if image_sub:
         input_sub = f"./temp/{image_sub.filename}"
         with open(input_sub, "wb") as f:
             f.write(await image_sub.read())
     else:
-        input_sub = "./assets/default_sub.png" if os.path.exists("./assets/default_sub.png") else None
-
+        input_sub = "./assets/default_sub.png"
+        
     # --------------------------------------------------------
 
     base = Image.open("./assets/BG.jpg").convert("RGBA")

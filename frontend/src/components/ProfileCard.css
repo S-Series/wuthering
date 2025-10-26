@@ -173,6 +173,17 @@
     background-color: #ffffff33;
 }
 
+.white-square-input {
+    font-family: "en-font", sans-serif;
+    background: transparent;
+    border: 1px solid #ffffff33;
+    color: #fff;
+    line-height: 1;
+}
+.white-square-input:focus {
+    border: 1px solid #ffffff66;
+}
+
 .profile-card-icon {
     display: block;
     width: 100%;

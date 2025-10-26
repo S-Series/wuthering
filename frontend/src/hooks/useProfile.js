@@ -84,7 +84,6 @@ export function ProfileProvider({ children }) {
 
     return fixedData;
   }
-
   const costToIndex = useCallback((cost) => {
     if (cost === 4) return 0;
     else if (cost === 3) return 1;
@@ -415,8 +414,10 @@ export function ProfileProvider({ children }) {
   }, [constellation]);
 
   useEffect(() => {
-    if (echoList)
-      localStorage.setItem(`${characterId}EchoData`, JSON.stringify(echoList));
+    if (!echoList) return;
+    localStorage.setItem(`${characterId}EchoData`, JSON.stringify(echoList));
+
+    
   }, [echoList]);
 
   const value = useMemo(
