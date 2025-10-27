@@ -9,7 +9,7 @@ function ImageDrag({ isMain, path = null, sizeValue = 1, inputable = false , onC
   const imageContRef = useRef();
   const fileInputRef = useRef();
 
-  const {setMainImage, setSubImage} = useProfile();
+  const {setMainImage, setSubImage, setMainImageTrans, setSubImageTrans} = useProfile();
 
   const [reloadKey, setReloadKey] = useState(false);
   const [resizeKey, setResizeKey] = useState(false);
@@ -48,7 +48,7 @@ function ImageDrag({ isMain, path = null, sizeValue = 1, inputable = false , onC
     setImgPath(path);
   }, [path]);
   useEffect(() => {
-    if (imageSize.width == 0 || imageSize.height == 0) return;
+    if (imageSize.width === 0 || imageSize.height === 0) return;
 
     const boxWidth = imageSlotRef.current.offsetWidth;
     const boxHeight = imageSlotRef.current.offsetHeight;
@@ -127,6 +127,10 @@ function ImageDrag({ isMain, path = null, sizeValue = 1, inputable = false , onC
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [dragging]);
+  useEffect(() => {
+    if (isMain) setMainImageTrans(imageTrans);
+    else setSubImageTrans(imageTrans);
+  }, [imageTrans])
   useEffect(() => {
     const mx = (imageSize.width * imageTrans.s - slotSize.width) / 2;
     const my = (imageSize.height * imageTrans.s - slotSize.height) / 2;

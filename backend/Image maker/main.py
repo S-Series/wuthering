@@ -183,21 +183,12 @@ async def create_profile_card(
     image_data: str = Form(...),
     stat_data: str = Form(...),
 ):
-    print("==== DEBUG FORM ====")
-    print("image_character:", image_character)
-    print("image_character filename:", getattr(image_character, "filename", None))
-    print("image_sub:", image_sub)
-    print("image_sub filename:", getattr(image_sub, "filename", None))
-    print("====================")
-    os.makedirs("./temp", exist_ok=True)
-    os.makedirs("./assets", exist_ok=True)
-
     stat_data = json.loads(stat_data)
     data_image = json.loads(image_data)
     font_use = KR_FONT_PATH
 
-    img_main_path = f"image_${secrets.token_hex(8)}.webp"
-    img_sub_path = f"image_${secrets.token_hex(8)}.webp"
+    img_main_path = f"./temp/image_{secrets.token_hex(8)}.webp"
+    img_sub_path = f"./temp/image_{secrets.token_hex(8)}.webp"
 
     # --------------------------------------------------------
 
@@ -206,14 +197,14 @@ async def create_profile_card(
         with open(input_main, "wb") as f:
             f.write(await image_character.read())
     else:
-        input_main = "./assets/default.png" 
+        input_main = "./default.webp" 
 
     if image_sub:
         input_sub = img_sub_path
         with open(input_sub, "wb") as f:
             f.write(await image_sub.read())
     else:
-        input_sub = "./assets/default.png"
+        input_sub = "./default.webp"
         
     # --------------------------------------------------------
 

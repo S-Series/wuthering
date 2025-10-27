@@ -33,6 +33,8 @@ export function ProfileProvider({ children }) {
   );
   const [mainImage, setMainImage] = useState(null);
   const [subImage, setSubImage] = useState(null);
+  const [mainImageTrans, setMainImageTrans] = useState({ x: 0, y: 0, z: 1 });
+  const [subImageTrans, setSubImageTrans] = useState({ x: 0, y: 0, z: 1 });
   const [mainImageCopyright, setMainImageCopyright] = useState(["Kuro Games", 2024]);
   const [subImageCopyright, setSubImageCopyright] = useState(["Kuro Games", 2024]);
   const imageCopyrightText = useMemo(() => {
@@ -430,6 +432,10 @@ export function ProfileProvider({ children }) {
       setMainImage,
       subImage,
       setSubImage,
+      mainImageTrans,
+      setMainImageTrans,
+      subImageTrans,
+      setSubImageTrans,
       imageCopyrightText,
       PatchImageCopyright,
       //$ character
@@ -459,43 +465,32 @@ export function ProfileProvider({ children }) {
       constellation,
       setConstellation,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       lang,
-      setLang,
-      costToIndex,
       //$ Image Data
       mainImage,
-      setMainImage,
+      mainImageTrans,
+      subImageTrans,
       subImage,
-      setSubImage,
       imageCopyrightText,
       PatchImageCopyright,
       //$ character
       characterId,
       characterData,
       characterStats,
-      setCharacterId,
       //$ weapon
       weaponId,
-      setWeaponId,
       weaponData,
       weaponStats,
       //$ echo
       echoList,
       echoScore,
-      setEchoList,
-      PatchEcho,
-      PatchEchoID,
-      PatchEchoCost,
-      PatchEchoStat,
-      PatchEchoHarmony,
-      PatchEchoMainStat,
       //$ others
       statId,
       finalStats,
       harmonyOption,
       constellation,
-      setConstellation,
     ]
   );
 

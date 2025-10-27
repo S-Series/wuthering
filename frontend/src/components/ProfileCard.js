@@ -6,7 +6,6 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
-  use,
 } from "react";
 import Select, { components } from "react-select";
 import { motion, AnimatePresence, color } from "framer-motion";
@@ -108,9 +107,7 @@ function ProfileCard() {
     setConstellation,
     //$ Image Data
     mainImage,
-    setMainImage,
     subImage,
-    setSubImage,
     imageCopyrightText,
     PatchImageCopyright,
     //$ character
@@ -134,12 +131,6 @@ function ProfileCard() {
   } = useProfile();
 
   const [sizeValue, setSizeValue] = useState(1.0);
-  const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
-
-  const [reloadKey, setReloadKey] = useState(0);
-
-  const [filterWeapon, setFilterWeapon] = useState([]);
-  const [filterElement, setFilterElement] = useState([]);
 
   const [selectedEchoIdx, setSelectedEchoIdx] = useState(0);
   const echoSlotBorderPos = useMemo(() => {
@@ -151,15 +142,6 @@ function ProfileCard() {
     };
   }, [selectedEchoIdx]);
 
-  const C_ConstellationList = [
-    { value: 0, label: "C0" },
-    { value: 1, label: "C1" },
-    { value: 2, label: "C2" },
-    { value: 3, label: "C3" },
-    { value: 4, label: "C4" },
-    { value: 5, label: "C5" },
-    { value: 6, label: "C6" },
-  ];
   const W_ConstellationList = [
     { value: 0, label: "C1" },
     { value: 1, label: "C2" },
@@ -221,8 +203,6 @@ function ProfileCard() {
 
   const handleResize = () => {
     const w = ProfileCardSlotRef.current.offsetWidth;
-    const h = ProfileCardSlotRef.current.offsetHeight;
-    setSlotSize({ width: w, height: h });
     setSizeValue(w / 2140);
   };
   //#endregion
@@ -233,11 +213,8 @@ function ProfileCard() {
     function handleResize() {
       const w = ProfileCardSlotRef.current.offsetWidth;
       const h = ProfileCardSlotRef.current.offsetHeight;
-      setSlotSize({ width: w, height: h });
       setSizeValue(w / 2140);
     }
-
-    setReloadKey((prev) => prev + 1);
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -248,9 +225,6 @@ function ProfileCard() {
       Math.min(ProfileCardSlotRef.current.offsetWidth, 1070),
       856
     );
-    const height = ProfileCardSlotRef.current.offsetHeight;
-
-    setSlotSize({ width, height });
     setSizeValue(width / 2140);
   }, []);
   //#endregion
@@ -356,6 +330,7 @@ function ProfileCard() {
   return (
     <div key={lang} className="profile-portrait">
       {/*
+       */}
       <button
         onClick={async () => {
           try {
@@ -388,10 +363,8 @@ function ProfileCard() {
             console.log(statData);
 
             const formData = new FormData();
-            formData.append("image_character", imageFile);
-            if (subFile) {
-              formData.append("image_sub", subFile);
-            }
+            if (imageFile) formData.append("image_character", imageFile);
+            if (subFile) formData.append("image_sub", subFile);
             formData.append("image_data", JSON.stringify(imageData));
             formData.append("stat_data", JSON.stringify(statData));
 
@@ -413,6 +386,7 @@ function ProfileCard() {
         test
       </button>
       <img src={generatedImage} />
+      {/*
        */}
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (
@@ -720,6 +694,7 @@ function ProfileCard() {
             backgroundPosition: "center center",
           }}>
           <img
+            alt=""
             src={`${assetApiUrl}/character/${characterId}/art.png`}
             style={{
               position: "absolute",
