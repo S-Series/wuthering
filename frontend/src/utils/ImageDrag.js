@@ -48,16 +48,6 @@ function ImageDrag({ isMain, path = null, sizeValue = 1, inputable = false , onC
     setImgPath(path);
   }, [path]);
   useEffect(() => {
-    (async () => {
-      const imgFile = await fetch("/default.webp")
-      .then((res) => res.blob())
-      .then((blob) => new File([blob], "default.webp", { type: "image/webp" }));
-      
-      if (isMain) setMainImage(imgFile);
-      else setSubImage(imgFile);
-    })();
-  }, [imgPath])
-  useEffect(() => {
     if (imageSize.width == 0 || imageSize.height == 0) return;
 
     const boxWidth = imageSlotRef.current.offsetWidth;
@@ -159,7 +149,9 @@ function ImageDrag({ isMain, path = null, sizeValue = 1, inputable = false , onC
           const file = item.getAsFile();
           const reader = new FileReader();
           reader.onload = (event) => {
-            setImgPath(event.target.result); // ✅ base64 이미지 적용
+            setImgPath(event.target.result);
+            if (isMain) setMainImage(file);
+            else setSubImage(file);
           };
           reader.readAsDataURL(file);
           break;
@@ -187,6 +179,8 @@ function ImageDrag({ isMain, path = null, sizeValue = 1, inputable = false , onC
     const reader = new FileReader();
     reader.onload = (item) => {
       setImgPath(item.target.result);
+      if (isMain) setMainImage(file);
+      else setSubImage(file);
     };
     reader.readAsDataURL(file);
   }

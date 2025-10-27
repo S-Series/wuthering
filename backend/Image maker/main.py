@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, ImageDraw, ImageFont, ImageChops
 from io import BytesIO
 
-import os, math, json, uvicorn, requests
+import os, math, json, uvicorn, secrets, requests
 import numpy as np
 
 app = FastAPI()
@@ -183,41 +183,12 @@ async def create_profile_card(
     image_data: str = Form(...),
     stat_data: str = Form(...),
 ):
-    """ const statData = {
-    lang: "kr",
-    server: "Asia",
-    lever: 80,
-    player_name: "SSeries",
-    uid: 700695460,
-    c_id: "camellya",
-    c_name: "카멜리아",
-    c_type: ["havoc", "atk", "normalBns", "sword"],
-    w_imgkey: "ico003",
-    w_name: "날카로운 봄",
-    w_stat: [587, 24.3],
-    w_type: "CritRate",
-    constel: [0, 0],
-    stats: [
-        [15665, 5340],
-        [2283, 998],
-        [1309, 149],
-        [136.0, 36],
-        [66.8, 37.5],
-        [270.0, 104.0],
-        [75.0, 60.0],
-        [25.9, 10.9],
-    ],
-    set_option: [["Eclipse", true]],
-    echo_id: ["", "", "", "", ""],
-    echo_stat: [ [], [], [], [], [] ],
-    echo_score: [
-        [28.8, 45.5],
-        [18.6, 50.7],
-        [26.4, 26.4],
-        [28.8, 28.8],
-        [32.4, 32.4],
-    ]};
-    """
+    print("==== DEBUG FORM ====")
+    print("image_character:", image_character)
+    print("image_character filename:", getattr(image_character, "filename", None))
+    print("image_sub:", image_sub)
+    print("image_sub filename:", getattr(image_sub, "filename", None))
+    print("====================")
     os.makedirs("./temp", exist_ok=True)
     os.makedirs("./assets", exist_ok=True)
 
@@ -225,21 +196,24 @@ async def create_profile_card(
     data_image = json.loads(image_data)
     font_use = KR_FONT_PATH
 
+    img_main_path = f"image_${secrets.token_hex(8)}.webp"
+    img_sub_path = f"image_${secrets.token_hex(8)}.webp"
+
     # --------------------------------------------------------
 
     if image_character:
-        input_main = f"./temp/{image_character.filename}"
+        input_main = img_main_path
         with open(input_main, "wb") as f:
             f.write(await image_character.read())
     else:
         input_main = "./assets/default.png" 
 
     if image_sub:
-        input_sub = f"./temp/{image_sub.filename}"
+        input_sub = img_sub_path
         with open(input_sub, "wb") as f:
             f.write(await image_sub.read())
     else:
-        input_sub = "./assets/default_sub.png"
+        input_sub = "./assets/default.png"
         
     # --------------------------------------------------------
 
