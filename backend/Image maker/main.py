@@ -49,32 +49,24 @@ def draw_rect(base, xy, color):
 
 # --------------------------------------------------------
 
-def draw_rect_topleft_round(base, xy1, xy2, radius, fill, color_filter=(255,255,255), border=None, img_path=None):
+def draw_rect_topleft_round(base, xy1, xy2, radius, fill = None, color_filter=(255,255,255), border=None, img_path=None):
     x1, y1, w, h = xy1
     x_off, y_off, a = xy2
 
     rounded = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(rounded)
 
-    draw.rectangle((0, radius, w, h), fill=fill)
-    draw.rectangle((radius, 0, w, radius), fill=fill)
-    draw.pieslice((0, 0, radius * 2, radius * 2), 180, 270, fill=fill)
-    # --------------------------------------------------------
     if img_path:
-        if img_path:
-            if img_path.startswith("http"):
-                response = requests.get(img_path)
-                img = Image.open(BytesIO(response.content)).convert("RGBA")
-            else:
-                img = Image.open(img_path).convert("RGBA")
+        if img_path.startswith("http"):
+            response = requests.get(img_path)
+            img = Image.open(BytesIO(response.content)).convert("RGBA")
+        else:
+            img = Image.open(img_path).convert("RGBA")
+
         iw, ih = img.size
-
-        cx = w / 2
-        cy = h / 2
-
+        cx, cy = w / 2, h / 2
         scale = (h / ih) * a
-        new_w = int(iw * scale)
-        new_h = int(ih * scale)
+        new_w, new_h = int(iw * scale), int(ih * scale)
         img = img.resize((new_w, new_h), Image.LANCZOS)
 
         paste_x = int(cx + x_off - new_w / 2)
@@ -86,16 +78,21 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill, color_filter=(255,255,
         mdraw.rectangle((radius, 0, w, radius), fill=255)
         mdraw.pieslice((0, 0, radius * 2, radius * 2), 180, 270, fill=255)
 
-        temp_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-        temp_layer.paste(img, (paste_x, paste_y), mask=img)
-        temp_layer.putalpha(mask)
+        if fill is None:
+            temp_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+            temp_layer.paste(img, (paste_x, paste_y), mask=img.split()[-1])
+            rounded.alpha_composite(temp_layer)
 
-        rounded.alpha_composite(temp_layer)
+        else:
+            temp_layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+            temp_layer.paste(img, (paste_x, paste_y), mask=img.split()[-1])
+            temp_layer.putalpha(mask)
+            rounded.alpha_composite(temp_layer)
     # --------------------------------------------------------
-    if color_filter is not (255, 255, 255):
+    if color_filter != (255, 255, 255):
         r, g, b = color_filter
-        color_layer = Image.new("RGBA", overlay.size, (r, g, b, 255))
-        overlay = ImageChops.multiply(overlay, color_layer)
+        color_layer = Image.new("RGBA", rounded.size, (r, g, b, 255))
+        rounded = ImageChops.multiply(rounded, color_layer)
     # --------------------------------------------------------
     if border:
         if isinstance(border[0], (tuple, list)):
@@ -147,7 +144,7 @@ def draw_image(base, path, xy, color_filter = (255, 255, 255), opacity=1.0):
             alpha = alpha.point(lambda p: int(p * opacity))
             overlay.putalpha(alpha)
 
-        if color_filter is not (255, 255, 255):
+        if color_filter != (255, 255, 255):
             r, g, b = color_filter
             color_layer = Image.new("RGBA", overlay.size, (r, g, b, 255))
             overlay = ImageChops.multiply(overlay, color_layer)
@@ -197,23 +194,17 @@ async def create_profile_card(
         with open(input_main, "wb") as f:
             f.write(await image_character.read())
     else:
-        input_main = "./default.webp" 
+        input_main = f"./assets/character/{stat_data.get("c_id")}/stand.png"
 
     if image_sub:
         input_sub = img_sub_path
         with open(input_sub, "wb") as f:
             f.write(await image_sub.read())
     else:
-        input_sub = "./default.webp"
+        input_sub = None
         
     # --------------------------------------------------------
-
     base = Image.open("./assets/BG.jpg").convert("RGBA")
-    img_main = Image.open(input_main).convert("RGBA")
-
-    if input_sub and os.path.exists(input_sub):
-        img_sub = Image.open(input_sub).convert("RGBA")
-        base.paste(img_sub, (25, 25), img_sub)
 
     #$ Portarit Init.
     draw = ImageDraw.Draw(base)
@@ -225,15 +216,24 @@ async def create_profile_card(
     # --------------------------------------------------------
 
     #$ Character Image
-    character_img_path = f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/character/{stat_data.get("c_id")}/art.png"
+    character_art_path = f"https://pub-9fd284d1a89c4bee9e0a92c921c2b28d.r2.dev/character/{stat_data.get("c_id")}/art.png"
     draw_rect_topleft_round(
         base, 
         xy1=(20, 20, 650, 800), 
         xy2=(0, 0, 1.04), 
         radius=40, 
         fill=(255, 255, 255, round(255 * 0.4)), 
+        color_filter=(150, 150, 150),
         border=((200, 200, 200), 5), 
-        img_path=character_img_path
+        img_path=character_art_path
+    )
+    draw_rect_topleft_round(
+        base, 
+        xy1=(20, 20, 650, 800), 
+        xy2=(0, 0, 1.04), 
+        radius=40, 
+        border=((200, 200, 200), 5), 
+        img_path=input_main
     )
     
     #$ Weapon Image

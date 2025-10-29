@@ -64,7 +64,6 @@ export function ProfileProvider({ children }) {
     const raw = localStorage.getItem(`${characterId}EchoData`);
     const parsed = raw ? normalize(JSON.parse(raw)) : null;
 
-    // 기본값: 빈 에코 5개 생성
     const defaultEcho = [
       createEmptyEcho(4),
       createEmptyEcho(3),
@@ -75,7 +74,6 @@ export function ProfileProvider({ children }) {
 
     const data = parsed ?? defaultEcho;
 
-    // $ 각 echo의 subStats 길이가 5보다 짧으면 부족한 부분을 채워줌
     const fixedData = data.map((echo) => {
       if (!Array.isArray(echo.subStats)) echo.subStats = [];
       while (echo.subStats.length < 5) {

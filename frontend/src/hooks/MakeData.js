@@ -117,11 +117,21 @@ export function MakeStatData(data) {
   return statData;
 }
 export function MakeImageData(data) {
+  const {
+    mainImageTrans,
+    subImageTrans,
+    mainImageCopyright,
+    subImageCopyright,
+  } = data;
+
   const imageData = {
-    auther: ["", ""],
-    img_xyz_main: [0, 0, 1],
-    img_xyz_sub: [0, 0, 1],
+    img_main_trans: mainImageTrans,
+    img_sub_trans: subImageTrans,
+    img_main_auther: mainImageCopyright,
+    img_sub_auther: subImageCopyright,
   }
+
+  return imageData;
 }
 
 /*

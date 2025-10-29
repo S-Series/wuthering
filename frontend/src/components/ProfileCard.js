@@ -108,6 +108,10 @@ function ProfileCard() {
     //$ Image Data
     mainImage,
     subImage,
+    mainImageTrans,
+    subImageTrans,
+    mainImageCopyright,
+    subImageCopyright,
     imageCopyrightText,
     PatchImageCopyright,
     //$ character
@@ -323,29 +327,55 @@ function ProfileCard() {
     );
   }, [sizeValue, characterData]);
 
+  const namecardOption = useMemo(() => {
+    return Array.from({ length: 52 }, (_, idx) => ({
+      value: `${assetApiUrl}/namecard/T_Card${idx + 1}.png`,
+      label: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: `${15 * sizeValue}px`,
+          }}>
+          <img
+            alt=""
+            src={`${assetApiUrl}/namecard/T_Card${idx + 1}.png`}
+            style={{
+              width: `${230 * sizeValue}px`,
+              height: `${102 * sizeValue}px`,
+              overflow: "visible",
+            }}
+          />
+          <span
+            className={`${lang}Font`}
+            style={{
+              display: "flex",
+              width: "auto",
+              whiteSpace: "nowrap",
+              justifySelf: "flex-end",
+              textAlign: "right",
+            }}>{`Namecard ${idx + 1}`}</span>
+        </div>
+      ),
+    }));
+  }, [sizeValue])
+
   //#endregion
 
+  const [namecardInputable, setNamecardInputable] = useState(false);
   const [generatedImage, setGeneratedImage] = useState("./asdf2.jpg");
 
   return (
     <div key={lang} className="profile-portrait">
       {/*
+       */}
       <button
         onClick={async () => {
           try {
             const imageFile = mainImage;
             const subFile = subImage;
 
-            console.log(mainImage);
-            console.log(subImage);
-
-            const imageData = {
-              name: "Aalto",
-              element: "Aero",
-              weapon: "Pistols",
-            };
-
-            const data = {
+            const dataA = {
               lang,
               constellation,
               characterData,
@@ -358,14 +388,22 @@ function ProfileCard() {
               harmonyOption,
               userData,
             };
-            const statData = MakeStatData(data);
+            const dataB = {
+              mainImageTrans,
+              subImageTrans,
+              mainImageCopyright,
+              subImageCopyright,
+            };
+            const statData = MakeStatData(dataA);
+            const imageData = MakeImageData(dataB);
             console.log(statData);
+            console.log(imageData);
 
             const formData = new FormData();
             if (imageFile) formData.append("image_character", imageFile);
             if (subFile) formData.append("image_sub", subFile);
-            formData.append("image_data", JSON.stringify(imageData));
             formData.append("stat_data", JSON.stringify(statData));
+            formData.append("image_data", JSON.stringify(imageData));
 
             const response = await fetch(
               "http://127.0.0.1:8000/generate_card",
@@ -385,6 +423,7 @@ function ProfileCard() {
         test
       </button>
       <img src={generatedImage} />
+      {/*
        */}
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (
@@ -511,6 +550,7 @@ function ProfileCard() {
               menuList: (prev) => ({
                 ...prev,
                 backgroundColor: UI_COLOR[2],
+                borderRadius: "4px",
               }),
               valueContainer: (base) => ({
                 ...base,
@@ -583,6 +623,7 @@ function ProfileCard() {
               menuList: (prev) => ({
                 ...prev,
                 backgroundColor: UI_COLOR[2],
+                borderRadius: "4px",
               }),
               option: (base) => ({
                 ...base,
@@ -605,6 +646,51 @@ function ProfileCard() {
               setWeaponId(item.value);
             }}
           />
+        </div>
+        <div className="empty-select-dropdown" />
+        <div>
+          <Select
+            options={namecardOption}
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                width: `${350 * sizeValue}px`,
+                height: `${100 * sizeValue}px`,
+                overflow: "visible",
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 9999,
+              }),
+              option: (base) => ({
+                ...base,
+                height: `${135 * sizeValue}px`,
+                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+              }),
+              menuList: (prev) => ({
+                ...prev,
+                backgroundColor: UI_COLOR[2],
+                borderRadius: "4px",
+                width: "fit-content",
+                minWidth: "100%",
+                maxWidth: "200%",
+                color: "#fff"
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                height: "100%",
+                color: "#fff"
+              }),
+              singleValue: (base) => ({
+                ...base,
+                overflow: "visible",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                color: "#fff"
+              }),
+            }}/>
         </div>
       </div>
       {/* //$ Card Top Info Field */}
