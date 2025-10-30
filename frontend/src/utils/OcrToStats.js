@@ -2,7 +2,21 @@ import { useCallback } from "react";
 import { createEmptyEcho } from "../data/Echos";
 import { FixedStats } from "../data/Stats";
 import { echoDict } from "../data/Echos";
+import stringSimilarity from "string-similarity";
 
+const retouchList = {
+  kr: [
+    [/라어용|라어움|라어요|라어워|라어운|라o운|라워/g, "방어력"],
+    [/H위프|H위lI프|H위표|피혜|피해|H위l표/g, "피해"],
+    [/음운/g, "공명"],
+    [/룡우/g, "효율"],
+    [/ㄱ릉|균릉|눈운공릉|눈운릉/g, "일반"],
+    [/유우/g, "해방"],
+    [/H위l프룸콩/g, "인멸피해"],
+  ],
+};
+
+/* unuse function
 function similarity(a, b) {
   a = a.replace(/\s+/g, "");
   b = b.replace(/\s+/g, "");
@@ -11,17 +25,6 @@ function similarity(a, b) {
   for (const ch of a) if (b.includes(ch)) match++;
   return match / Math.max(a.length, b.length);
 }
-
-const retouchList = {
-  kr: [
-    [/라어용|라어움|라어요|라어워|라어운|라o운/g, "방어력"],
-    [/H위프|H위lI프|H위표|피혜|피해|H위l표/g, "피해"],
-    [/음운/g, "공명"],
-    [/ㄱ릉|균릉|눈운공릉|눈운릉/g, "일반"],
-    [/유우/g, "해방"],
-    [/H위l프룸콩/g, "인멸피해"],
-  ],
-};
 
 const checkSim = {
   kr: {
@@ -48,7 +51,64 @@ function applyRetouch(texts, lang) {
     });
     return result;
   });
+}*/
+
+//#region functions
+function findClosestEcho(keyword) {
+  const candidates = [];
+
+  for (const [cost, group] of Object.entries(echoDict)) {
+    for (const [id, data] of Object.entries(group)) {
+      const langs = [data.kr, data.en, data.jp, data.zh].filter(Boolean);
+
+      langs.forEach((val) => {
+        const similarity = stringSimilarity.compareTwoStrings(
+          keyword.toLowerCase(),
+          val.toLowerCase()
+        );
+
+        candidates.push({
+          id,
+          cost,
+          matchLang: val,
+          score: similarity,
+          ...data,
+        });
+      });
+    }
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  const best = candidates[0];
+  return best.score >= 0.5 ? best : null;
 }
+function findClosestStat(keyword) {
+  if (!keyword || typeof keyword !== "string") return null;
+
+  const candidates = [];
+
+  for (const [id, data] of Object.entries(FixedStats)) {
+    const langs = [data.kr, data.en, data.jp, data.zh].filter(Boolean);
+    langs.forEach((val) => {
+      const similarity = stringSimilarity.compareTwoStrings(
+        keyword.toLowerCase(),
+        val.toLowerCase()
+      );
+
+      candidates.push({
+        id,
+        matchLang: val,
+        score: similarity,
+        ...data,
+      });
+    });
+  }
+
+  candidates.sort((a, b) => b.score - a.score);
+  const best = candidates[0];
+  return best && best.score >= 0.5 ? best : null;
+}
+//#endregion
 
 export function useOcrRetouch() {
   const OcrToStats = useCallback((texts, lang = "kr") => {
@@ -198,9 +258,9 @@ export function useOcrRetouch() {
         const value = item.replace(/[^\d.&%-]/g, "");
         if (key) {
           if (/COST/i.test(key)) {
-            const [before, after] = key.split(/COST/i);
-            if (before) echoData.push({ echoName: before });
-            echoData.push({ cost: value });
+            const [before, _] = key.split(/COST/i);
+            if (before) echoData.push(before);
+            echoData.push(value);
           } else {
             result.push([ key, value ]);
           }
@@ -211,7 +271,58 @@ export function useOcrRetouch() {
       }
     });
 
-    console.log("re:init", echoData, result);
+    result = result.slice(-7);
+    while (result.length < 7) result.push([FixedStats.dummy.id, 0]);
+    
+    const fixedEchoData = findClosestEcho(echoData[0]);
+    const fixedStatData = result.map((item) => [
+      findClosestStat(item[0]).id,
+      item[1],
+    ]);
+    const tempMainStat = fixedStatData[0];
+    const tempSubStats = fixedStatData.slice(2, 7);
+    const tempSubStatsValue = tempSubStats.map((item) => {
+      if (["hp", "atk", "def"].some((key) => item[0].includes(key))) {
+        if (item[1].includes("%")) {
+          return [
+            `${item[0]}Pct`,
+            parseFloat(String(item[1]).replace(/[^0-9.]/g, "")) / 10,
+          ];
+        } else return [item[0], Number(item[1])];
+      } else {
+        if (item[1].includes("%")) {
+          return [
+            item[0],
+            parseFloat(String(item[1]).replace(/[^0-9.]/g, "")) / 10,
+          ];
+        } else return [item[0], Number(item[1])];
+      }
+    });
+
+    statData.echoId = fixedEchoData.id;
+    statData.cost = parseInt(String(fixedEchoData.cost).replace(/[^0-9.]/g, ""));
+    statData.mainStat = [
+      tempMainStat[0],
+      tempMainStat[1].includes("%")
+        ? parseFloat(String(tempMainStat[1]).replace(/[^0-9.]/g, "")) / 10
+        : Number(tempMainStat[1]),
+    ];
+    statData.subStats = tempSubStatsValue.map((item) => {
+      const valueList = FixedStats[item[0]]?.ValueSub ?? [];
+      const numericValue = parseFloat(item[1]);
+
+      if (!valueList || valueList.length === 0) return [item[0], -1];
+
+      const numericList = valueList.map((v) => parseFloat(v));
+
+      const closestIndex = numericList.reduce((bestIdx, v, idx, arr) => {
+        const diff = Math.abs(v - numericValue);
+        const bestDiff = Math.abs(arr[bestIdx] - numericValue);
+        return diff < bestDiff ? idx : bestIdx;
+      }, 0);
+
+      return [item[0], closestIndex];
+    });
 
     return statData;
   }, []);

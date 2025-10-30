@@ -40,7 +40,7 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
       en: [
         "* The recognition result may not be accurate. Please double-check manually.",
         "* For issues or inquiries about the recognition feature, contact: inweag80@gmail.com",
-        '"Double-click to select an image file" or "Ctrl + V to paste an image"',
+        '"Double-click" to select an image file or "Ctrl + V" to paste an image',
         "Waiting for recognition request",
         "Waiting for recognition server...",
         "Request successful! Apply the detected values?",
@@ -51,7 +51,7 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
       jp: [
         "※ 認識結果が正確でない場合があります。必ず内容を確認してください。",
         "※ 認識機能に関する問題やお問い合わせは inweag80@gmail.com までご連絡ください。",
-        "「ダブルクリックで画像を選択」または「Ctrl + Vで画像を貼り付け」",
+        "「ダブルクリック」で画像を選択または「Ctrl + V」で画像を貼り付け",
         "認識リクエストを待機中",
         "認識サーバーを待機中...",
         "リクエスト成功！ 検出された数値を適用しますか？",
@@ -159,12 +159,14 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
     <div style={{ width: "100%", height: "100%", alignContent: "center" }}>
       <span
         className="ocr-request-info-text"
-        style={{ fontSize: `${19 * sizeValue}px` }}>
+        style={{ fontSize: `${19 * sizeValue}px` }}
+      >
         {uiText(0)}
       </span>
       <span
         className="ocr-request-info-text"
-        style={{ fontSize: `${19 * sizeValue}px` }}>
+        style={{ fontSize: `${19 * sizeValue}px` }}
+      >
         {uiText(1)}
       </span>
       <div
@@ -175,7 +177,8 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
         }}
         onDoubleClick={() => {
           fileInputRef.current?.click();
-        }}>
+        }}
+      >
         {isfocused ? (
           <div style={{ width: "100%", height: "100%" }}>
             <input
@@ -192,14 +195,20 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
             />
             <span
               className="ocr-request-text"
-              style={{ fontSize: `${26 * sizeValue}px` }}>
+              style={{ fontSize: `${26 * sizeValue}px` }}
+            >
               {uiText(2)}
             </span>
             <img className="ocr-image focused" src={echoImageBase64[index]} />
           </div>
         ) : (
           <div style={{ width: "100%", height: "100%" }}>
-            <span className="ocr-request-text" style={{ fontSize: `${26 * sizeValue}px` }}>Click to start</span>
+            <span
+              className="ocr-request-text"
+              style={{ fontSize: `${26 * sizeValue}px` }}
+            >
+              Click to start
+            </span>
             <img className="ocr-image" src={echoImageBase64[index]} />
           </div>
         )}
@@ -228,7 +237,8 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
                     height: "100%",
                     alignItems: "center",
                     justifyContent: "flex-end",
-                  }}>
+                  }}
+                >
                   <span className={`${lang}Font ocr-status-text success`}>
                     {uiText(5)}
                   </span>
@@ -236,10 +246,12 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
                     className="ocr-result-button"
                     onClick={() => {
                       setOcrStatus("Idle");
-                    }}>
+                    }}
+                  >
                     <span
                       className={`${lang}Font`}
-                      style={{ fontSize: `${26 * sizeValue}px` }}>
+                      style={{ fontSize: `${26 * sizeValue}px` }}
+                    >
                       No
                     </span>
                   </button>
@@ -248,10 +260,12 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
                     onClick={() => {
                       PatchEcho(index, ocrEchoData);
                       setOcrStatus("Applied");
-                    }}>
+                    }}
+                  >
                     <span
                       className={`${lang}Font`}
-                      style={{ fontSize: `${26 * sizeValue}px` }}>
+                      style={{ fontSize: `${26 * sizeValue}px` }}
+                    >
                       Yes
                     </span>
                   </button>
@@ -279,12 +293,17 @@ function OcrRequest({sizeValue, index = 1, isDebug = false }) {
           onClick={() => {
             if (ocrStatus !== "Requested" && ocrStatus !== "Successed")
               RequestOCR();
-          }}>
+          }}
+        >
           <span className={`${lang}Font`}>{uiText(8)}</span>
         </button>
       </div>
       {isDebug ? (
-        <div style={{ color: "#fff", backgroundColor: "#000" }}>{debug}</div>
+        <div style={{ color: "#fff", backgroundColor: "#000" }}>
+          <pre style={{ fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
+            {debug}
+          </pre>
+        </div>
       ) : null}
     </div>
   );

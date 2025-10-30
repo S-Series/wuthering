@@ -45,6 +45,7 @@ function ProfileCard() {
   const { userData } = useUserData();
   const { currentUser } = useFirebase();
   const assetApiUrl = process.env.REACT_APP_ASSET_API_URL;
+  const scoreSheetUrl = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
 
   const UI_COLOR = [
     "#333366ff",
@@ -419,7 +420,8 @@ function ProfileCard() {
           } catch (error) {
             console.error("❌ 요청 실패:", error);
           }
-        }}>
+        }}
+      >
         test
       </button>
       <img src={generatedImage} />
@@ -441,7 +443,8 @@ function ProfileCard() {
                   ? prev.filter((v) => v !== item.value)
                   : [...prev, item.value];
               });
-            }}>
+            }}
+          >
             <img
               style={{
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
@@ -466,7 +469,8 @@ function ProfileCard() {
                   ? prev.filter((v) => v !== item.value)
                   : [...prev, item.value];
               });
-            }}>
+            }}
+          >
             <img
               style={{
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
@@ -484,14 +488,16 @@ function ProfileCard() {
           onClick={() => {
             setWeaponFilter([]);
             setElementFilter([]);
-          }}>
+          }}
+        >
           <span
             className={`${lang}Font`}
             style={{
               fontWeight: "100",
               fontSize: `${30 * sizeValue}px`,
               color: "#fff",
-            }}>
+            }}
+          >
             Reset
           </span>
         </button>
@@ -509,7 +515,8 @@ function ProfileCard() {
                   display: "flex",
                   alignItems: "center",
                   gap: `${25 * sizeValue}px`,
-                }}>
+                }}
+              >
                 <img
                   alt=""
                   src={`${assetApiUrl}/character/${characterData?.id}/ico.webp`}
@@ -521,7 +528,8 @@ function ProfileCard() {
                 />
                 <span
                   className={`${lang}Font`}
-                  style={{ fontSize: `${32 * sizeValue}px` }}>
+                  style={{ fontSize: `${32 * sizeValue}px` }}
+                >
                   {`${
                     characterData?.[
                       lang === "en" ? "id" : lang ?? "Character"
@@ -581,7 +589,8 @@ function ProfileCard() {
                   display: "flex",
                   alignItems: "center",
                   gap: `${20 * sizeValue}px`,
-                }}>
+                }}
+              >
                 <img
                   alt=""
                   src={
@@ -600,7 +609,8 @@ function ProfileCard() {
                   style={{
                     fontSize: `${28 * sizeValue}px`,
                     whiteSpace: "pre-wrap",
-                  }}>
+                  }}
+                >
                   {characterData && weaponId
                     ? weapon[characterData.weapon].find(
                         (item) => item.id === weaponId
@@ -675,12 +685,12 @@ function ProfileCard() {
                 width: "fit-content",
                 minWidth: "100%",
                 maxWidth: "200%",
-                color: "#fff"
+                color: "#fff",
               }),
               valueContainer: (base) => ({
                 ...base,
                 height: "100%",
-                color: "#fff"
+                color: "#fff",
               }),
               singleValue: (base) => ({
                 ...base,
@@ -688,9 +698,10 @@ function ProfileCard() {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                color: "#fff"
+                color: "#fff",
               }),
-            }}/>
+            }}
+          />
         </div>
       </div>
       {/* //$ Card Top Info Field */}
@@ -711,12 +722,14 @@ function ProfileCard() {
             PatchImageCopyright(false, false, "Kuro Games");
             CopyrightInputfield[1].current.value = "2024";
             PatchImageCopyright(false, true, "2024");
-          }}>
+          }}
+        >
           <span className={`${lang}Font`}>{UI_TEXT[lang][3] ?? "error"}</span>
         </button>
         <div
           className="profile-image-request-slot top end"
-          style={{ marginLeft: `${25 * sizeValue}px` }}>
+          style={{ marginLeft: `${25 * sizeValue}px` }}
+        >
           <span className="enFont">&nbsp; © &nbsp;</span>
           <input
             className="white-square-input"
@@ -756,13 +769,15 @@ function ProfileCard() {
       <div
         className="profile-card-slot"
         ref={ProfileCardSlotRef}
-        style={{ backgroundImage: `url("/asdf2.jpg")` }}>
+        style={{ backgroundImage: `url("/asdf2.jpg")` }}
+      >
         <div className={`${lang}Font profile-alert-text`}>
           <span
             style={{
               ...setSlotStyle({ w: 1100 - 25, h: 80, x: 1000, y: -180 }),
               fontSize: `${28 * sizeValue}px`,
-            }}>
+            }}
+          >
             {`${getStringInfo(lang, 2)}\n${getStringInfo(lang, 3)}`}
           </span>
         </div>
@@ -776,7 +791,8 @@ function ProfileCard() {
             borderTopLeftRadius: `calc(40px * ${sizeValue})`,
             overflow: "hidden",
             backgroundPosition: "center center",
-          }}>
+          }}
+        >
           <img
             alt=""
             src={`${assetApiUrl}/character/${characterId}/art.png`}
@@ -820,13 +836,15 @@ function ProfileCard() {
               justifyContent: "center",
               visibility: constellation[0] !== 0 ? "visible" : "hidden",
             }}
-            onClick={() => setConstellation((prev) => [0, prev[1]])}>
+            onClick={() => setConstellation((prev) => [0, prev[1]])}
+          >
             <span
               className={`enFont`}
               style={{
                 fontSize: `${20 * sizeValue}px`,
                 whiteSpace: "nowrap",
-              }}>
+              }}
+            >
               Reset C0
             </span>
           </button>
@@ -867,7 +885,8 @@ function ProfileCard() {
           className="profile-card-character-info"
           style={{
             ...setSlotStyle({ w: 650, h: 120, x: 20, y: 820 }),
-          }}>
+          }}
+        >
           {/* //$ Left */}
           <span
             className={`profile-card-text enFont`}
@@ -876,7 +895,8 @@ function ProfileCard() {
               left: `calc(15px * ${sizeValue})`,
               color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
-            }}>
+            }}
+          >
             {userData?.gameServer ?? "Guest Server"}
           </span>
           <span
@@ -886,7 +906,8 @@ function ProfileCard() {
               left: `calc(15px * ${sizeValue})`,
               color: "#ffffff",
               fontSize: `calc(24px * ${sizeValue})`,
-            }}>
+            }}
+          >
             {`Lv.${userData?.gameLevel ?? "--"} ${currentUser?.displayName}`}
           </span>
           <span
@@ -896,7 +917,8 @@ function ProfileCard() {
               bottom: `calc(10px * ${sizeValue})`,
               left: `calc(15px * ${sizeValue})`,
               fontSize: `calc(24px * ${sizeValue})`,
-            }}>
+            }}
+          >
             {`Uid. ${userData?.gameUid ?? "--- --- ---"}`}
           </span>
           {/* //$ Right */}
@@ -947,7 +969,8 @@ function ProfileCard() {
               right: "0px",
               color: "#ffffff",
               fontSize: `calc(46px * ${sizeValue})`,
-            }}>
+            }}
+          >
             {lang === "en"
               ? capitalizeFirst(characterData?.id) ?? ""
               : characterData?.[lang] ?? ""}
@@ -959,7 +982,8 @@ function ProfileCard() {
               textAlign: "end",
               color: "#ffffff99",
               fontSize: `calc(18px * ${sizeValue})`,
-            }}>
+            }}
+          >
             {imageCopyrightText[0]}
           </span>
         </div>
@@ -970,7 +994,8 @@ function ProfileCard() {
             background: `linear-gradient(210deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
             border: `calc(5px * ${sizeValue}) solid #323232`,
             zIndex: 250,
-          }}>
+          }}
+        >
           <img
             alt=""
             className="profile-card-icon"
@@ -995,7 +1020,8 @@ function ProfileCard() {
                     alignSelf: "flex-end",
                     justifySelf: "center",
                     color: "#fff",
-                  }}>
+                  }}
+                >
                   C{constellation[1] + 1}
                 </span>
               ),
@@ -1069,7 +1095,8 @@ function ProfileCard() {
           className="profile-card-weapon profile-slot"
           style={{
             ...setSlotStyle({ w: 600, h: 140, x: 700, y: 70 }),
-          }}>
+          }}
+        >
           {/* //$ Weapon Name */}
           <span
             className={`profile-card-text ${lang}Font`}
@@ -1082,7 +1109,8 @@ function ProfileCard() {
               left: `${175 * sizeValue}px`,
               width: `${420 * sizeValue}px`,
               height: `${60 * sizeValue}px`,
-            }}>
+            }}
+          >
             {characterData && weaponId
               ? weapon[characterData.weapon].find(
                   (item) => item.id === weaponId
@@ -1107,7 +1135,8 @@ function ProfileCard() {
               textAlign: "right",
               alignContent: "center",
               ...setSlotStyle({ w: 170, h: 60, x: 165, y: 75 }),
-            }}>
+            }}
+          >
             {weaponStats?.atk ?? ""}
           </span>
           {/* //$ Weapon Main Stat */}
@@ -1132,7 +1161,8 @@ function ProfileCard() {
               textAlign: "right",
               alignContent: "center",
               ...setSlotStyle({ w: 195, h: 60, x: 380, y: 75 }),
-            }}>
+            }}
+          >
             {weaponStats?.value?.[0].toFixed(1) ?? ""}%
           </span>
         </div>
@@ -1142,7 +1172,8 @@ function ProfileCard() {
           style={{
             ...setSlotStyle({ w: 600, h: 710, x: 700, y: 210 }),
             backgroundColor: "#00000033",
-          }}>
+          }}
+        >
           {statId.map((item, idx) => (
             <StatSlot
               key={idx}
@@ -1167,13 +1198,15 @@ function ProfileCard() {
               alignContent: "center",
               justifyContent: "center",
               //backgroundColor: "#ff000033",
-            }}>
+            }}
+          >
             {profileData.harmony === null ? null : (
               <div
                 style={{
                   display: "flex",
                   gap: `${20 * sizeValue}px`,
-                }}>
+                }}
+              >
                 <div
                   style={{
                     display: "flex",
@@ -1182,7 +1215,8 @@ function ProfileCard() {
                     height: "100%",
                     padding: `0 ${2 * sizeValue}px`,
                     backgroundColor: "#ffffff33",
-                  }}>
+                  }}
+                >
                   <div style={{ width: `${2 * sizeValue}px` }} />
                   <img
                     alt=""
@@ -1210,7 +1244,8 @@ function ProfileCard() {
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis",
-                    }}>
+                    }}
+                  >
                     {`${harmony[profileData.harmony]?.[lang]} [5]`}
                   </span>
                   <div style={{ width: `${10 * sizeValue}px` }} />
@@ -1223,7 +1258,8 @@ function ProfileCard() {
                     height: "100%",
                     padding: `0 ${2 * sizeValue}px`,
                     backgroundColor: "#ffffff33",
-                  }}>
+                  }}
+                >
                   <div style={{ width: `${2 * sizeValue}px` }} />
                   <img
                     alt=""
@@ -1251,7 +1287,8 @@ function ProfileCard() {
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis",
-                    }}>
+                    }}
+                  >
                     {`${harmony[profileData.harmony]?.[lang]} [5]`}
                   </span>
                   <div style={{ width: `${10 * sizeValue}px` }} />
@@ -1265,17 +1302,20 @@ function ProfileCard() {
               ...setSlotStyle({ w: 540, h: 50, x: 30, y: 645 }),
               display: "flex",
               flexDirection: "row",
-            }}>
+            }}
+          >
             {[0, 1].map((item) => (
               <div className="stat-score-slot" key={item}>
                 <span
                   className="stat-score-text title numFont"
-                  style={{ fontSize: `${36 * sizeValue}px` }}>
+                  style={{ fontSize: `${36 * sizeValue}px` }}
+                >
                   {item === 0 ? "Cv." : "Av."}
                 </span>
                 <span
                   className="stat-score-text value numFont"
-                  style={{ fontSize: `${36 * sizeValue}px` }}>
+                  style={{ fontSize: `${36 * sizeValue}px` }}
+                >
                   {echoScore
                     .reduce((acc, cur) => acc + cur[item], 0)
                     .toFixed(1)}
@@ -1289,7 +1329,8 @@ function ProfileCard() {
           className="profile-card-total-info profile-slot"
           style={{
             ...setSlotStyle({ w: 800, h: 215, x: 1320, y: 70 }),
-          }}>
+          }}
+        >
           <img
             alt=""
             src={`/ico/rank/4.png`}
@@ -1321,7 +1362,8 @@ function ProfileCard() {
               color: "#fff",
               textAlign: "center",
               fontSize: `${36 * sizeValue}px`,
-            }}>
+            }}
+          >
             {`Av. ${echoScore
               .reduce((acc, cur) => acc + cur[1], 0)
               .toFixed(1)}pt`}
@@ -1334,7 +1376,8 @@ function ProfileCard() {
               overflow: "hidden",
               ...setSlotStyle({ w: 560, h: 195, x: 230, y: 10 }),
               backgroundColor: "#00000033",
-            }}>
+            }}
+          >
             <ImageDrag
               isMain={false}
               inputable={true}
@@ -1349,7 +1392,8 @@ function ProfileCard() {
               textAlign: "end",
               color: "#ffffff99",
               fontSize: `calc(15px * ${sizeValue})`,
-            }}>
+            }}
+          >
             {imageCopyrightText[1]}
           </span>
         </div>
@@ -1362,7 +1406,8 @@ function ProfileCard() {
             fontSize: `${25 * sizeValue}px`,
             alignItems: "center",
             justifyContent: "flex-start",
-          }}>
+          }}
+        >
           Unofficial Fan Project: All assets © Kuro Games
         </span>
         <span
@@ -1374,7 +1419,8 @@ function ProfileCard() {
             fontSize: `${19.8 * sizeValue}px`,
             alignItems: "center",
             justifyContent: "flex-end",
-          }}>
+          }}
+        >
           powered by. SSeries
         </span>
         <span
@@ -1386,7 +1432,8 @@ function ProfileCard() {
             fontSize: `${25 * sizeValue}px`,
             alignItems: "center",
             justifyContent: "flex-end",
-          }}>
+          }}
+        >
           WuWa.dev © 2025
         </span>
         {echoList.map((item, idx) => (
@@ -1395,7 +1442,8 @@ function ProfileCard() {
             className="profile-card-echo-slot profile-slot"
             style={{
               ...setSlotStyle({ w: 148, h: 620, x: 1320 + 163 * idx, y: 300 }),
-            }}>
+            }}
+          >
             <EchoSlot index={idx} sizeValue={sizeValue} />
           </div>
         ))}
@@ -1453,12 +1501,8 @@ function ProfileCard() {
         <button
           className="profile-image-request-button bottom end"
           style={{ marginLeft: `${25 * sizeValue}px` }}
-          onClick={() =>
-            window.open(
-              "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029",
-              "_blank"
-            )
-          }>
+          onClick={() => window.open(scoreSheetUrl, "_blank")}
+        >
           <span className={`${lang}Font`}>{UI_TEXT[lang][6] ?? "error"}</span>
         </button>
       </div>
@@ -1469,7 +1513,8 @@ function ProfileCard() {
           style={{
             ...setSlotStyle({ w: 550, h: 816, x: 20, y: 20 }),
             backgroundColor: "#00000033",
-          }}>
+          }}
+        >
           <span
             className="ocr-text title"
             style={{
@@ -1477,7 +1522,8 @@ function ProfileCard() {
               fontSize: `${56 * sizeValue}px`,
               alignContent: "center",
               textAlign: "center",
-            }}>
+            }}
+          >
             Echo Data
           </span>
           {echoList.map((item, idx) => {
@@ -1493,12 +1539,14 @@ function ProfileCard() {
                     y: 100 + idx * 150,
                   }),
                   backgroundColor: "#00000033",
-                }}>
+                }}
+              >
                 <div
                   className="ocr-react-select-slot"
                   style={{
                     ...setSlotStyle({ w: 300, h: 80, x: 15, y: 20 }),
-                  }}>
+                  }}
+                >
                   <Select
                     className="ocr-cost-select"
                     value={{
@@ -1553,7 +1601,8 @@ function ProfileCard() {
                   }}
                   onClick={() => {
                     setSelectedEchoIdx(idx);
-                  }}>
+                  }}
+                >
                   <span className={`${lang}Font`}>Select</span>
                 </button>
               </div>
@@ -1575,19 +1624,22 @@ function ProfileCard() {
                   width: "100%",
                   height: "100%",
                   pointerEvents: "none",
-                }}>
+                }}
+              >
                 <div
                   className="ocr-input-slot ocr"
                   style={{
                     ...setSlotStyle({ w: 900, h: 816, x: 590, y: 20 }),
                     backgroundColor: "#00000033",
-                  }}>
+                  }}
+                >
                   <div
                     style={{
                       ...setSlotStyle({ w: 900, h: 816, x: 0, y: 0 }),
                       backgroundColor: "#00000033",
                       pointerEvents: "auto",
-                    }}>
+                    }}
+                  >
                     <OcrRequest
                       sizeValue={sizeValue}
                       index={idx}
@@ -1600,12 +1652,14 @@ function ProfileCard() {
                   style={{
                     ...setSlotStyle({ w: 600, h: 816, x: 1510, y: 20 }),
                     backgroundColor: "#00000033",
-                  }}>
+                  }}
+                >
                   <div
                     style={{
                       ...setSlotStyle({ w: 600 - 2, h: 816 - 2, y: 0 }),
                       backgroundColor: "#00000033",
-                    }}>
+                    }}
+                  >
                     <EchoStatDrop index={idx} sizeValue={sizeValue} />
                   </div>
                 </div>
@@ -1614,7 +1668,7 @@ function ProfileCard() {
           )}
         </AnimatePresence>
       </div>
-      <div style={{ height: `${1000 * sizeValue}px` }} />
+      <div style={{ height: `${1500 * sizeValue}px` }} />
     </div>
   );
 }
