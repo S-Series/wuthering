@@ -77,7 +77,7 @@ export function ProfileProvider({ children }) {
     const fixedData = data.map((echo) => {
       if (!Array.isArray(echo.subStats)) echo.subStats = [];
       while (echo.subStats.length < 5) {
-        echo.subStats.push([FixedStats.dummy.id, 0]); // ✅ 기본값 더미 추가
+        echo.subStats.push([FixedStats.dummy.id, 0]);
       }
       return echo;
     });

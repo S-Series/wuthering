@@ -1,4 +1,4 @@
-import { echoDict, harmony } from "../../data/Echos";
+import { harmony } from "../../data/Echos";
 import { useStyleHelper } from "../../hooks/useStyleHelpers";
 import { useProfile } from "../../hooks/useProfile";
 import { useApi } from "../../hooks/useApi";
@@ -11,12 +11,12 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
   const { setSlotStyle } = useStyleHelper(sizeValue);
   const { echoList, echoScore } = useProfile();
   
-  function subStyleValue(idx, isText) {
+  function subStyleValue(idx, isText = null) {
     return {
-      w: isText ? 130 : 35,
-      h: 35,
-      x: 9,
-      y: 264 + 42 * idx,
+      w: isText === null ? 130 + 9 * 2 : isText ? 130 : 35,
+      h: isText === null ? 55 : 35,
+      x: isText === null ? 0 : 9,
+      y: isText === null ? 254 + 42 * idx : 264 + 42 * idx,
     };
   }
   function costToIndex(cost) {
@@ -83,7 +83,10 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
         <img
           alt=""
           src={`${assetApiUrl}/ico/stats/${echoList[index]?.mainStat}.webp`}
-          style={setSlotStyle({ w: 35, h: 35, x: 9, y: 165 })}
+          style={{
+            ...setSlotStyle({ w: 35, h: 35, x: 9, y: 165 }),
+            zIndex: 6,
+          }}
         />
         <span
           className="numFont"
@@ -94,7 +97,9 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             justifyContent: "flex-end",
             color: "#fff",
             fontSize: `${28 * sizeValue}px`,
-          }}>
+            zIndex: 6,
+          }}
+        >
           {FixedStats[echoList[index]?.mainStat]?.ValueMain[
             costToIndex(echoList[index]?.cost)
           ] || "----"}
@@ -105,7 +110,10 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
           src={`${assetApiUrl}/ico/stats/${
             FixedMainSub[costToIndex(echoList[index]?.cost)][0]
           }.webp`}
-          style={setSlotStyle({ w: 35, h: 35, x: 9, y: 207 })}
+          style={{
+            ...setSlotStyle({ w: 35, h: 35, x: 9, y: 207 }),
+            zIndex: 6,
+          }}
         />
         <span
           className="numFont"
@@ -116,19 +124,33 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
             justifyContent: "flex-end",
             color: "#fff",
             fontSize: `${28 * sizeValue}px`,
-          }}>
+            zIndex: 6,
+          }}
+        >
           {FixedMainSub[costToIndex(echoList[index]?.cost)][1] || "----"}
         </span>
+        <img
+          alt=""
+          src="./accent.png"
+          style={{
+            ...setSlotStyle({ w: 148, h: 55, x: 0, y: 155 }),
+            zIndex: 5,
+            opacity: 0.5,
+          }}
+        />
       </div>
       <div className="echo-sub-stats">
-        {echoList[index]?.subStats.map((item, idx) =>
+        {echoList[index]?.subStats.map((_, idx) =>
           echoList[index]?.subStats[idx][0] !== "dummy" &&
           echoList[index]?.subStats[idx][1] >= 0 ? (
             <div key={idx} style={{ alignContent: "center" }}>
               <img
                 alt=""
                 src={`${assetApiUrl}/ico/stats/${echoList[index]?.subStats[idx][0]}.webp`}
-                style={setSlotStyle(subStyleValue(idx, false))}
+                style={{
+                  ...setSlotStyle(subStyleValue(idx, false)),
+                  zIndex: 6,
+                }}
               />
               <span
                 className="numFont"
@@ -139,7 +161,9 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
                   justifyContent: "flex-end",
                   color: "#fff",
                   fontSize: `${28 * sizeValue}px`,
-                }}>
+                  zIndex: 6,
+                }}
+              >
                 {`${
                   FixedStats[echoList[index].subStats[idx][0]].ValueSub[
                     echoList[index].subStats[idx][1]
@@ -153,6 +177,15 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
                       : ""
                   }`}
               </span>
+              <img
+                alt=""
+                src="./accent.png"
+                style={{
+                  ...setSlotStyle(subStyleValue(idx)),
+                  zIndex: 5,
+                  opacity: 0.5,
+                }}
+              />
             </div>
           ) : (
             <div key={idx} style={{ alignContent: "center" }}>
@@ -170,7 +203,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
                   justifyContent: "flex-end",
                   color: "#fff",
                   fontSize: `${30 * sizeValue}px`,
-                }}>
+                }}
+              >
                 ----
               </span>
             </div>
@@ -180,9 +214,16 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
       <div className="echo-score">
         <img
           alt=""
-          src={`/default.webp`}
+          src={`/ico/rank/${Math.min(
+            4,
+            Math.max(
+              0,
+              Math.floor(
+                ((echoScore[index][1] - 25) / 15
+              ) + 1
+          )))}.png`}
           style={{
-            ...setSlotStyle({ w: 140, h: 72.5, x: 4, y: 481 }),
+            ...setSlotStyle({ w: 140, h: 70, x: 4, y: 482 }),
             objectFit: "contain",
             objectPosition: "center",
           }}
@@ -196,7 +237,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
               textAlign: "left",
               transform: `translateY(-${4 * sizeValue}px)`,
               fontSize: `${28 * sizeValue}px`,
-            }}>
+            }}
+          >
             Cv.
           </span>
           <span
@@ -207,7 +249,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
               textAlign: "right",
               transform: `translateY(-${4 * sizeValue}px)`,
               fontSize: `${28 * sizeValue}px`,
-            }}>
+            }}
+          >
             {echoScore[index][0]}pt
           </span>
           <span
@@ -218,7 +261,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
               textAlign: "left",
               transform: `translateY(-${4 * sizeValue}px)`,
               fontSize: `${28 * sizeValue}px`,
-            }}>
+            }}
+          >
             Av.
           </span>
           <span
@@ -229,7 +273,8 @@ function EchoSlot({ index = 0, sizeValue = 0 }) {
               textAlign: "right",
               transform: `translateY(-${4 * sizeValue}px)`,
               fontSize: `${28 * sizeValue}px`,
-            }}>
+            }}
+          >
             {echoScore[index][1]}pt
           </span>
         </div>

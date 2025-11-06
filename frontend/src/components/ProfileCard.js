@@ -369,7 +369,6 @@ function ProfileCard() {
   return (
     <div key={lang} className="profile-portrait">
       {/*
-       */}
       <button
         onClick={async () => {
           try {
@@ -425,7 +424,6 @@ function ProfileCard() {
         test
       </button>
       <img src={generatedImage} />
-      {/*
        */}
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (
@@ -446,6 +444,7 @@ function ProfileCard() {
             }}
           >
             <img
+              alt=""
               style={{
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
                 filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
@@ -472,6 +471,7 @@ function ProfileCard() {
             }}
           >
             <img
+              alt=""
               style={{
                 ...setSlotStyle({ w: 63, h: 63, x: 0, y: 0 }),
                 filter: `drop-shadow(0 0px ${15 * sizeValue}px #ffffffcc)`,
@@ -862,6 +862,7 @@ function ProfileCard() {
                 onClick={() => setConstellation((prev) => [idx + 1, prev[1]])}
               />
               <img
+                alt=""
                 src={`${assetApiUrl}/character/${characterId}/C${idx + 1}.png`}
                 style={
                   idx + 1 > constellation[0]
@@ -1333,7 +1334,17 @@ function ProfileCard() {
         >
           <img
             alt=""
-            src={`/ico/rank/4.png`}
+            src={`/ico/rank/${Math.min(
+              4,
+              Math.max(
+                0,
+                Math.floor(
+                  (echoScore.reduce((acc, cur) => acc + cur[1], 0).toFixed(1) -
+                    150) /
+                    50
+                ) + 1
+              )
+            )}.png`}
             style={{
               ...setSlotStyle({ w: 262, h: 156, x: -16, y: 12 }),
               objectFit: "contain",
@@ -1341,6 +1352,7 @@ function ProfileCard() {
             }}
           />
           <img
+            alt=""
             src="/link.png"
             style={{
               ...setSlotStyle({ w: 20, h: 20, x: 570, y: -31 }),
