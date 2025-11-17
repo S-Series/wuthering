@@ -13,7 +13,7 @@ import {
 } from "../data/Characters.js";
 import { weapon, weaponStat } from "../data/Weapons.js";
 import { FixedStats } from "../data/Stats.js";
-import { createEmptyEcho } from "../data/Echos.js";
+import { createEmptyEcho, harmony } from "../data/Echos.js";
 
 const ProfileContext = createContext(null);
 
@@ -417,7 +417,21 @@ export function ProfileProvider({ children }) {
     if (!echoList) return;
     localStorage.setItem(`${characterId}EchoData`, JSON.stringify(echoList));
 
-    
+    const harmonies = Object.values(echoList).map(item => item.harmony);
+    const harmonyList = Object.keys(harmony).map(id => [id, 0]);
+
+    console.log(harmonies);
+    console.log(harmonyList);
+
+    harmonies.forEach(id => {
+      const item = harmonyList.find((x) => x[0] === id);
+      if (item) item[1] += 1;
+    });
+
+    const filtered = harmonyList.filter(([, count]) => count > 0)
+
+    console.log(filtered);
+
   }, [echoList]);
 
   const value = useMemo(
