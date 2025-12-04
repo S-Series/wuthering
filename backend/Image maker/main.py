@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -220,7 +219,7 @@ async def create_profile_card(
     draw_rect_topleft_round(
         base, 
         xy1=(20, 20, 650, 800), 
-        xy2=(0, 0, 1.04), 
+        xy2=(0, 0, 1), 
         radius=40, 
         fill=(255, 255, 255, round(255 * 0.4)), 
         color_filter=(150, 150, 150),
@@ -230,7 +229,7 @@ async def create_profile_card(
     draw_rect_topleft_round(
         base, 
         xy1=(20, 20, 650, 800), 
-        xy2=(0, 0, 1.04), 
+        xy2=(0, 0, 1), 
         radius=40, 
         border=((200, 200, 200), 5), 
         img_path=input_main

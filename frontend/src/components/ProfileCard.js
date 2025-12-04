@@ -369,6 +369,7 @@ function ProfileCard() {
   return (
     <div key={lang} className="profile-portrait">
       {/*
+       */}
       <button
         onClick={async () => {
           try {
@@ -424,6 +425,7 @@ function ProfileCard() {
         test
       </button>
       <img src={generatedImage} />
+      {/*
        */}
       <div className="profile-filter-slot">
         {Object.values(WEAPON_TYPES).map((item, idx) => (

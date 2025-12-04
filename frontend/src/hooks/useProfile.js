@@ -44,9 +44,6 @@ export function ProfileProvider({ children }) {
     ]
   }, [mainImageCopyright, subImageCopyright])
 
-  //$ 이건 콘솔 출력됨
-  useEffect(() => {console.log(imageCopyrightText)},[imageCopyrightText])
-
   const PatchImageCopyright = useCallback((isMain, isValue, value) => {
     if (isMain) {
       setMainImageCopyright((prev) =>
