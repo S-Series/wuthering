@@ -1,0 +1,44 @@
+#footer-body {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    height: 60px;
+    justify-content: space-between;
+    
+    border-top: 1px #000 solid;
+    background: linear-gradient(0deg, #ccc, #aaa 40%, #aaa 60%, #ccc);
+
+    z-index: 1001;
+}
+
+#footer-body .item-slot {
+    display: flex;
+    width: fit-content;
+    min-width: 20px;
+    height: 100%;
+
+    gap: 1rem;
+    margin: 0 1rem;
+
+    color: #000;
+    align-items: center;
+    white-space: pre-line;
+    line-height: 18px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#footer-body a {
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    align-items: center;
+}
+
+#footer-body .footer-icon {
+    height: 45px;
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    border-radius: 50%;
+}
