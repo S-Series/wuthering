@@ -1,0 +1,120 @@
+.card-contents .card-contents-slot.main {
+    background: url("/temp/result.png");
+    background: url("/cardBg.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.card-contents .card-contents-slot.main .main-item-slot {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: #ff000033;
+}
+
+.card-contents .card-contents-slot.main .main-item-slot.character {
+    width: 30.75%;
+    height: 96.25%;
+    top: 2.5%;
+    left: 1%;
+    background-color: transparent;
+}
+.card-contents .card-contents-slot.main .main-item-slot.weapon {
+    flex-direction: row;
+    width: 28%;
+    height: 20%;
+    top: 2.5%;
+    left: 32.75%;
+}
+.card-contents .card-contents-slot.main .main-item-slot.stats {
+    width: 28%;
+    height: 76%;
+    bottom: 1.5%;
+    left: 32.75%;
+    background-color: #ffc00066;
+}
+.card-contents .card-contents-slot.main .main-item-slot.description {
+    flex-direction: row;
+    width: 37.5%;
+    height: 6%;
+    top: 1%;
+    right: 0.8%;
+    background-color: #ffc00066;
+}
+.card-contents .card-contents-slot.main .main-item-slot.namecard {
+    width: 37.5%;
+    height: 23.5%;
+    top: 7.5%;
+    right: 0.8%;
+}
+.card-contents .card-contents-slot.main .main-item-slot.echos {
+    width: 37.5%;
+    height: 66.25%;
+    right: 0.8%;
+    bottom: 1.5%;
+}
+
+.main-item-slot.character .card-character-slot {
+    width: calc(99% - 2px);
+    height: calc(88% - 2px);
+    border: 1px solid #fff;
+    border-top-left-radius: 1.25vw;
+    box-shadow: 0.2vw 0.2vw 0 #000;
+    object-fit: contain;
+}
+
+.main-item-slot.character .card-character-slot .account-info {
+    position: absolute;
+    left: 1%;
+
+    color: #fff;
+    font-size: min(0.7vw, 0.8rem);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.main-item-slot.character .card-character-slot .account-info.region {
+    bottom: 7%;
+}
+.main-item-slot.character .card-character-slot .account-info.player-name {
+    bottom: 3.5%;
+}
+.main-item-slot.character .card-character-slot .account-info.player-uid {
+    bottom: 0;
+}
+
+.main-item-slot.character .card-character-slot .character-name {
+    position: absolute;
+    right: 1%;
+    bottom: -0.5%;
+
+    color: #fff;
+    font-size: min(1.75vw, 2rem);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.main-item-slot.character .card-character-slot .character-icon {
+    position: absolute;
+    bottom: 6.5%;
+    height: min(1.1vw, 1.3rem);
+    aspect-ratio: 1 / 1;
+}
+
+.main-item-slot.character .card-character-slot .character-icon.element {
+    height: min(1.3vw, 1.5rem);
+    bottom: calc(6.5% - 0.05vw);
+    aspect-ratio: 1 / 1;
+    right: calc(19% - 0.1vw);
+}
+.main-item-slot.character .card-character-slot .character-icon.stat-type {
+    right: 13%;
+}
+.main-item-slot.character .card-character-slot .character-icon.attack-type {
+    right: 7%;
+}
+.main-item-slot.character .card-character-slot .character-icon.weapon-type {
+    right: 1%;
+}
+

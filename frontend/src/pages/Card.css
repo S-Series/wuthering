@@ -1,0 +1,224 @@
+#card-page-slot {
+    display: flex;
+    flex-direction: row; 
+    width: 85%;
+    min-width: 780px;
+    max-width: 1500px;
+    height: fit-content;
+    min-height: 100%;
+
+    gap: 0;
+    margin: 0 auto;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    background-color: #ff000011;
+
+}
+
+#card-page-slot .card-section {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    min-height: 10vh;
+
+    gap: 2rem;
+}
+
+#card-page-slot .card-section.left {
+    min-width: 600px;
+    width: 77.5%;
+}
+
+#card-page-slot .card-section.right {
+    width: 20%;
+    border: 1px solid #000;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    min-height: 10px;
+
+    gap: 1rem;
+    align-items: center;
+}
+
+.card-header .header-slot {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    background-color: #ff44ff55;
+}
+
+.card-contents {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+
+    align-items: center;
+}
+
+.card-contents .card-contents-slot.header,
+.card-contents .card-contents-slot.footer {
+    display: flex;
+    width: 97%;
+    min-width: 480px;
+    height: min(2.75vw, 3rem);
+    justify-content: space-between;
+
+    background-color: #ff44ff55;
+    z-index: 99;
+}
+
+.card-contents .card-contents-slot.main {
+    display: flex;
+    position: relative;
+    width: calc(100% - 2px);
+    aspect-ratio: 2140 / 940;
+    border: 1px solid #888;
+    box-shadow: 0 5px 10px #00000088;
+    z-index: 100;
+}
+
+.card-page-button {
+    display: flex;
+    position: relative;
+    width: fit-content;
+    
+    gap: 1vw;
+    outline: 0;
+    border: 1px solid transparent;
+    padding: 0;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+
+    color: #fff;
+    font-size: min(1.2vw, 1.1rem);
+    font-weight: 500;
+    text-align: center;
+    border-radius: 4px;
+    background: linear-gradient(0deg, #333366ff, #0b0b44ff, #333366ff);
+}
+
+.card-page-button span {
+    padding: 0 1vw;
+}
+
+.card-page-button:hover {
+    border: 1px solid #fff;
+}
+
+.card-page-button:active,
+.card-page-button:focus,
+.card-page-button:focus-visible {
+    outline: 0;
+}
+
+.card-page-button::-moz-focus-inner {
+    outline: 0;
+}
+
+.card-page-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: #fff;
+    mix-blend-mode: overlay;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 0.1s ease-out;
+}
+
+.card-page-button.active::after {
+    opacity: 0.8;
+}
+
+.card-page-button.filter {
+    width: fit-content;
+    min-width: 35px;
+    height: 35px;
+}
+
+.card-page-button.content {
+    width: fit-content;
+    height: 100%;
+
+    font-size: min(1.1vw, 1rem);
+    border: 1px solid #888;
+    border-radius: 0;
+}
+
+.card-page-button.content.top {
+    border-bottom: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card-page-button.content.bottom {
+    border-bottom: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.card-page-button img {
+    height: 100%;
+    z-index: 1;
+}
+
+.card-header .item-slot,
+.card-contents .item-slot {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    height: 100%;
+
+    gap: min(0.5vw, 1rem);
+}
+
+@media (max-width: 780px) {
+    #card-page-slot {
+        width: 100%;
+        min-width: 400px;
+        flex-direction: column;
+        
+        gap: 2rem;
+        align-items: center;
+    }
+
+    #card-page-slot .card-section.left {
+        min-width: 480px;
+        max-width: 600px;
+        width: 95%;
+    }
+
+    #card-page-slot .card-section.right {
+        min-width: 480px;
+        max-width: 600px;
+        width: 95%;
+    }
+
+    .card-contents .card-contents-slot.header,
+    .card-contents .card-contents-slot.footer {
+        height: 2rem;
+    }
+
+    .card-header .item-slot.filter {
+        flex-direction: column;
+    }
+
+    .card-page-button,
+    .card-page-button.content {
+        font-size: 0.7rem;
+    }
+
+    .card-header .item-slot,
+    .card-contents .item-slot {
+        gap: 0.5rem;
+    }
+
+}

@@ -1,0 +1,11 @@
+#main-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: fit-content;
+    min-height: 100vh;
+    padding-top: 100px;
+    padding-bottom: 120px;
+
+    box-sizing: border-box;
+}

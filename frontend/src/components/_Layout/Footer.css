@@ -2,7 +2,8 @@
     display: flex;
     position: fixed;
     bottom: 0;
-    width: 100vw;
+    width: calc(100vw - 0.6rem);
+    padding: 0 0.3rem;
     height: 60px;
     justify-content: space-between;
     
@@ -24,9 +25,8 @@
     color: #000;
     align-items: center;
     white-space: pre-line;
-    line-height: 18px;
-    font-size: 12px;
-    font-weight: 500;
+    line-height: 1rem;
+    font-size: 0.7rem;
 }
 
 #footer-body a {
@@ -37,7 +37,7 @@
 }
 
 #footer-body .footer-icon {
-    height: 45px;
+    height: 35px;
     aspect-ratio: 1/1;
     object-fit: contain;
     border-radius: 50%;

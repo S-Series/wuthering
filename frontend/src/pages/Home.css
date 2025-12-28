@@ -1,0 +1,17 @@
+.article-slot {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    align-items: flex-start;
+    padding: 1rem;
+}
+
+.article-slot .title {
+    font-size: 1.75rem;
+    margin: 0 1rem;
+}
+
+.article-slot .article {
+    display: flex;
+}

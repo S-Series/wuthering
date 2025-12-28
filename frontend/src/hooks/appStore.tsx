@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 // ===============================================
 
-export type LangType = "kr" | "en" | "jp";
+export type LangType = "kr" | "en" | "jp" | "zh";
 
 export interface AppStore {
     lang: LangType;
@@ -16,7 +16,7 @@ export interface AppStore {
 // ===============================================
 
 export function isLangType(v: string | null): v is LangType {
-  return v === "kr" || v === "en" || v === "jp";
+  return v === "kr" || v === "en" || v === "jp" || v === "zh";
 }
 
 // ===============================================
@@ -24,7 +24,18 @@ export function isLangType(v: string | null): v is LangType {
 const AppContext = createContext<AppStore | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-    const [lang, setLang] = useState<LangType>("kr");
+    const [lang, setLang] = useState<LangType>(() => {
+        const saved = localStorage.getItem("LastLang");
+        if (
+            saved === "kr" ||
+            saved === "en" ||
+            saved === "jp" ||
+            saved === "zh"
+        ) {
+            return saved;
+        }
+        return "kr";
+    });
     const [characterId, setCharacterId] = useState<string | null>(null);
 
     useEffect(() => {

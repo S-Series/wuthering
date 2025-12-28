@@ -1,16 +1,14 @@
-import { useAppStore } from "@/hooks/appStore";
-import "./Footer.css";
+import "@/components/_Layout/Footer.css"
 
 export default function Footer() {
-
-    //const { lang, setLang } = useAppStore();
 
     return (
         <div id="footer-body">
             <div className="item-slot en-font">
                 {
-                    `All assets © Kuro Games 2024 || non-official fan project
-                    E-mail: SSeries000923@gmail.com || Discord: SSeries0923`
+                    `All assets © Kuro Games 2024
+                    Non-Official fan project. By SSeries
+                    Contact: SSeries000923@gmail.com`
                 }
             </div>
             <div className="item-slot">
