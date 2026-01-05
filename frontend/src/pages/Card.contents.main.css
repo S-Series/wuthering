@@ -20,48 +20,128 @@
     left: 1%;
     background-color: transparent;
 }
+
 .card-contents .card-contents-slot.main .main-item-slot.weapon {
     flex-direction: row;
     width: 28%;
     height: 20%;
     top: 2.5%;
     left: 32.75%;
+    background-color: transparent;
 }
+
 .card-contents .card-contents-slot.main .main-item-slot.stats {
+    align-items: center;
+
+    gap: 2.5%;
+
     width: 28%;
-    height: 76%;
+    height: 74.5%;
     bottom: 1.5%;
     left: 32.75%;
-    background-color: #ffc00066;
+    background-color: transparent;
 }
+
 .card-contents .card-contents-slot.main .main-item-slot.description {
     flex-direction: row;
     width: 37.5%;
     height: 6%;
     top: 1%;
     right: 0.8%;
-    background-color: #ffc00066;
+    background-color: transparent;
 }
+
 .card-contents .card-contents-slot.main .main-item-slot.namecard {
+    flex-direction: row;
     width: 37.5%;
     height: 23.5%;
     top: 7.5%;
     right: 0.8%;
+    align-items: center;
+    justify-content: space-evenly;
 }
+
 .card-contents .card-contents-slot.main .main-item-slot.echos {
+    flex-direction: row;
     width: 37.5%;
     height: 66.25%;
     right: 0.8%;
     bottom: 1.5%;
+
+    justify-content: space-between;
 }
+
+/* == Character ==================================== */
 
 .main-item-slot.character .card-character-slot {
     width: calc(99% - 2px);
     height: calc(88% - 2px);
-    border: 1px solid #fff;
+    border: 1px solid #bbb;
     border-top-left-radius: 1.25vw;
     box-shadow: 0.2vw 0.2vw 0 #000;
     object-fit: contain;
+    overflow: hidden;
+}
+
+.main-item-slot.character .card-character-slot .constell-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 99%;
+    height: 88%;
+    pointer-events: none;
+}
+
+.main-item-slot.character .card-character-slot .constell-overlay img {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.main-item-slot.character .card-character-slot .constell-overlay .constell-button {
+    display: flex;
+    position: absolute;
+    width: min(2.5vw, 2.8rem);
+    aspect-ratio: 1 / 1;
+
+    border: 0;
+    outline: 0;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+    pointer-events: all !important;
+}
+
+
+.main-item-slot.character .card-character-slot .constell-overlay .constell-button:active,
+.main-item-slot.character .card-character-slot .constell-overlay .constell-button:focus,
+.main-item-slot.character .card-character-slot .constell-overlay .constell-button:focus-visible {
+    border: 0;
+    outline: 0;
+}
+
+.main-item-slot.character .card-character-slot .constell-overlay .constell-button img {
+    width: 50%;
+    height: 50%;
+    margin: 25% 25%;
+    opacity: 0.5;
+    transition: transform 0.3s ease-out;
+    filter: drop-shadow(0 0 0 #00000088);
+}
+
+.main-item-slot.character .card-character-slot .constell-overlay .constell-button.active img {
+    width: 70%;
+    height: 70%;
+    margin: 15% 15%;
+    opacity: 1;
+}
+
+.main-item-slot.character .card-character-slot .constell-overlay .constell-button:hover img {
+    transform: scale(1.25);
 }
 
 .main-item-slot.character .card-character-slot .account-info {
@@ -77,9 +157,11 @@
 .main-item-slot.character .card-character-slot .account-info.region {
     bottom: 7%;
 }
+
 .main-item-slot.character .card-character-slot .account-info.player-name {
     bottom: 3.5%;
 }
+
 .main-item-slot.character .card-character-slot .account-info.player-uid {
     bottom: 0;
 }
@@ -108,13 +190,180 @@
     aspect-ratio: 1 / 1;
     right: calc(19% - 0.1vw);
 }
+
 .main-item-slot.character .card-character-slot .character-icon.stat-type {
     right: 13%;
 }
+
 .main-item-slot.character .card-character-slot .character-icon.attack-type {
     right: 7%;
 }
+
 .main-item-slot.character .card-character-slot .character-icon.weapon-type {
     right: 1%;
 }
+
+/* == Weapon ==================================== */
+
+.main-item-slot.weapon .weapon-info-slot {
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 2px);
+    height: 72.5%;
+    border: 1px solid #bbb;
+}
+
+.main-item-slot.weapon .weapon-info-img {
+    position: absolute;
+    left: 2.5%;
+    width: calc(25% - 2px);
+    aspect-ratio: 1 / 1;
+    border: 1px solid #bbb;
+    overflow: hidden;
+    z-index: 250;
+}
+
+.main-item-slot.weapon .weapon-info-img img {
+    width: 100%;
+    height: 100%;
+}
+
+.main-item-slot.weapon .weapon-stat,
+.main-item-slot.weapon .weapon-name {
+    position: absolute;
+    color: #fff;
+}
+
+.main-item-slot.weapon .weapon-name {
+    font-size: min(1.1vw, 1.15rem);
+    top: 25%;
+    left: 30%;
+    transform: translateY(-50%);
+}
+.main-item-slot.weapon .weapon-stat-icon {
+    position: absolute;
+    top: 75%;
+    width: 10%;
+    height: auto;
+    transform: translateY(-50%);
+}
+.main-item-slot.weapon .weapon-stat {
+    font-size: min(1.4vw, 1.5rem);
+    top: 72.5%;
+    transform: translateY(-50%);
+}
+
+.main-item-slot.weapon .weapon-stat-icon.main {
+    left: 30%;
+}
+.main-item-slot.weapon .weapon-stat-icon.sub {
+    left: 62.5%;
+}
+.main-item-slot.weapon .weapon-stat.main {
+    left: 42.5%;
+}
+.main-item-slot.weapon .weapon-stat.sub  {
+    left: 75%;
+}
+
+/* == Stats ==================================== */
+
+.main-item-slot.stats .harmony-slot {
+    display: flex;
+    color: #fff;
+    margin: auto auto;
+}
+
+.main-item-slot.stats .score-slot {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+
+    color: #fff;
+    font-size: min(1.2vw, 1.3rem);
+
+    margin-top: auto;
+    justify-content: space-evenly;
+}
+
+.main-item-slot.stats .score-slot em {
+    text-decoration: underline;
+    font-size: min(1.3vw, 1.38rem);
+}
+
+/* == Description ==================================== */
+
+.main-item-slot.description span {
+    position: absolute;
+    color: #bbb;
+    white-space: nowrap;
+}
+
+.main-item-slot.description span.kuro {
+    left: 0;
+    bottom: 0;
+    font-size: min(0.78vw, 0.85rem);
+}
+
+.main-item-slot.description span.powered {
+    right: 0;
+    bottom: 60%;
+    font-size: min(0.65vw, 0.71rem);
+}
+
+.main-item-slot.description span.link {
+    right: 0;
+    bottom: 0;
+    font-size: min(0.78vw, 0.85rem);
+}
+
+.main-item-slot.description span.link em {
+    text-decoration: underline;
+}
+
+.main-item-slot.description span.link img.link-image {
+    position: absolute;
+    height: 70%;
+    transform: translate(-120%, 10%);
+}
+
+/* == Namecard ==================================== */
+
+.main-item-slot.namecard .namecard-score {
+    position: relative;
+    width: 31%;
+    height: 90%;
+}
+
+.main-item-slot.namecard .namecard-score img {
+    position: absolute;
+    width: 125%;
+    top: 37.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.main-item-slot.namecard .namecard-score span {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+
+    color: #fff;
+    white-space: nowrap;
+    transform: translate(-52%, 10%);
+    font-size: min(1.2vw, 1.3rem);
+}
+.main-item-slot.namecard .namecard-score em {
+    text-decoration: underline;
+    font-size: min(1.3vw, 1.38rem);
+}
+
+.main-item-slot.namecard .namecard-image {
+    display: flex;
+    width: 65%;
+    height: 90%;
+    border: 1px solid #fff;
+}
+
+/* == Echos ==================================== */
+
 

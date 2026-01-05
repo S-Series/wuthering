@@ -29,7 +29,7 @@ export interface Character {
   version: number;
   isElite: boolean;
   region: //==================================================//
-  | "Spastract Collective" // = //@ 스페이스트렉 콜렉티브 (라하이 로이)
+  | "Spacetrek Collective" // = //@ 스페이스트렉 콜렉티브 (라하이 로이)
     | "Statotchi Academy" // == //@ 스타토치 아카데미 (라하이 로이)
     //========================================================//
     | "Fractsidus" // ========= //@ 잔성회
@@ -44,15 +44,205 @@ export interface Character {
 
 export const character: Record<string, Character> = {
   //$== ver 3.X ===========================//
+  //*== ver 3.1 ===========================//
+  /* temp: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.1,
+    isElite: true,
+    region: ,
+  },*/
+  
   //*== ver 3.0 ===========================//
+  mornye: {
+    en: "Mornye",
+    kr: "모니에",
+    jp: "モーニエ",
+    zh: "莫宁",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "fusion",
+    type: "heal",
+    version: 3.0,
+    isElite: true,
+    region: "Spacetrek Collective",
+  },
+  lynae: {
+    en: "Lynae",
+    kr: "린네",
+    jp: "リンネー",
+    zh: "琳奈",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "spectro",
+    type: "basic",
+    version: 3.0,
+    isElite: true,
+    region: "Statotchi Academy",
+  },
 
-  //@== ver 2.X ===========================//
+  //$== ver 2.X ===========================//
   //*== ver 2.8 ===========================//
+  chisa: {
+    en: "Chisa",
+    kr: "치사",
+    jp: "千咲",
+    zh: "千咲",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "havoc",
+    type: "liberation",
+    version: 2.8,
+    isElite: true,
+    region: "Statotchi Academy",
+  },
+  buling: {
+    en: "Buling",
+    kr: "복링",
+    jp: "卜霊",
+    zh: "卜灵",
+    hasSkin: false,
+    weapon: "rectifier",
+    element: "electro",
+    type: "heal",
+    version: 2.8,
+    isElite: false,
+    region: "Black Shores",
+  },
+  
   //*== ver 2.7 ===========================//
+  qiuyuan: {
+    en: "qiuyuan",
+    kr: "구원",
+    jp: "仇遠",
+    zh: "仇远",
+    hasSkin: false,
+    weapon: "sword",
+    element: "aero",
+    type: "heavy",
+    version: 2.7,
+    isElite: true,
+    region: "Huanglong",
+  },
+  galbrena: {
+    en: "galbrena",
+    kr: "갈브레나",
+    jp: "ガルブレーナ",
+    zh: "嘉贝莉娜",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "fusion",
+    type: "heavy",
+    version: 2.7,
+    isElite: true,
+    region: "Black Shores",
+  },
+  
   //*== ver 2.6 ===========================//
+  iuno: {
+    en: "iuno",
+    kr: "유노",
+    jp: "ユーノ",
+    zh: "尤诺",
+    hasSkin: false,
+    weapon: "gauntlet",
+    element: "aero",
+    type: "liberation",
+    version: 2.6,
+    isElite: true,
+    region: "Seven Hills",
+  },
+  augusta: {
+    en: "augusta",
+    kr: "아우구스타",
+    jp: "オーガスタ",
+    zh: "奥古斯塔",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "electro",
+    type: "heavy",
+    version: 2.6,
+    isElite: true,
+    region: "Seven Hills",
+  },
+  
   //*== ver 2.5 ===========================//
+  phrolova: {
+    en: "phrolova",
+    kr: "플로로",
+    jp: "フローヴァ",
+    zh: "弗洛洛",
+    hasSkin: false,
+    weapon: "rectifier",
+    element: "havoc",
+    type: "skill",
+    version: 2.5,
+    isElite: true,
+    region: "Fractsidus",
+  },
+  
   //*== ver 2.4 ===========================//
+  lupa: {
+    en: "lupa",
+    kr: "루파",
+    jp: "ルパ",
+    zh: "露帕",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "fusion",
+    type: "liberation",
+    version: 2.4,
+    isElite: true,
+    region: "Ragunna",
+  },
+  cartethyia: {
+    en: "cartethyia",
+    kr: "카르티시아",
+    jp: "カルテジア",
+    zh: "卡提希娅",
+    hasSkin: false,
+    weapon: "sword",
+    element: "aero",
+    type: "basic",
+    version: 2.4,
+    isElite: true,
+    region: "Ragunna",
+  },
+  
   //*== ver 2.3 ===========================//
+  chiaccona: {
+    en: "chiaccona",
+    kr: "샤콘",
+    jp: "シャコンヌ",
+    zh: "夏空",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "aero",
+    type: "liberation",
+    version: 2.3,
+    isElite: true,
+    region: "Ragunna",
+  },
+  zani: {
+    en: "zani",
+    kr: "젠니",
+    jp: "ザンニー",
+    zh: "赞妮",
+    hasSkin: false,
+    weapon: "gauntlet",
+    element: "spectro",
+    type: "heavy",
+    version: 2.3,
+    isElite: true,
+    region: "Ragunna",
+  },
+  
   //*== ver 2.2 ===========================//
   cantarella: {
     en: "cantarella",
@@ -108,6 +298,7 @@ export const character: Record<string, Character> = {
     isElite: true,
     region: "Ragunna",
   },
+  
   //*== ver 2.0 ===========================//
   roccia: {
     en: "roccia",

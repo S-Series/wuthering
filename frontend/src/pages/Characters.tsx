@@ -1,5 +1,8 @@
 import { useMemo, useEffect, useState } from "react"
 
+import { calcRank } from "@/calc/calcRank";
+import { loadSummaryStore } from "@/summaryData/storage";
+
 import { character } from "@/datas/characters"
 import type { WeaponType, ElementType } from "@/datas/characters";
 import CharacterSlot from "@/components/features/Characters/CharacterSlot";
@@ -22,6 +25,8 @@ export default function Characters() {
 
   const [isDisplayGrid, setIsDisplayGrid] = useState(true);
 
+  const summaryStore = useMemo(() => loadSummaryStore(), []);
+
   const CHARACTER_LIST = Object.entries(character);
 
   const filteredCharacters = useMemo(() => {
@@ -32,7 +37,7 @@ export default function Characters() {
       .filter(([, item]) =>
         !elementFilter || item.element === elementFilter
       )
-      .sort(([, a], [, b]) => {
+      .sort(([idA, a], [idB, b]) => {
         switch (orderBy) {
           case "version":
             return b.version - a.version;
@@ -40,16 +45,35 @@ export default function Characters() {
           case "version_reverse":
             return a.version - b.version;
 
-          case "score":
-            return 0;
+          case "score": {
+            const scoreA = summaryStore.data[idA]?.score ?? 0;
+            const scoreB = summaryStore.data[idB]?.score ?? 0;
+            return scoreB - scoreA;
+          }
 
-          case "score_reverse":
-            return 0;
+          case "score_reverse": {
+            const scoreA = summaryStore.data[idA]?.score ?? 0;
+            const scoreB = summaryStore.data[idB]?.score ?? 0;
+            return scoreA - scoreB;
+          }
 
-          default: throw new Error(`Unexpected Value: [orderBy : {${orderBy}}]`);
+          default:
+            throw new Error(`Unexpected Value: ${orderBy}`);
         }
+      })
+      .map(([id, item]) => {
+        const score = summaryStore.data[id]?.score ?? 0;
+
+        return [
+          id,
+          {
+            ...item,
+            score,
+            rank: calcRank(score),
+          },
+        ] as const;
       });
-  }, [weaponFilter, elementFilter, orderBy]);
+  }, [weaponFilter, elementFilter, orderBy, summaryStore]);
 
   return (
     <div id="page-slot">

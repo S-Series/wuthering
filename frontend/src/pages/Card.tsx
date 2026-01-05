@@ -1,26 +1,40 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Select from "react-select/base";
+import Select, { type StylesConfig } from "react-select";
 
-import ImagePicker from "@/components/ImagePicker";
 import { useAppStore } from "@/hooks/appStore";
 import { useUserStore } from "@/hooks/userStore";
+
+import ImagePicker from "@/components/ImagePicker";
+import StatSlot from "@/components/features/Card/StatSlot";
 
 import { character, WeaponTypes as WeaponLists ,ElementTypes as ElementLists } from "@/datas/characters"
 import type { Character, WeaponTypes, ElementTypes } from "@/datas/characters"
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
+import EchoSlot from "@/components/features/Card/EchoSlot";
 
 export default function Card() {
 
   const { lang } = useAppStore();
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
-  
+  const UI_BUTTON_POS = [
+    { x: 85.5, y: 62.8 },
+    { x: 73.89, y: 72.1 },
+    { x: 60, y: 79.5 },
+    { x: 45, y: 85 },
+    { x: 29.3, y: 88.3 },
+    { x: 13, y: 88.9 },
+  ]
+  const TEMP_CONSTELL = 3;
+
+
   const [searchParams] = useSearchParams();
   const paramData = searchParams.get("character") ?? "empty";
 
+  const [cardSection, setCardSection] = useState(0);
   const [weaponFilter, setWeaponFilter] = useState([false, false, false, false, false])
   const [elementFilter, setElementFilter] = useState([false, false, false, false, false, false])
   
@@ -29,8 +43,6 @@ export default function Card() {
     const data = CHARACTER_LIST.find(([key]) => key === paramData)?.[1] || character["rover_spectro"]
     return data;
   });
-
-  
 
   const characterImage = useUserStore((s) => s.characterImage);
   const namecardImage = useUserStore((s) => s.namecardImage);
@@ -96,12 +108,22 @@ export default function Card() {
           <div className="header-slot">
             <div className="item-slot">
               {/* Character Select */}
-              <Select/>
+              <Select
+                options={[
+                  { value: 1, label: "Cost 1" },
+                  { value: 2, label: "Cost 2" },
+                ]}
+              />
 
               <div style={{ width: "4px" }} />
 
               {/* Weapon Select */}
-              <Select/>
+              <Select
+                options={[
+                  { value: 1, label: "Cost 1" },
+                  { value: 2, label: "Cost 2" },
+                ]}
+              />
             </div>
           </div>
         </div>
@@ -136,17 +158,39 @@ export default function Card() {
               <div className="card-character-slot">
                 <ImagePicker
                   src={characterImage.src}
-                  defaultSrc={`${BASE_URL}/character/${characterData.en}/stand.png`}
+                  defaultSrc={
+                    `${BASE_URL}/character/${characterData.en.includes("rover") 
+                      ? "rover" 
+                      : characterData.en}/stand.png`
+                  }
                   onChangeSrc={(src) =>
                     setImageSrc("characterImage", src)
                   }
                 />
+
+                <div className="constell-overlay">
+                  <img className="" src={`/ui/CharacterC${TEMP_CONSTELL}.png`} />
+                  {UI_BUTTON_POS.map((item, idx) => {
+                    return (
+                      <button className={`constell-button ${TEMP_CONSTELL > idx ? "active" : ""}`}
+                        style={{ left: `${item.x}%`, top: `${item.y}%`, }}>
+                        <img className="constell-image" src={
+                          `${BASE_URL}/character/${characterData.en.includes("rover")
+                            ? "rover"
+                            : characterData.en}/C${idx + 1}.png`
+                        } />
+                      </button>
+                    )
+                  })}
+                </div>
+
                 <span className="account-info region en-font">{`Asia`}</span>
                 <span className="account-info player-name en-font">{`Lv.-- Guest Player`}</span>
                 <span className="account-info player-uid en-font">{`UID. - - -  - - -  - - -`}</span>
                 <span className={`character-name ${lang}-font`}>
                   {characterData[lang]?.charAt(0).toUpperCase() + characterData[lang]?.slice(1)}
                 </span>
+
                 <img className="character-icon element" 
                   alt="element icon" 
                   src={`/ico/element/${characterData.element}.png`}/>
@@ -161,20 +205,78 @@ export default function Card() {
                   src={`/ico/weapon_type/${characterData.weapon}.webp`}/>
               </div>
             </div>
+
             <div className="main-item-slot weapon">
+              <div className="weapon-info-img">
+                <img alt="weapon icon" src={`/default.webp`}/>
+              </div>
               
+              <div className="weapon-info-slot">
+                <span className="weapon-name">{`판타지 변주`}</span>
+
+                <img className="weapon-stat-icon main" alt="stat icon" src={`/default.webp`} />
+                <span className="weapon-stat main">{`500`}</span>
+
+                <img className="weapon-stat-icon sub" alt="stat icon" src={`/default.webp`} />
+                <span className="weapon-stat sub">{`34.5%`}</span>
+              </div>
             </div>
+
             <div className="main-item-slot stats">
-              
+              <StatSlot statId="" statValue={54321} plusValue={12345} />
+              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+
+              <div className="harmony-slot">
+                Harmony Options Comes Here.
+              </div>
+
+              <div className="score-slot">
+                <span className="en-font">Av. <em className="num-font">{`${123.4}`}</em>pt</span>
+                <span className="en-font">Cv. <em className="num-font">{`${123.4}`}</em>pt</span>
+              </div>
             </div>
+
             <div className="main-item-slot description">
-              
+              <span className="en-font kuro">Unofficial Fan Project: All assets © Kuro Games </span>
+              <span className="en-font powered">Powered by. SSeries </span>
+              <span className="en-font link">
+                <em><img className="link-image" src="/link.png" />WuWa.dev</em> © 2025 
+              </span>
             </div>
+
             <div className="main-item-slot namecard">
-              
+              <div className="namecard-score">
+                <img alt="rank icon" src="/ico/rank/SSS.png"/>
+                <span className="en-font">
+                  Av. <em className="num-font">{123.4}</em>pt
+                </span>
+              </div>
+
+              <div className="namecard-image">
+                <ImagePicker src={namecardImage.src}
+                  defaultSrc={
+                    `${BASE_URL}/character/${characterData.en.includes("rover") 
+                      ? "rover" 
+                      : characterData.en}/stand.png`
+                  }
+                  onChangeSrc={(src) =>
+                    setImageSrc("namecardImage", src)
+                  }/>
+              </div>
             </div>
+            
             <div className="main-item-slot echos">
-              
+              <EchoSlot/>
+              <EchoSlot/>
+              <EchoSlot/>
+              <EchoSlot/>
+              <EchoSlot/>
             </div>
           </div>
           {/* == //$ Main Content End */}
@@ -197,8 +299,22 @@ export default function Card() {
       </div>
 
       <div className="card-section right">
-        <div className="card-setting">
-          에코 세팅 슬롯 + OCR
+        <button className={`en-font ${cardSection === 0 ? "active" : ""}`}
+          onClick={() => { setCardSection(0) }}>Character</button>
+        <div className={`card-item ${cardSection === 0 ? "active" : ""}`}>
+          asdf
+        </div>
+
+        <button className={`en-font ${cardSection === 1 ? "active" : ""}`}
+          onClick={() => { setCardSection(1) }}>Weapon</button>
+        <div className={`card-item ${cardSection === 1 ? "active" : ""}`}>
+          asdf
+        </div>
+
+        <button className={`en-font ${cardSection === 2 ? "active" : ""}`}
+          onClick={() => { setCardSection(2) }}>Echo Setting</button>
+        <div className={`card-item echo ${cardSection === 2 ? "active" : ""}`}>
+          asdf
         </div>
       </div>
     </div>

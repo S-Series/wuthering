@@ -71,37 +71,53 @@
     background-position: center;
 }
 
+.character-slot .card-bg.empty {
+    background: linear-gradient(#4d4d4d, #d8d8d8, #fff, #d8d8d8, #4d4d4d);
+    filter: saturate(0.1);
+}
+
 .character-slot .card-bg::after {
     content: "";
     position: absolute;
     inset: 0;
-
-    mix-blend-mode: overlay;
+    
+    mix-blend-mode: multiply;
     opacity: 0.5;
     pointer-events: none;
+
+    background: url("/ui/card_bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .character-slot .card-bg.aero::after {
+    mix-blend-mode: overlay;
     background: #41a33a;
 }
 
 .character-slot .card-bg.fusion::after {
+    mix-blend-mode: overlay;
     background: #f66;
 }
 
 .character-slot .card-bg.electro::after {
+    mix-blend-mode: overlay;
     background: #83c;
 }
 
 .character-slot .card-bg.glacio::after {
+    mix-blend-mode: overlay;
     background: #6cf;
 }
 
 .character-slot .card-bg.spectro::after {
+    mix-blend-mode: overlay;
     background: #ff6;
 }
 
 .character-slot .card-bg.havoc::after {
+    mix-blend-mode: overlay;
     background: #c39;
 }
 
@@ -110,6 +126,9 @@
     height: 105%;
     z-index: 2;
     filter: drop-shadow(0 0 5px #000000aa);
+}
+.character-slot .character-image-slot .character-image.Empty {
+    filter: saturate(0.1);
 }
 
 .character-slot .character-image-slot .character-image:hover {

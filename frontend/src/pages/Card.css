@@ -11,9 +11,6 @@
     margin: 0 auto;
     align-items: flex-start;
     justify-content: space-between;
-
-    background-color: #ff000011;
-
 }
 
 #card-page-slot .card-section {
@@ -22,18 +19,77 @@
     height: fit-content;
     min-height: 10vh;
 
-    gap: 2rem;
+    align-items: center;
 }
 
 #card-page-slot .card-section.left {
     min-width: 600px;
     width: 77.5%;
+    gap: 2rem;
 }
 
 #card-page-slot .card-section.right {
     width: 20%;
-    border: 1px solid #000;
+    gap: 0.4rem;
 }
+
+#card-page-slot .card-section.right button {
+    display: flex;
+    width: calc(100% - 2px);
+    height: 2rem;
+    margin: 0;
+    padding: 0;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #ccc;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    font-size: 1rem;
+    overflow: hidden;
+    background-color: #ffffff11;
+    transition: all 0.3s ease-out;
+}
+
+#card-page-slot .card-section.right button.active {
+    color: #000;
+    font-size: 1.1rem;
+    background-color: #ffffff55;
+}
+
+#card-page-slot .card-section.right button:hover {
+    color: #000;
+    font-size: 1.1rem;
+    background-color: #ffffff99;
+}
+
+#card-page-slot .card-section.right .card-item {
+    display: flex;
+    width: calc(100% - 2px - min(2vw, 2.22rem));
+    height: 0;
+
+    justify-content: center;
+
+    color: #ccc;
+    border: 1px solid transparent;
+    transition: all 0.3s ease-out;
+
+    overflow: scroll;
+}
+#card-page-slot .card-section.right .card-item.active {
+    padding: 1rem min(1vw, 1.11rem);
+    height: min(20vw, 22.2rem);
+    border: 1px solid #ccc;
+    transform: translateY(-0.5rem);
+    transition: all 0.3s ease-in;
+}
+
+#card-page-slot .card-section.right .card-item.echo.active {
+    height: min(30vw, 33.3rem);
+}
+
+/* ============================================ */
 
 .card-header {
     display: flex;
@@ -50,7 +106,6 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
-    background-color: #ff44ff55;
 }
 
 .card-contents {
@@ -70,7 +125,6 @@
     height: min(2.75vw, 3rem);
     justify-content: space-between;
 
-    background-color: #ff44ff55;
     z-index: 99;
 }
 
@@ -111,6 +165,7 @@
 
 .card-page-button:hover {
     border: 1px solid #fff;
+    background: linear-gradient(0deg, #6666aaff, #3e3e77ff, #6666aaff);
 }
 
 .card-page-button:active,

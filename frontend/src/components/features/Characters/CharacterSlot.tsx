@@ -1,11 +1,12 @@
 import { useAppStore } from "@/hooks/appStore";
 import type { Character } from "@/datas/characters";
+import type { CharacterRank } from "@/types/character.type";
 
 import "./CharacterSlot.css"
 
 interface CharaterSlotProps {
   id: string;
-  prop: Character;
+  prop: Character & { score: number; rank: CharacterRank };
   isGrid: boolean;
 }
 
@@ -21,10 +22,14 @@ export default function CharacterSlot({ id, isGrid, prop }: CharaterSlotProps) {
         href={`/card?character=${id}`}>
 
         <div className="character-image-slot">
-          <img alt="character image" className="character-image" src={`${BASE_URL}/character/${id}/stand.png`} />
-          <div className={`card-bg ${prop.element}`} />
+          <img className={`character-image ${prop.rank}`} alt="character image" 
+            src={`${BASE_URL}/character/${id.includes("rover") ? "rover" : id}/stand.png`} 
+            />
+          <div className={`card-bg ${prop.rank === "Empty" ? "empty" : prop.element}`} />
           <div className="overlay" />
-          <img alt="rank icon" className="rank-icon" src={`/ico/rank/1.png`} />
+          {prop.rank === "Empty" ? null :
+            <img alt="rank icon" className="rank-icon" src={`/ico/rank/${prop.rank}.png`} />
+          }
         </div>
 
         <div className="character-info-slot">

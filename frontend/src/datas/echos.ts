@@ -1,6 +1,15 @@
-import { FixedStats } from "./Stats";
+import { FixedStats, type StatId } from "./stats";
 
-export function createEmptyEcho(cost = 1) {
+export interface EchoRuntime {
+  echoId: string;
+  harmony: string;
+  cost: number;
+  mainStat: string;
+  subStats: [string, number][];
+  score: number[];
+}
+
+export function createEmptyEcho(cost = 1): EchoRuntime {
   return {
     echoId: "default",
     harmony: "default",
@@ -17,90 +26,21 @@ export function createEmptyEcho(cost = 1) {
   };
 }
 
+export interface HarmonyOption {
+  id: string;
+  en: string;
+  kr: string;
+  jp: string;
+  zh: string;
+  optionCount: number[];
+  colorCode: string;
+}
+
 export const harmony = {
-  //#region Ver1.0 Echos
-  Frost: {
-    id: "Frost",
-    en: "Freezing Frost",
-    kr: "야밤의 서리",
-    jp: "夜にこびり付く白霜",
-    zh: "凝夜白霜",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
-  Rift: {
-    id: "Rift",
-    en: "Molten Rift",
-    kr: "솟구치는 용암",
-    jp: "山を轟かせる崩火",
-    zh: "熔山裂谷",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
-  Thunder: {
-    id: "Thunder",
-    en: "Void Thunder",
-    kr: "울려퍼지는 뇌음",
-    jp: "空を切り裂く冥雷",
-    zh: "彻空冥雷",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
-  Gale: {
-    id: "Gale",
-    en: "Sierra Gale",
-    kr: "스쳐가는 바람",
-    jp: "谷を突き抜ける長風",
-    zh: "啸谷长风",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
-  Light: {
-    id: "Light",
-    en: "Celestial Light",
-    kr: "빛나는 별",
-    jp: "闇を取り払う浮星",
-    zh: "浮星祛暗",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
-  Eclipse: {
-    id: "Eclipse",
-    en: "Sun-sinking Eclipse",
-    kr: "빛을 삼키는 해",
-    jp: "二度と輝かない沈日",
-    zh: "沉日劫明",
-    optionCount: [2, 5],
-    colorCode: "#cc99cc",
-  },
-  Rejuvent: {
-    id: "Rejuvent",
-    en: "Rejuvenating Glow",
-    kr: "찬란한 광휘",
-    jp: "喧騒に隠す回光",
-    zh: "隐世回光",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
-  Clouds: {
-    id: "Clouds",
-    en: "Moonlit Clouds",
-    kr: "떠오르는 구름",
-    jp: "月を窺う軽雲",
-    zh: "轻云出月",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
-  Tunes: {
-    id: "Tunes",
-    en: "Lingering Tunes",
-    kr: "끊임없는 잔향",
-    jp: "絶えない余韻",
-    zh: "不绝余音",
-    optionCount: [2, 5],
-    colorCode: "#",
-  },
+  //#region Ver3.0 Echos
+  
   //#endregion
+
   //#region Ver2.0 Echos
   Frosty: {
     id: "Frosty",
@@ -212,8 +152,108 @@ export const harmony = {
   },
 
   //#endregion
-  //#region Ver3.0 Echos
-};
+  
+  //#region Ver1.0 Echos
+  Frost: {
+    id: "Frost",
+    en: "Freezing Frost",
+    kr: "야밤의 서리",
+    jp: "夜にこびり付く白霜",
+    zh: "凝夜白霜",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Rift: {
+    id: "Rift",
+    en: "Molten Rift",
+    kr: "솟구치는 용암",
+    jp: "山を轟かせる崩火",
+    zh: "熔山裂谷",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Thunder: {
+    id: "Thunder",
+    en: "Void Thunder",
+    kr: "울려퍼지는 뇌음",
+    jp: "空を切り裂く冥雷",
+    zh: "彻空冥雷",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Gale: {
+    id: "Gale",
+    en: "Sierra Gale",
+    kr: "스쳐가는 바람",
+    jp: "谷を突き抜ける長風",
+    zh: "啸谷长风",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Light: {
+    id: "Light",
+    en: "Celestial Light",
+    kr: "빛나는 별",
+    jp: "闇を取り払う浮星",
+    zh: "浮星祛暗",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Eclipse: {
+    id: "Eclipse",
+    en: "Sun-sinking Eclipse",
+    kr: "빛을 삼키는 해",
+    jp: "二度と輝かない沈日",
+    zh: "沉日劫明",
+    optionCount: [2, 5],
+    colorCode: "#cc99cc",
+  },
+  Rejuvent: {
+    id: "Rejuvent",
+    en: "Rejuvenating Glow",
+    kr: "찬란한 광휘",
+    jp: "喧騒に隠す回光",
+    zh: "隐世回光",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Clouds: {
+    id: "Clouds",
+    en: "Moonlit Clouds",
+    kr: "떠오르는 구름",
+    jp: "月を窺う軽雲",
+    zh: "轻云出月",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Tunes: {
+    id: "Tunes",
+    en: "Lingering Tunes",
+    kr: "끊임없는 잔향",
+    jp: "絶えない余韻",
+    zh: "不绝余音",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  //#endregion
+
+} as const satisfies Record<string, HarmonyOption>;
+type HarmonyId = (typeof harmony)[keyof typeof harmony]["id"];
+
+export interface EchoStat {
+  statId: StatId;
+  value: number;
+}
+
+export interface EchoData {
+  id: string;
+  en: string;
+  kr: string;
+  jp: string;
+  zh: string;
+  type: HarmonyId[];
+  stats: EchoStat[];
+}
 
 export const echoDict = {
   Cost4: {
@@ -223,7 +263,10 @@ export const echoDict = {
       jp: "ナイトメア・雷刹のウロコ",
       zh: "梦魇·朔雷之鳞",
       type: [harmony.Thunder.id, harmony.Empyrean.id],
-      stats: [],
+      stats: [
+        {statId: FixedStats.ElectroBns.id, value: 12.0},
+        {statId: FixedStats.heavyBns.id, value: 12.0},
+      ],
     },
     W75: {
       en: "Tempest Mephis",
@@ -239,7 +282,7 @@ export const echoDict = {
       jp: "ナイトメア・無冠者",
       zh: "梦魇·无冠者",
       type: [harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     H80: {
       en: "Crownless",
@@ -247,7 +290,7 @@ export const echoDict = {
       jp: "無冠者",
       zh: "无冠者",
       type: [harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     H71N: {
       en: "Nightmare: Feilian Beringal",
@@ -255,7 +298,7 @@ export const echoDict = {
       jp: "ナイトメア・飛廉の大猿",
       zh: "梦魇·飞廉之猩",
       type: [harmony.Gale.id],
-      stats: [{}],
+      stats: [],
     },
     H71: {
       en: "Feilian Beringal",
@@ -263,7 +306,7 @@ export const echoDict = {
       jp: "飛廉の大猿",
       zh: "飞廉之猩",
       type: [harmony.Gale.id],
-      stats: [{}],
+      stats: [],
     },
     N74N: {
       en: "Nightmare: Lampylumen Myriad",
@@ -271,7 +314,7 @@ export const echoDict = {
       jp: "ナイトメア・輝き蛍の軍勢",
       zh: "梦魇·辉萤军势",
       type: [harmony.Frost.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     N74: {
       en: "Lampylumen Myriad",
@@ -279,7 +322,7 @@ export const echoDict = {
       jp: "輝き蛍の軍勢",
       zh: "辉萤军势",
       type: [harmony.Frost.id],
-      stats: [{}],
+      stats: [],
     },
     H73N: {
       en: "Nightmare: Mourning Aix",
@@ -287,7 +330,7 @@ export const echoDict = {
       jp: "ナイトメア・哀切の凶鳥",
       zh: "梦魇·哀声鸷",
       type: [harmony.Radiance.id],
-      stats: [{}],
+      stats: [],
     },
     H73: {
       en: "Mourning Aix",
@@ -295,7 +338,7 @@ export const echoDict = {
       jp: "哀切の凶鳥",
       zh: "哀声鸷",
       type: [harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     R56: {
       en: "Mech Abomination",
@@ -303,7 +346,7 @@ export const echoDict = {
       jp: "機械アボミネーション",
       zh: "聚械机偶",
       type: [harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     H72N: {
       en: "Nightmare: Impermanence Heron",
@@ -311,7 +354,7 @@ export const echoDict = {
       jp: "ナイトメア・無情のサギ",
       zh: "无常凶鹭",
       type: [harmony.Veil.id],
-      stats: [{}],
+      stats: [],
     },
     H72: {
       en: "Nightmare: Impermanence Heron",
@@ -319,7 +362,7 @@ export const echoDict = {
       jp: "ナイトメア・無情のサギ",
       zh: "无常凶鹭",
       type: [harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     H81: {
       en: "Dreamless",
@@ -327,7 +370,7 @@ export const echoDict = {
       jp: "無妄者",
       zh: "无妄者",
       type: [harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     Z01: {
       en: "Jué",
@@ -335,7 +378,7 @@ export const echoDict = {
       jp: "角",
       zh: "角",
       type: [harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     X78: {
       en: "Fallacy of No Return",
@@ -343,7 +386,7 @@ export const echoDict = {
       jp: "フェイタルエラー",
       zh: "无归的谬误",
       type: [harmony.Rejuvent.id],
-      stats: [{}],
+      stats: [],
     },
     W83: {
       en: "Lorelei",
@@ -351,7 +394,7 @@ export const echoDict = {
       jp: "ローレライ",
       zh: "罗蕾莱",
       type: [harmony.Veil.id],
-      stats: [{}],
+      stats: [],
     },
     W84: {
       en: "Sentry Construct",
@@ -359,7 +402,7 @@ export const echoDict = {
       jp: "ゼノコロッサス",
       zh: "异构武装",
       type: [harmony.Frosty.id],
-      stats: [{}],
+      stats: [],
     },
     H82: {
       en: "Dragon of Dirge",
@@ -367,7 +410,7 @@ export const echoDict = {
       jp: "嘆きのドレイク",
       zh: "叹息古龙",
       type: [harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     W93: {
       en: "Hecate",
@@ -375,7 +418,7 @@ export const echoDict = {
       jp: "ヘカテー",
       zh: "赫卡忒",
       type: [harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     Z02: {
       en: "Reminiscence: Fleurdelys",
@@ -383,7 +426,7 @@ export const echoDict = {
       jp: "響き渡る共鳴・フルールドリス",
       zh: "共鸣回响·芙露德莉斯",
       type: [harmony.Welkin.id, harmony.Pilgrimage.id],
-      stats: [{}],
+      stats: [],
     },
     W85: {
       en: "",
@@ -391,7 +434,7 @@ export const echoDict = {
       jp: "ナイトメア・ケルピー",
       zh: "梦魇·凯尔匹",
       type: [harmony.Welkin.id, harmony.Pilgrimage.id],
-      stats: [{}],
+      stats: [],
     },
     W86: {
       en: "",
@@ -399,7 +442,7 @@ export const echoDict = {
       jp: "誉れのライオネス",
       zh: "荣耀狮像",
       type: [harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     W76N: {
       en: "Nightmare: Thundering Mephis",
@@ -407,7 +450,7 @@ export const echoDict = {
       jp: "ナイトメア・雲閃のウロコ",
       zh: "梦魇·云闪之鳞",
       type: [harmony.Thunder.id],
-      stats: [{}],
+      stats: [],
     },
     H91: {
       en: "Bell-Borne Geochelone",
@@ -415,7 +458,7 @@ export const echoDict = {
       jp: "鳴鐘の亀",
       zh: "鸣钟之龟",
       type: [harmony.Rejuvent.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     W77N: {
       en: "Nightmare: Inferno Rider",
@@ -423,7 +466,7 @@ export const echoDict = {
       jp: "ナイトメア・燎原の炎騎",
       zh: "梦魇·燎照之骑",
       type: [harmony.Rift.id],
-      stats: [{}],
+      stats: [],
     },
     W77: {
       en: "Inferno Rider",
@@ -431,7 +474,7 @@ export const echoDict = {
       jp: "燎原の炎騎",
       zh: "燎照之骑",
       type: [harmony.Rift.id],
-      stats: [{}],
+      stats: [],
     },
     //$ Update After Phrolobia
     W93N: {
@@ -440,7 +483,7 @@ export const echoDict = {
       jp: "ナイトメア・ヘカテー",
       zh: "梦魇·赫卡忒",
       type: [harmony.Dream.id],
-      stats: [{}],
+      stats: [],
     },
     X79: {
       en: "Reminiscence: Fenrico",
@@ -448,7 +491,7 @@ export const echoDict = {
       jp: "響き渡る共鳴・フェンリコ",
       zh: "共鸣回响·芬莱克",
       type: [harmony.Dream.id, harmony.Law.id],
-      stats: [{}],
+      stats: [],
     },
     W87: {
       en: "The False Sovereign",
@@ -456,7 +499,7 @@ export const echoDict = {
       jp: "偽りの神王",
       zh: "伪作的神王",
       type: [harmony.Crown.id],
-      stats: [{}],
+      stats: [],
     },
     W88: {
       en: "Lady of the Sea",
@@ -464,7 +507,7 @@ export const echoDict = {
       jp: "海の娘",
       zh: "海之女",
       type: [harmony.Crown.id],
-      stats: [{}],
+      stats: [],
     },
     Z03: {
       en: "Reminiscence: Threnodian - Leviathan",
@@ -472,7 +515,7 @@ export const echoDict = {
       jp: "響き渡る共鳴・鳴式・レビヤタン",
       zh: "共鸣回响·鸣式·利维亚坦",
       type: [harmony.Shadow.id],
-      stats: [{}],
+      stats: [],
     },
     /*
     "": {
@@ -496,7 +539,7 @@ export const echoDict = {
       jp: "いたずら猿",
       zh: "戏猿",
       type: [harmony.Gale.id, harmony.Rejuvent.id],
-      stats: [{}],
+      stats: [],
     },
     R55: {
       en: "Carapace",
@@ -504,7 +547,7 @@ export const echoDict = {
       jp: "恐刃の車",
       zh: "车刃镰",
       type: [harmony.Gale.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     X53: {
       en: "Autopuppet Scout",
@@ -512,7 +555,7 @@ export const echoDict = {
       jp: "巡回のカラクリ",
       zh: "巡哨机傀",
       type: [harmony.Frost.id, harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     H53: {
       en: "Glacio Dreadmane",
@@ -520,7 +563,7 @@ export const echoDict = {
       jp: "雪鬣狼",
       zh: "雪鬃狼",
       type: [harmony.Frost.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     Z11: {
       en: "Lumiscale Construct",
@@ -528,7 +571,7 @@ export const echoDict = {
       jp: "浮遊鱗機（ふゆうりんき）",
       zh: "游鳞机枢",
       type: [harmony.Frost.id, harmony.Thunder.id],
-      stats: [{}],
+      stats: [],
     },
     H54: {
       en: "Lightcrusher",
@@ -536,7 +579,7 @@ export const echoDict = {
       jp: "光踏獣（こうとうじゅう）",
       zh: "踏光兽",
       type: [harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     W64: {
       en: "Questless Knight",
@@ -544,7 +587,7 @@ export const echoDict = {
       jp: "回歴の騎士",
       zh: "巡游骑士",
       type: [harmony.Frosty.id, harmony.Veil.id],
-      stats: [{}],
+      stats: [],
     },
     W65: {
       en: "Diurnus Knight",
@@ -552,7 +595,7 @@ export const echoDict = {
       jp: "炎昼の騎士",
       zh: "幻昼骑士",
       type: [harmony.Radiance.id],
-      stats: [{}],
+      stats: [],
     },
     W66: {
       en: "Nocturnus Knight",
@@ -560,7 +603,7 @@ export const echoDict = {
       jp: "闇夜の騎士",
       zh: "暗夜骑士",
       type: [harmony.Veil.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     W67: {
       en: "Abyssal Patricius",
@@ -568,7 +611,7 @@ export const echoDict = {
       jp: "アビサル・パトリシウス",
       zh: "毒冠贵族",
       type: [harmony.Frosty.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     W68: {
       en: "Abyssal Gladius",
@@ -576,7 +619,7 @@ export const echoDict = {
       jp: "アビサル・グラディウス",
       zh: "持刃贵族",
       type: [harmony.Veil.id, harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     W69: {
       en: "Abyssal Mercator",
@@ -584,7 +627,7 @@ export const echoDict = {
       jp: "アビサル・メルカトル",
       zh: "凝水贵族",
       type: [harmony.Frosty.id, harmony.Radiance.id],
-      stats: [{}],
+      stats: [],
     },
     R41: {
       en: "Chop Chop",
@@ -592,7 +635,7 @@ export const echoDict = {
       jp: "フロートアルマ",
       zh: "浮灵偶",
       type: [harmony.Empyrean.id, harmony.Courage.id, harmony.Dream.id],
-      stats: [{}],
+      stats: [],
     },
     W70: {
       en: "Vitreum Dancer",
@@ -600,7 +643,7 @@ export const echoDict = {
       jp: "ヴィトルムダンサー",
       zh: "琉璃刀伶",
       type: [harmony.Radiance.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     R42: {
       en: "Cuddle Wuddle",
@@ -608,7 +651,7 @@ export const echoDict = {
       jp: "ビッグベア",
       zh: "巨布偶",
       type: [harmony.Frosty.id, harmony.Veil.id],
-      stats: [{}],
+      stats: [],
     },
     S56: {
       en: "Rage Against the Statue",
@@ -616,7 +659,7 @@ export const echoDict = {
       jp: "彫像を再構築する岩拳",
       zh: "重塑雕像的拳砾",
       type: [harmony.Radiance.id, harmony.Welkin.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     H47: {
       en: "Hurriclaw",
@@ -624,7 +667,7 @@ export const echoDict = {
       jp: "ハリケーン熊",
       zh: "飓力熊",
       type: [harmony.Courage.id, harmony.Welkin.id, harmony.Crown.id],
-      stats: [{}],
+      stats: [],
     },
     W71: {
       en: "Capitaneus",
@@ -632,7 +675,7 @@ export const echoDict = {
       jp: "カピタネウス",
       zh: "荣光节使",
       type: [harmony.Radiance.id, harmony.Welkin.id, harmony.Pilgrimage.id],
-      stats: [{}],
+      stats: [],
     },
     W72: {
       en: "Pilgrim's Shell",
@@ -640,7 +683,7 @@ export const echoDict = {
       jp: "伝道師の空殻",
       zh: "传道者的遗形",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     H55: {
       en: "Kerasaur",
@@ -648,7 +691,7 @@ export const echoDict = {
       jp: "クラトスクス",
       zh: "角鳄",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id, harmony.Shadow.id],
-      stats: [{}],
+      stats: [],
     },
     H42N: {
       en: "Nightmare: Violet-Feathered Heron",
@@ -656,7 +699,7 @@ export const echoDict = {
       jp: "ナイトメア・紫羽サギ",
       zh: "梦魇·紫羽鹭",
       type: [harmony.Crown.id],
-      stats: [{}],
+      stats: [],
     },
     H42: {
       en: "Violet-Feathered Heron",
@@ -664,7 +707,7 @@ export const echoDict = {
       jp: "紫羽サギ",
       zh: "紫羽鹭",
       type: [harmony.Rift.id, harmony.Thunder.id],
-      stats: [{}],
+      stats: [],
     },
     H41N: {
       en: "Nightmare: Cyan-Feathered Heron",
@@ -672,7 +715,7 @@ export const echoDict = {
       jp: "ナイトメア・青羽サギ",
       zh: "梦魇·青羽鹭",
       type: [harmony.Law.id],
-      stats: [{}],
+      stats: [],
     },
     H41: {
       en: "Cyan-Feathered Heron",
@@ -680,7 +723,7 @@ export const echoDict = {
       jp: "青羽サギ",
       zh: "青羽鹭",
       type: [harmony.Gale.id, harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     S55: {
       en: "Stonewall Bracer",
@@ -688,7 +731,7 @@ export const echoDict = {
       jp: "巨岩の闘士",
       zh: "坚岩斗士",
       type: [harmony.Rejuvent.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     W61: {
       en: "Flautist",
@@ -696,7 +739,7 @@ export const echoDict = {
       jp: "宣諭の楽手",
       zh: "奏谕乐师",
       type: [harmony.Thunder.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     W60: {
       en: "Tambourinist",
@@ -704,7 +747,7 @@ export const echoDict = {
       jp: "金鈴の楽手",
       zh: "振铎乐师",
       type: [harmony.Frost.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     W63: {
       en: "Rocksteady Guardian",
@@ -712,7 +755,7 @@ export const echoDict = {
       jp: "磐石の守り手",
       zh: "磐石守卫",
       type: [harmony.Light.id, harmony.Rejuvent.id],
-      stats: [{}],
+      stats: [],
     },
     W62: {
       en: "Chasm Guardian",
@@ -720,7 +763,7 @@ export const echoDict = {
       jp: "冥淵の守り手",
       zh: "冥渊守卫",
       type: [harmony.Rejuvent.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     H46N: {
       en: "Nightmare: Viridblaze Saurian",
@@ -728,7 +771,7 @@ export const echoDict = {
       jp: "ナイトメア・熔解トカゲ",
       zh: "梦魇·绿熔蜥",
       type: [harmony.Shadow.id],
-      stats: [{}],
+      stats: [],
     },
     H46: {
       en: "Viridblaze Saurian",
@@ -736,7 +779,7 @@ export const echoDict = {
       jp: "熔解トカゲ",
       zh: "绿熔蜥",
       type: [harmony.Rift.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     S06: {
       en: "Roseshroom",
@@ -744,7 +787,7 @@ export const echoDict = {
       jp: "トゲバラタケ",
       zh: "刺玫菇",
       type: [harmony.Frost.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     H49: {
       en: "Havoc Dreadmane",
@@ -752,7 +795,7 @@ export const echoDict = {
       jp: "闇鬣狼",
       zh: "暗鬃狼",
       type: [harmony.Rift.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     H48: {
       en: "Spearback",
@@ -760,7 +803,7 @@ export const echoDict = {
       jp: "黒棘熊",
       zh: "箭簇熊",
       type: [harmony.Clouds.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
   },
   Cost1: {
@@ -770,7 +813,7 @@ export const echoDict = {
       jp: "猿の幼体",
       zh: "幼猿",
       type: [harmony.Gale.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     H11: {
       en: "Diamondclaw",
@@ -778,7 +821,7 @@ export const echoDict = {
       jp: "結晶化サソリ",
       zh: "晶螯蝎",
       type: [harmony.Clouds.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     H02: {
       en: "Chirpuff",
@@ -786,7 +829,7 @@ export const echoDict = {
       jp: "ジュルッポ",
       zh: "啾啾河豚",
       type: [harmony.Gale.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     X54: {
       en: "Traffic Illuminator",
@@ -794,7 +837,7 @@ export const echoDict = {
       jp: "信号機モドキ",
       zh: "通行灯偶",
       type: [harmony.Rift.id, harmony.Thunder.id, harmony.Gale.id],
-      stats: [{}],
+      stats: [],
     },
     G05: {
       en: "Clang Bang",
@@ -802,7 +845,7 @@ export const echoDict = {
       jp: "チリン",
       zh: "叮咚咚",
       type: [harmony.Frost.id, harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     H21: {
       en: "Lava Larva",
@@ -810,7 +853,7 @@ export const echoDict = {
       jp: "溶岩虫",
       zh: "融火虫",
       type: [harmony.Rift.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     H22: {
       en: "Dwarf Cassowary",
@@ -818,7 +861,7 @@ export const echoDict = {
       jp: "地駝鳥",
       zh: "侏侏鸵",
       type: [harmony.Gale.id, harmony.Rejuvent.id],
-      stats: [{}],
+      stats: [],
     },
     H23: {
       en: "Galescourge Stalker",
@@ -826,7 +869,7 @@ export const echoDict = {
       jp: "風鬣狼",
       zh: "风鬃狼",
       type: [harmony.Frosty.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     H24: {
       en: "Voltscourge Stalker",
@@ -834,7 +877,7 @@ export const echoDict = {
       jp: "雷鬣狼",
       zh: "雷鬃狼",
       type: [harmony.Veil.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     H25: {
       en: "Frostscourge Stalker",
@@ -842,7 +885,7 @@ export const echoDict = {
       jp: "霜鬣狼",
       zh: "霜鬃狼",
       type: [harmony.Radiance.id, harmony.Veil.id],
-      stats: [{}],
+      stats: [],
     },
     R01: {
       en: "Chop Chop: Headless",
@@ -850,7 +893,7 @@ export const echoDict = {
       jp: "フロートアルマ・ヘッド",
       zh: "浮灵偶·海德",
       type: [harmony.Radiance.id, harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     R02: {
       en: "Chop Chop: Leftless",
@@ -858,7 +901,7 @@ export const echoDict = {
       jp: "フロートアルマ・レフト",
       zh: "浮灵偶·蕾弗",
       type: [harmony.Frosty.id, harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     R03: {
       en: "Chop Chop: Rightless",
@@ -866,7 +909,7 @@ export const echoDict = {
       jp: "フロートアルマ・ライト",
       zh: "浮灵偶·莱特",
       type: [harmony.Frosty.id, harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     R04: {
       en: "Fae Ignis",
@@ -874,7 +917,7 @@ export const echoDict = {
       jp: "フェイイグニス",
       zh: "幽翎火",
       type: [harmony.Radiance.id, harmony.Veil.id, harmony.Dream.id],
-      stats: [{}],
+      stats: [],
     },
     R05: {
       en: "Nimbus Wraith",
@@ -882,7 +925,7 @@ export const echoDict = {
       jp: "雲の妖精",
       zh: "云海妖精",
       type: [harmony.Veil.id, harmony.Empyrean.id, harmony.Shadow.id],
-      stats: [{}],
+      stats: [],
     },
     R06: {
       en: "Hocus Pocus",
@@ -890,7 +933,7 @@ export const echoDict = {
       jp: "ミスター・マギア",
       zh: "魔术先生",
       type: [harmony.Frosty.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     R07: {
       en: "Lottie Lost",
@@ -898,7 +941,7 @@ export const echoDict = {
       jp: "ミス・ロンリー",
       zh: "寂寞小姐",
       type: [harmony.Frosty.id, harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     R08: {
       en: "Diggy Duggy",
@@ -906,7 +949,7 @@ export const echoDict = {
       jp: "サクサクベア",
       zh: "工头布偶",
       type: [harmony.Radiance.id, harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     R09: {
       en: "Chest Mimic",
@@ -914,7 +957,7 @@ export const echoDict = {
       jp: "秘蔵ミミック",
       zh: "欺诈奇藏",
       type: [harmony.Frosty.id, harmony.Veil.id, harmony.Empyrean.id],
-      stats: [{}],
+      stats: [],
     },
     S10: {
       en: "Golden Junrock",
@@ -922,7 +965,7 @@ export const echoDict = {
       jp: "愚者のゴールドの岩塊",
       zh: "愚金幼岩",
       type: [harmony.Frosty.id, harmony.Radiance.id, harmony.Law.id],
-      stats: [{}],
+      stats: [],
     },
     S11: {
       en: "Calcified Junrock",
@@ -930,7 +973,7 @@ export const echoDict = {
       jp: "ミカーレの岩塊",
       zh: "釉变幼岩",
       type: [harmony.Empyrean.id, harmony.Courage.id, harmony.Crown.id],
-      stats: [{}],
+      stats: [],
     },
     N15: {
       en: "Aero Prism",
@@ -938,7 +981,7 @@ export const echoDict = {
       jp: "気動のプリズム",
       zh: "气动棱镜",
       type: [harmony.Radiance.id, harmony.Courage.id],
-      stats: [{}],
+      stats: [],
     },
     W32: {
       en: "La Guardia",
@@ -946,7 +989,7 @@ export const echoDict = {
       jp: "ガルディア",
       zh: "卫冕节使",
       type: [harmony.Veil.id, harmony.Welkin.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     W33: {
       en: "Sagittario",
@@ -954,7 +997,7 @@ export const echoDict = {
       jp: "サジタリオ",
       zh: "赦罪节使",
       type: [harmony.Radiance.id, harmony.Welkin.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     W34: {
       en: "Sacerdos",
@@ -962,7 +1005,7 @@ export const echoDict = {
       jp: "サケルドス",
       zh: "慈悲节使",
       type: [harmony.Welkin.id, harmony.Pilgrimage.id],
-      stats: [{}],
+      stats: [],
     },
     H26: {
       en: "Aero Drake",
@@ -970,7 +1013,7 @@ export const echoDict = {
       jp: "ドレイクの幼体・気動",
       zh: "小翼龙·气动",
       type: [harmony.Courage.id, harmony.Welkin.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     H27: {
       en: "Electro Drake",
@@ -978,7 +1021,7 @@ export const echoDict = {
       jp: "ドレイクの幼体・電導",
       zh: "小翼龙·导电",
       type: [harmony.Veil.id, harmony.Welkin.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     H28: {
       en: "Glacio Drake",
@@ -986,7 +1029,7 @@ export const echoDict = {
       jp: "ドレイクの幼体・凝縮",
       zh: "小翼龙·冷凝",
       type: [harmony.Welkin.id, harmony.Pilgrimage.id],
-      stats: [{}],
+      stats: [],
     },
     H29: {
       en: "",
@@ -994,7 +1037,7 @@ export const echoDict = {
       jp: "ドレイクの幼体・焦熱",
       zh: "小翼龙·热熔",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     H30: {
       en: "",
@@ -1002,7 +1045,7 @@ export const echoDict = {
       jp: "ドレイクの幼体・回折",
       zh: "小翼龙·衍射",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     H31: {
       en: "",
@@ -1010,7 +1053,7 @@ export const echoDict = {
       jp: "ドレイクの幼体・消滅",
       zh: "小翼龙·湮灭",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     W35: {
       en: "",
@@ -1018,7 +1061,7 @@ export const echoDict = {
       jp: "狂信者の血肉",
       zh: "苦信者的作俑",
       type: [harmony.Welkin.id, harmony.Pilgrimage.id, harmony.Clawprint.id],
-      stats: [{}],
+      stats: [],
     },
     S08: {
       en: "Vanguard Junrock",
@@ -1026,7 +1069,7 @@ export const echoDict = {
       jp: "先兵岩塊",
       zh: "先锋幼岩",
       type: [harmony.Thunder.id, harmony.Rejuvent.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     S09: {
       en: "Fission Junrock",
@@ -1034,7 +1077,7 @@ export const echoDict = {
       jp: "壊れかけ岩塊",
       zh: "裂变幼岩",
       type: [harmony.Thunder.id, harmony.Rejuvent.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     W25: {
       en: "Electro Predator",
@@ -1042,7 +1085,7 @@ export const echoDict = {
       jp: "春雷の狩人",
       zh: "惊蛰猎手",
       type: [harmony.Rift.id, harmony.Thunder.id],
-      stats: [{}],
+      stats: [],
     },
     W30: {
       en: "Fusion Warrior",
@@ -1050,7 +1093,7 @@ export const echoDict = {
       jp: "慟哭の戦士",
       zh: "鸣泣战士",
       type: [harmony.Rift.id, harmony.Thunder.id, harmony.Gale.id],
-      stats: [{}],
+      stats: [],
     },
     W31: {
       en: "Havoc Warrior",
@@ -1058,7 +1101,7 @@ export const echoDict = {
       jp: "審判の戦士",
       zh: "审判战士",
       type: [harmony.Light.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     G02: {
       en: "Snip Snap",
@@ -1066,7 +1109,7 @@ export const echoDict = {
       jp: "カチャチャ",
       zh: "咔嚓嚓",
       type: [harmony.Rift.id, harmony.Rejuvent.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     G03: {
       en: "Zig Zag",
@@ -1074,7 +1117,7 @@ export const echoDict = {
       jp: "アツツ",
       zh: "阿嗞嗞",
       type: [harmony.Light.id, harmony.Clouds.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     G01: {
       en: "Whiff Whaff",
@@ -1082,7 +1125,7 @@ export const echoDict = {
       jp: "フシュシュ",
       zh: "呼咻咻",
       type: [harmony.Gale.id, harmony.Rejuvent.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     G04: {
       en: "Tick Tack",
@@ -1090,7 +1133,7 @@ export const echoDict = {
       jp: "ウカカ",
       zh: "呜咔咔",
       type: [harmony.Eclipse.id, harmony.Rejuvent.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     W26: {
       en: "Glacio Predator",
@@ -1098,7 +1141,7 @@ export const echoDict = {
       jp: "破霜の狩人",
       zh: "破霜猎手",
       type: [harmony.Frost.id, harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     W27: {
       en: "Aero Predator",
@@ -1106,7 +1149,7 @@ export const echoDict = {
       jp: "徘徊の狩人",
       zh: "巡徊猎手",
       type: [harmony.Thunder.id, harmony.Gale.id],
-      stats: [{}],
+      stats: [],
     },
     H12: {
       en: "Cruisewing",
@@ -1114,7 +1157,7 @@ export const echoDict = {
       jp: "遊弋蝶",
       zh: "游弋蝶",
       type: [harmony.Light.id, harmony.Rejuvent.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     H08: {
       en: "Sabyr Boar",
@@ -1122,7 +1165,7 @@ export const echoDict = {
       jp: "砕牙イノシシ",
       zh: "碎獠猪",
       type: [harmony.Frost.id, harmony.Gale.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     H01: {
       en: "Gulpuff",
@@ -1130,7 +1173,7 @@ export const echoDict = {
       jp: "グルッポ",
       zh: "咕咕河豚",
       type: [harmony.Frost.id, harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     H05: {
       en: "Excarat",
@@ -1138,7 +1181,7 @@ export const echoDict = {
       jp: "モグロン",
       zh: "遁地鼠",
       type: [harmony.Frost.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     H06: {
       en: "Baby Viridblaze Saurian",
@@ -1146,7 +1189,7 @@ export const echoDict = {
       jp: "熔解トカゲ（幼体）",
       zh: "绿熔蜥（稚形）",
       type: [harmony.Rift.id, harmony.Thunder.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     S05: {
       en: "Young Roseshroom",
@@ -1154,7 +1197,7 @@ export const echoDict = {
       jp: "トゲバラタケ（幼体）",
       zh: "刺玫菇（稚形）",
       type: [harmony.Gale.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     H09: {
       en: "Fusion Dreadmane",
@@ -1162,7 +1205,7 @@ export const echoDict = {
       jp: "火鬣狼",
       zh: "火鬃狼",
       type: [harmony.Rift.id, harmony.Rejuvent.id],
-      stats: [{}],
+      stats: [],
     },
     H15: {
       en: "Hoartoise",
@@ -1170,7 +1213,7 @@ export const echoDict = {
       jp: "寒霜亀",
       zh: "寒霜陆龟",
       type: [harmony.Frost.id, harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     N12: {
       en: "Fusion Prism",
@@ -1178,7 +1221,7 @@ export const echoDict = {
       jp: "焦熱のプリズム",
       zh: "热熔棱镜",
       type: [harmony.Frost.id, harmony.Rift.id, harmony.Tunes.id],
-      stats: [{}],
+      stats: [],
     },
     N11: {
       en: "Glacio Prism",
@@ -1186,7 +1229,7 @@ export const echoDict = {
       jp: "凝縮のプリズム",
       zh: "冷凝棱镜",
       type: [harmony.Frost.id, harmony.Eclipse.id, harmony.Clouds.id],
-      stats: [{}],
+      stats: [],
     },
     N14: {
       en: "Spectro Prism",
@@ -1194,7 +1237,7 @@ export const echoDict = {
       jp: "回折のプリズム",
       zh: "衍射棱镜",
       type: [harmony.Rift.id, harmony.Thunder.id, harmony.Light.id],
-      stats: [{}],
+      stats: [],
     },
     N13: {
       en: "Havoc Prism",
@@ -1202,7 +1245,7 @@ export const echoDict = {
       jp: "消滅のプリズム",
       zh: "湮灭棱镜",
       type: [harmony.Thunder.id, harmony.Light.id, harmony.Eclipse.id],
-      stats: [{}],
+      stats: [],
     },
     W31N: {
       en: "Nightmare: Havoc Warrior",
@@ -1210,7 +1253,7 @@ export const echoDict = {
       jp: "ナイトメア・審判の戦士",
       zh: "梦魇·审判战士",
       type: [harmony.Dream.id],
-      stats: [{}],
+      stats: [],
     },
     W26N: {
       en: "Nightmare: Glacio Predator",
@@ -1218,7 +1261,7 @@ export const echoDict = {
       jp: "ナイトメア・破霜の狩人",
       zh: "梦魇·破霜猎手",
       type: [harmony.Dream.id],
-      stats: [{}],
+      stats: [],
     },
     W25N: {
       en: "Nightmare: Electro Predator",
@@ -1226,7 +1269,7 @@ export const echoDict = {
       jp: "梦魇·惊蛰猎手",
       zh: "梦魇·赫卡忒",
       type: [harmony.Crown.id],
-      stats: [{}],
+      stats: [],
     },
     W27N: {
       en: "Nightmare: Aero Predator",
@@ -1234,7 +1277,7 @@ export const echoDict = {
       jp: "ナイトメア・徘徊の狩人",
       zh: "梦魇·巡徊猎手",
       type: [harmony.Crown.id],
-      stats: [{}],
+      stats: [],
     },
     H01N: {
       en: "Nightmare: Gulpuff",
@@ -1242,7 +1285,7 @@ export const echoDict = {
       jp: "ナイトメア・グルッポ",
       zh: "梦魇·咕咕河豚",
       type: [harmony.Law.id],
-      stats: [{}],
+      stats: [],
     },
     H02N: {
       en: "Nightmare: Chirpuff",
@@ -1250,7 +1293,7 @@ export const echoDict = {
       jp: "ナイトメア・ジュルッポ",
       zh: "梦魇·啾啾河豚",
       type: [harmony.Law.id],
-      stats: [{}],
+      stats: [],
     },
     H06N: {
       en: "Nightmare: Baby Viridblaze Saurian",
@@ -1258,7 +1301,7 @@ export const echoDict = {
       jp: "ナイトメア・熔解トカゲ（幼体）",
       zh: "梦魇·绿熔蜥（稚形）",
       type: [harmony.Shadow.id],
-      stats: [{}],
+      stats: [],
     },
     S05N: {
       en: "Nightmare: Baby Roseshroom",
@@ -1266,13 +1309,7 @@ export const echoDict = {
       jp: "ナイトメア・トゲバラタケ（幼体）",
       zh: "梦魇·刺玫菇（稚形）",
       type: [harmony.Shadow.id],
-      stats: [{}],
+      stats: [],
     },
   },
-};
-
-Object.values(echoDict).forEach((group) => {
-  Object.entries(group).forEach(([id, data]) => {
-    data.id = id;
-  });
-});
+} as const satisfies Record<string, Record<string, Omit<EchoData, "id">>>;

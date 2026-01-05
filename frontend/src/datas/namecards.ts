@@ -1,4 +1,12 @@
-const NamecardList = {
+export interface Namecard {
+  id: string;
+  en: string;
+  kr: string;
+  jp: string;
+  zh: string;
+}
+
+export const namecards = {
   1: {
     id: "T_card1",
     en: "Sigil of the Wanderer",
@@ -270,6 +278,4 @@ const NamecardList = {
     jp: "セブン・ヒルズのグラディエーター",
     zh: "七丘鬥士",
   },
-};
-
-export default NamecardList;
+}as const satisfies Record<number, Namecard>;
