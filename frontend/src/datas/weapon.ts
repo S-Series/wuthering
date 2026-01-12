@@ -1,3 +1,5 @@
+import { type WeaponType } from "./characters";
+
 export interface Weapon {
     id: string,
     en: string,
@@ -5,6 +7,25 @@ export interface Weapon {
     jp: string,
     zh: string,
     imgKey: string,
+}
+
+type WeaponCategory = keyof typeof weapon;
+type WeaponId =
+  {
+    [K in WeaponCategory]: keyof typeof weapon[K]
+  }[WeaponCategory];
+
+export function getWeaponById(
+  weaponData: typeof weapon,
+  weaponId: WeaponId | null,
+) {
+  for (const category of Object.values(weaponData)) {
+    if (!weaponId) return null;
+    if (weaponId in category) {
+      return category[weaponId as keyof typeof category];
+    }
+  }
+  return null;
 }
 
 export const weapon = {
@@ -596,4 +617,4 @@ export const weapon = {
       imgKey: "ico110",
     },
   },
-} as const satisfies Record<string, Record<string, Weapon>>;
+} as const satisfies Record<WeaponType, Record<string, Weapon>>;

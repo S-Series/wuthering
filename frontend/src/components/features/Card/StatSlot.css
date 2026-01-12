@@ -3,7 +3,7 @@
     width: 95%;
     aspect-ratio: 12 / 1;
     gap: 2.5%;
-    border: 1px solid #ccc;
+    background-color: #ffffff22;
     overflow: hidden;
     align-items: center;
     justify-content: space-between;

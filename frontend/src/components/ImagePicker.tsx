@@ -20,7 +20,7 @@ export default function ImagePicker(props: Props) {
   const displaySrc = useMemo(() => {
     return src ?? defaultSrc ?? null;
   }, [src, defaultSrc]);
-
+  
   const [imageReady, setImageReady] = useState(false);
 
   const [x, setX] = useState(0);

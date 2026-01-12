@@ -21,11 +21,11 @@
 
 .echo-slot-body .echo-image-slot .echo-image {
     position: absolute;
-    width: min(4.25vw, 4.8rem);
-    background-color: #00000066;
+    width: min(4.25vw, 4.4rem);
+    background-color: #ff000066;
     top: 50%;
     left: 50%;
-    transform: translate(calc(-50% + 1px), -50%);
+    transform: translate(-50%, -50%);
 }
 
 .echo-slot-body .echo-image-slot .harmony-image {
@@ -48,8 +48,8 @@
 
 .echo-slot-body .stat-container .echo-stat-slot {
     display: flex;
-    width: 95%;
-    aspect-ratio: 4 / 1;                                
+    width: 85%;
+    aspect-ratio: 3.5 / 1;                                
 
     margin: 3% 0;
 
@@ -63,7 +63,7 @@
 }
 
 .echo-slot-body .echo-stat-slot img {
-    height: 100%;
+    height: 90%;
 }
 
 .echo-slot-body .echo-stat-slot span {

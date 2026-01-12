@@ -108,8 +108,8 @@ export const FixedStats = {
     ValueMain: [0, 32.0, 0],
     ValueSub: [6.8, 7.6, 8.4, 9.2, 10.0, 10.8, 11.6, 12.4,],
   },
-  normalBns: {
-    id: "normalBns",
+  basicBns: {
+    id: "basicBns",
     en: "Basic Attack DMG Bonus",
     kr: "일반공격 피해보너스",
     jp: "通常攻撃ダメージアップ",

@@ -37,11 +37,59 @@ export interface HarmonyOption {
 }
 
 export const harmony = {
+
+  /*
+  asdf: {
+    id: "",
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  */
+
   //#region Ver3.0 Echos
-  
+  Leap: {
+    id: "Leap",
+    en: "Pact of Neonlight Leap",
+    kr: "역광 속 눈부신 서약",
+    jp: "リフレクト・ブレイズ",
+    zh: "逆光跃彩之约",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Halo: {
+    id: "Halo",
+    en: "Halo of Starry Radiance",
+    kr: "빛을 쫓는 별의 고리",
+    jp: "スターブライト・リング",
+    zh: "星构寻辉之环",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Revelation: {
+    id: "Revelation",
+    en: "Rite of Cilded Revelation",
+    kr: "흐르는 금빛 속 진리의 답",
+    jp: "ゴールデン・ヴァリアント",
+    zh: "流金溯真之式",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
   //#endregion
 
   //#region Ver2.0 Echos
+  Fate: {
+    id: "Fate",
+    en: "Thread of Severed Fate",
+    kr: "운명을 붕괴시키는 현",
+    jp: "命理崩壊の弦",
+    zh: "命理崩毁之弦",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
   Frosty: {
     id: "Frosty",
     en: "Frosty Resolve",
@@ -238,6 +286,7 @@ export const harmony = {
   //#endregion
 
 } as const satisfies Record<string, HarmonyOption>;
+
 type HarmonyId = (typeof harmony)[keyof typeof harmony]["id"];
 
 export interface EchoStat {
@@ -256,7 +305,35 @@ export interface EchoData {
 }
 
 export const echoDict = {
+  /*
+    asdf: {
+      en: "",
+      kr: "",
+      jp: "",
+      zh: "",
+      type: [],
+      stats: [],
+    },
+  */
+
   Cost4: {
+    R65: {
+      en: "",
+      kr: "하이와티아",
+      jp: "",
+      zh: "",
+      type: [harmony.Leap.id, harmony.Revelation.id],
+      stats: [],
+    },
+    R66: {
+      en: "",
+      kr: "리액터 허스크",
+      jp: "",
+      zh: "",
+      type: [harmony.Halo.id],
+      stats: [{ statId: FixedStats.ResonanceBns.id, value: 10.0 }],
+    },
+    //* ==================================================== //
     W75N: {
       en: "Nightmare: Tempest Mephis",
       kr: "악몽 · 천둥의 비늘",
@@ -264,8 +341,8 @@ export const echoDict = {
       zh: "梦魇·朔雷之鳞",
       type: [harmony.Thunder.id, harmony.Empyrean.id],
       stats: [
-        {statId: FixedStats.ElectroBns.id, value: 12.0},
-        {statId: FixedStats.heavyBns.id, value: 12.0},
+        { statId: FixedStats.ElectroBns.id, value: 12.0 },
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
       ],
     },
     W75: {
@@ -533,6 +610,100 @@ export const echoDict = {
     */
   },
   Cost3: {
+    S74: {
+      en: "Windlash Coleoid",
+      kr: "바람의 기생갑",
+      jp: "風纏いの寄生甲",
+      zh: "风鳞蜃甲",
+      type: [harmony.Revelation.id],
+      stats: [],
+    },
+    W73: {
+      en: "Frostbite Coleoid",
+      kr: "서리의 기생갑",
+      jp: "霜纏いの寄生甲",
+      zh: "霜鳞蜃甲",
+      type: [harmony.Halo.id],
+      stats: [],
+    },
+    R64: {
+      en: "Sabercat Prowler",
+      kr: "세이버캣 프라울러",
+      jp: "プラウラーシェード",
+      zh: "隐迹铁影",
+      type: [harmony.Leap.id, harmony.Halo.id],
+      stats: [],
+    },
+    R63: {
+      en: "Sabercat Reaver",
+      kr: "세이버캣 리버",
+      jp: "リッパーシェード",
+      zh: "锯袭铁影",
+      type: [harmony.Leap.id, harmony.Halo.id],
+      stats: [],
+    },
+    R62: {
+      en: "Spacetrek Explorer",
+      kr: "스페이스 트렉 탐색기",
+      jp: "スペーストレック重機",
+      zh: "探隧重机",
+      type: [harmony.Halo.id],
+      stats: [],
+    },
+    R61: {
+      en: "Ironhoof",
+      kr: "아이언후프",
+      jp: "アイアン・フーフ",
+      zh: "重工铁蹄",
+      type: [harmony.Leap.id],
+      stats: [],
+    },
+    R60: {
+      en: "Mining Reindeer",
+      kr: "마이닝 메카 레인디어",
+      jp: "マイニング・メカレインディア",
+      zh: "矿岩机麋",
+      type: [harmony.Leap.id],
+      stats: [],
+    },
+    R59: {
+      en: "Flora Reindeer",
+      kr: "플로라 메카 레인디어",
+      jp: "フローラ・メカレインディア",
+      zh: "莳植机麋",
+      type: [harmony.Revelation.id],
+      stats: [],
+    },
+    R58: {
+      en: "Twin Nova: Collapsar Blade",
+      kr: "트윈 노바 · 콜라사르 블레이드",
+      jp: "バイポーラ・アビスフォール",
+      zh: "双极·渊陨重锋",
+      type: [harmony.Revelation.id],
+      stats: [
+        { statId: FixedStats.basicBns.id, value: 12.0},
+        { statId: FixedStats.ElectroBns.id, value: 12.0},
+      ],
+    },
+    R57: {
+      en: "Twin Nova: Nebulous Cannon",
+      kr: "트윈 노바 · 네뷸러스 캐논",
+      jp: "バイポーラ・ノヴァライザー",
+      zh: "双极·星升辉铳",
+      type: [harmony.Revelation.id],
+      stats: [
+        { statId: FixedStats.basicBns.id, value: 12.0},
+        { statId: FixedStats.SpectroBns.id, value: 12.0},
+      ],
+    },
+    S06N: {
+      en: "Nightmare: Roseshroom",
+      kr: "악몽 · 가시장미버섯",
+      jp: "ナイトメア・トゲバラタケ",
+      zh: "梦魇·刺玫菇",
+      type: [harmony.Fate.id],
+      stats: [],
+    },
     H51: {
       en: "Hoochief",
       kr: "까부는 원숭이",
@@ -807,6 +978,62 @@ export const echoDict = {
     },
   },
   Cost1: {
+    W37: {
+      en: "Zip Zap",
+      kr: "삐리릭",
+      jp: "ビリリ",
+      zh: "噼啪啪",
+      type: [],
+      stats: [],
+    },
+    R12: {
+      en: "Geospider S4",
+      kr: "바위거미 S4형",
+      jp: "イワグモS4型",
+      zh: "岩蛛S4型",
+      type: [],
+      stats: [],
+    },
+    R11: {
+      en: "Mining Drone",
+      kr: "바위 호박벌",
+      jp: "サイクツクマバチ",
+      zh: "矿岩熊蜂",
+      type: [],
+      stats: [],
+    },
+    R10: {
+      en: "Flora Drone",
+      kr: "파종 호박벌",
+      jp: "カフンクマバチ",
+      zh: "莳植熊蜂",
+      type: [],
+      stats: [],
+    },
+    W36: {
+      en: "Tremor Warrior",
+      kr: "전율하는 전사",
+      jp: "戦慄の戦士",
+      zh: "颤栗战士",
+      type: [],
+      stats: [],
+    },
+    H22N: {
+      en: "Nightmare: Dwarf Cassowary",
+      kr: "악몽 · 피그미타조",
+      jp: "ナイトメア・地駝鳥",
+      zh: "梦魇·侏侏鸵",
+      type: [],
+      stats: [],
+    },
+    G04N: {
+      en: "Nightmare: Tick Tack",
+      kr: "악몽 · 우글글",
+      jp: "ナイトメア・ウカカ",
+      zh: "梦魇·呜咔咔",
+      type: [],
+      stats: [],
+    },
     H19: {
       en: "Hooscamp",
       kr: "어린 원숭이",

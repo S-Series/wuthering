@@ -61,7 +61,7 @@ export const character: Record<string, Character> = {
   
   //*== ver 3.0 ===========================//
   mornye: {
-    en: "Mornye",
+    en: "mornye",
     kr: "모니에",
     jp: "モーニエ",
     zh: "莫宁",
@@ -74,7 +74,7 @@ export const character: Record<string, Character> = {
     region: "Spacetrek Collective",
   },
   lynae: {
-    en: "Lynae",
+    en: "lynae",
     kr: "린네",
     jp: "リンネー",
     zh: "琳奈",
@@ -90,7 +90,7 @@ export const character: Record<string, Character> = {
   //$== ver 2.X ===========================//
   //*== ver 2.8 ===========================//
   chisa: {
-    en: "Chisa",
+    en: "chisa",
     kr: "치사",
     jp: "千咲",
     zh: "千咲",
@@ -103,7 +103,7 @@ export const character: Record<string, Character> = {
     region: "Statotchi Academy",
   },
   buling: {
-    en: "Buling",
+    en: "buling",
     kr: "복링",
     jp: "卜霊",
     zh: "卜灵",

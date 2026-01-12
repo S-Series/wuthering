@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Select, { type StylesConfig } from "react-select";
 
@@ -10,14 +10,25 @@ import StatSlot from "@/components/features/Card/StatSlot";
 
 import { character, WeaponTypes as WeaponLists ,ElementTypes as ElementLists } from "@/datas/characters"
 import type { Character, WeaponTypes, ElementTypes } from "@/datas/characters"
+import { weapon, type Weapon, getWeaponById } from "@/datas/weapon";
+import { type EchoRuntime } from "@/runtime/echo.runtime";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
 import EchoSlot from "@/components/features/Card/EchoSlot";
+import EchoSelect from "@/components/features/Card/EchoSelect";
 
 export default function Card() {
 
   const { lang } = useAppStore();
+  const {
+    selectedCharacter,
+    setSelectedCharacter,
+    setWeapon,
+    setEcho,
+    setConstell
+  } = useUserStore();
+  
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
   const UI_BUTTON_POS = [
@@ -28,33 +39,105 @@ export default function Card() {
     { x: 29.3, y: 88.3 },
     { x: 13, y: 88.9 },
   ]
-  const TEMP_CONSTELL = 3;
-
-
   const [searchParams] = useSearchParams();
   const paramData = searchParams.get("character") ?? "empty";
 
-  const [cardSection, setCardSection] = useState(0);
+  const [cardSection, setCardSection] = useState(-1);
+  const [echoSection, setEchoSection] = useState(0);
   const [weaponFilter, setWeaponFilter] = useState([false, false, false, false, false])
   const [elementFilter, setElementFilter] = useState([false, false, false, false, false, false])
   
+  //* == Character ================================================//
   const CHARACTER_LIST = Object.entries(character);
-  const [characterData, setCharacterData] = useState<Character>(() => {
-    const data = CHARACTER_LIST.find(([key]) => key === paramData)?.[1] || character["rover_spectro"]
-    return data;
-  });
+  const FILTERED_CHARACTER = useMemo(() => {
+    let result = CHARACTER_LIST;
 
+    const hasElementFilter = elementFilter.some(Boolean);
+    if (hasElementFilter) {
+      result = result.filter(([_, character]) => {
+        const idx = ElementLists.indexOf(character.element);
+        if (idx === -1) return false;
+        return elementFilter[idx];
+      });
+    }
+
+    const hasWeaponFilter = weaponFilter.some(Boolean);
+    if (hasWeaponFilter) {
+      result = result.filter(([_, character]) => {
+        const idx = WeaponLists.indexOf(character.weapon);
+        if (idx === -1) return false;
+        return weaponFilter[idx];
+      });
+    }
+
+    return result;
+  }, [CHARACTER_LIST, elementFilter, weaponFilter]);
+
+  const characterData = useMemo<Character>(() => {
+    const data = CHARACTER_LIST.find(([key]) => key === selectedCharacter.characterId)?.[1] || character["rover_spectro"]
+    return data;
+  }, [selectedCharacter.characterId])
+
+  //* == Weapon ================================================//
+  const FILTERED_WEAPON = useMemo(() => {
+    return Object.values(weapon[characterData.weapon]);
+  }, [characterData]);
+
+  const weaponData = useMemo<Weapon | null>(() => {
+    return getWeaponById(weapon, selectedCharacter.weaponId)
+  }, [selectedCharacter.weaponId])
+
+  //* == Echoes ================================================//
+  const echoData = useMemo(() => {
+    return [
+      null as EchoRuntime | null,
+      null as EchoRuntime | null,
+      null as EchoRuntime | null,
+      null as EchoRuntime | null,
+      null as EchoRuntime | null
+    ]
+  }, [selectedCharacter.echoes])
+
+  //* == Image ================================================//
   const characterImage = useUserStore((s) => s.characterImage);
   const namecardImage = useUserStore((s) => s.namecardImage);
 
   const setImageSrc = useUserStore((s) => s.setImageSrc);
   const resetImage = useUserStore((s) => s.resetImage);
 
+  //* == Image Loading ================================================//
+  type LoadingStatus = "loading" | "loaded" | "error";
+  const [imageLoad, setImageLoad] = useState({
+    character: "loading" as LoadingStatus,
+    characterPreview: "loading" as LoadingStatus,
+    weapon: "loading" as LoadingStatus,
+    weaponPreview: "loading" as LoadingStatus,
+    echoes: Array<LoadingStatus>(5).fill("loading"),
+    echoPreviews: Array<LoadingStatus>(5).fill("loading"),
+  })
+
+  useEffect(() => { 
+    setImageLoad(v => ({ ...v, character: "loading", characterPreview: "loading" })) 
+  }, [characterData]);
+
+  useEffect(() => { 
+    setImageLoad(v => ({ ...v, weapon: "loading", weaponPreview: "loading" })) 
+  }, [weaponData]);
+
+  //* == Init Datas ================================================//
+  useEffect(() => {
+    setSelectedCharacter(CHARACTER_LIST.find(
+      ([key]) => key === paramData)?.[0]
+      || "rover_spectro")
+  }, [])
+
+  //* == return data ================================================//
   return (
     <div id="card-page-slot">
       <div className="card-section left">
         <div className="card-header">
           {/* filter buttons */}
+          {/*
           <div className="header-slot">
             <div className="item-slot filter">
               <div style={{display: "flex", gap: "min(0.5vw, 1rem)"}}>
@@ -103,11 +186,12 @@ export default function Card() {
               asdf
             </div>
           </div>
+          */}
 
           {/* Select Field */}
+          {/*
           <div className="header-slot">
             <div className="item-slot">
-              {/* Character Select */}
               <Select
                 options={[
                   { value: 1, label: "Cost 1" },
@@ -117,7 +201,6 @@ export default function Card() {
 
               <div style={{ width: "4px" }} />
 
-              {/* Weapon Select */}
               <Select
                 options={[
                   { value: 1, label: "Cost 1" },
@@ -126,6 +209,7 @@ export default function Card() {
               />
             </div>
           </div>
+          */}
         </div>
 
         <div className="card-contents">
@@ -169,11 +253,16 @@ export default function Card() {
                 />
 
                 <div className="constell-overlay">
-                  <img className="" src={`/ui/CharacterC${TEMP_CONSTELL}.png`} />
+                  <img className="" src={`/ui/CharacterC${selectedCharacter.constell[0]}.png`} />
                   {UI_BUTTON_POS.map((item, idx) => {
                     return (
-                      <button className={`constell-button ${TEMP_CONSTELL > idx ? "active" : ""}`}
-                        style={{ left: `${item.x}%`, top: `${item.y}%`, }}>
+                      <button className={`constell-button ${selectedCharacter.constell[0] > idx ? "active" : ""}`}
+                        style={{ left: `${item.x}%`, top: `${item.y}%`, }}
+                        onClick={() => {
+                          setConstell(
+                            selectedCharacter.constell[0] === idx + 1 ? 0 : idx + 1,
+                            selectedCharacter.constell[1])
+                        }}>
                         <img className="constell-image" src={
                           `${BASE_URL}/character/${characterData.en.includes("rover")
                             ? "rover"
@@ -299,22 +388,134 @@ export default function Card() {
       </div>
 
       <div className="card-section right">
+        {/* == Character ============ */}
         <button className={`en-font ${cardSection === 0 ? "active" : ""}`}
-          onClick={() => { setCardSection(0) }}>Character</button>
-        <div className={`card-item ${cardSection === 0 ? "active" : ""}`}>
-          asdf
-        </div>
+          onClick={() => { setCardSection((p) => { return (p === 0 ? -1 : 0) }) }}>Character</button>
+        
+        <button className={`card-preview character ${cardSection === 0 ? "" : "active"}`}
+          onClick={() => { setCardSection((p) => { return (p === 0 ? -1 : 0) }) }}>
 
+          {imageLoad.character !== "loaded" && (
+            <img alt="loading"
+              src={`${BASE_URL}/character/${characterData.en}/ico.webp`} />
+          )}
+
+          <img alt="character"
+            src={`${BASE_URL}/character/${characterData.en}/ico.webp`}
+            style={{ display: imageLoad.character === "loaded" ? "block" : "none" }}
+            onLoad={() => setImageLoad(v => ({ ...v, character: "loaded" }))}
+            onError={() => setImageLoad(v => ({ ...v, character: "error" }))}
+          />
+
+          <span className={`${lang}-font`}>{characterData[lang]}</span>
+        </button>
+        
+        <div className={`card-slot ${cardSection === 0 ? "active" : ""}`}>
+          <div className="filter-slot">
+            {WeaponLists.map((item, idx) => {
+              return (
+                <button className={
+                  `filter-item ${weaponFilter[idx] ? "active" : ""}`
+                }
+                  onClick={() => {
+                    setWeaponFilter((prev) =>
+                      prev.map((v, i) => (i === idx ? !v : v)))
+                  }}>
+                  <img alt="filter icon"
+                    src={`${BASE_URL}/ico/weapon_type/${item}.webp`} />
+                </button>
+              )
+            })}
+          </div>
+          <div className="filter-slot">
+            {ElementLists.map((item, idx) => {
+              return (
+                <button className={
+                  `filter-item ${elementFilter[idx] ? "active" : ""}`
+                }
+                  onClick={() => {
+                    setElementFilter((prev) =>
+                      prev.map((v, i) => (i === idx ? !v : v)))
+                  }}>
+                  <img alt="filter icon"
+                    src={`${BASE_URL}/ico/element/${item}.png`} />
+                </button>
+              )
+            })}
+          </div>
+          {FILTERED_CHARACTER.map((item) => {
+            return (
+              <div className={`card-item ${item[1].element}
+                ${item[0] === characterData.en ? "selected" : ""}`}
+                onClick={() => {
+                  setSelectedCharacter(item[0])
+                  setCardSection(-1)
+                }}>
+                <img alt="character icon" src={`${BASE_URL}/character/${item[0].includes("rover") 
+                    ? "rover" 
+                    : item[0]}/ico.webp`} />
+                <span className={`${lang}-font`}>{item[1][lang]}</span>
+              </div>
+            )
+          })}
+        </div>
+        
+        {/* == Weapon ============ */}
         <button className={`en-font ${cardSection === 1 ? "active" : ""}`}
-          onClick={() => { setCardSection(1) }}>Weapon</button>
-        <div className={`card-item ${cardSection === 1 ? "active" : ""}`}>
-          asdf
+          onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>Weapon</button>
+        
+        <button className={`card-preview weapon ${cardSection === 1 ? "" : "active"}`}
+          onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>
+
+          <img src={`${BASE_URL}/weapon/${characterData.weapon}/${weaponData?.imgKey}.png`}/>
+          
+          <span className={`${lang}-font`}>{weaponData?.[lang]}</span>
+        </button>
+        
+        <div className={`card-slot ${cardSection === 1 ? "active" : ""}`}>
+          {FILTERED_WEAPON.map((item) => {
+            return (
+              <div className={`card-item weapon
+                ${item.id.includes("00") ? "spectro" : "havoc"}
+                ${item.id === weaponData?.id ? "selected" : ""}`}
+                onClick={() => {
+                  setWeapon(item)
+                  setCardSection(-1)
+                }}>
+                <img alt="weapon icon" src={`${BASE_URL}/weapon/${characterData.weapon}/${item.imgKey}.png`} />
+                <div style={{display: "flex", flexDirection: "column"}}>
+                  <span className={`${lang}-font`}>{item.id.includes("00") ? "★★★★★" : "★★★★"}</span>
+                  <span className={`${lang}-font`}>{item[lang]}</span>
+                </div>
+              </div>
+            )
+          })}
         </div>
 
+        {/* == Echos ============ */}
         <button className={`en-font ${cardSection === 2 ? "active" : ""}`}
-          onClick={() => { setCardSection(2) }}>Echo Setting</button>
-        <div className={`card-item echo ${cardSection === 2 ? "active" : ""}`}>
-          asdf
+          onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>Echos</button>
+        
+        <button className={`card-preview echo ${cardSection === 2 ? "" : "active"}`}
+          onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>
+          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`}/>
+          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`}/>
+          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`}/>
+          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`}/>
+          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`}/>
+        </button>
+        
+        <div className={`card-slot echo ${cardSection === 2 ? "active" : ""}`}>
+          <div className="filter-slot">
+            {[0, 0, 0, 0, 0].map((_, idx) => {
+              return (
+                <button className={`filter-item ${echoSection === idx 
+                  ? "active" : ""}`} onClick={() => {setEchoSection(idx)}}>
+                  {idx}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
