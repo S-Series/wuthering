@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { CharacterId } from "@/datas/characterStats";
 
 import { 
   type ImageKey,
@@ -7,13 +8,14 @@ import {
  } from "@/runtime/image.runtime";
 
 import {
-  type CharacterId,
-  type WeaponId,
+  type CharacterFinalStat,
+  type WeaponData,
   type SelectedCharacterRuntime,
-  createInitialSelectedCharacterRuntime
+  createInitialSelectedCharacterRuntime,
 } from "@/runtime/character.runtime";
 
 import { type EchoRuntime } from "@/runtime/echo.runtime";
+import { characterStat, type CharacterStat } from "@/datas/characterStats";
 
 type UserStore = {
   //#region Images
@@ -42,7 +44,7 @@ type UserStore = {
 
   setSelectedCharacter: (characterId: CharacterId | null) => void;
 
-  setWeapon: (weaponId: WeaponId | null) => void;
+  setWeapon: (weaponData: WeaponData | null) => void;
 
   setConstell: (character: number, weapon: number) => void;
 
@@ -50,10 +52,12 @@ type UserStore = {
 
   resetSelectedCharacter: () => void;
 
+  getFinalStat: () => CharacterFinalStat | null;
+
   //#endregion
 };
 
-export const useUserStore = create<UserStore>((set) => ({
+export const useUserStore = create<UserStore>((set, get) => ({
   //#region Images
   characterImage: createInitialImageState(),
   namecardImage: createInitialImageState(),
@@ -103,21 +107,27 @@ export const useUserStore = create<UserStore>((set) => ({
   //#region Characters
   selectedCharacter: createInitialSelectedCharacterRuntime(),
 
-  setSelectedCharacter: (characterId) =>
+  setSelectedCharacter: (characterId: CharacterId | null) => {
+    console.log("id:", characterId);
+    const stats = characterId !== null ? characterStat[characterId] : null;
+    console.log(stats);
+
     set((state) => ({
       ...state,
       selectedCharacter: {
         ...state.selectedCharacter,
         characterId,
+        characterStat: stats,
       },
-    })),
+    }))
+  },
 
-  setWeapon: (weaponId) =>
+  setWeapon: (weaponData) =>
     set((state) => ({
       ...state,
       selectedCharacter: {
         ...state.selectedCharacter,
-        weaponId,
+        weaponData,
       },
     })),
 
@@ -149,6 +159,17 @@ export const useUserStore = create<UserStore>((set) => ({
       ...state,
       selectedCharacter: createInitialSelectedCharacterRuntime(),
     })),
+
+  getFinalStat: () => {
+    const { selectedCharacter } = get();
+    const baseStat = selectedCharacter.characterStat;
+    const weaponData = selectedCharacter.weaponData;
+    const echoData = selectedCharacter.echoes;
+    console.log("c:", baseStat);
+    console.log("w:", weaponData);
+    console.log("e:", echoData);
+    return null;
+  },
 
   //#endregion
 

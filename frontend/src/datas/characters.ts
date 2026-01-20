@@ -1,3 +1,5 @@
+import type { CharacterId } from "./characterStats";
+
 export const WeaponTypes = [
   "sword",
   "broadblade",
@@ -17,6 +19,9 @@ export const ElementTypes = [
 ] as const;
 export type ElementType = (typeof ElementTypes)[number];
 
+const AttackTypes = ["basic", "heavy", "skill", "liberation", "heal"] as const;
+export type AttackType = (typeof AttackTypes)[number];
+
 export interface Character {
   en: string;
   kr: string;
@@ -25,7 +30,7 @@ export interface Character {
   hasSkin: boolean;
   weapon: WeaponType;
   element: ElementType;
-  type: "basic" | "heavy" | "skill" | "liberation" | "heal";
+  type: AttackType;
   version: number;
   isElite: boolean;
   region: //==================================================//
@@ -42,7 +47,7 @@ export interface Character {
   //==========================================================//
 }
 
-export const character: Record<string, Character> = {
+export const character: Record<CharacterId, Character> = {
   //$== ver 3.X ===========================//
   //*== ver 3.1 ===========================//
   /* temp: {
@@ -481,7 +486,8 @@ export const character: Record<string, Character> = {
     region: "Unknown",
   },
 
-  //$== ver 0.0 ===========================//
+  //$== ver open ===========================//
+  //# 5★
   rover_spectro: {
     en: "rover : Spectro",
     kr: "방랑자 (회절)",
@@ -494,5 +500,188 @@ export const character: Record<string, Character> = {
     version: 1.0,
     isElite: true,
     region: "Unknown",
+  },
+  verina: {
+    en: "verina",
+    kr: "벨리나",
+    jp: "ヴェリーナ",
+    zh: "维里奈",
+    hasSkin: false,
+    weapon: "rectifier",
+    element: "spectro",
+    type: "heal",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  calcharo: {
+    en: "calcharo",
+    kr: "카카루",
+    jp: "カカロ",
+    zh: "卡卡罗",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "electro",
+    type: "heavy",
+    version: 1.0,
+    isElite: true,
+    region: "Unknown",
+  },
+  encore: {
+    en: "encore",
+    kr: "앙코",
+    jp: "アンコ",
+    zh: "安可",
+    hasSkin: false,
+    weapon: "rectifier",
+    element: "fusion",
+    type: "basic",
+    version: 1.0,
+    isElite: true,
+    region: "Unknown",
+  },
+  jianxin: {
+    en: "jianxin",
+    kr: "감심",
+    jp: "鑑心",
+    zh: "鉴心",
+    hasSkin: false,
+    weapon: "gauntlet",
+    element: "aero",
+    type: "heavy",
+    version: 1.0,
+    isElite: true,
+    region: "Unknown",
+  },
+  lingyang: {
+    en: "lingyang",
+    kr: "능양",
+    jp: "凌陽",
+    zh: "凌阳",
+    hasSkin: false,
+    weapon: "gauntlet",
+    element: "glacio",
+    type: "basic",
+    version: 1.0,
+    isElite: true,
+    region: "Unknown",
+  },
+  //# 4★
+  sanhua: {
+    en: "sanhua",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "sword",
+    element: "glacio",
+    type: "skill",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  baizhi: {
+    en: "baizhi",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "rectifier",
+    element: "glacio",
+    type: "heal",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  chixia: {
+    en: "chixia",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "fusion",
+    type: "liberation",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  mortefi: {
+    en: "mortefi",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "fusion",
+    type: "liberation",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  yuanwu: {
+    en: "yuanwu",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "gauntlet",
+    element: "electro",
+    type: "basic",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  yangyang: {
+    en: "yangyang",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "sword",
+    element: "aero",
+    type: "liberation",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  aalto: {
+    en: "aalto",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "aero",
+    type: "skill",
+    version: 1.0,
+    isElite: true,
+    region: "Black Shores",
+  },
+  taoqi: {
+    en: "taoqi",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "havoc",
+    type: "liberation",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
+  },
+  danjin: {
+    en: "danjin",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "sword",
+    element: "havoc",
+    type: "heavy",
+    version: 1.0,
+    isElite: true,
+    region: "Huanglong",
   },
 };

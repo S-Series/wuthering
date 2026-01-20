@@ -1,8 +1,9 @@
 import { useAppStore } from "@/hooks/appStore";
+import type { StatId } from "@/datas/stats";
 import "./StatSlot.css"
 
 interface StatSlotProps {
-    statId: string;
+    statId: StatId;
     statValue: number;
     plusValue: number;
 }
@@ -13,7 +14,7 @@ export default function StatSlot({ statId, statValue, plusValue }: StatSlotProps
     return (
         <div className="stat-slot-body">
             <div className="container">
-                <img src="/default.webp"/>
+                <img src={`/ico/stats/${statId}.webp`}/>
                 <span className={`${lang}-font`}>{`Stat Name`}</span>
                 <p className={`${lang}-font`}>{statValue}</p>
             </div>

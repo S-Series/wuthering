@@ -10,13 +10,18 @@ import StatSlot from "@/components/features/Card/StatSlot";
 
 import { character, WeaponTypes as WeaponLists ,ElementTypes as ElementLists } from "@/datas/characters"
 import type { Character, WeaponTypes, ElementTypes } from "@/datas/characters"
-import { weapon, type Weapon, getWeaponById } from "@/datas/weapon";
+import { weapon, type Weapon } from "@/datas/weapon";
 import { type EchoRuntime } from "@/runtime/echo.runtime";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
 import EchoSlot from "@/components/features/Card/EchoSlot";
 import EchoSelect from "@/components/features/Card/EchoSelect";
+import { weaponStat } from "@/datas/weaponStats";
+import type { WeaponData } from "@/runtime/character.runtime";
+import { harmony } from "@/datas/echos";
+import type { CharacterId } from "@/datas/characterStats";
+import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats } from "@/datas/stats";
 
 export default function Card() {
 
@@ -26,7 +31,8 @@ export default function Card() {
     setSelectedCharacter,
     setWeapon,
     setEcho,
-    setConstell
+    setConstell,
+    getFinalStat
   } = useUserStore();
   
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
@@ -48,7 +54,7 @@ export default function Card() {
   const [elementFilter, setElementFilter] = useState([false, false, false, false, false, false])
   
   //* == Character ================================================//
-  const CHARACTER_LIST = Object.entries(character);
+  const CHARACTER_LIST = Object.entries(character) as [CharacterId, Character][];
   const FILTERED_CHARACTER = useMemo(() => {
     let result = CHARACTER_LIST;
 
@@ -70,7 +76,7 @@ export default function Card() {
       });
     }
 
-    return result;
+    return result as [CharacterId, Character][];
   }, [CHARACTER_LIST, elementFilter, weaponFilter]);
 
   const characterData = useMemo<Character>(() => {
@@ -78,14 +84,30 @@ export default function Card() {
     return data;
   }, [selectedCharacter.characterId])
 
+  const STAT_IDS = useMemo(() => {
+    return [
+      FixedStats.hp.id,
+      FixedStats.atk.id,
+      FixedStats.def.id,
+      FixedStats.ResonanceBns.id,
+      FixedStats.CritRate.id,
+      FixedStats.CritDmg.id,
+      ELEMENT_STAT_MAP[characterData.element] || FixedStats.dummy.id,
+      ATTACK_TYPE_STAT_MAP[characterData.type]  || FixedStats.dummy.id,
+    ]
+  }, [characterData.element, characterData.type])
+  
+  const TEMP = getFinalStat();
+  console.log(TEMP);
+
   //* == Weapon ================================================//
-  const FILTERED_WEAPON = useMemo(() => {
+  const FILTERED_WEAPON = useMemo<Weapon[]>(() => {
     return Object.values(weapon[characterData.weapon]);
   }, [characterData]);
 
-  const weaponData = useMemo<Weapon | null>(() => {
-    return getWeaponById(weapon, selectedCharacter.weaponId)
-  }, [selectedCharacter.weaponId])
+  const weaponData = useMemo<WeaponData | null>(() => {
+    return selectedCharacter.weaponData;
+  }, [selectedCharacter.weaponData])
 
   //* == Echoes ================================================//
   const echoData = useMemo(() => {
@@ -297,37 +319,77 @@ export default function Card() {
 
             <div className="main-item-slot weapon">
               <div className="weapon-info-img">
-                <img alt="weapon icon" src={`/default.webp`}/>
+                <img alt="weapon icon" src={
+                  `${BASE_URL}/weapon/${characterData.weapon}/${weaponData?.imgKey}.png`}
+                  onError={(e) => {
+                    e.currentTarget.dataset.fallback = "true";
+                    e.currentTarget.src = "/default.webp";
+                  }}/>
               </div>
               
               <div className="weapon-info-slot">
-                <span className="weapon-name">{`판타지 변주`}</span>
+                <span className="weapon-name">
+                  {`${weaponData?.[lang] || "- - - - - - - - - -"}`}
+                </span>
 
-                <img className="weapon-stat-icon main" alt="stat icon" src={`/default.webp`} />
-                <span className="weapon-stat main">{`500`}</span>
+                <img className="weapon-stat-icon main" alt="stat icon" 
+                  src={`/ico/stats/atk.webp`} />
+                <span className="weapon-stat num-font main">{`${weaponData?.atk || "- - -"}`}</span>
 
-                <img className="weapon-stat-icon sub" alt="stat icon" src={`/default.webp`} />
-                <span className="weapon-stat sub">{`34.5%`}</span>
+                <img className="weapon-stat-icon sub" alt="stat icon" 
+                  src={`/ico/stats/${weaponData?.statType[0]}.webp`} 
+                  onError={(e) => {
+                    e.currentTarget.dataset.fallback = "true";
+                    e.currentTarget.src = "/default.webp";
+                  }}/>
+                <span className="weapon-stat num-font sub">
+                  {`${weaponData?.value[0] || "- - -"}`}<em>%</em>
+                </span>
               </div>
             </div>
 
             <div className="main-item-slot stats">
-              <StatSlot statId="" statValue={54321} plusValue={12345} />
-              <StatSlot statId="" statValue={12345} plusValue={23.4} />
-              <StatSlot statId="" statValue={12345} plusValue={23.4} />
-              <StatSlot statId="" statValue={12345} plusValue={23.4} />
-              <StatSlot statId="" statValue={12345} plusValue={23.4} />
-              <StatSlot statId="" statValue={12345} plusValue={23.4} />
-              <StatSlot statId="" statValue={12345} plusValue={23.4} />
-              <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              {
+                STAT_IDS.map((item) => {
+                  return (
+                    <StatSlot statId={item} statValue={123} plusValue={123} />
+                  )
+                })
+              }
+              {/*
+                <StatSlot statId="" statValue={54321} plusValue={12345} />
+                <StatSlot statId="" statValue={12345} plusValue={23.4} />
+                <StatSlot statId="" statValue={12345} plusValue={23.4} />
+                <StatSlot statId="" statValue={12345} plusValue={23.4} />
+                <StatSlot statId="" statValue={12345} plusValue={23.4} />
+                <StatSlot statId="" statValue={12345} plusValue={23.4} />
+                <StatSlot statId="" statValue={12345} plusValue={23.4} />
+                <StatSlot statId="" statValue={12345} plusValue={23.4} />
+              */}
 
               <div className="harmony-slot">
-                Harmony Options Comes Here.
+                <div className="container">
+                  <img src={`/ico/harmony/${harmony.Clouds.id}.webp`}/>
+                  <span className={`${lang}-font`}>
+                    {harmony.Clouds[lang]} <em className="num-font">{"[5]"}</em>
+                  </span>
+                </div>
+
+                <div className="container">
+                  <img src={`/ico/harmony/${harmony.Revelation.id}.webp`}/>
+                  <span className={`${lang}-font`}>
+                    {harmony.Revelation[lang]} <em className="num-font">{"[5]"}</em>
+                  </span>
+                </div>
               </div>
 
               <div className="score-slot">
-                <span className="en-font">Av. <em className="num-font">{`${123.4}`}</em>pt</span>
-                <span className="en-font">Cv. <em className="num-font">{`${123.4}`}</em>pt</span>
+                <span className="en-font">
+                  Av. <em className="num-font">{`${123.4}`}</em>pt
+                </span>
+                <span className="en-font">
+                  Cv. <em className="num-font">{`${123.4}`}</em>pt
+                </span>
               </div>
             </div>
 
@@ -448,6 +510,7 @@ export default function Card() {
               <div className={`card-item ${item[1].element}
                 ${item[0] === characterData.en ? "selected" : ""}`}
                 onClick={() => {
+                  console.log("asdf:", item);
                   setSelectedCharacter(item[0])
                   setCardSection(-1)
                 }}>
@@ -479,8 +542,11 @@ export default function Card() {
                 ${item.id.includes("00") ? "spectro" : "havoc"}
                 ${item.id === weaponData?.id ? "selected" : ""}`}
                 onClick={() => {
-                  setWeapon(item)
-                  setCardSection(-1)
+                  const stat = weaponStat[item.id];
+                  if (!stat) return;
+
+                  setWeapon({ ...item, ...stat });
+                  setCardSection(-1);
                 }}>
                 <img alt="weapon icon" src={`${BASE_URL}/weapon/${characterData.weapon}/${item.imgKey}.png`} />
                 <div style={{display: "flex", flexDirection: "column"}}>

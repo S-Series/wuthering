@@ -1,3 +1,5 @@
+import type { AttackType, ElementType } from "./characters";
+
 export interface Stat {
   id: string,
   en: string,
@@ -135,8 +137,8 @@ export const FixedStats = {
     ValueMain: [0, 0, 0],
     ValueSub: [6.4, 7.1, 7.9, 8.6, 9.4, 10.1, 10.9, 11.6,],
   },
-  ultBns: {
-    id: "ultBns",
+  liberationBns: {
+    id: "liberationBns",
     en: "Liberation DMG Bonus",
     kr: "공명해방 피해보너스",
     jp: "共鳴解放ダメージアップ",
@@ -199,5 +201,22 @@ export const FixedStats = {
     ValueSub: [],
   },
 } as const satisfies Record<string, Stat>;
+
+export const ELEMENT_STAT_MAP: Record<ElementType, StatId> = {
+  fusion: FixedStats.FusionBns.id,
+  glacio: FixedStats.GlacioBns.id,
+  electro: FixedStats.ElectroBns.id,
+  aero: FixedStats.AeroBns.id,
+  spectro: FixedStats.SpectroBns.id,
+  havoc: FixedStats.HavocBns.id,
+} as const;
+
+export const ATTACK_TYPE_STAT_MAP: Record<AttackType, StatId> = {
+  basic: FixedStats.basicBns.id,
+  heavy: FixedStats.heavyBns.id,
+  skill: FixedStats.skillBns.id,
+  liberation: FixedStats.liberationBns.id,
+  heal: FixedStats.healBns.id,
+} as const;
 
 export type StatId = (typeof FixedStats)[keyof typeof FixedStats]["id"];

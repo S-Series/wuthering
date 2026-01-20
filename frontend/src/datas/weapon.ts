@@ -1,31 +1,15 @@
 import { type WeaponType } from "./characters";
+import type { weaponStat } from "./weaponStats";
+
+type WeaponStatId = keyof typeof weaponStat
 
 export interface Weapon {
-    id: string,
+    id: WeaponStatId,
     en: string,
     kr: string,
     jp: string,
     zh: string,
     imgKey: string,
-}
-
-type WeaponCategory = keyof typeof weapon;
-type WeaponId =
-  {
-    [K in WeaponCategory]: keyof typeof weapon[K]
-  }[WeaponCategory];
-
-export function getWeaponById(
-  weaponData: typeof weapon,
-  weaponId: WeaponId | null,
-) {
-  for (const category of Object.values(weaponData)) {
-    if (!weaponId) return null;
-    if (weaponId in category) {
-      return category[weaponId as keyof typeof category];
-    }
-  }
-  return null;
 }
 
 export const weapon = {
@@ -272,7 +256,7 @@ export const weapon = {
   gauntlet: {
     //$ 5-Starts
     gauntlet001:{
-			id: "gauntlet00",
+			id: "gauntlet001",
       en: "Abyss Surges",
       kr: "물결의 파동",
       jp: "怒涛の湖音",

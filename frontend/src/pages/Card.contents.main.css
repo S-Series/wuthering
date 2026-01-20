@@ -33,10 +33,10 @@
 
     gap: 2.5%;
     padding-top: 0.7%;
-    padding-bottom: 1.25%;
+    padding-bottom: 0.75%;
 
     width: 28%;
-    height: 71.5%;
+    height: 72.5%;
     bottom: 1.5%;
     left: 32.75%;
     background-color: #00000033;
@@ -45,8 +45,8 @@
 .card-contents .card-contents-slot.main .main-item-slot.description {
     flex-direction: row;
     width: 37.5%;
-    height: 6%;
-    top: 1%;
+    height: 5.5%;
+    top: 1.75%;
     right: 0.8%;
 }
 
@@ -208,19 +208,20 @@
 .main-item-slot.weapon .weapon-info-slot {
     position: absolute;
     bottom: 0;
-    width: calc(100% - 2px);
+    width: 100%;
     height: 72.5%;
-    border: 1px solid #bbb;
+    background-color: #ffffff19;
 }
 
 .main-item-slot.weapon .weapon-info-img {
     position: absolute;
-    left: 2.5%;
+    left: 2%;
     width: calc(25% - 2px);
     aspect-ratio: 1 / 1;
     border: 1px solid #bbb;
     overflow: hidden;
     z-index: 250;
+    background: linear-gradient(30deg, #0b0b44, #333366);
 }
 
 .main-item-slot.weapon .weapon-info-img img {
@@ -235,43 +236,81 @@
 }
 
 .main-item-slot.weapon .weapon-name {
-    font-size: min(1.1vw, 1.15rem);
-    top: 25%;
+    font-size: min(1vw, 0.98rem);
+    bottom: 40%;
     left: 30%;
+    width: 70%;
+
+    white-space: nowrap;
     transform: translateY(-50%);
 }
 .main-item-slot.weapon .weapon-stat-icon {
     position: absolute;
-    top: 75%;
-    width: 10%;
+    top: 77.5%;
+    width: 8%;
     height: auto;
     transform: translateY(-50%);
 }
 .main-item-slot.weapon .weapon-stat {
-    font-size: min(1.4vw, 1.5rem);
-    top: 72.5%;
+    font-size: min(1.3vw, 1.274rem);
+    top: 77.5%;
     transform: translateY(-50%);
 }
 
+.main-item-slot.weapon .weapon-stat em {
+    font-size: min(1vw, 0.98rem);
+}
+
 .main-item-slot.weapon .weapon-stat-icon.main {
-    left: 30%;
+    left: 29%;
 }
 .main-item-slot.weapon .weapon-stat-icon.sub {
     left: 62.5%;
 }
 .main-item-slot.weapon .weapon-stat.main {
-    left: 42.5%;
+    right: 45%;
 }
 .main-item-slot.weapon .weapon-stat.sub  {
-    left: 75%;
+    right: 5%;
 }
 
 /* == Stats ==================================== */
 
 .main-item-slot.stats .harmony-slot {
     display: flex;
+    position: absolute;
+    flex-direction: column;
+    bottom: 2.75%;
+    left: 50%;
+    width: 100%;
+    height: min(3.75vw, 3.7rem);
+
+    gap: min(0.5vw, 0.55rem);
+    align-items: center;
+    justify-content: center;
+
     color: #fff;
-    margin: auto auto;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+}
+
+.main-item-slot.stats .harmony-slot .container {
+    display: flex;
+    width: fit-content;
+    max-width: 90%;
+    height: 40%;
+
+    gap: min(0.22vw, 0.242rem);
+    padding: 0 min(0.2vw, 0.2rem);
+    align-items: center;
+
+    background-color: #ffffff19;
+    font-size: min(1vw, 0.9rem);
+}
+
+.main-item-slot.stats .harmony-slot .container img {
+    width: min(1.1vw, 1.1rem);
+    height: min(1.1vw, 1.1rem);
 }
 
 .main-item-slot.stats .score-slot {
@@ -280,7 +319,7 @@
     height: fit-content;
 
     color: #fff;
-    font-size: min(1.2vw, 1.3rem);
+    font-size: min(1.2vw, 1.2rem);
 
     margin-top: auto;
     justify-content: space-evenly;
@@ -288,7 +327,7 @@
 
 .main-item-slot.stats .score-slot em {
     text-decoration: underline;
-    font-size: min(1.3vw, 1.38rem);
+    font-size: min(1.3vw, 1.365rem);
 }
 
 /* == Description ==================================== */
@@ -338,7 +377,7 @@
 .main-item-slot.namecard .namecard-score img {
     position: absolute;
     width: 125%;
-    top: 37.5%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -349,12 +388,12 @@
 
     color: #fff;
     white-space: nowrap;
-    transform: translate(-52%, 10%);
-    font-size: min(1.2vw, 1.3rem);
+    transform: translate(-52%, 20%);
+    font-size: min(1.2vw, 1.2rem);
 }
 .main-item-slot.namecard .namecard-score em {
     text-decoration: underline;
-    font-size: min(1.3vw, 1.38rem);
+    font-size: min(1.3vw, 1.3rem);
 }
 
 .main-item-slot.namecard .namecard-image {

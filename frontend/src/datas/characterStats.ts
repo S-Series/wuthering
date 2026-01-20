@@ -12,10 +12,78 @@ export interface CharacterStat {
   hpPct: number;
   defPct: number;
 
-  typeBns: number[];
+  typeBns: readonly number[];
 }
 
 export const characterStat = {
+  // == 3.1 ======================================= //
+  // == 3.0 ======================================= //
+  mornye: {
+    baseHp: 9850,
+    baseAtk: 262,
+    baseDef: 1075,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 12.0],
+  },
+  lynae: {
+    baseHp: 9850,
+    baseAtk: 262,
+    baseDef: 1075,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 12.0],
+  },
+  // == 2.8 ======================================= //
+  chisa: {
+    baseHp: 9850,
+    baseAtk: 262,
+    baseDef: 1075,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 12.0],
+  },
+  buling: {
+    baseHp: 9850,
+    baseAtk: 262,
+    baseDef: 1075,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 12.0],
+  },
+  // =========================================== //
   aalto: {
     baseHp: 9850,
     baseAtk: 262,
@@ -672,4 +740,5 @@ export const characterStat = {
 
     typeBns: [0, 0.0],
   },
-} as const satisfies Record<string, CharacterStat>;
+} as const;
+export type CharacterId = keyof typeof characterStat;
