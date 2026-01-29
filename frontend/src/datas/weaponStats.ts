@@ -1,9 +1,9 @@
-import { FixedStats } from "./stats";
+import { FixedStats, type StatId } from "./stats";
 
 export interface WeaponStat {
     atk: number,
     value: number[],
-    statType: string[],
+    statType: StatId[],
 }
 
 export const weaponStat = {
@@ -284,7 +284,7 @@ export const weaponStat = {
   pistol107: {
     atk: 462,
     value: [18.2, 0],
-    statType: ["aktPct", "atk"],
+    statType: ["atkPct", "atk"],
   },
   pistol108: {
     atk: 412,
@@ -353,7 +353,7 @@ export const weaponStat = {
   rectifier105: {
     atk: 387,
     value: [36.4, 0],
-    statType: ["aktPct", "atk"],
+    statType: ["atkPct", "atk"],
   },
   rectifier106: {
     atk: 412,

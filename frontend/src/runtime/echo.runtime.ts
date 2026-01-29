@@ -1,7 +1,7 @@
-import { type Stat } from "@/datas/stats";
+import { type Stat, type StatId } from "@/datas/stats";
 
 export type EchoStatOption = {
-  statId: Stat["id"];
+  statId: StatId;
   statValue: number | -1;
 };
 

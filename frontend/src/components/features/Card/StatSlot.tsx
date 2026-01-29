@@ -10,15 +10,25 @@ interface StatSlotProps {
 
 export default function StatSlot({ statId, statValue, plusValue }: StatSlotProps) {
     const { lang } = useAppStore();
+    const isPct = ((
+        statId.includes("Crit")
+        || statId.includes("Bns")
+        || statId.includes("Pct"))
+        ? true : false
+    );
     
     return (
         <div className="stat-slot-body">
             <div className="container">
                 <img src={`/ico/stats/${statId}.webp`}/>
                 <span className={`${lang}-font`}>{`Stat Name`}</span>
-                <p className={`${lang}-font`}>{statValue}</p>
+                <p className={`num-font`}>
+                    {isPct ? (statValue.toFixed(1) + "%") : statValue}
+                </p>
             </div>
-            <em className={`${lang}-font`}>+{plusValue}</em>
+            <em className={`num-font`}>
+                +{isPct ? (plusValue.toFixed(1) + "%") : plusValue}
+            </em>
         </div>
     )
 }

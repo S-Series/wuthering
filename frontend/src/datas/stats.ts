@@ -200,6 +200,15 @@ export const FixedStats = {
     ValueMain: [0, 33.0, 0],
     ValueSub: [],
   },
+  typeBns: {
+    id: "typeBns",
+    en: "",
+    kr: "모든속성 피해보너스",
+    jp: "",
+    zh: "",
+    ValueMain: [],
+    ValueSub: [],
+  }
 } as const satisfies Record<string, Stat>;
 
 export const ELEMENT_STAT_MAP: Record<ElementType, StatId> = {
