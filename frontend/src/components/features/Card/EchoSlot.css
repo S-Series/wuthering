@@ -1,0 +1,127 @@
+.echo-slot-body {
+    display: flex;
+    flex-direction: column;
+    width: calc(19.5% - 2px);
+    height: calc(100% - 2pxs);
+    border: 1px solid #ccc;
+
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.echo-slot-body .echo-image-slot {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    margin-top: 2.5%;
+    width: 95%;
+    aspect-ratio: 1 / 1;
+    align-items: center;
+}
+
+.echo-slot-body .echo-image-slot .echo-image {
+    position: absolute;
+    width: min(4.25vw, 4.4rem);
+    background-color: #ff000066;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.echo-slot-body .echo-image-slot .harmony-image {
+    position: absolute;
+    width: min(2vw, 1.2rem);
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    z-index: 250;
+}
+
+.echo-slot-body .stat-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2%;
+}
+
+.echo-slot-body .stat-container .echo-stat-slot {
+    display: flex;
+    width: 85%;
+    aspect-ratio: 3.5 / 1;                                
+
+    margin: 3% 0;
+
+    overflow: hidden;
+    align-items: center;
+    justify-content: space-between;
+}
+.echo-slot-body .stat-container.main {
+    margin-top: 10%;
+    margin-bottom: 2%;
+}
+
+.echo-slot-body .echo-stat-slot img {
+    height: 90%;
+}
+
+.echo-slot-body .echo-stat-slot span {
+    color: #f0f0f0;
+    font-size: min(1vw, 1.05rem);
+    transform: scaleX(0.925);
+}
+
+.echo-slot-body .score-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    margin-top: auto;
+    margin-bottom: 2.5%;
+    color: #f0f0f0;
+    align-items: center;
+}
+
+.echo-slot-body .score-container .slot {
+    display: flex;
+    width: 85%;
+    height: fit-content;
+    align-items: flex-end;
+    justify-content: space-between;
+    font-size: min(0.7vw, 0.8rem);
+}
+
+.echo-slot-body .score-container img {
+    position: absolute;
+    bottom: 32.5%;
+    left: 50%;
+    height: min(2.15vw, 2.3rem);
+    transform: translate(-50%, -50%);
+}
+
+.echo-slot-body .score-container span {
+    white-space: nowrap;
+}
+
+.echo-slot-body .score-container em {
+    text-decoration: underline;
+}
+
+
+.echo-slot-body .divider {
+    width: 100%;
+    height: 1px;
+    background-color: #888;
+}
+
+.echo-slot-body .divider.echo {
+    position: absolute;
+    bottom: 0;
+    transform: translateY(50%);
+}
+
+.echo-slot-body .divider.stat {
+    width: 85%;
+}

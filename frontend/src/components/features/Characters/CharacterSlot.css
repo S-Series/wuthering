@@ -1,0 +1,200 @@
+.character-slot {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 180px;
+    min-width: 180px;
+    height: 240px;
+    min-height: 240px;
+
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+
+    background: linear-gradient(#4d4d4d, #d8d8d8, #fff, #d8d8d8, #4d4d4d);
+    border-top-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+    filter: drop-shadow(4px 6px 4px #00000055);
+    transition: transform 0.3s ease-out;
+}
+
+.character-slot:hover,
+.character-slot:focus {
+    border: 0;
+    outline: none;
+    text-decoration: none;
+    transform: scale(1.05);
+}
+
+.character-slot.elite {
+    background: linear-gradient(45deg, #a47a1e, #d3a84c, #ffec94, #e6be69, #ffd87c, #b58f3e, #956d13);
+}
+
+.character-slot .character-image-slot {
+    display: flex;
+    position: absolute;
+    width: calc(100% - 2.5px);
+    height: calc(100% - 2.5px);
+    align-items: center;
+    justify-content: center;
+
+    margin: 1.25px;
+
+    object-fit: cover;
+    overflow: hidden;
+    border-top-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+}
+
+.character-slot .character-image-slot:hover {
+    border: 0;
+    outline: none;
+}
+
+.character-slot .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-top-left-radius: 1.5rem;
+    opacity: 0.75;
+    background: linear-gradient(0deg, #000, transparent 50%);
+    z-index: 3;
+}
+
+.character-slot .card-bg {
+    position: absolute;
+    width: 220px;
+    height: 280px;
+    background: url("/ui/card_bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.character-slot .card-bg.empty {
+    background: linear-gradient(#4d4d4d, #d8d8d8, #fff, #d8d8d8, #4d4d4d);
+    filter: saturate(0.1);
+}
+
+.character-slot .card-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+    pointer-events: none;
+
+    background: url("/ui/card_bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.character-slot .card-bg.aero::after {
+    mix-blend-mode: overlay;
+    background: #41a33a;
+}
+
+.character-slot .card-bg.fusion::after {
+    mix-blend-mode: overlay;
+    background: #f66;
+}
+
+.character-slot .card-bg.electro::after {
+    mix-blend-mode: overlay;
+    background: #83c;
+}
+
+.character-slot .card-bg.glacio::after {
+    mix-blend-mode: overlay;
+    background: #6cf;
+}
+
+.character-slot .card-bg.spectro::after {
+    mix-blend-mode: overlay;
+    background: #ff6;
+}
+
+.character-slot .card-bg.havoc::after {
+    mix-blend-mode: overlay;
+    background: #c39;
+}
+
+.character-slot .character-image-slot .character-image {
+    width: auto;
+    height: 105%;
+    z-index: 2;
+    filter: drop-shadow(0 0 5px #000000aa);
+}
+.character-slot .character-image-slot .character-image.Empty {
+    filter: saturate(0.1);
+}
+
+.character-slot .character-image-slot .character-image:hover {
+    border: 0;
+    outline: none;
+}
+
+.character-slot .rank-icon {
+    position: absolute;
+    width: auto;
+    height: 3.25rem;
+    bottom: 2rem;
+    right: 50%;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+    transform: translateX(50%);
+    filter: drop-shadow(0 0 10px #fff) brightness(1.2);
+    z-index: 11;
+}
+
+.character-slot .character-info-slot {
+    display: flex;
+    position: absolute;
+    width: 95%;
+    height: 100%;
+
+    align-items: flex-start;
+    justify-content: flex-end;
+
+    color: #fff;
+    border-top-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+    filter: saturate(1.5) contrast(1.5) drop-shadow(0 0 10px #000000cc);
+    z-index: 10;
+}
+
+.character-slot .character-info-slot {
+    border: 0;
+    outline: none;
+}
+
+.character-slot .character-info-slot .name {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 50%;
+    width: 120%;
+
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: auto;
+    text-align: center;
+    filter: drop-shadow(0 0 5px #00000099);
+    transform: translateX(50%);
+}
+
+.character-slot .character-info-slot img {
+    margin-top: 1px;
+    width: auto;
+    height: 1.3rem;
+}
+
+.character-slot .character-info-slot img.bigger {
+    width: auto;
+    height: 2.75rem;
+    filter: saturate(2);
+}

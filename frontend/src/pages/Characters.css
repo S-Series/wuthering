@@ -1,0 +1,81 @@
+#page-slot {
+    gap: 2rem;
+}
+
+#page-slot .page-header {
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+#page-slot .page-header .header-button {
+    display: flex;
+    width: fit-content;
+    min-width: 3rem;
+    height: 3rem;
+    
+    gap: 0.5rem;
+    border: 0;
+    outline: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+#page-slot .page-header .button-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+#page-slot .page-header .search-bar {
+    display: flex;
+    width: 30%;
+    max-width: 250px;
+    height: 80%;
+    
+    gap: 0.25rem;
+    margin-left: auto;
+    border: 2px #444 solid;
+    border-radius: 10px;
+    background-color: #fff;
+    align-items: center;
+
+    overflow: hidden;
+}
+
+#page-slot .page-header .search-bar img {
+    height: 80%;
+    aspect-ratio: 1 / 1;
+    padding-left: 4px;
+}
+#page-slot .page-header .search-bar input {
+    width: 100%;
+    border: 0;
+}
+
+#page-slot .page-header .search-bar input:focus,
+#page-slot .page-header .search-bar input:focus-visible,
+#page-slot .page-header .search-bar input:active {
+    outline: 0;
+}
+
+#page-slot .page-header .search-bar input::-moz-focus-inner {
+    outline: 0;
+}
+
+#page-slot .slot-container {
+  display: flex;
+  width: 100%;
+  gap: 1.5rem;
+  flex-wrap: wrap; 
+  justify-content: space-evenly;
+}
+
+#page-slot .item {
+  width: 23.5%;
+  aspect-ratio: 16 / 9;
+  background: #ddd;
+  border-radius: 6px;
+}

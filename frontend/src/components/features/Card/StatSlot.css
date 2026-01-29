@@ -1,0 +1,46 @@
+.stat-slot-body {
+    display: flex;
+    width: 95%;
+    aspect-ratio: 12 / 1;
+    gap: 2.5%;
+    background-color: #ffffff22;
+    overflow: hidden;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-slot-body .container {
+    display: flex;
+    width: 80%;
+    height: 100%;
+    gap: 2.5%;
+    color: #fff;
+    align-items: center;
+}
+
+.stat-slot-body .container img {
+    width: auto;
+    height: 90%;
+    aspect-ratio: 1/1;
+    margin-left: 1%;
+}
+
+.stat-slot-body .container span {
+    position: relative;
+    font-size: min(1vw, 1.1rem);
+    white-space: nowrap;
+}
+
+.stat-slot-body .container p {
+    margin: 0;
+    margin-left: auto;
+    font-size: min(1vw, 1.1rem);
+}
+
+.stat-slot-body em {
+    margin: 0;
+    color: #fa0;
+    padding-right: 2.5%;
+    font-size: min(0.7vw, 0.77rem);
+    transform: translateY(15%);
+}
