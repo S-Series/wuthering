@@ -15,7 +15,7 @@ import {
 } from "@/runtime/character.runtime";
 
 import { type EchoRuntime } from "@/runtime/echo.runtime";
-import { characterStat, type CharacterStat } from "@/datas/characterStats";
+import { characterStat } from "@/datas/characterStats";
 import { FixedStats, type StatId } from "@/datas/stats";
 
 type UserStore = {
