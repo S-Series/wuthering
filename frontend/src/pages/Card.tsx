@@ -1,38 +1,37 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Select, { type StylesConfig } from "react-select";
 
 import { useAppStore } from "@/hooks/appStore";
-import { useStyleStore } from "@/hooks/styleStore";
 import { useUserStore } from "@/hooks/userStore";
 
 import ImagePicker from "@/components/ImagePicker";
 import StatSlot from "@/components/features/Card/StatSlot";
+import EchoSlot from "@/components/features/Card/EchoSlot";
+import EchoSelect from "@/components/features/Card/EchoSelect";
+
 
 import { character, WeaponTypes as WeaponLists, ElementTypes as ElementLists } from "@/datas/characters"
-import type { Character, WeaponTypes, ElementTypes } from "@/datas/characters"
+import type { Character} from "@/datas/characters"
+import { characterStat, type CharacterId } from "@/datas/characterStats";
 import { weapon, type Weapon } from "@/datas/weapon";
+import { weaponStat } from "@/datas/weaponStats";
+import { harmony } from "@/datas/echos";
+import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
+
+import type { WeaponData } from "@/runtime/character.runtime";
 import { type EchoRuntime } from "@/runtime/echo.runtime";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
-import EchoSlot from "@/components/features/Card/EchoSlot";
-import EchoSelect from "@/components/features/Card/EchoSelect";
-import { weaponStat } from "@/datas/weaponStats";
-import type { WeaponData } from "@/runtime/character.runtime";
-import { harmony } from "@/datas/echos";
-import { characterStat, type CharacterId } from "@/datas/characterStats";
-import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
 
 export default function Card() {
 
   const { lang } = useAppStore();
-  const { getSelectStyles, selectTheme, baseSelectStyles} = useStyleStore();
   const {
     selectedCharacter,
     setSelectedCharacter,
     setWeapon,
-    setEcho,
+    //setEcho,
     setConstell,
     getFinalStat
   } = useUserStore();
@@ -126,7 +125,7 @@ export default function Card() {
   const namecardImage = useUserStore((s) => s.namecardImage);
 
   const setImageSrc = useUserStore((s) => s.setImageSrc);
-  const resetImage = useUserStore((s) => s.resetImage);
+  // const resetImage = useUserStore((s) => s.resetImage);
 
   //* == Image Loading ================================================//
   type LoadingStatus = "loading" | "loaded" | "error";
@@ -622,19 +621,7 @@ export default function Card() {
           </div>
 
           <div className="echo-slot" ref={echoSlotRef}>
-            <div className="dropdown">
-              <Select styles={getSelectStyles(45)}/>
-              <Select styles={getSelectStyles(45)}/>
-            </div>
-
-            <div className="dropdown">
-              <Select styles={getSelectStyles(100)}/>
-            </div>
-
-            <div className="stats">
-              <Select styles={getSelectStyles(30)}/>
-            </div>
-            
+            <EchoSelect/>
           </div>
         </div>
       </div>

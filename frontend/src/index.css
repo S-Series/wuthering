@@ -32,6 +32,7 @@
 
 .num-font {
     font-family: 'numFont', sans-serif;
+    transform: scaleX(0.9);
 }
 
 /* ====================================================== */

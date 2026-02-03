@@ -19,46 +19,46 @@ const StyleContext = createContext<StyleStore | null>(null);
 const UI_COLOR = ["#333366ff", "#0b0b44ff"];
 
 export function StyleProvider({ children }: { children: ReactNode }) {
-    const baseSelectStyles = useMemo<SingleSelectStyles>(
-        () => ({
-            container: (base) => ({
-                ...base, width: "100%", minHeight: 0
-            }),
-            control: (base, state) => ({
-                ...base,
-                overflow: "visible",
-                height: "100%",
-                minHeight: "1px",
-                border: "1px solid red",
-                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
-            }),
-            menu: (base) => ({
-                ...base,
-                zIndex: 9999,
-            }),
-            option: (base) => ({
-                ...base,
-                background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
-            }),
-            menuList: (prev) => ({
-                ...prev,
-                backgroundColor: UI_COLOR[1],
-                borderRadius: "4px",
-            }),
-            valueContainer: (base) => ({
-                ...base,
-                height: "100%",
-            }),
-            singleValue: (base) => ({
-                ...base,
-                overflow: "visible",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-            }),
-        }),
-        []
-    );
+  const baseSelectStyles = useMemo<SingleSelectStyles>(
+    () => ({
+      container: (base) => ({
+        ...base, width: "100%", minHeight: 0
+      }),
+      control: (base, state) => ({
+        ...base,
+        overflow: "visible",
+        height: "100%",
+        minHeight: "1px",
+        border: "1px solid transparent",
+        background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+      }),
+      menu: (base) => ({
+        ...base,
+        zIndex: 9999,
+      }),
+      option: (base) => ({
+        ...base,
+        background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+      }),
+      menuList: (prev) => ({
+        ...prev,
+        backgroundColor: UI_COLOR[1],
+        borderRadius: "4px",
+      }),
+      valueContainer: (base) => ({
+        ...base,
+        height: "100%",
+      }),
+      singleValue: (base) => ({
+        ...base,
+        overflow: "visible",
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+      }),
+    }),
+    []
+  );
 
   const selectTheme = useMemo<ThemeConfig>(
     () => (theme) => ({
@@ -67,26 +67,26 @@ export function StyleProvider({ children }: { children: ReactNode }) {
     []
   );
 
-    const getSelectStyles = useMemo(() => {
-        return (widthPct: number): SingleSelectStyles => {
-            const clamped = Math.max(0, Math.min(100, widthPct));
-            const width = `${clamped}%`;
+  const getSelectStyles = useMemo(() => {
+    return (widthPct: number): SingleSelectStyles => {
+      const clamped = Math.max(0, Math.min(100, widthPct));
+      const width = `${clamped}%`;
 
-            return {
-                ...baseSelectStyles,
+      return {
+        ...baseSelectStyles,
 
-                container: (base) => ({
-                    ...base,
-                    width,
-                }),
+        container: (base) => ({
+          ...base,
+          width,
+        }),
 
-                control: (base, state) => {
-                    const common = baseSelectStyles.control ? baseSelectStyles.control(base, state) : base;
-                    return { ...common, width: "100%" }; // 컨테이너 안에서 꽉 채우기
-                },
-            };
-        };
-    }, [baseSelectStyles]);
+        control: (base, state) => {
+          const common = baseSelectStyles.control ? baseSelectStyles.control(base, state) : base;
+          return { ...common, width: "100%" }; // 컨테이너 안에서 꽉 채우기
+        },
+      };
+    };
+  }, [baseSelectStyles]);
 
   const value = useMemo<StyleStore>(
     () => ({

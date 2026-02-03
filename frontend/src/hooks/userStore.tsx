@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import type { CharacterId } from "@/datas/characterStats";
 
-import { 
+import {
   type ImageKey,
   type ImageTransformState,
   createInitialImageState
- } from "@/runtime/image.runtime";
+} from "@/runtime/image.runtime";
 
 import {
   type CharacterFinalStat,
@@ -15,7 +15,7 @@ import {
 } from "@/runtime/character.runtime";
 
 import { type EchoRuntime } from "@/runtime/echo.runtime";
-import { characterStat, type CharacterStat } from "@/datas/characterStats";
+import { characterStat } from "@/datas/characterStats";
 import { FixedStats, type StatId } from "@/datas/stats";
 
 type UserStore = {
@@ -49,7 +49,10 @@ type UserStore = {
 
   setConstell: (character: number, weapon: number) => void;
 
-  setEcho: (index: 0 | 1 | 2 | 3 | 4, echo: EchoRuntime | null) => void;
+  updateEcho: (
+    index: 0 | 1 | 2 | 3 | 4,
+    fn: (prev: EchoRuntime) => EchoRuntime
+  ) => void;
 
   resetSelectedCharacter: () => void;
 
@@ -141,10 +144,14 @@ export const useUserStore = create<UserStore>((set, get) => ({
       },
     })),
 
-  setEcho: (index, echo) =>
+  updateEcho: (index, fn) =>
     set((state) => {
       const nextEchoes = [...state.selectedCharacter.echoes] as typeof state.selectedCharacter.echoes;
-      nextEchoes[index] = echo;
+
+      const prev = nextEchoes[index] ?? null;
+      const next = fn(prev);
+
+      nextEchoes[index] = next;
 
       return {
         ...state,
@@ -241,7 +248,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     //$ 계산 전 데이터 정리
     //* 캐릭터 데이터
     if (baseStat !== null) {
-      temp.hpPct += baseStat.hpPct ;
+      temp.hpPct += baseStat.hpPct;
       temp.atkPct += baseStat.atkPct;
       temp.defPct += baseStat.defPct;
     }

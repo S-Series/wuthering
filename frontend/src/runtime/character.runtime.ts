@@ -1,8 +1,8 @@
-import { character, type ElementType, type AttackType } from "@/datas/characters";
-import type { CharacterId, characterStat, CharacterStat } from "@/datas/characterStats";
+import { type ElementType, type AttackType } from "@/datas/characters";
+import type { CharacterId, CharacterStat } from "@/datas/characterStats";
 import type { Weapon } from "@/datas/weapon";
 import type { WeaponStat } from "@/datas/weaponStats";
-import { type EchoRuntime } from "@/runtime/echo.runtime";
+import { type EchoRuntime, createEmptyEchoRuntime } from "@/runtime/echo.runtime";
 
 export type WeaponData = Weapon & WeaponStat
 
@@ -12,11 +12,11 @@ export type SelectedCharacterRuntime = {
   weaponData: WeaponData | null;
   constell: [number, number];
   echoes: [
-    EchoRuntime | null,
-    EchoRuntime | null,
-    EchoRuntime | null,
-    EchoRuntime | null,
-    EchoRuntime | null
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime
   ];
 };
 
@@ -37,5 +37,11 @@ export const createInitialSelectedCharacterRuntime =
     characterStat: null,
     weaponData: null,
     constell: [0, 0],
-    echoes: [null, null, null, null, null],
+    echoes: [
+      createEmptyEchoRuntime(4),
+      createEmptyEchoRuntime(3),
+      createEmptyEchoRuntime(3),
+      createEmptyEchoRuntime(1),
+      createEmptyEchoRuntime(1),
+    ]
   });
