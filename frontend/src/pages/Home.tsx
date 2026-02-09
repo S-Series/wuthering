@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 
-import { useAppStore } from "@/hooks/appStore";
-import type { LangType } from "@/hooks/appStore";
+import { useAppStore } from "@/stores/appStore";
+import type { LangType } from "@/stores/appStore";
 
 import { YOUTUBE_PLAYLISTS } from "@/lib/youtubePlaylists";
 import { fetchLatestFromPlaylist } from "@/lib/youtubeApi";

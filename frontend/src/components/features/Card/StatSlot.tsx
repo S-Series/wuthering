@@ -1,4 +1,4 @@
-import { useAppStore } from "@/hooks/appStore";
+import { useAppStore } from "@/stores/appStore";
 import type { StatId } from "@/datas/stats";
 import "./StatSlot.css"
 

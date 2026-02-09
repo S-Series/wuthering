@@ -35,16 +35,19 @@ export function StyleProvider({ children }: { children: ReactNode }) {
       menu: (base) => ({
         ...base,
         zIndex: 9999,
+        color: "white",
       }),
       option: (base) => ({
         ...base,
         background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+        color: "white",
       }),
-      menuList: (prev) => ({
-        ...prev,
+      menuList: (base) => ({
+        ...base,
         backgroundColor: UI_COLOR[1],
         borderRadius: "4px",
       }),
+      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
       valueContainer: (base) => ({
         ...base,
         height: "100%",
@@ -54,6 +57,7 @@ export function StyleProvider({ children }: { children: ReactNode }) {
         overflow: "visible",
         display: "flex",
         alignItems: "center",
+        color: "white",
         gap: 8,
       }),
     }),

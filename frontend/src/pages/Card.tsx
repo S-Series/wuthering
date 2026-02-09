@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import { useAppStore } from "@/hooks/appStore";
-import { useUserStore } from "@/hooks/userStore";
+import { useAppStore } from "@/stores/appStore";
+import { useUserStore } from "@/stores/userStore";
 
 import ImagePicker from "@/components/ImagePicker";
 import StatSlot from "@/components/features/Card/StatSlot";
@@ -314,9 +314,9 @@ export default function Card() {
                 <ImagePicker
                   src={characterImage.src}
                   defaultSrc={
-                    `${BASE_URL}/character/${characterData.en.includes("rover")
+                    `${BASE_URL}/character/${selectedCharacter.characterId?.includes("rover")
                       ? "rover"
-                      : characterData.en}/stand.png`
+                      : selectedCharacter.characterId}/stand.png`
                   }
                   onChangeSrc={(src) =>
                     setImageSrc("characterImage", src)
@@ -335,9 +335,9 @@ export default function Card() {
                             selectedCharacter.constell[1])
                         }}>
                         <img className="constell-image" src={
-                          `${BASE_URL}/character/${characterData.en.includes("rover")
+                          `${BASE_URL}/character/${selectedCharacter.characterId?.includes("rover")
                             ? "rover"
-                            : characterData.en}/C${idx + 1}.png`
+                            : selectedCharacter.characterId}/C${idx + 1}.png`
                         } />
                       </button>
                     )
@@ -496,7 +496,7 @@ export default function Card() {
 
           {imageLoad.character !== "loaded" && (
             <img alt="loading"
-              src={`${BASE_URL}/character/${characterData.en}/ico.webp`} />
+              src={`${BASE_URL}/character/${selectedCharacter.characterId}/ico.webp`} />
           )}
 
           <img alt="character"
@@ -601,11 +601,16 @@ export default function Card() {
 
         <button className={`card-preview echo ${cardSection === 2 ? "" : "active"}`}
           onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>
-          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`} />
-          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`} />
-          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`} />
-          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`} />
-          <img src={`${BASE_URL}/character/${characterData.en}/ico.webp`} />
+            {
+              [0, 1, 2, 3, 4].map((item) => {
+                return (
+                  <img src={`${BASE_URL}/ico/echos/${selectedCharacter.echoes[item].echoId}.webp`} 
+                    onError={(e) => {
+                      
+                    }}/>
+                )
+              })
+            }
         </button>
 
         <div className={`card-slot echo ${cardSection === 2 ? "active" : ""}`}>

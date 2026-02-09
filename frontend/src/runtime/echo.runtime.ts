@@ -1,4 +1,4 @@
-import { FixedStats, type Stat, type StatId } from "@/datas/stats";
+import { type StatId } from "@/datas/stats";
 
 export type EchoStatOption = {
   statId: StatId;

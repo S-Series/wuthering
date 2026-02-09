@@ -64,6 +64,34 @@ export const character: Record<CharacterId, Character> = {
     region: ,
   },*/
   
+  //*== ver 3.1 ===========================//
+  luuk_herssen: {
+    en: "Luuk Herssen",
+    kr: "루크 헤르센",
+    jp: "エイメス",
+    zh: "爱弥斯",
+    hasSkin: false,
+    weapon: "gauntlet",
+    element: "spectro",
+    type: "liberation",
+    version: 3.1,
+    isElite: true,
+    region: "Statotchi Academy",
+  },
+  aemeath: {
+    en: "Aemeath",
+    kr: "에이메스",
+    jp: "エイメス",
+    zh: "爱弥斯",
+    hasSkin: false,
+    weapon: "sword",
+    element: "fusion",
+    type: "liberation",
+    version: 3.1,
+    isElite: true,
+    region: "Statotchi Academy",
+  },
+
   //*== ver 3.0 ===========================//
   mornye: {
     en: "mornye",

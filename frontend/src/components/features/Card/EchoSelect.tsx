@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { StylesConfig } from "react-select";
 import Select, { type FormatOptionLabelMeta } from "react-select";
 
-import { useAppStore } from "@/hooks/appStore"
-import { useStyleStore } from "@/hooks/styleStore"
-import { useUserStore } from "@/hooks/userStore"
+import { useAppStore } from "@/stores/appStore"
+import { useStyleStore } from "@/stores/styleStore"
+import { useUserStore } from "@/stores/userStore"
 
-import { type Stat } from "@/datas/stats";
+import { FixedStats } from "@/datas/stats";
 import { echoDict, harmony, type EchoData } from "@/datas/echos";
 
 import type { EchoRuntime } from "@/runtime/echo.runtime";
@@ -18,18 +18,18 @@ interface EchoSelectProps {
 }
 
 //#region Dropdown Tools ====================================
-type SelectOriginalOption<T = any> = {
-    value: T;
-    en: string;
-    kr: string;
-    jp: string;
-    zh: string;
-    path: string;
-}
 type SelectOption<T = any> = {
     value: T;
     label: string;
     isDisabled?: false;
+}
+type SelectOriginalOption<T = any> = {
+    value: T;
+    kr: string;
+    en: string;
+    jp: string;
+    zh: string;
+    path: string;
 }
 type SelectOptionWithImage<T = any> = {
     value: T;
@@ -37,6 +37,19 @@ type SelectOptionWithImage<T = any> = {
     path: string;
     isDisabled?: false;
 }
+
+type SelectOptionStatOriginal<T = any> = {
+    value: T;
+    label: string;
+    kr: string;
+    en: string;
+    jp: string;
+    zh: string;
+    path: string;
+    mainValue: number[];
+    subValue: number[];
+}
+
 const formatOptionWithImage = <
     T extends SelectOptionWithImage<any>
 >(
@@ -51,7 +64,7 @@ const formatOptionWithImage = <
                 style={{ objectFit: "contain", height: "100%", aspectRatio: "1 / 1" }}
             />
         )}
-        <span style={{wordBreak: "keep-all"}}>{opt.label}</span>
+        <span style={{ wordBreak: "keep-all" }}>{opt.label}</span>
     </div>
 );
 //#endregion ====================================
@@ -64,9 +77,11 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
     const wrapRef = useRef<HTMLDivElement | null>(null);
     const [slotHeight, setSlotHeight] = useState(16);
-    
+
+    console.log(selectedCharacter);
+
     //#region Ui Datas ====================================
-    
+
     type Cost = 1 | 3 | 4;
     const selectedCost = useMemo<Cost>(() => {
         return selectedCharacter.echoes[index]?.cost || 4
@@ -85,12 +100,12 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
         return found ? found[1] : null;
     }, [selectedCost, selectedEchoData]);
 
-    useEffect(() =>{
+    useEffect(() => {
         console.log(selectedEchoDictionaryData);
     }, [selectedEchoDictionaryData])
 
     //#endregion ====================================
-    
+
     //#region Dropdown Styles ====================================
 
     const STAT_DROP_STYLE = useMemo<StylesConfig<any, false>>(() => {
@@ -118,7 +133,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                 return {
                     ...common,
                     minHeight: 0,
-                    color: "white",
                 };
             },
             singleValue: (base, state) => {
@@ -322,7 +336,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
         })
     }, [baseSelectStyles, slotHeight])
     //#endregion ====================================
-    
+
     //#region Dropdown Options Original ====================================
 
     const HARMONY_OPTIONS_BASE = useMemo<SelectOriginalOption[]>(() => {
@@ -341,7 +355,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
         return Object.entries(echoDict[costKey]).map(([echoId, echo]) => ({
             value: echoId,
-            label: echo.kr,     // 기본(검색용) 아무거나 하나
+            label: echo.kr,
             kr: echo.kr,
             en: echo.en,
             jp: echo.jp,
@@ -349,14 +363,27 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             path: `${BASE_URL}/ico/echos/${echoId}.webp`,
         }));
     }, [selectedCost, echoDict]);
+
+    const STAT_OPTION_BASE: SelectOptionStatOriginal[] =
+        Object.entries(FixedStats).map(([statId, stat]) => ({
+            value: statId,
+            label: stat.kr,
+            kr: stat.kr,
+            en: stat.en,
+            jp: stat.jp,
+            zh: stat.zh,
+            path: "",
+            mainValue: stat.ValueMain,
+            subValue: stat.ValueSub,
+        }));
     //#endregion ====================================
 
     //#region Dropdown Options ====================================
-    
+
     const COST_DROP_OPTION: SelectOption<Cost>[] = [
-        { value: 4, label: "Cost 4"},
-        { value: 3, label: "Cost 3"},
-        { value: 1, label: "Cost 1"},
+        { value: 4, label: "Cost 4" },
+        { value: 3, label: "Cost 3" },
+        { value: 1, label: "Cost 1" },
     ]
 
     const HARMONY_DROP_OPTION = useMemo<SelectOptionWithImage[]>(() => {
@@ -381,10 +408,21 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             path: opt.path,
         }));
     }, [ECHO_ID_OPTION_BASE, lang]);
+
+    const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
+        (opt) => opt.mainValue[2] !== 0
+    )
+    const STAT_OPTION_MAIN_COST3 = STAT_OPTION_BASE.filter(
+        (opt) => opt.mainValue[1] !== 0
+    )
+    const STAT_OPTION_MAIN_COST1 = STAT_OPTION_BASE.filter(
+        (opt) => opt.mainValue[0] !== 0
+    )
+
     //#endregion ====================================
-    
+
     //#region Ui Datas ====================================
-    
+
     useEffect(() => {
         const el = wrapRef.current;
         if (!el) return;
@@ -402,19 +440,19 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
         return () => ro.disconnect();
     }, []); //resize observer
     //#endregion ====================================
-    
+
     //* =========================================================    
-    return (
+    return ( 
         <div className="echo-select-wrapper" ref={wrapRef}>
             <div className="drop-slot">
-                <Select options={COST_DROP_OPTION} 
+                <Select options={COST_DROP_OPTION}
                     isSearchable={false}
-                    styles={STAT_DROP_STYLE} 
+                    styles={STAT_DROP_STYLE}
                     value={COST_DROP_OPTION.find((e) => e.value === selectedCost) ?? null}
                     onChange={(opt) => {
                         updateEcho(index, (prev) => (prev ? { ...prev, cost: opt?.value || 1 } : prev));
                     }}
-                    />
+                />
                 <Select options={HARMONY_DROP_OPTION}
                     isSearchable={false}
                     styles={STAT_DROP_STYLE_OPTION_WIDE}
@@ -423,7 +461,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     onChange={(opt) => {
                         updateEcho(index, (prev) => (prev ? { ...prev, setId: opt?.value || "dummy" } : prev));
                     }}
-                    />
+                />
             </div>
             <div className="drop-slot large">
                 <Select options={ECHO_ID_DROP_OPTION}
@@ -434,7 +472,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     onChange={(opt) => {
                         updateEcho(index, (prev) => (prev ? { ...prev, echoId: opt?.value || "dummy" } : prev));
                     }}
-                    />
+                />
             </div>
 
             <div className="divider" />
@@ -447,10 +485,10 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             <div className="divider" />
 
             <div className="drop-slot">
-                <Select styles={STAT_DROP_STYLE} />
-                <Select styles={STAT_DROP_STYLE} />
+                <Select menuPortalTarget={document.body} options={STAT_OPTION_MAIN_COST4} styles={STAT_DROP_STYLE} />
+                <Select menuPortalTarget={document.body} options={STAT_OPTION_MAIN_COST3} styles={STAT_DROP_STYLE_OPTION_WIDE} />
             </div><div className="drop-slot">
-                <Select styles={STAT_DROP_STYLE} />
+                <Select menuPortalTarget={document.body}  options={STAT_OPTION_MAIN_COST1} styles={STAT_DROP_STYLE_OPTION_WIDE} />
                 <Select styles={STAT_DROP_STYLE} />
             </div><div className="drop-slot">
                 <Select styles={STAT_DROP_STYLE} />

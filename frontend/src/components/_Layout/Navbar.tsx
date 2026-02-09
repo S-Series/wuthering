@@ -2,7 +2,7 @@ import { useState } from "react";
 import Select from "react-select";
 import type { SingleValue } from "react-select";
 
-import { useAppStore } from "@/hooks/appStore";
+import { useAppStore } from "@/stores/appStore";
 import "@/components/_Layout/Navbar.css"
 
 interface LangOption {

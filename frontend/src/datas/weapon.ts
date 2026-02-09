@@ -13,7 +13,7 @@ export interface Weapon {
 }
 
 export const weapon = {
-  sword: {
+  sword: { //* 직검
     //$ 5-Starts
     sword001: {
 			id: "sword001",
@@ -70,6 +70,22 @@ export const weapon = {
       jp: "破敵の鋭竹",
       zh: "裁竹",
       imgKey: "ico007",
+    },
+    sword008:{ //* 신상시
+			id: "sword008",
+      en: "Laser Shearer",
+      kr: "레이저 변형",
+      jp: "レーザーの鋭剣",
+      zh: "镭射切变",
+      imgKey: "ico008",
+    },
+    sword009:{ //* 에이메스
+			id: "sword009",
+      en: "Everbright Polestar",
+      kr: "영원한 샛별",
+      jp: "とこしえの明星",
+      zh: "永远的启明星",
+      imgKey: "ico009",
     },
     //$ 4-Starts
     sword101:{
@@ -145,7 +161,7 @@ export const weapon = {
       imgKey: "ico109",
     },
   },
-  broadblade: {
+  broadblade: { //* 대검
     //$ 5-Starts
     broadblade001:{
 			id: "broadblade001",
@@ -186,6 +202,30 @@ export const weapon = {
       jp: "雷霆を統べし王剣",
       zh: "驭冕铸雷之权",
       imgKey: "ico005",
+    },
+    broadblade006:{ //* 치사
+			id: "broadblade006",
+      en: "Kumokiri",
+      kr: "쿠모키리",
+      jp: "曇斬",
+      zh: "昙切",
+      imgKey: "ico006",
+    },
+    broadblade007:{ //* 신상시
+			id: "broadblade007",
+      en: "Radiance Cleaver",
+      kr: "에너지 절단",
+      jp: "ラディアンスの切っ先",
+      zh: "源能机锋",
+      imgKey: "ico007",
+    },
+    broadblade008:{ //* 모니에
+			id: "broadblade008",
+      en: "Starfield Calibrator",
+      kr: "별하늘 연산 측정기",
+      jp: "スターキャリブレーター",
+      zh: "宙算仪轨",
+      imgKey: "ico008",
     },
     //$ 4-Starts
     broadblade101:{
@@ -253,7 +293,7 @@ export const weapon = {
       imgKey: "ico108",
     },
   },
-  gauntlet: {
+  gauntlet: { //* 권갑
     //$ 5-Starts
     gauntlet001:{
 			id: "gauntlet001",
@@ -295,6 +335,23 @@ export const weapon = {
       zh: "万物持存的注释",
       imgKey: "ico005",
     },
+    gauntlet006:{ //* 신상시
+			id: "gauntlet006",
+      en: "Pulsation Bracer",
+      kr: "격동의 조력",
+      jp: "パルスの機腕",
+      zh: "脉冲协臂",
+      imgKey: "ico006",
+    },
+    gauntlet007:{ //* 루크 헤르센
+			id: "gauntlet007",
+      en: "Daybreaker's Spine",
+      kr: "한낮의 의지",
+      jp: "デイブレイカースパイン",
+      zh: "白昼之脊",
+      imgKey: "ico007",
+    },
+    
     //$ 4-Starts
     gauntlet101:{
 			id: "gauntlet101",
@@ -361,7 +418,7 @@ export const weapon = {
       imgKey: "ico108",
     },
   },
-  pistol: {
+  pistol: { //* 권총
     //$ 5-Starts
     pistol001:{
 			id: "pistol001",
@@ -394,6 +451,22 @@ export const weapon = {
       jp: "ルクス＆アンブラ",
       zh: "光影双生",
       imgKey: "ico004",
+    },
+    pistol005:{ //* 신상시
+			id: "pistol005",
+      en: "Phasic Homogenizer",
+      kr: "위상의 파동",
+      jp: "フェーズのさざ波",
+      zh: "相位涟漪",
+      imgKey: "ico005",
+    },
+    pistol006:{//* 린네
+			id: "pistol006",
+      en: "Spectrum Blaster",
+      kr: "스펙트럼 블래스터",
+      jp: "スペクトル・ブラスター",
+      zh: "溢彩荧辉",
+      imgKey: "ico006",
     },
     //$ 4-Starts
     pistol101:{
@@ -461,7 +534,7 @@ export const weapon = {
       imgKey: "ico108",
     },
   },
-  rectifier: {
+  rectifier: { //* 증폭기
     //$ 5-Starts
     rectifier001:{
 			id: "rectifier001",
@@ -518,6 +591,14 @@ export const weapon = {
       jp: "幽冥の忘憂曲",
       zh: "幽冥的忘忧章",
       imgKey: "ico007",
+    },
+    rectifier008:{//* 신상시
+			id: "rectifier008",
+      en: "Boson Astrolabe",
+      kr: "보손 관측기",
+      jp: "ボゾンの観測器",
+      zh: "玻色星仪",
+      imgKey: "ico008",
     },
     //$ 4-Starts
     rectifier101:{

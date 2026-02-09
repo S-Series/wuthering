@@ -16,14 +16,66 @@ export interface CharacterStat {
 }
 
 export const characterStat = {
-  // == 3.1 ======================================= //
-  // == 3.0 ======================================= //
-  mornye: {
-    baseHp: 9850,
-    baseAtk: 262,
-    baseDef: 1075,
+  /* Temp Data
+  temp: {
+    baseHp: 0,
+    baseAtk: 0,
+    baseDef: 0,
 
     CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  */
+
+  // == 3.2 ======================================= //
+  /*sigrika: {
+    baseHp: 0,
+    baseAtk: 0,
+    baseDef: 0,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  */
+  // == 3.1 ======================================= //
+  luuk_herssen: {
+    baseHp: 0,
+    baseAtk: 0,
+    baseDef: 0,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  aemeath: {
+    baseHp: 11025,
+    baseAtk: 425,
+    baseDef: 1148,
+
+    CritRate: 13.0,
     CritDmg: 150.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
@@ -31,15 +83,32 @@ export const characterStat = {
     atkPct: 12.0,
     hpPct: 0.0,
     defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  // == 3.0 ======================================= //
+  mornye: {
+    baseHp: 15375,
+    baseAtk: 287,
+    baseDef: 1356,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 0.0,
+    defPct: 15.2,
 
     typeBns: [0, 12.0],
   },
   lynae: {
-    baseHp: 9850,
-    baseAtk: 262,
-    baseDef: 1075,
+    baseHp: 12237,
+    baseAtk: 375,
+    baseDef: 1197,
 
-    CritRate: 5.0,
+    CritRate: 13.0,
     CritDmg: 150.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
@@ -48,15 +117,15 @@ export const characterStat = {
     hpPct: 0.0,
     defPct: 0.0,
 
-    typeBns: [0, 12.0],
+    typeBns: [0, 0.0],
   },
   // == 2.8 ======================================= //
   chisa: {
-    baseHp: 9850,
-    baseAtk: 262,
-    baseDef: 1075,
+    baseHp: 10775,
+    baseAtk: 437,
+    baseDef: 1136,
 
-    CritRate: 5.0,
+    CritRate: 13.0,
     CritDmg: 150.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
@@ -65,7 +134,7 @@ export const characterStat = {
     hpPct: 0.0,
     defPct: 0.0,
 
-    typeBns: [0, 12.0],
+    typeBns: [0, 0.0],
   },
   buling: {
     baseHp: 9850,
