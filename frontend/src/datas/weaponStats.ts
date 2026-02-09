@@ -43,6 +43,16 @@ export const weaponStat = {
     value: [24.3, 12],
     statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
   },
+  sword008: { //* 레이저 변형: 신상시
+    atk: 587,
+    value: [38.8, 12],
+    statType: [FixedStats.ResonanceBns.id, FixedStats.atkPct.id],
+  },
+  sword009: { //* 영원한 샛별: 에이메스 전무
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.typeBns.id],
+  },
   //$ --------------------------------------
   sword101: {
     atk: 462,
@@ -84,7 +94,7 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
   },
-  sword109: {
+  sword109: { //* 예리한 날개깃
     atk: 412,
     value: [20.2, 0],
     statType: [FixedStats.CritRate.id, FixedStats.dummy.id],
@@ -116,6 +126,21 @@ export const weaponStat = {
     atk: 675,
     value: [12.1, 12],
     statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  broadblade006: { //* 에너지 절단: 신상시
+    atk: 587,
+    value: [48.6, 12],
+    statType: [FixedStats.CritDmg.id, FixedStats.atkPct.id],
+  },
+  broadblade007: { //* 쿠모키리: 치사전무
+    atk: 500,
+    value: [36.0, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  broadblade008: { //* 별하늘 연산 측정기 : 모니에 전무
+    atk: 412,
+    value: [77.0, 16],
+    statType: [FixedStats.ResonanceBns.id, FixedStats.defPct.id]
   },
   //$ --------------------------------------------------
   broadblade101: {
@@ -153,7 +178,7 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
   },
-  broadblade108: {
+  broadblade108: { //* 금빛 하늘: 신패스
     atk: 412,
     value: [40.5, 0],
     statType: [FixedStats.CritDmg.id, FixedStats.dummy.id],
@@ -184,6 +209,16 @@ export const weaponStat = {
   gauntlet005: {
     atk: 500,
     value: [36.0, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  gauntlet006: { //* 격동의 조력: 신상시
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  gauntlet007: { //* 한낮의 의지: 루크 헤르센 전무
+    atk: 587,
+    value: [24.3, 12],
     statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
   },
   //$ ---------------------------------------
@@ -222,7 +257,7 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
   },
-  gauntlet108: {
+  gauntlet108: { //* 거침없는 비상: 신패스
     atk: 412,
     value: [40.5, 0],
     statType: [FixedStats.CritDmg.id, FixedStats.dummy.id],
@@ -249,6 +284,16 @@ export const weaponStat = {
     atk: 587,
     value: [48.6, 12],
     statType: [FixedStats.CritDmg.id, FixedStats.atkPct.id],
+  },
+  pistol005: { //* 위산의 파동: 신상시
+    atk: 587,
+    value: [48.6, 12],
+    statType: [FixedStats.CritDmg.id, FixedStats.atkPct.id],
+  },
+  pistol006: { //* 스펙트럼 블래스터: 린네전무
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
   },
   //$ -------------------------------------------
   pistol101: {
@@ -286,7 +331,7 @@ export const weaponStat = {
     value: [18.2, 0],
     statType: ["atkPct", "atk"],
   },
-  pistol108: {
+  pistol108: { //* 태양 불꽃
     atk: 412,
     value: [20.2, 0],
     statType: [FixedStats.CritRate.id, FixedStats.dummy.id],
@@ -328,6 +373,11 @@ export const weaponStat = {
     atk: 587,
     value: [24.3, 12],
     statType: [FixedStats.CritRate.id, FixedStats.atkPct.id],
+  },
+  rectifier008: { //* 보손 관측기: 신상시
+    atk: 525,
+    value: [38.8, 12],
+    statType: [FixedStats.ResonanceBns.id, FixedStats.atkPct.id],
   },
   //$ -----------------------------------------------
   rectifier101: {

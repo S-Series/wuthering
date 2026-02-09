@@ -206,7 +206,7 @@ export const FixedStats = {
     kr: "모든속성 피해보너스",
     jp: "",
     zh: "",
-    ValueMain: [],
+    ValueMain: [0, 0, 0],
     ValueSub: [],
   }
 } as const satisfies Record<string, Stat>;

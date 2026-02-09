@@ -1,4 +1,4 @@
-import { type Stat, type StatId } from "@/datas/stats";
+import { type StatId } from "@/datas/stats";
 
 export type EchoStatOption = {
   statId: StatId;
@@ -19,3 +19,20 @@ export type EchoRuntime = {
     EchoStatOption
   ];
 };
+
+export const createEmptyEchoRuntime = (cost: 4 | 3 | 1): EchoRuntime => ({
+  echoId: "",
+  setId: "",
+  cost,
+  mainOption: {
+    statId: "dummy",
+    statValue: -1,
+  },
+  subOptions: [
+    { statId: "dummy", statValue: -1 },
+    { statId: "dummy", statValue: -1 },
+    { statId: "dummy", statValue: -1 },
+    { statId: "dummy", statValue: -1 },
+    { statId: "dummy", statValue: -1 },
+  ],
+});

@@ -1,4 +1,4 @@
-import { useAppStore } from "@/hooks/appStore";
+import { useAppStore } from "@/stores/appStore";
 import type { Character } from "@/datas/characters";
 import type { CharacterRank } from "@/types/character.type";
 
