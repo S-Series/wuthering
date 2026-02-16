@@ -10,7 +10,7 @@ import { FixedStats } from "@/datas/stats";
 import { echoDict, harmony, type EchoData } from "@/datas/echos";
 
 import type { EchoRuntime } from "@/runtime/echo.runtime";
-import { setEchoId, patchEchoMainOption, patchEchoSubOption, } from "@/runtime/characterData.helpers";
+import { setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
 
 import "./EchoSelect.css"
 
@@ -411,13 +411,13 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     }, [ECHO_ID_OPTION_BASE, lang]);
 
     const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
-        (opt) => opt.mainValue[2] !== 0
+        (opt) => opt.mainValue[0] !== 0
     )
     const STAT_OPTION_MAIN_COST3 = STAT_OPTION_BASE.filter(
         (opt) => opt.mainValue[1] !== 0
     )
     const STAT_OPTION_MAIN_COST1 = STAT_OPTION_BASE.filter(
-        (opt) => opt.mainValue[0] !== 0
+        (opt) => opt.mainValue[2] !== 0
     )
 
     //#endregion ====================================
@@ -445,13 +445,14 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     //* =========================================================    
     return (
         <div className="echo-select-wrapper" ref={wrapRef}>
+            {/*//$ Cost, Harmony */}
             <div className="drop-slot">
                 <Select options={COST_DROP_OPTION}
                     isSearchable={false}
                     styles={STAT_DROP_STYLE}
                     value={COST_DROP_OPTION.find((e) => e.value === selectedCost) ?? null}
                     onChange={(opt) => {
-                        //patchCharacterData(index, (prev) => (prev ? { ...prev, cost: opt?.value || 1 } : prev));
+                        patchCharacterData(setEchoCost(characterData, index, opt.value))
                     }}
                 />
                 <Select options={HARMONY_DROP_OPTION}
@@ -460,10 +461,12 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     formatOptionLabel={formatOptionWithImage}
                     value={HARMONY_DROP_OPTION.find((e) => e.value === characterData.echoData[index].setId) ?? null}
                     onChange={(opt) => {
-                        //updateEcho(index, (prev) => (prev ? { ...prev, setId: opt?.value || "dummy" } : prev));
+                        patchCharacterData(setEchoSetId(characterData, index, opt.value))
                     }}
                 />
             </div>
+
+            {/*//$ Echo */}
             <div className="drop-slot large">
                 <Select options={ECHO_ID_DROP_OPTION}
                     styles={STAT_DROP_STYLE_LARGE}
@@ -479,12 +482,23 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
             <div className="divider" />
 
+            {/*//$ Main */}
             <div className="drop-slot">
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
+                <Select options={(() => {
+                    switch (characterData.echoData[index].cost) {
+                        case 4: return STAT_OPTION_MAIN_COST4;
+                        case 3: return STAT_OPTION_MAIN_COST3;
+                        case 1: return STAT_OPTION_MAIN_COST1;
+                        default: return [];
+                    }
+                })()}
+                    styles={STAT_DROP_STYLE_OPTION_WIDE}
+                    menuPortalTarget={document.body}
                 />
+
                 <Select options={[]}
                     styles={STAT_DROP_STYLE}
+                    menuPortalTarget={document.body}
                 />
             </div>
 
@@ -492,13 +506,26 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
             <div className="drop-slot">
                 <Select options={[]}
+                    styles={STAT_DROP_STYLE_OPTION_WIDE}
+                    menuPortalTarget={document.body}
+                />
+                
+                <Select options={[]}
                     styles={STAT_DROP_STYLE}
                     menuPortalTarget={document.body}
                 />
+            </div>
+
+            <div className="drop-slot">
                 <Select options={[]}
                     styles={STAT_DROP_STYLE_OPTION_WIDE}
                     menuPortalTarget={document.body}
                 />
+                
+                <Select options={[]}
+                    styles={STAT_DROP_STYLE}
+                    menuPortalTarget={document.body}
+                />
             </div>
 
             <div className="drop-slot">
@@ -506,34 +533,34 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     styles={STAT_DROP_STYLE_OPTION_WIDE}
                     menuPortalTarget={document.body}
                 />
-                <Select styles={STAT_DROP_STYLE}
+
+                <Select options={[]}
+                    styles={STAT_DROP_STYLE}
+                    menuPortalTarget={document.body}
                 />
             </div>
 
             <div className="drop-slot">
                 <Select options={[]}
-                    styles={STAT_DROP_STYLE}
+                    styles={STAT_DROP_STYLE_OPTION_WIDE}
+                    menuPortalTarget={document.body}
                 />
+                
                 <Select options={[]}
                     styles={STAT_DROP_STYLE}
-                />
-            </div>
-
-            <div className="drop-slot">
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
-                />
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
+                    menuPortalTarget={document.body}
                 />
             </div>
 
             <div className="drop-slot">
                 <Select options={[]}
-                    styles={STAT_DROP_STYLE}
+                    styles={STAT_DROP_STYLE_OPTION_WIDE}
+                    menuPortalTarget={document.body}
                 />
+                
                 <Select options={[]}
                     styles={STAT_DROP_STYLE}
+                    menuPortalTarget={document.body}
                 />
             </div>
         </div>

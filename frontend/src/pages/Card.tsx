@@ -456,11 +456,11 @@ export default function Card() {
             </div>
 
             <div className="main-item-slot echos">
-              <EchoSlot />
-              <EchoSlot />
-              <EchoSlot />
-              <EchoSlot />
-              <EchoSlot />
+              <EchoSlot Echodata={characterData.echoData[0]} />
+              <EchoSlot Echodata={characterData.echoData[1]} />
+              <EchoSlot Echodata={characterData.echoData[2]} />
+              <EchoSlot Echodata={characterData.echoData[3]} />
+              <EchoSlot Echodata={characterData.echoData[4]} />
             </div>
           </div>
           {/* == //$ Main Content End */}
@@ -622,7 +622,7 @@ export default function Card() {
           </div>
 
           <div className="echo-slot" ref={echoSlotRef}>
-            <EchoSelect/>
+            <EchoSelect index={echoSection as 0 | 1 | 2 | 3 | 4} />
           </div>
         </div>
       </div>
