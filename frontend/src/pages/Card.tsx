@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/appStore";
-import { useUserStore } from "@/stores/userStore";
+import { useImgStore } from "@/stores/imgStore";
+import { useCharacter } from "@/stores/characterDataStore";
 
 import ImagePicker from "@/components/ImagePicker";
 import StatSlot from "@/components/features/Card/StatSlot";
@@ -13,7 +14,7 @@ import EchoSelect from "@/components/features/Card/EchoSelect";
 import { character, WeaponTypes as WeaponLists, ElementTypes as ElementLists } from "@/datas/characters"
 import type { Character} from "@/datas/characters"
 import { characterStat, type CharacterId } from "@/datas/characterStats";
-import { weapon, type Weapon } from "@/datas/weapon";
+import { weapon, weaponDict, type Weapon } from "@/datas/weapon";
 import { weaponStat } from "@/datas/weaponStats";
 import { harmony } from "@/datas/echos";
 import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
@@ -23,18 +24,12 @@ import { type EchoRuntime } from "@/runtime/echo.runtime";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
+import { setWeaponId } from "@/runtime/characterData.helpers";
 
 export default function Card() {
 
   const { lang } = useAppStore();
-  const {
-    selectedCharacter,
-    setSelectedCharacter,
-    setWeapon,
-    //setEcho,
-    setConstell,
-    getFinalStat
-  } = useUserStore();
+  const { characterId, setCharacterId, patchCharacterData, characterData, characterFinalStat } = useCharacter();
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
@@ -82,10 +77,10 @@ export default function Card() {
     return result as [CharacterId, Character][];
   }, [CHARACTER_LIST, elementFilter, weaponFilter]);
 
-  const characterData = useMemo<Character>(() => {
-    const data = CHARACTER_LIST.find(([key]) => key === selectedCharacter.characterId)?.[1] || character["rover_spectro"]
+  const selectedCharacterData = useMemo<Character>(() => {
+    const data = CHARACTER_LIST.find(([key]) => key === characterId)?.[1] || character["rover_spectro"]
     return data;
-  }, [selectedCharacter.characterId])
+  }, [characterId])
 
   const STAT_IDS = useMemo(() => {
     return [
@@ -95,19 +90,25 @@ export default function Card() {
       FixedStats.ResonanceBns.id,
       FixedStats.CritRate.id,
       FixedStats.CritDmg.id,
-      ELEMENT_STAT_MAP[characterData.element] || FixedStats.dummy.id,
-      ATTACK_TYPE_STAT_MAP[characterData.type] || FixedStats.dummy.id,
+      ELEMENT_STAT_MAP[selectedCharacterData.element] || FixedStats.dummy.id,
+      ATTACK_TYPE_STAT_MAP[selectedCharacterData.type] || FixedStats.dummy.id,
     ]
-  }, [characterData.element, characterData.type])
+  }, [selectedCharacterData.element, selectedCharacterData.type])
 
   //* == Weapon ================================================//
   const FILTERED_WEAPON = useMemo<Weapon[]>(() => {
-    return Object.values(weapon[characterData.weapon]);
-  }, [characterData]);
+    return Object.values(weapon[selectedCharacterData.weapon]);
+  }, [selectedCharacterData]);
 
   const weaponData = useMemo<WeaponData | null>(() => {
-    return selectedCharacter.weaponData;
-  }, [selectedCharacter.weaponData])
+    const id = characterData.weaponId;
+    if (!id) return null;
+    const base = weaponDict[id];
+    const stat = weaponStat[id];
+    if (!base || !stat) return null;
+
+    return {...base, ...stat}
+  }, [characterData.weaponId])
 
   //* == Echoes ================================================//
   const echoData = useMemo(() => {
@@ -118,13 +119,13 @@ export default function Card() {
       null as EchoRuntime | null,
       null as EchoRuntime | null
     ]
-  }, [selectedCharacter.echoes])
+  }, [characterData])
 
   //* == Image ================================================//
-  const characterImage = useUserStore((s) => s.characterImage);
-  const namecardImage = useUserStore((s) => s.namecardImage);
+  const characterImage = useImgStore((s) => s.characterImage);
+  const namecardImage = useImgStore((s) => s.namecardImage);
 
-  const setImageSrc = useUserStore((s) => s.setImageSrc);
+  const setImageSrc = useImgStore((s) => s.setImageSrc);
   // const resetImage = useUserStore((s) => s.resetImage);
 
   //* == Image Loading ================================================//
@@ -140,7 +141,7 @@ export default function Card() {
 
   useEffect(() => {
     setImageLoad(v => ({ ...v, character: "loading", characterPreview: "loading" }))
-  }, [characterData]);
+  }, [selectedCharacterData]);
 
   useEffect(() => {
     setImageLoad(v => ({ ...v, weapon: "loading", weaponPreview: "loading" }))
@@ -159,48 +160,45 @@ export default function Card() {
     const fromStorage = localStorage.getItem("selectedCharacterId");
 
     if (fromList) {
-      setSelectedCharacter(fromList);
+      setCharacterId(fromList);
       return;
     }
 
     if (fromStorage && isCharacterId(fromStorage)) {
-      setSelectedCharacter(fromStorage);
+      setCharacterId(fromStorage);
       return;
     }
 
-    setSelectedCharacter("rover_spectro");
+    setCharacterId("rover_spectro");
   }, [])
 
-  const FINAL_STATS = useMemo(() => {
-    return getFinalStat();
-  }, [characterData, weaponData, echoData]);
-
   const FINAL_STATS_MAP = useMemo<Partial<Record<StatId, number>>>(() => {
+    console.log("data", characterFinalStat);
     return {
       //* base stats
-      [FixedStats.hp.id]: FINAL_STATS?.hp || 0,
-      [FixedStats.atk.id]: FINAL_STATS?.atk || 0,
-      [FixedStats.def.id]: FINAL_STATS?.def || 0,
-      [FixedStats.ResonanceBns.id]: FINAL_STATS?.resBns || 0,
-      [FixedStats.CritRate.id]: FINAL_STATS?.critRate || 0,
-      [FixedStats.CritDmg.id]: FINAL_STATS?.critDmg || 0,
+      [FixedStats.hp.id]: characterFinalStat?.hp || 0,
+      [FixedStats.atk.id]: characterFinalStat?.atk || 0,
+      [FixedStats.def.id]: characterFinalStat?.def || 0,
+      [FixedStats.ResonanceBns.id]: characterFinalStat?.resBns || 0,
+      [FixedStats.CritRate.id]: characterFinalStat?.critRate || 0,
+      [FixedStats.CritDmg.id]: characterFinalStat?.critDmg || 0,
 
       //* element type stats
-      [FixedStats.AeroBns.id]: FINAL_STATS?.elementBns.aero || 0,
-      [FixedStats.FusionBns.id]: FINAL_STATS?.elementBns.fusion || 0,
-      [FixedStats.GlacioBns.id]: FINAL_STATS?.elementBns.glacio || 0,
-      [FixedStats.ElectroBns.id]: FINAL_STATS?.elementBns.electro || 0,
-      [FixedStats.HavocBns.id]: FINAL_STATS?.elementBns.havoc || 0,
-      [FixedStats.SpectroBns.id]: FINAL_STATS?.elementBns.spectro || 0,
+      [FixedStats.AeroBns.id]: characterFinalStat?.elementBns.aero || 0,
+      [FixedStats.FusionBns.id]: characterFinalStat?.elementBns.fusion || 0,
+      [FixedStats.GlacioBns.id]: characterFinalStat?.elementBns.glacio || 0,
+      [FixedStats.ElectroBns.id]: characterFinalStat?.elementBns.electro || 0,
+      [FixedStats.HavocBns.id]: characterFinalStat?.elementBns.havoc || 0,
+      [FixedStats.SpectroBns.id]: characterFinalStat?.elementBns.spectro || 0,
 
       //* attack type stats
-      [FixedStats.basicBns.id]: FINAL_STATS?.attackBns.basic || 0,
-      [FixedStats.heavyBns.id]: FINAL_STATS?.attackBns.heavy || 0,
-      [FixedStats.skillBns.id]: FINAL_STATS?.attackBns.skill || 0,
-      [FixedStats.liberationBns.id]: FINAL_STATS?.attackBns.liberation || 0,
-      [FixedStats.healBns.id]: FINAL_STATS?.attackBns.heal || 0,
+      [FixedStats.basicBns.id]: characterFinalStat?.attackTypeBns.basic || 0,
+      [FixedStats.heavyBns.id]: characterFinalStat?.attackTypeBns.heavy || 0,
+      [FixedStats.skillBns.id]: characterFinalStat?.attackTypeBns.skill || 0,
+      [FixedStats.liberationBns.id]: characterFinalStat?.attackTypeBns.liberation || 0,
+      [FixedStats.healBns.id]: characterFinalStat?.attackTypeBns.heal || 0,
     }
-  }, [FINAL_STATS]);
+  }, [characterFinalStat]);
 
   //* == return data ================================================//
   return (
@@ -314,9 +312,9 @@ export default function Card() {
                 <ImagePicker
                   src={characterImage.src}
                   defaultSrc={
-                    `${BASE_URL}/character/${selectedCharacter.characterId?.includes("rover")
+                    `${BASE_URL}/character/${characterId?.includes("rover")
                       ? "rover"
-                      : selectedCharacter.characterId}/stand.png`
+                      : characterId}/stand.png`
                   }
                   onChangeSrc={(src) =>
                     setImageSrc("characterImage", src)
@@ -324,20 +322,18 @@ export default function Card() {
                 />
 
                 <div className="constell-overlay">
-                  <img className="" src={`/ui/CharacterC${selectedCharacter.constell[0]}.png`} />
+                  <img className="" src={`/ui/CharacterC${characterData.constell[0]}.png`} />
                   {UI_BUTTON_POS.map((item, idx) => {
                     return (
-                      <button className={`constell-button ${selectedCharacter.constell[0] > idx ? "active" : ""}`}
+                      <button className={`constell-button ${characterData.constell[0] > idx ? "active" : ""}`}
                         style={{ left: `${item.x}%`, top: `${item.y}%`, }}
                         onClick={() => {
-                          setConstell(
-                            selectedCharacter.constell[0] === idx + 1 ? 0 : idx + 1,
-                            selectedCharacter.constell[1])
+
                         }}>
                         <img className="constell-image" src={
-                          `${BASE_URL}/character/${selectedCharacter.characterId?.includes("rover")
+                          `${BASE_URL}/character/${characterId?.includes("rover")
                             ? "rover"
-                            : selectedCharacter.characterId}/C${idx + 1}.png`
+                            : characterId}/C${idx + 1}.png`
                         } />
                       </button>
                     )
@@ -348,28 +344,28 @@ export default function Card() {
                 <span className="account-info player-name en-font">{`Lv.-- Guest Player`}</span>
                 <span className="account-info player-uid en-font">{`UID. - - -  - - -  - - -`}</span>
                 <span className={`character-name ${lang}-font`}>
-                  {characterData[lang]?.charAt(0).toUpperCase() + characterData[lang]?.slice(1)}
+                  {selectedCharacterData[lang]?.charAt(0).toUpperCase() + selectedCharacterData[lang]?.slice(1)}
                 </span>
 
                 <img className="character-icon element"
                   alt="element icon"
-                  src={`/ico/element/${characterData.element}.png`} />
+                  src={`/ico/element/${selectedCharacterData.element}.png`} />
                 <img className="character-icon stat-type"
                   alt="stat type icon"
                   src={`/ico/stats/atk.webp`} />
                 <img className="character-icon attack-type"
                   alt="attack type icon"
-                  src={`/ico/stats/${characterData.type}Bns.webp`} />
+                  src={`/ico/stats/${selectedCharacterData.type}Bns.webp`} />
                 <img className="character-icon weapon-type"
                   alt="weapon type icon"
-                  src={`/ico/weapon_type/${characterData.weapon}.webp`} />
+                  src={`/ico/weapon_type/${selectedCharacterData.weapon}.webp`} />
               </div>
             </div>
 
             <div className="main-item-slot weapon">
               <div className="weapon-info-img">
                 <img alt="weapon icon" src={
-                  `${BASE_URL}/weapon/${characterData.weapon}/${weaponData?.imgKey}.png`}
+                  `${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png`}
                   onError={(e) => {
                     e.currentTarget.dataset.fallback = "true";
                     e.currentTarget.src = "/default.webp";
@@ -449,9 +445,9 @@ export default function Card() {
               <div className="namecard-image">
                 <ImagePicker src={namecardImage.src}
                   defaultSrc={
-                    `${BASE_URL}/character/${characterData.en.includes("rover")
+                    `${BASE_URL}/character/${selectedCharacterData.en.includes("rover")
                       ? "rover"
-                      : characterData.en}/stand.png`
+                      : selectedCharacterData.en}/stand.png`
                   }
                   onChangeSrc={(src) =>
                     setImageSrc("namecardImage", src)
@@ -460,11 +456,11 @@ export default function Card() {
             </div>
 
             <div className="main-item-slot echos">
-              <EchoSlot />
-              <EchoSlot />
-              <EchoSlot />
-              <EchoSlot />
-              <EchoSlot />
+              <EchoSlot Echodata={characterData.echoData[0]} />
+              <EchoSlot Echodata={characterData.echoData[1]} />
+              <EchoSlot Echodata={characterData.echoData[2]} />
+              <EchoSlot Echodata={characterData.echoData[3]} />
+              <EchoSlot Echodata={characterData.echoData[4]} />
             </div>
           </div>
           {/* == //$ Main Content End */}
@@ -496,17 +492,17 @@ export default function Card() {
 
           {imageLoad.character !== "loaded" && (
             <img alt="loading"
-              src={`${BASE_URL}/character/${selectedCharacter.characterId}/ico.webp`} />
+              src={`${BASE_URL}/character/${characterId}/ico.webp`} />
           )}
 
           <img alt="character"
-            src={`${BASE_URL}/character/${characterData.en}/ico.webp`}
+            src={`${BASE_URL}/character/${selectedCharacterData.en}/ico.webp`}
             style={{ display: imageLoad.character === "loaded" ? "block" : "none" }}
             onLoad={() => setImageLoad(v => ({ ...v, character: "loaded" }))}
             onError={() => setImageLoad(v => ({ ...v, character: "error" }))}
           />
 
-          <span className={`${lang}-font`}>{characterData[lang]}</span>
+          <span className={`${lang}-font`}>{selectedCharacterData[lang]}</span>
         </button>
 
         <div className={`card-slot ${cardSection === 0 ? "active" : ""}`}>
@@ -545,10 +541,10 @@ export default function Card() {
           {FILTERED_CHARACTER.map((item) => {
             return (
               <div className={`card-item ${item[1].element}
-                ${item[0] === characterData.en ? "selected" : ""}`}
+                ${item[0] === selectedCharacterData.en ? "selected" : ""}`}
                 onClick={() => {
                   console.log("asdf:", item);
-                  setSelectedCharacter(item[0])
+                  setCharacterId(item[0])
                   setCardSection(-1)
                 }}>
                 <img alt="character icon" src={`${BASE_URL}/character/${item[0].includes("rover")
@@ -567,7 +563,7 @@ export default function Card() {
         <button className={`card-preview weapon ${cardSection === 1 ? "" : "active"}`}
           onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>
 
-          <img src={`${BASE_URL}/weapon/${characterData.weapon}/${weaponData?.imgKey}.png`} />
+          <img src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png`} />
 
           <span className={`${lang}-font`}>{weaponData?.[lang]}</span>
         </button>
@@ -582,10 +578,10 @@ export default function Card() {
                   const stat = weaponStat[item.id];
                   if (!stat) return;
 
-                  setWeapon({ ...item, ...stat });
+                  patchCharacterData(setWeaponId(characterData, item.id));
                   setCardSection(-1);
                 }}>
-                <img alt="weapon icon" src={`${BASE_URL}/weapon/${characterData.weapon}/${item.imgKey}.png`} />
+                <img alt="weapon icon" src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${item.imgKey}.png`} />
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <span className={`${lang}-font`}>{item.id.includes("00") ? "★★★★★" : "★★★★"}</span>
                   <span className={`${lang}-font`}>{item[lang]}</span>
@@ -604,7 +600,7 @@ export default function Card() {
             {
               [0, 1, 2, 3, 4].map((item) => {
                 return (
-                  <img src={`${BASE_URL}/ico/echos/${selectedCharacter.echoes[item].echoId}.webp`} 
+                  <img src={`${BASE_URL}/ico/echos/${characterData.echoData[item].echoId}.webp`} 
                     onError={(e) => {
                       
                     }}/>
@@ -626,7 +622,7 @@ export default function Card() {
           </div>
 
           <div className="echo-slot" ref={echoSlotRef}>
-            <EchoSelect/>
+            <EchoSelect index={echoSection as 0 | 1 | 2 | 3 | 4} />
           </div>
         </div>
       </div>

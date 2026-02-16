@@ -431,4 +431,10 @@ export const weaponStat = {
     statType: [FixedStats.CritDmg.id, FixedStats.dummy.id],
   },
   //#endregion
+
+  dummy: {
+    atk: 0,
+    value: [0.0, 0.0],
+    statType: ["dummy", "dummy"],
+  }
 } as const satisfies Record<string, WeaponStat>;

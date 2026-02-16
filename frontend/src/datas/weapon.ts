@@ -1,10 +1,10 @@
 import { type WeaponType } from "./characters";
 import type { weaponStat } from "./weaponStats";
 
-type WeaponStatId = keyof typeof weaponStat
+export type WeaponId = keyof typeof weaponStat
 
 export interface Weapon {
-    id: WeaponStatId,
+    id: WeaponId,
     en: string,
     kr: string,
     jp: string,
@@ -683,3 +683,19 @@ export const weapon = {
     },
   },
 } as const satisfies Record<WeaponType, Record<string, Weapon>>;
+
+export const weaponDict: Record<WeaponId, Weapon> = {
+  ...weapon.sword,
+  ...weapon.broadblade,
+  ...weapon.gauntlet,
+  ...weapon.pistol,
+  ...weapon.rectifier,
+  dummy: {
+    id: "dummy",
+    en: "dummy",
+    kr: "dummy",
+    jp: "dummy",
+    zh: "dummy",
+    imgKey: "default",
+  },
+};

@@ -623,7 +623,7 @@ export const character: Record<CharacterId, Character> = {
   },
   chixia: {
     en: "chixia",
-    kr: "",
+    kr: "치사",
     jp: "",
     zh: "",
     hasSkin: false,
