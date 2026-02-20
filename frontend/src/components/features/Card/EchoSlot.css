@@ -21,10 +21,10 @@
 
 .echo-slot-body .echo-image-slot .echo-image {
     position: absolute;
-    width: min(4.25vw, 4.4rem);
-    background-color: #ff000066;
+    width: calc(min(4.8vw, 4.4rem) - 2px);
     top: 50%;
     left: 50%;
+    border: 1px solid #ffffff33;
     transform: translate(-50%, -50%);
 }
 
@@ -68,7 +68,7 @@
 
 .echo-slot-body .echo-stat-slot span {
     color: #f0f0f0;
-    font-size: min(1vw, 1.05rem);
+    font-size: min(1vw, 1rem);
     transform: scaleX(0.925);
 }
 
@@ -90,14 +90,14 @@
     height: fit-content;
     align-items: flex-end;
     justify-content: space-between;
-    font-size: min(0.7vw, 0.8rem);
+    font-size: min(0.7vw, 0.7rem);
 }
 
 .echo-slot-body .score-container img {
     position: absolute;
     bottom: 32.5%;
     left: 50%;
-    height: min(2.15vw, 2.3rem);
+    height: min(2.15vw, 2.15rem);
     transform: translate(-50%, -50%);
 }
 

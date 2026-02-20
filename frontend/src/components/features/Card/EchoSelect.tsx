@@ -6,7 +6,7 @@ import { useAppStore } from "@/stores/appStore"
 import { useStyleStore } from "@/stores/styleStore"
 import { useCharacter } from "@/stores/characterDataStore"
 
-import { FixedStats } from "@/datas/stats";
+import { FixedStats, type StatId } from "@/datas/stats";
 import { echoDict, harmony, type EchoData } from "@/datas/echos";
 
 import type { EchoRuntime } from "@/runtime/echo.runtime";
@@ -51,23 +51,7 @@ type SelectOptionStatOriginal<T = any> = {
     subValue: number[];
 }
 
-const formatOptionWithImage = <
-    T extends SelectOptionWithImage<any>
->(
-    opt: T,
-    _meta: FormatOptionLabelMeta<T>
-) => (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, height: 32 }}>
-        {opt.path && (
-            <img
-                src={opt.path}
-                alt=""
-                style={{ objectFit: "contain", height: "100%", aspectRatio: "1 / 1" }}
-            />
-        )}
-        <span style={{ wordBreak: "keep-all" }}>{opt.label}</span>
-    </div>
-);
+
 //#endregion ====================================
 
 export default function EchoSelect({ index = 0 }: EchoSelectProps) {
@@ -79,7 +63,58 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     const wrapRef = useRef<HTMLDivElement | null>(null);
     const [slotHeight, setSlotHeight] = useState(16);
 
-    console.log(characterData);
+    //#region Format ====================================
+    const formatOptionWithImage = <
+        T extends SelectOptionWithImage<any>
+    >(
+        opt: T,
+        _meta: FormatOptionLabelMeta<T>
+    ) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "min(1vw, 1rem)", height: "min(2.75vw, 2.75rem)" }}>
+            {opt.path && (
+                <img alt=""
+                    src={opt.path}
+                    style={{ objectFit: "contain", height: "100%", aspectRatio: "1 / 1" }}
+                />
+            )}
+            <span className={`${lang}-font`}
+                style={{
+                    wordBreak: "normal",
+                    whiteSpace: "pre",
+                    msTextOverflow: "ellipsis",
+                    fontSize: "min(1.2vw, 1.2rem)",
+                }}>
+                {(opt.label)
+                    .replaceAll("Nightmare: ", "Nightmare:\n")
+                    .replaceAll("Reminiscence: ", "Reminiscence:\n")}
+            </span>        
+        </div>
+    );
+
+    const formatOptionWithImage_Smaller = <
+        T extends SelectOptionWithImage<any>
+    >(
+        opt: T,
+        _meta: FormatOptionLabelMeta<T>
+    ) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "min(0.25vw, 0.25rem)", height: "min(2vw, 2rem)" }}>
+            {opt.path && (
+                <img alt=""
+                    src={opt.path}
+                    style={{ objectFit: "contain", height: "70%", transform: "translateY(-5%)" }}
+                />
+            )}
+            <span className={`${lang}-font`}
+                style={{
+                    wordBreak: "keep-all",
+                    whiteSpace: "nowrap",
+                    fontSize: "min(1.2vw, 1.2rem)",
+                }}>
+                {opt.label}
+            </span>
+        </div>
+    );
+    //#endregion
 
     //#region Ui Datas ====================================
 
@@ -347,7 +382,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             en: v.en,
             jp: v.jp,
             zh: v.zh,
-            path: "default.webp",
+            path: `/ico/harmony/${v.id}.png`,
         }));
     }, [harmony]);
 
@@ -356,7 +391,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
         return Object.entries(echoDict[costKey]).map(([echoId, echo]) => ({
             value: echoId,
-            label: echo.kr,
+            label: echo[lang],
             kr: echo.kr,
             en: echo.en,
             jp: echo.jp,
@@ -366,14 +401,14 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     }, [selectedCost, echoDict]);
 
     const STAT_OPTION_BASE: SelectOptionStatOriginal[] =
-        Object.entries(FixedStats).map(([statId, stat]) => ({
+        Object.entries(FixedStats).filter((v) => v[1].id !== "dummy").map(([statId, stat]) => ({
             value: statId,
-            label: stat.kr,
+            label: stat[lang],
             kr: stat.kr,
             en: stat.en,
             jp: stat.jp,
             zh: stat.zh,
-            path: "",
+            path: `/ico/stats/${statId}.webp`,
             mainValue: stat.ValueMain,
             subValue: stat.ValueSub,
         }));
@@ -419,6 +454,29 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     const STAT_OPTION_MAIN_COST1 = STAT_OPTION_BASE.filter(
         (opt) => opt.mainValue[2] !== 0
     )
+    const STAT_OPTION_SUB = STAT_OPTION_BASE.filter(
+        (opt) => opt.subValue.length !== 0
+    )
+
+    type SelectOpt = { value: number; label: string };
+
+    const isFixedStatId = (id: string): id is keyof typeof FixedStats => id in FixedStats;
+
+    const STAT_OPTION_VALUE_SUBS = useMemo(() => {
+        const echo = characterData.echoData[index];
+
+        return echo.subOptions.map((sub) => {
+            const id = sub.statId;
+
+            if (!id || id === "dummy") return [] as SelectOpt[];
+            if (!isFixedStatId(id)) return [] as SelectOpt[];
+
+            return FixedStats[id].ValueSub.map((value) => ({
+                value,
+                label: String(value),
+            }));
+        }) as [SelectOpt[], SelectOpt[], SelectOpt[], SelectOpt[], SelectOpt[]];
+    }, [index, characterData.echoData]);
 
     //#endregion ====================================
 
@@ -445,7 +503,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     //* =========================================================    
     return (
         <div className="echo-select-wrapper" ref={wrapRef}>
-            {/*//$ Cost, Harmony */}
             <div className="drop-slot">
                 <Select options={COST_DROP_OPTION}
                     isSearchable={false}
@@ -458,21 +515,25 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                 <Select options={HARMONY_DROP_OPTION}
                     isSearchable={false}
                     styles={STAT_DROP_STYLE_OPTION_WIDE}
-                    formatOptionLabel={formatOptionWithImage}
-                    value={HARMONY_DROP_OPTION.find((e) => e.value === characterData.echoData[index].setId) ?? null}
+                    formatOptionLabel={formatOptionWithImage_Smaller}
+                    value={HARMONY_DROP_OPTION.find((e) => e.value 
+                        === characterData.echoData[index].setId) ?? null
+                    }
                     onChange={(opt) => {
+                        if (!opt) return;
                         patchCharacterData(setEchoSetId(characterData, index, opt.value))
                     }}
                 />
             </div>
 
-            {/*//$ Echo */}
             <div className="drop-slot large">
                 <Select options={ECHO_ID_DROP_OPTION}
-                    styles={STAT_DROP_STYLE_LARGE}
                     isSearchable={false}
+                    styles={STAT_DROP_STYLE_LARGE}
                     formatOptionLabel={formatOptionWithImage}
-                    value={ECHO_ID_OPTION_BASE.find((e) => e.value === characterData.echoData[index].echoId) ?? null}
+                    value={ECHO_ID_OPTION_BASE.find((e) => e.value
+                        === characterData.echoData[index].echoId) ?? null
+                    }
                     onChange={(opt) => {
                         if (!opt) return;
                         patchCharacterData(setEchoId(characterData, index as 0 | 1 | 2 | 3 | 4, opt.value));
@@ -482,7 +543,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
             <div className="divider" />
 
-            {/*//$ Main */}
             <div className="drop-slot">
                 <Select options={(() => {
                     switch (characterData.echoData[index].cost) {
@@ -493,76 +553,81 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     }
                 })()}
                     styles={STAT_DROP_STYLE_OPTION_WIDE}
+                    formatOptionLabel={formatOptionWithImage_Smaller}
                     menuPortalTarget={document.body}
+                    value={STAT_OPTION_BASE.find((e) => e.value
+                        === characterData.echoData[index].mainOption.statId) ?? null
+                    }
+                    onChange={(opt) => {
+                        if (!opt) return;
+                        patchCharacterData(patchEchoMainOption(characterData, index, {
+                            statId: opt.value, 
+                            statValue: (() => {
+                                const echoData = characterData.echoData[index];
+                                const statId = opt.value;
+
+                                if (!statId || statId === "dummy") return 0;
+
+                                const costIndexMap: Record<1 | 3 | 4, number> = {
+                                    4: 0,
+                                    3: 1,
+                                    1: 2,
+                                };
+
+                                const idx = costIndexMap[echoData.cost];
+                                const stat = FixedStats[statId as keyof typeof FixedStats];
+
+                                if (!stat) return 0;
+
+                                return stat.ValueMain[idx];
+                            })()
+                        }));
+                    }}
                 />
 
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
-                    menuPortalTarget={document.body}
-                />
+                <span className="main-stat-span num-font">
+                    {characterData.echoData[index].mainOption.statValue.toFixed(1)}%
+                </span>
             </div>
 
             <div className="divider" />
 
-            <div className="drop-slot">
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE_OPTION_WIDE}
-                    menuPortalTarget={document.body}
-                />
-                
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
-                    menuPortalTarget={document.body}
-                />
-            </div>
+            {[0, 1, 2, 3, 4].map((idx) => {
+                return (<div className="drop-slot">
+                    <Select options={STAT_OPTION_SUB}
+                        styles={STAT_DROP_STYLE_OPTION_WIDE}
+                        formatOptionLabel={formatOptionWithImage_Smaller}
+                        menuPlacement="auto"
+                        menuPosition="fixed"
+                        minMenuHeight={200}
+                        menuShouldScrollIntoView={false}
+                        menuPortalTarget={document.body}
+                        value={STAT_OPTION_BASE.find((e) => e.value
+                            === characterData.echoData[index].subOptions[idx].statId) ?? null
+                        }
+                        onChange={(opt) => {
+                            if (!opt) return;
+                            patchCharacterData(patchEchoSubOption(characterData, index, idx as 0 | 1 | 2 | 3 | 4, { statId: opt.value }));
+                        }}
+                    />
 
-            <div className="drop-slot">
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE_OPTION_WIDE}
-                    menuPortalTarget={document.body}
-                />
-                
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
-                    menuPortalTarget={document.body}
-                />
-            </div>
-
-            <div className="drop-slot">
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE_OPTION_WIDE}
-                    menuPortalTarget={document.body}
-                />
-
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
-                    menuPortalTarget={document.body}
-                />
-            </div>
-
-            <div className="drop-slot">
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE_OPTION_WIDE}
-                    menuPortalTarget={document.body}
-                />
-                
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
-                    menuPortalTarget={document.body}
-                />
-            </div>
-
-            <div className="drop-slot">
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE_OPTION_WIDE}
-                    menuPortalTarget={document.body}
-                />
-                
-                <Select options={[]}
-                    styles={STAT_DROP_STYLE}
-                    menuPortalTarget={document.body}
-                />
-            </div>
+                    <Select options={STAT_OPTION_VALUE_SUBS[idx]}
+                        styles={STAT_DROP_STYLE}
+                        menuPlacement="auto"
+                        menuPosition="fixed"
+                        minMenuHeight={200}
+                        menuShouldScrollIntoView={false}
+                        menuPortalTarget={document.body}
+                        value={STAT_OPTION_VALUE_SUBS[idx].find((e) => e.value
+                            === characterData.echoData[index].subOptions[idx].statValue) ?? null
+                        }
+                        onChange={(opt) => {
+                            if (!opt) return;
+                            patchCharacterData(patchEchoSubOption(characterData, index, idx as 0 | 1 | 2 | 3 | 4, { statValue: opt.value }));
+                        }}
+                    />
+                </div>)
+            })}
         </div>
     )
 } 

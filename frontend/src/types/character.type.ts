@@ -12,28 +12,28 @@ export type CharacterData = {
 }
 
 export type CharacterStat = {
-    hp: number,
-    atk: number,
-    def: number,
-    resBns: number,
-    critRate: number,
-    critDmg: number,
-    elementBns: {
-        aero: number,
-        fusion: number,
-        glacio: number,
-        electro: number,
-        havoc: number,
-        spectro: number,
-    },
-    attackTypeBns: {
-        basic: number,
-        heavy: number,
-        skill: number,
-        liberation: number,
-        heal: number,
-    },
-}
+  hp: number;
+  atk: number;
+  def: number;
+  resonanceBns: number;
+  critRate: number;
+  critDmg: number;
+
+  aero: number;
+  fusion: number;
+  glacio: number;
+  electro: number;
+  havoc: number;
+  spectro: number;
+
+  basic: number;
+  heavy: number;
+  skill: number;
+  liberation: number;
+  heal: number;
+
+  dummy: number;
+};
 
 export const createEmptyCharacterData = (id: CharacterId): CharacterData => ({
     characterId: id,

@@ -51,6 +51,33 @@ export const harmony = {
   */
 
   //#region Ver3.0 Echos
+  Star: {
+    id: "Star",
+    en: "Trailblazing Star",
+    kr: "긴 여정을 떠나는 별",
+    jp: "アストロ・ロード",
+    zh: "長路啟航之星",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Sound: {
+    id: "Sound",
+    en: "Sound of True Name",
+    kr: "함의의 소리를 따라",
+    jp: "セマンティック・ウィッシュ",
+    zh: "聽喚語義之願",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
+  Foam: {
+    id: "Foam",
+    en: "Chromatic Foam",
+    kr: "오색찬란한 거품",
+    jp: "パティナ・フォーム",
+    zh: "斑駁粉飾之沫",
+    optionCount: [2, 5],
+    colorCode: "#",
+  },
   Leap: {
     id: "Leap",
     en: "Pact of Neonlight Leap",
@@ -317,6 +344,22 @@ export const echoDict = {
   */
 
   Cost4: {
+    W89: {
+      en: "Nameless Explorer",
+      kr: "이름없는 탐색자",
+      jp: "名もない探索者",
+      zh: "無銘探索者",
+      type: [harmony.Sound.id],
+      stats: [{ statId: FixedStats.aeroBns.id, value: 12.0 }],
+    },
+    Z04: {
+      en: "Sigillum",
+      kr: "시길룸",
+      jp: "シギルム",
+      zh: "辛吉勒姆",
+      type: [harmony.Star.id],
+      stats: [],
+    },
     R65: {
       en: "",
       kr: "하이와티아",
@@ -330,8 +373,8 @@ export const echoDict = {
       kr: "리액터 허스크",
       jp: "",
       zh: "",
-      type: [harmony.Halo.id],
-      stats: [{ statId: FixedStats.ResonanceBns.id, value: 10.0 }],
+      type: [harmony.Halo.id, harmony.Foam.id],
+      stats: [{ statId: FixedStats.resonanceBns.id, value: 10.0 }],
     },
     //* ==================================================== //
     W75N: {
@@ -341,7 +384,7 @@ export const echoDict = {
       zh: "梦魇·朔雷之鳞",
       type: [harmony.Thunder.id, harmony.Empyrean.id],
       stats: [
-        { statId: FixedStats.ElectroBns.id, value: 12.0 },
+        { statId: FixedStats.electroBns.id, value: 12.0 },
         { statId: FixedStats.heavyBns.id, value: 12.0 },
       ],
     },
@@ -591,7 +634,7 @@ export const echoDict = {
       kr: "공명의 메아리 · 명식 · 레비아탄",
       jp: "響き渡る共鳴・鳴式・レビヤタン",
       zh: "共鸣回响·鸣式·利维亚坦",
-      type: [harmony.Shadow.id],
+      type: [harmony.Shadow.id, harmony.Fate.id],
       stats: [],
     },
     /*
@@ -610,6 +653,30 @@ export const echoDict = {
     */
   },
   Cost3: {
+    R67: {
+      en: "Kronablight",
+      kr: "크로나블라이트",
+      jp: "メカファルコン",
+      zh: "冠頂械隼",
+      type: [harmony.Foam.id, harmony.Star.id],
+      stats: [],
+    },
+    X55: {
+      en: "Reminiscence: Kronaclaw",
+      kr: "공명의 메아리 · 크로나클라우",
+      jp: "響き渡る共鳴・クロナファルコン",
+      zh: "共鳴迴響·冠頂蒼隼",
+      type: [harmony.Foam.id, harmony.Star.id],
+      stats: [],
+    },
+    R68: {
+      en: "Glommoth",
+      kr: "글로모스",
+      jp: "グローモス",
+      zh: "格洛獁圖",
+      type: [harmony.Star.id],
+      stats: [],
+    },
     S74: {
       en: "Windlash Coleoid",
       kr: "바람의 기생갑",
@@ -631,7 +698,7 @@ export const echoDict = {
       kr: "세이버캣 프라울러",
       jp: "プラウラーシェード",
       zh: "隐迹铁影",
-      type: [harmony.Leap.id, harmony.Halo.id],
+      type: [harmony.Leap.id, harmony.Halo.id, harmony.Sound.id],
       stats: [],
     },
     R63: {
@@ -639,7 +706,7 @@ export const echoDict = {
       kr: "세이버캣 리버",
       jp: "リッパーシェード",
       zh: "锯袭铁影",
-      type: [harmony.Leap.id, harmony.Halo.id],
+      type: [harmony.Leap.id, harmony.Halo.id, harmony.Sound.id],
       stats: [],
     },
     R62: {
@@ -647,7 +714,7 @@ export const echoDict = {
       kr: "스페이스 트렉 탐색기",
       jp: "スペーストレック重機",
       zh: "探隧重机",
-      type: [harmony.Halo.id],
+      type: [harmony.Halo.id, harmony.Foam.id, harmony.Sound.id],
       stats: [],
     },
     R61: {
@@ -679,10 +746,10 @@ export const echoDict = {
       kr: "트윈 노바 · 콜라사르 블레이드",
       jp: "バイポーラ・アビスフォール",
       zh: "双极·渊陨重锋",
-      type: [harmony.Revelation.id],
+      type: [harmony.Revelation.id, harmony.Star.id, harmony.Sound.id],
       stats: [
-        { statId: FixedStats.basicBns.id, value: 12.0},
-        { statId: FixedStats.ElectroBns.id, value: 12.0},
+        { statId: FixedStats.basicBns.id, value: 12.0 },
+        { statId: FixedStats.electroBns.id, value: 12.0 },
       ],
     },
     R57: {
@@ -690,10 +757,10 @@ export const echoDict = {
       kr: "트윈 노바 · 네뷸러스 캐논",
       jp: "バイポーラ・ノヴァライザー",
       zh: "双极·星升辉铳",
-      type: [harmony.Revelation.id],
+      type: [harmony.Revelation.id, harmony.Foam.id],
       stats: [
-        { statId: FixedStats.basicBns.id, value: 12.0},
-        { statId: FixedStats.SpectroBns.id, value: 12.0},
+        { statId: FixedStats.basicBns.id, value: 12.0 },
+        { statId: FixedStats.spectroBns.id, value: 12.0 },
       ],
     },
     S06N: {
@@ -978,12 +1045,33 @@ export const echoDict = {
     },
   },
   Cost1: {
+    W38: {
+      en: "Iceglint Dancer",
+      kr: "아이스글린트 댄서",
+      jp: "アイスグリントダンサー",
+      zh: "冰盈舞者",
+      type: [harmony.Star.id],
+      stats: [],
+    },
+    W39: {
+      en: "Shadow Stepper",
+      kr: "쉐도우 스태퍼",
+      jp: "シャドウステッパー",
+      zh: "影爍者",
+      type: [harmony.Star.id, harmony.Foam.id],
+      stats: [],
+    },
     W37: {
       en: "Zip Zap",
       kr: "삐리릭",
       jp: "ビリリ",
       zh: "噼啪啪",
-      type: [],
+      type: [
+        harmony.Leap.id,
+        harmony.Revelation.id,
+        harmony.Foam.id,
+        harmony.Sound.id,
+      ],
       stats: [],
     },
     R12: {
@@ -991,7 +1079,7 @@ export const echoDict = {
       kr: "바위거미 S4형",
       jp: "イワグモS4型",
       zh: "岩蛛S4型",
-      type: [],
+      type: [harmony.Leap.id, harmony.Halo.id, harmony.Star.id],
       stats: [],
     },
     R11: {
@@ -999,7 +1087,7 @@ export const echoDict = {
       kr: "바위 호박벌",
       jp: "サイクツクマバチ",
       zh: "矿岩熊蜂",
-      type: [],
+      type: [harmony.Halo.id, harmony.Revelation.id, harmony.Sound.id],
       stats: [],
     },
     R10: {
@@ -1007,7 +1095,7 @@ export const echoDict = {
       kr: "파종 호박벌",
       jp: "カフンクマバチ",
       zh: "莳植熊蜂",
-      type: [],
+      type: [harmony.Leap.id, harmony.Revelation.id, harmony.Sound.id],
       stats: [],
     },
     W36: {
@@ -1015,7 +1103,7 @@ export const echoDict = {
       kr: "전율하는 전사",
       jp: "戦慄の戦士",
       zh: "颤栗战士",
-      type: [],
+      type: [harmony.Halo.id, harmony.Foam.id],
       stats: [],
     },
     H22N: {
@@ -1023,7 +1111,7 @@ export const echoDict = {
       kr: "악몽 · 피그미타조",
       jp: "ナイトメア・地駝鳥",
       zh: "梦魇·侏侏鸵",
-      type: [],
+      type: [harmony.Fate.id],
       stats: [],
     },
     G04N: {
@@ -1031,7 +1119,7 @@ export const echoDict = {
       kr: "악몽 · 우글글",
       jp: "ナイトメア・ウカカ",
       zh: "梦魇·呜咔咔",
-      type: [],
+      type: [harmony.Fate.id],
       stats: [],
     },
     H19: {
@@ -1540,3 +1628,5 @@ export const echoDict = {
     },
   },
 } as const satisfies Record<string, Record<string, Omit<EchoData, "id">>>;
+
+

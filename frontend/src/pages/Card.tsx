@@ -29,7 +29,7 @@ import { setWeaponId } from "@/runtime/characterData.helpers";
 export default function Card() {
 
   const { lang } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, characterData, characterFinalStat } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat } = useCharacter();
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
@@ -87,9 +87,9 @@ export default function Card() {
       FixedStats.hp.id,
       FixedStats.atk.id,
       FixedStats.def.id,
-      FixedStats.ResonanceBns.id,
-      FixedStats.CritRate.id,
-      FixedStats.CritDmg.id,
+      FixedStats.resonanceBns.id,
+      FixedStats.critRate.id,
+      FixedStats.critDmg.id,
       ELEMENT_STAT_MAP[selectedCharacterData.element] || FixedStats.dummy.id,
       ATTACK_TYPE_STAT_MAP[selectedCharacterData.type] || FixedStats.dummy.id,
     ]
@@ -172,31 +172,58 @@ export default function Card() {
     setCharacterId("rover_spectro");
   }, [])
 
+  const BASE_STATS_MAP = useMemo<Partial<Record<StatId, number>>>(() => {
+    return {
+      //* base stats
+      [FixedStats.hp.id]: characterBaseStat?.hp || 0,
+      [FixedStats.atk.id]: characterBaseStat?.atk || 0,
+      [FixedStats.def.id]: characterBaseStat?.def || 0,
+      [FixedStats.resonanceBns.id]: characterBaseStat?.resonanceBns || 0,
+      [FixedStats.critRate.id]: characterBaseStat?.critRate || 0,
+      [FixedStats.critDmg.id]: characterBaseStat?.critDmg || 0,
+
+      //* element type stats
+      [FixedStats.aeroBns.id]: characterBaseStat?.aero || 0,
+      [FixedStats.fusionBns.id]: characterBaseStat?.fusion || 0,
+      [FixedStats.glacioBns.id]: characterBaseStat?.glacio || 0,
+      [FixedStats.electroBns.id]: characterBaseStat?.electro || 0,
+      [FixedStats.havocBns.id]: characterBaseStat?.havoc || 0,
+      [FixedStats.spectroBns.id]: characterBaseStat?.spectro || 0,
+
+      //* attack type stats
+      [FixedStats.basicBns.id]: characterBaseStat?.basic || 0,
+      [FixedStats.heavyBns.id]: characterBaseStat?.heavy || 0,
+      [FixedStats.skillBns.id]: characterBaseStat?.skill || 0,
+      [FixedStats.liberationBns.id]: characterBaseStat?.liberation || 0,
+      [FixedStats.healBns.id]: characterBaseStat?.heal || 0,
+    }
+  }, [characterBaseStat]);
+
+
   const FINAL_STATS_MAP = useMemo<Partial<Record<StatId, number>>>(() => {
-    console.log("data", characterFinalStat);
     return {
       //* base stats
       [FixedStats.hp.id]: characterFinalStat?.hp || 0,
       [FixedStats.atk.id]: characterFinalStat?.atk || 0,
       [FixedStats.def.id]: characterFinalStat?.def || 0,
-      [FixedStats.ResonanceBns.id]: characterFinalStat?.resBns || 0,
-      [FixedStats.CritRate.id]: characterFinalStat?.critRate || 0,
-      [FixedStats.CritDmg.id]: characterFinalStat?.critDmg || 0,
+      [FixedStats.resonanceBns.id]: characterFinalStat?.resonanceBns || 0,
+      [FixedStats.critRate.id]: characterFinalStat?.critRate || 0,
+      [FixedStats.critDmg.id]: characterFinalStat?.critDmg || 0,
 
       //* element type stats
-      [FixedStats.AeroBns.id]: characterFinalStat?.elementBns.aero || 0,
-      [FixedStats.FusionBns.id]: characterFinalStat?.elementBns.fusion || 0,
-      [FixedStats.GlacioBns.id]: characterFinalStat?.elementBns.glacio || 0,
-      [FixedStats.ElectroBns.id]: characterFinalStat?.elementBns.electro || 0,
-      [FixedStats.HavocBns.id]: characterFinalStat?.elementBns.havoc || 0,
-      [FixedStats.SpectroBns.id]: characterFinalStat?.elementBns.spectro || 0,
+      [FixedStats.aeroBns.id]: characterFinalStat?.aero || 0,
+      [FixedStats.fusionBns.id]: characterFinalStat?.fusion || 0,
+      [FixedStats.glacioBns.id]: characterFinalStat?.glacio || 0,
+      [FixedStats.electroBns.id]: characterFinalStat?.electro || 0,
+      [FixedStats.havocBns.id]: characterFinalStat?.havoc || 0,
+      [FixedStats.spectroBns.id]: characterFinalStat?.spectro || 0,
 
       //* attack type stats
-      [FixedStats.basicBns.id]: characterFinalStat?.attackTypeBns.basic || 0,
-      [FixedStats.heavyBns.id]: characterFinalStat?.attackTypeBns.heavy || 0,
-      [FixedStats.skillBns.id]: characterFinalStat?.attackTypeBns.skill || 0,
-      [FixedStats.liberationBns.id]: characterFinalStat?.attackTypeBns.liberation || 0,
-      [FixedStats.healBns.id]: characterFinalStat?.attackTypeBns.heal || 0,
+      [FixedStats.basicBns.id]: characterFinalStat?.basic || 0,
+      [FixedStats.heavyBns.id]: characterFinalStat?.heavy || 0,
+      [FixedStats.skillBns.id]: characterFinalStat?.skill || 0,
+      [FixedStats.liberationBns.id]: characterFinalStat?.liberation || 0,
+      [FixedStats.healBns.id]: characterFinalStat?.heal || 0,
     }
   }, [characterFinalStat]);
 
@@ -396,7 +423,11 @@ export default function Card() {
             <div className="main-item-slot stats">
               {STAT_IDS.map((item: StatId) => {
                 return (
-                  <StatSlot statId={item} statValue={FINAL_STATS_MAP[item] ?? 0} plusValue={123} />
+                  <StatSlot 
+                    statId={item}
+                    statValue={FINAL_STATS_MAP?.[item] ?? 0}
+                    plusValue={(FINAL_STATS_MAP?.[item] ?? 0) - (BASE_STATS_MAP?.[item] ?? 0)}
+                    />
                 )
               })}
 
@@ -602,7 +633,9 @@ export default function Card() {
                 return (
                   <img src={`${BASE_URL}/ico/echos/${characterData.echoData[item].echoId}.webp`} 
                     onError={(e) => {
-                      
+                      const img = e.currentTarget;
+                      img.onerror = null;
+                      img.src = "default.webp"
                     }}/>
                 )
               })
