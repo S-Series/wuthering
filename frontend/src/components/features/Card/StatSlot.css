@@ -11,7 +11,7 @@
 
 .stat-slot-body .container {
     display: flex;
-    width: 80%;
+    width: 79%;
     height: 100%;
     gap: 2.5%;
     color: #fff;
@@ -27,20 +27,24 @@
 
 .stat-slot-body .container span {
     position: relative;
-    font-size: min(1vw, 1.1rem);
+    font-size: min(1vw, 1rem);
     white-space: nowrap;
 }
 
 .stat-slot-body .container p {
     margin: 0;
     margin-left: auto;
-    font-size: min(1vw, 1.1rem);
+    font-size: min(1vw, 1rem);
+}
+
+.stat-slot-body .container p.blank {
+    margin-right: 1%;
 }
 
 .stat-slot-body em {
     margin: 0;
     color: #fa0;
     padding-right: 2.5%;
-    font-size: min(0.7vw, 0.77rem);
-    transform: translateY(15%);
+    font-size: min(0.7vw, 0.7rem);
+    transform: translateY(15%) scaleX(0.95);
 }

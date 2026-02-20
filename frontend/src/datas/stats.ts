@@ -53,7 +53,7 @@ export const FixedStats = {
     kr: "공격력%",
     jp: "攻撃力%",
     zh: "攻击%",
-    ValueMain: [33.0, 33.0, 18.0],
+    ValueMain: [33.0, 30.0, 18.0],
     ValueSub: [6.4, 7.1, 7.9, 8.6, 9.4, 10.1, 10.9, 11.6,],
   },
   def: {
@@ -74,8 +74,8 @@ export const FixedStats = {
     ValueMain: [41.5, 38.0, 18.0],
     ValueSub: [8.1, 9.0, 10.0, 10.9, 11.8, 12.8, 13.8, 14.7,],
   },
-  CritRate: {
-    id: "CritRate",
+  critRate: {
+    id: "critRate",
     en: "Critical Rate",
     kr: "크리티컬",
     jp: "クリティカル",
@@ -83,8 +83,8 @@ export const FixedStats = {
     ValueMain: [22.0, 0, 0],
     ValueSub: [6.3, 6.9, 7.5, 8.1, 8.7, 9.3, 9.9, 10.5],
   },
-  CritDmg: {
-    id: "CritDmg",
+  critDmg: {
+    id: "critDmg",
     en: "Critical Damage",
     kr: "크리티컬 피해",
     jp: "クリティカルダメージ",
@@ -101,8 +101,8 @@ export const FixedStats = {
     ValueMain: [26.4, 0, 0],
     ValueSub: [],
   },
-  ResonanceBns: {
-    id: "ResonanceBns",
+  resonanceBns: {
+    id: "resonanceBns",
     en: "Resonance Bonus",
     kr: "공명 효율",
     jp: "共鳴効率",
@@ -146,58 +146,58 @@ export const FixedStats = {
     ValueMain: [0, 0, 0],
     ValueSub: [6.4, 7.1, 7.9, 8.6, 9.4, 10.1, 10.9, 11.6,],
   },
-  GlacioBns: {
-    id: "GlacioBns",
+  glacioBns: {
+    id: "glacioBns",
     en: "Glacio DMG Bonus",
     kr: "응결 피해보너스",
     jp: "凝縮ダメージアップ",
     zh: "冷凝伤害加成",
-    ValueMain: [0, 33.0, 0],
+    ValueMain: [0, 30.0, 0],
     ValueSub: [],
   },
-  FusionBns: {
-    id: "FusionBns",
+  fusionBns: {
+    id: "fusionBns",
     en: "Fusion DMG Bonus",
     kr: "융용 피해보너스",
     jp: "焦熱ダメージアップ",
     zh: "热熔伤害加成",
-    ValueMain: [0, 33.0, 0],
+    ValueMain: [0, 30.0, 0],
     ValueSub: [],
   },
-  ElectroBns: {
-    id: "ElectroBns",
+  electroBns: {
+    id: "electroBns",
     en: "Electro DMG Bonus",
     kr: "전도 피해보너스",
     jp: "電導ダメージアップ",
     zh: "导电伤害加成",
-    ValueMain: [0, 33.0, 0],
+    ValueMain: [0, 30.0, 0],
     ValueSub: [],
   },
-  AeroBns: {
-    id: "AeroBns",
+  aeroBns: {
+    id: "aeroBns",
     en: "Aero DMG Bonus",
     kr: "기류 피해보너스",
     jp: "気動ダメージアップ",
     zh: "氣動傷害加成",
-    ValueMain: [0, 33.0, 0],
+    ValueMain: [0, 30.0, 0],
     ValueSub: [],
   },
-  SpectroBns: {
-    id: "SpectroBns",
+  spectroBns: {
+    id: "spectroBns",
     en: "Spectro DMG Bonus",
     kr: "회절 피해보너스",
     jp: "回折ダメージアップ",
     zh: "衍射傷害加成",
-    ValueMain: [0, 33.0, 0],
+    ValueMain: [0, 30.0, 0],
     ValueSub: [],
   },
-  HavocBns: {
-    id: "HavocBns",
+  havocBns: {
+    id: "havocBns",
     en: "Havoc DMG Bonus",
     kr: "인멸 피해보너스",
     jp: "消滅ダメージアップ",
     zh: "湮滅傷害加成",
-    ValueMain: [0, 33.0, 0],
+    ValueMain: [0, 30.0, 0],
     ValueSub: [],
   },
   typeBns: {
@@ -212,12 +212,12 @@ export const FixedStats = {
 } as const satisfies Record<string, Stat>;
 
 export const ELEMENT_STAT_MAP: Record<ElementType, StatId> = {
-  fusion: FixedStats.FusionBns.id,
-  glacio: FixedStats.GlacioBns.id,
-  electro: FixedStats.ElectroBns.id,
-  aero: FixedStats.AeroBns.id,
-  spectro: FixedStats.SpectroBns.id,
-  havoc: FixedStats.HavocBns.id,
+  fusion: FixedStats.fusionBns.id,
+  glacio: FixedStats.glacioBns.id,
+  electro: FixedStats.electroBns.id,
+  aero: FixedStats.aeroBns.id,
+  spectro: FixedStats.spectroBns.id,
+  havoc: FixedStats.havocBns.id,
 } as const;
 
 export const ATTACK_TYPE_STAT_MAP: Record<AttackType, StatId> = {
