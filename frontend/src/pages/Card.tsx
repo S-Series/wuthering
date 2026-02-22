@@ -20,16 +20,16 @@ import { harmony } from "@/datas/echos";
 import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
 
 import type { WeaponData } from "@/runtime/character.runtime";
-import { type EchoRuntime } from "@/runtime/echo.runtime";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
 import { setWeaponId } from "@/runtime/characterData.helpers";
+import { getCharacterRank } from "@/types/character.type";
 
 export default function Card() {
 
   const { lang } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore } = useCharacter();
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
@@ -44,7 +44,7 @@ export default function Card() {
   const [searchParams] = useSearchParams();
   const paramData = searchParams.get("character") ?? "empty";
 
-  const [cardSection, setCardSection] = useState(-1);
+  const [cardSection, setCardSection] = useState(2);
   const [echoSection, setEchoSection] = useState(0);
   const [weaponFilter, setWeaponFilter] = useState([false, false, false, false, false])
   const [elementFilter, setElementFilter] = useState([false, false, false, false, false, false])
@@ -95,6 +95,13 @@ export default function Card() {
     ]
   }, [selectedCharacterData.element, selectedCharacterData.type])
 
+  const scores = useMemo(() => {
+    return [
+      equipmentScore[0][0] + equipmentScore[1][0] + equipmentScore[2][0] + equipmentScore[3][0] + equipmentScore[4][0],
+      equipmentScore[0][1] + equipmentScore[1][1] + equipmentScore[2][1] + equipmentScore[3][1] + equipmentScore[4][1]
+    ]
+  }, [equipmentScore])
+
   //* == Weapon ================================================//
   const FILTERED_WEAPON = useMemo<Weapon[]>(() => {
     return Object.values(weapon[selectedCharacterData.weapon]);
@@ -109,17 +116,6 @@ export default function Card() {
 
     return {...base, ...stat}
   }, [characterData.weaponId])
-
-  //* == Echoes ================================================//
-  const echoData = useMemo(() => {
-    return [
-      null as EchoRuntime | null,
-      null as EchoRuntime | null,
-      null as EchoRuntime | null,
-      null as EchoRuntime | null,
-      null as EchoRuntime | null
-    ]
-  }, [characterData])
 
   //* == Image ================================================//
   const characterImage = useImgStore((s) => s.characterImage);
@@ -449,10 +445,10 @@ export default function Card() {
 
               <div className="score-slot">
                 <span className="en-font">
-                  Av. <em className="num-font">{`${123.4}`}</em>pt
+                  Cv. <em className="num-font">{scores[0].toFixed(1)}</em>pt
                 </span>
                 <span className="en-font">
-                  Cv. <em className="num-font">{`${123.4}`}</em>pt
+                  Av. <em className="num-font">{scores[1].toFixed(1)}</em>pt
                 </span>
               </div>
             </div>
@@ -467,9 +463,9 @@ export default function Card() {
 
             <div className="main-item-slot namecard">
               <div className="namecard-score">
-                <img alt="rank icon" src="/ico/rank/SSS.png" />
+                <img alt="rank icon" src={`/ico/rank/${getCharacterRank(scores[1])}.png`} />
                 <span className="en-font">
-                  Av. <em className="num-font">{123.4}</em>pt
+                  Av. <em className="num-font">{scores[1].toFixed(1)}</em>pt
                 </span>
               </div>
 
@@ -487,11 +483,11 @@ export default function Card() {
             </div>
 
             <div className="main-item-slot echos">
-              <EchoSlot Echodata={characterData.echoData[0]} />
-              <EchoSlot Echodata={characterData.echoData[1]} />
-              <EchoSlot Echodata={characterData.echoData[2]} />
-              <EchoSlot Echodata={characterData.echoData[3]} />
-              <EchoSlot Echodata={characterData.echoData[4]} />
+              <EchoSlot index={0} Echodata={characterData.echoData[0]} />
+              <EchoSlot index={1} Echodata={characterData.echoData[1]} />
+              <EchoSlot index={2} Echodata={characterData.echoData[2]} />
+              <EchoSlot index={3} Echodata={characterData.echoData[3]} />
+              <EchoSlot index={4} Echodata={characterData.echoData[4]} />
             </div>
           </div>
           {/* == //$ Main Content End */}

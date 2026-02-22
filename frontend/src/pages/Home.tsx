@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 
 import { useAppStore } from "@/stores/appStore";
-import type { LangType } from "@/stores/appStore";
 
 import { YOUTUBE_PLAYLISTS } from "@/lib/youtubePlaylists";
 import { fetchLatestFromPlaylist } from "@/lib/youtubeApi";
@@ -17,7 +16,7 @@ export default function Home() {
 
   const { lang } = useAppStore();
 
-  const playlists = YOUTUBE_PLAYLISTS[lang];
+  //const playlists = YOUTUBE_PLAYLISTS[lang];
 
   const [trailer, setTrailer] = useState<YoutubeLatestVideo | null>(null);
   const [intro, setIntro] = useState<YoutubeLatestVideo | null>(null);

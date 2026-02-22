@@ -6,7 +6,7 @@ import { useAppStore } from "@/stores/appStore"
 import { useStyleStore } from "@/stores/styleStore"
 import { useCharacter } from "@/stores/characterDataStore"
 
-import { FixedStats, type StatId } from "@/datas/stats";
+import { FixedStats } from "@/datas/stats";
 import { echoDict, harmony, type EchoData } from "@/datas/echos";
 
 import type { EchoRuntime } from "@/runtime/echo.runtime";

@@ -24,7 +24,7 @@ export function StyleProvider({ children }: { children: ReactNode }) {
       container: (base) => ({
         ...base, width: "100%", minHeight: 0
       }),
-      control: (base, state) => ({
+      control: (base) => ({
         ...base,
         overflow: "visible",
         height: "100%",

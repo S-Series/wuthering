@@ -1,6 +1,5 @@
 import { useMemo, useEffect, useState } from "react"
 
-import { calcRank } from "@/calc/calcRank";
 import { loadSummaryStore } from "@/summaryData/storage";
 
 import { character } from "@/datas/characters"
@@ -9,6 +8,7 @@ import CharacterSlot from "@/components/features/Characters/CharacterSlot";
 
 import "@/pages/_Page.css"
 import "@/pages/Characters.css"
+import { getCharacterRank } from "@/types/character.type";
 
 type OrderByOption = 
   | "version"
@@ -69,7 +69,7 @@ export default function Characters() {
           {
             ...item,
             score,
-            rank: calcRank(score),
+            rank: getCharacterRank(score),
           },
         ] as const;
       });
@@ -100,6 +100,7 @@ export default function Characters() {
       <div className="slot-container">
         {
           filteredCharacters.map(([key, item]) => {
+            console.log("item: ", item)
             return <CharacterSlot isGrid={isDisplayGrid}
               key={key}
               id={key}

@@ -1,8 +1,11 @@
 import type { EchoRuntime } from "@/runtime/echo.runtime";
 
 import "./EchoSlot.css"
+import { useCharacter } from "@/stores/characterDataStore";
+import { getEquipmentRank } from "@/types/character.type";
 
 interface StatSlotProps {
+  index: number;
   Echodata?: EchoRuntime;
 }
 
@@ -24,9 +27,10 @@ function MakeStatSlot({ StatId = "", StatValue = -1, }
   );
 }
 
-export default function EchoSlot({ Echodata }: StatSlotProps) {
+export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
+  const { equipmentScore } = useCharacter();
 
   return (
     <div className="echo-slot-body">
@@ -78,14 +82,14 @@ export default function EchoSlot({ Echodata }: StatSlotProps) {
       <div className="divider stat" />
 
       <div className="score-container">
-        <img alt="rank icon" src="/ico/rank/SSS.png" />
+        <img alt="rank icon" src={`/ico/rank/${getEquipmentRank(equipmentScore[index][1])}.png`} />
         <div className="slot">
           <span className="en-font">Cv.</span>
-          <span className="en-font"> <em className="num-font">23.4</em>pt</span>
+          <span className="en-font"> <em className="num-font">{equipmentScore[index][0].toFixed(1)}</em>pt</span>
         </div>
         <div className="slot">
           <span className="en-font">Av.</span>
-          <span className="en-font"> <em className="num-font">123.4</em>pt</span>
+          <span className="en-font"> <em className="num-font">{equipmentScore[index][1].toFixed(1)}</em>pt</span>
         </div>
       </div>
     </div>

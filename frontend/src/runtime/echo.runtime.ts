@@ -5,6 +5,11 @@ export type EchoStatOption = {
   statValue: number | -1;
 };
 
+export type EchoStatOptionSUb = {
+  statId: "hp" | "hpPct";
+  statValue: number | -1;
+};
+
 export type EchoRuntime = {
   echoId: string;
   setId: string;
@@ -26,13 +31,13 @@ export const createEmptyEchoRuntime = (cost: 4 | 3 | 1): EchoRuntime => ({
   cost,
   mainOption: {
     statId: "dummy",
-    statValue: -1,
+    statValue: 0,
   },
   subOptions: [
-    { statId: "dummy", statValue: -1 },
-    { statId: "dummy", statValue: -1 },
-    { statId: "dummy", statValue: -1 },
-    { statId: "dummy", statValue: -1 },
-    { statId: "dummy", statValue: -1 },
+    { statId: "dummy", statValue: 0 },
+    { statId: "dummy", statValue: 0 },
+    { statId: "dummy", statValue: 0 },
+    { statId: "dummy", statValue: 0 },
+    { statId: "dummy", statValue: 0 },
   ],
 });

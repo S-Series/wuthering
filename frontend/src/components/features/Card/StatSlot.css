@@ -27,8 +27,9 @@
 
 .stat-slot-body .container span {
     position: relative;
-    font-size: min(1vw, 1rem);
+    font-size: min(0.925vw, 0.925rem);
     white-space: nowrap;
+    transform: translateY(-3%);
 }
 
 .stat-slot-body .container p {

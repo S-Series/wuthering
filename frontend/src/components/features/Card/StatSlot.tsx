@@ -21,7 +21,11 @@ export default function StatSlot({ statId, statValue, plusValue }: StatSlotProps
         <div className="stat-slot-body">
             <div className="container">
                 <img src={`/ico/stats/${statId}.webp`}/>
-                <span className={`${lang}-font`}>{FixedStats[statId][lang]}</span>
+                <span className={`${lang}-font`}>{
+                    FixedStats[statId][lang]
+                        .replace("アップ", " ✢")
+                        .replace("加成", " ✢")
+                }</span>
                 <p className={`num-font ${isPct ? "" : "blank"}`}>
                     {isPct ? (statValue.toFixed(1) + "%") : statValue}
                 </p>

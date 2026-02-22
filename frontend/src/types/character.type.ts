@@ -47,3 +47,21 @@ export const createEmptyCharacterData = (id: CharacterId): CharacterData => ({
         createEmptyEchoRuntime(1),
     ]
 });
+
+export const getCharacterRank = (score: number):CharacterRank => {
+    if (score >= 300) return "SSS"
+    else if (score >= 250) return "SS"
+    else if (score >= 225) return "S"
+    else if (score >= 200) return "A"
+    else if (score === 0) return "Empty"
+    else return "B"
+}
+
+export const getEquipmentRank = (score: number):CharacterRank => {
+    if (score >= 65) return "SSS"
+    else if (score >= 60) return "SS"
+    else if (score >= 55) return "S"
+    else if (score >= 50) return "A"
+    else if (score === 0) return "Empty"
+    else return "B"
+}

@@ -23,3 +23,18 @@ export function loadSummaryStore(): CharacterSummaryStore {
 export function saveSummaryStore(store: CharacterSummaryStore) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
 }
+
+export function saveCharacterScore(
+  characterId: string,
+  score: number
+) {
+  const store = loadSummaryStore();
+
+  store.data[characterId] = {
+    characterId,
+    score,
+    updatedAt: Date.now(),
+  };
+
+  saveSummaryStore(store);
+}
