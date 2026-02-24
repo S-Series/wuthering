@@ -101,14 +101,14 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             {opt.path && (
                 <img alt=""
                     src={opt.path}
-                    style={{ objectFit: "contain", height: "70%", transform: "translateY(-5%)" }}
+                    style={{ objectFit: "contain", height: "70%", transform: "translate(-7.5%, -2.5%)" }}
                 />
             )}
             <span className={`${lang}-font`}
                 style={{
                     wordBreak: "keep-all",
                     whiteSpace: "nowrap",
-                    fontSize: "min(1.2vw, 1.2rem)",
+                    fontSize: "min(1vw, 1rem)",
                 }}>
                 {opt.label}
             </span>
@@ -260,6 +260,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     minHeight: 0,
                     height: `${slotHeight / 13}px`,
                     overflow: "hidden",
+                    fontSize: `${slotHeight / 30}px`,
                 };
             },
             container: (base, state) => {
@@ -270,7 +271,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                 return {
                     ...common,
                     minHeight: 0,
-                    color: "white",
                 };
             },
             singleValue: (base, state) => {
@@ -312,9 +312,33 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     ...common,
                     paddingTop: 0,
                     paddingBottom: 0,
-                    paddingLeft: `${slotHeight / 80}px`,
-                    paddingRight: `${slotHeight / 80}px`,
+                    paddingLeft: `${slotHeight / 100}px`,
+                    paddingRight: `${slotHeight / 100}px`,
                 };
+            },
+            indicatorsContainer: (base, state) => {
+                const common = baseSelectStyles.indicatorsContainer
+                    ? baseSelectStyles.indicatorsContainer(base, state)
+                    : base;
+                return {
+                    ...common,
+                    position: "relative",
+                    zIndex: 999,
+                    pointerEvents: "auto",
+                }
+            },
+            clearIndicator: (base, state) => {
+                const common = baseSelectStyles.clearIndicator
+                    ? baseSelectStyles.clearIndicator(base, state)
+                    : base;
+
+                return {
+                    ...common,
+                    position: "relative",
+                    zIndex: 999,
+                    pointerEvents: "auto",
+                    cursor: "pointer",
+                }
             },
             placeholder: (base, state) => {
                 const common = baseSelectStyles.placeholder
@@ -341,7 +365,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                 const common = baseSelectStyles.control
                     ? baseSelectStyles.control(base, state)
                     : base;
-
                 return {
                     ...common,
                     minHeight: 0,
@@ -353,7 +376,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                 const common = baseSelectStyles.container
                     ? baseSelectStyles.container(base, state)
                     : base;
-
                 return {
                     ...common,
                     color: "white",
@@ -363,7 +385,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                 const common = baseSelectStyles.singleValue
                     ? baseSelectStyles.singleValue(base, state)
                     : base;
-
                 return {
                     ...common,
                     color: "white",
@@ -520,7 +541,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                         === characterData.echoData[index].setId) ?? null
                     }
                     onChange={(opt) => {
-                        if (!opt) return;
                         patchCharacterData(setEchoSetId(characterData, index, opt.value))
                     }}
                 />
@@ -528,6 +548,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
             <div className="drop-slot large">
                 <Select options={ECHO_ID_DROP_OPTION}
+                    isClearable={true}
                     isSearchable={false}
                     styles={STAT_DROP_STYLE_LARGE}
                     formatOptionLabel={formatOptionWithImage}
@@ -535,7 +556,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                         === characterData.echoData[index].echoId) ?? null
                     }
                     onChange={(opt) => {
-                        if (!opt) return;
                         patchCharacterData(setEchoId(characterData, index as 0 | 1 | 2 | 3 | 4, opt.value));
                     }}
                 />
@@ -550,8 +570,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                         case 3: return STAT_OPTION_MAIN_COST3;
                         case 1: return STAT_OPTION_MAIN_COST1;
                         default: return [];
-                    }
-                })()}
+                    }})()}
                     styles={STAT_DROP_STYLE_OPTION_WIDE}
                     formatOptionLabel={formatOptionWithImage_Smaller}
                     menuPortalTarget={document.body}
@@ -594,6 +613,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
             {[0, 1, 2, 3, 4].map((idx) => {
                 return (<div className="drop-slot">
+                    <div style={{width: "65%"}}>
                     <Select options={STAT_OPTION_SUB}
                         styles={STAT_DROP_STYLE_OPTION_WIDE}
                         formatOptionLabel={formatOptionWithImage_Smaller}
@@ -610,9 +630,11 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                             patchCharacterData(patchEchoSubOption(characterData, index, idx as 0 | 1 | 2 | 3 | 4, { statId: opt.value }));
                         }}
                     />
+                    </div>
 
+                    <div style={{width: "35%"}}>
                     <Select options={STAT_OPTION_VALUE_SUBS[idx]}
-                        styles={STAT_DROP_STYLE}
+                        styles={STAT_DROP_STYLE_OPTION_WIDE}
                         menuPlacement="auto"
                         menuPosition="fixed"
                         minMenuHeight={200}
@@ -626,6 +648,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                             patchCharacterData(patchEchoSubOption(characterData, index, idx as 0 | 1 | 2 | 3 | 4, { statValue: opt.value }));
                         }}
                     />
+                    </div>
                 </div>)
             })}
         </div>

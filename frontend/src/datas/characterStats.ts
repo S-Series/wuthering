@@ -36,7 +36,7 @@ export const characterStat = {
   */
 
   // == 3.2 ======================================= //
-  /*sigrika: {
+  /* sigrika: {
     baseHp: 0,
     baseAtk: 0,
     baseDef: 0,

@@ -483,11 +483,13 @@ export default function Card() {
             </div>
 
             <div className="main-item-slot echos">
-              <EchoSlot index={0} Echodata={characterData.echoData[0]} />
-              <EchoSlot index={1} Echodata={characterData.echoData[1]} />
-              <EchoSlot index={2} Echodata={characterData.echoData[2]} />
-              <EchoSlot index={3} Echodata={characterData.echoData[3]} />
-              <EchoSlot index={4} Echodata={characterData.echoData[4]} />
+              {[0, 1, 2, 3, 4].map((idx) => {
+                console.log(echoSection === idx);
+
+                return <EchoSlot
+                  index={echoSection === idx ? idx : idx}
+                  Echodata={characterData.echoData[idx]} />
+              })}
             </div>
           </div>
           {/* == //$ Main Content End */}

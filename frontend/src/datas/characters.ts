@@ -64,6 +64,90 @@ export const character: Record<CharacterId, Character> = {
     region: ,
   },*/
   
+  //*== ver 3.4 ===========================//
+  /* lucilla: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.3,
+    isElite: true,
+    region: ,
+  },*/
+  /* rebecca: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.3,
+    isElite: true,
+    region: ,
+  },*/
+  /* lucy: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.3,
+    isElite: true,
+    region: ,
+  },*/
+
+  //*== ver 3.3 ===========================//
+  /* denia: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.3,
+    isElite: true,
+    region: ,
+  },*/
+  /* pheisha: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.3,
+    isElite: true,
+    region: ,
+  },*/
+
+  //*== ver 3.2 ===========================//
+  /* sigrika: {
+    en: "Sigrika",
+    kr: "시그리카",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.2,
+    isElite: true,
+    region: ,
+  },*/
+
   //*== ver 3.1 ===========================//
   luuk_herssen: {
     en: "Luuk Herssen",

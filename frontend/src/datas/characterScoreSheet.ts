@@ -11,12 +11,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.5,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
-    [FixedStats.liberationBns.id]: 5,
+    [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -24,12 +27,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+    [FixedStats.basicBns.id]: 0.25,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
-    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.liberationBns.id]: 1.25,
+
     [FixedStats.resonanceBns.id]: 1.2,
     maxResCount: 3,
   },
@@ -37,12 +43,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 0,
     [FixedStats.defPct.id]: 1.0,
+
     [FixedStats.critRate.id]: 1.5,
-    [FixedStats.critDmg.id]: 0.75,
+    [FixedStats.critDmg.id]: 1,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 1.0,
+
     [FixedStats.resonanceBns.id]: 2,
     maxResCount: 5,
   },
@@ -50,12 +59,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 1.5,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+    [FixedStats.basicBns.id]: 1.1,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0.2,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.liberationBns.id]: 0.2,
+
     [FixedStats.resonanceBns.id]: 1.2,
     maxResCount: 3,
   },
@@ -63,12 +75,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 1.2,
+
     [FixedStats.resonanceBns.id]: 1.2,
     maxResCount: 4,
   },
@@ -76,52 +91,59 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 1.0,
     [FixedStats.atkPct.id]: 0,
     [FixedStats.defPct.id]: 0,
+
     [FixedStats.critRate.id]: 1.0,
     [FixedStats.critDmg.id]: 0.5,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.2,
     maxResCount: 5,
   },
   //* ===========================================================
   aalto: {
-    [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
-    [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 0.5,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+
+    [FixedStats.basicBns.id]: 0.25,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 1.0,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.liberationBns.id]: 0.25,
+
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
   baizhi: {
     [FixedStats.hpPct.id]: 2.0,
-    [FixedStats.atkPct.id]: 0,
-    [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 0,
-    [FixedStats.critDmg.id]: 0,
-    [FixedStats.basicBns.id]: 0,
-    [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 0,
+
     [FixedStats.liberationBns.id]: 0.5,
+    
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 5,
   },
   brant: {
     [FixedStats.hpPct.id]: 0,
-    [FixedStats.atkPct.id]: 0.5,
+    [FixedStats.atkPct.id]: 0.8,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+
     [FixedStats.basicBns.id]: 1.1,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.liberationBns.id]: 0.2,
+
+
     [FixedStats.resonanceBns.id]: 1.5,
     maxResCount: 5,
   },
@@ -129,12 +151,16 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+    [FixedStats.basicBns.id]: 0.3,
     [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.skillBns.id]: 0.1,
+    [FixedStats.liberationBns.id]: 1.1,
+
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
@@ -142,12 +168,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 1.2,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+    [FixedStats.basicBns.id]: 1.15,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.liberationBns.id]: 0.35,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
@@ -155,12 +184,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
   },
@@ -168,12 +200,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 1.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -181,12 +216,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 1.0,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.skillBns.id]: 1.1,
+    [FixedStats.liberationBns.id]: 0.4,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
@@ -194,25 +232,31 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 1.0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
-  chixia: {
+  chixia: { //치샤
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 1.0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 0.5,
     maxResCount: 3,
   },
@@ -220,12 +264,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
@@ -233,64 +280,79 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
-  jianxin: {
+  jianxin: { //감심
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
   },
-  jinhsi: {
+  jinhsi: { //그뫼엥
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.25,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 1.25,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.skillBns.id]: 1.2,
+    [FixedStats.liberationBns.id]: 0.6,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
-  jiyan: {
+  jiyan: { //기염
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
-  lingyang: {
+  lingyang: { //능ㅋㅋ
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 1,
   },
@@ -298,12 +360,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
@@ -311,12 +376,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 1.0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -324,12 +392,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -337,12 +408,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -350,12 +424,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -363,12 +440,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -376,12 +456,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -389,12 +472,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 1.0,
+
     [FixedStats.resonanceBns.id]: 0.5,
     maxResCount: 1,
   },
@@ -402,12 +488,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 2.0,
     [FixedStats.atkPct.id]: 0,
     [FixedStats.defPct.id]: 0,
+
     [FixedStats.critRate.id]: 0,
     [FixedStats.critDmg.id]: 1.0,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 1.0,
+
     [FixedStats.resonanceBns.id]: 2.0,
     maxResCount: 5,
   },
@@ -415,38 +504,47 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 0,
     [FixedStats.defPct.id]: 2.0,
+
     [FixedStats.critRate.id]: 1.5,
     [FixedStats.critDmg.id]: 0.75,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 1.0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
   },
   verina: {
     [FixedStats.hpPct.id]: 0,
-    [FixedStats.atkPct.id]: 2.0,
+    [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 0,
-    [FixedStats.critDmg.id]: 0,
-    [FixedStats.basicBns.id]: 0.5,
+
+    [FixedStats.critRate.id]: 1.5,
+    [FixedStats.critDmg.id]: 0.75,
+
+    [FixedStats.basicBns.id]: 0.3,
     [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.skillBns.id]: 0.3,
+    [FixedStats.liberationBns.id]: 0.3,
+
     [FixedStats.resonanceBns.id]: 2.0,
     maxResCount: 5,
   },
-  xiangliyao: {
+  xiangliyao: { //큐브남
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+    [FixedStats.basicBns.id]: 0.1,
     [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 0,
-    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.skillBns.id]: 0.3,
+    [FixedStats.liberationBns.id]: 1.1,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
@@ -454,12 +552,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0.5,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 5,
   },
@@ -467,12 +568,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 1.0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -480,12 +584,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 1.0,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.5,
     maxResCount: 5,
   },
@@ -493,12 +600,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 0,
     [FixedStats.defPct.id]: 1.0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 5,
   },
@@ -506,25 +616,31 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.skillBns.id]: 0.1,
+    [FixedStats.liberationBns.id]: 0.4,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
-  zhezhi: {
+  zhezhi: { //ㅈㅈ
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
   },
@@ -532,12 +648,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 1.5,
     [FixedStats.atkPct.id]: 0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 1.0,
     [FixedStats.heavyBns.id]: 0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -545,12 +664,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 0,
-    [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 0,
-    [FixedStats.liberationBns.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+    [FixedStats.basicBns.id]: 0.1,
+    [FixedStats.heavyBns.id]: 0.1,
+    [FixedStats.skillBns.id]: 0.2,
+    [FixedStats.liberationBns.id]: 1.1,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -558,12 +680,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
-    [FixedStats.basicBns.id]: 0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
+    [FixedStats.basicBns.id]: 0.1,
     [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 1.5,
+    [FixedStats.skillBns.id]: 1.4,
     [FixedStats.liberationBns.id]: 0.5,
+
     [FixedStats.resonanceBns.id]: 0,
     maxResCount: 0,
   },
@@ -571,12 +696,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 0.6,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.5,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
@@ -584,12 +712,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 0,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 1.5,
+    [FixedStats.skillBns.id]: 0.3,
+    [FixedStats.liberationBns.id]: 1.2,
+
     [FixedStats.resonanceBns.id]: 1.1,
     maxResCount: 4,
   },
@@ -597,12 +728,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,
     [FixedStats.defPct.id]: 0,
-    [FixedStats.critRate.id]: 2.0,
-    [FixedStats.critDmg.id]: 1.0,
+
+    [FixedStats.critRate.id]: 2.5,
+    [FixedStats.critDmg.id]: 1.25,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1.0,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
@@ -610,12 +744,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1,
     [FixedStats.defPct.id]: 0,
+
     [FixedStats.critRate.id]: 2,
     [FixedStats.critDmg.id]: 1,
+
     [FixedStats.basicBns.id]: 0,
     [FixedStats.heavyBns.id]: 1,
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0,
+
     [FixedStats.resonanceBns.id]: 1,
     maxResCount: 3,
   },

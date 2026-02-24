@@ -31,9 +31,10 @@ export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { equipmentScore } = useCharacter();
+  console.log(index);
 
   return (
-    <div className="echo-slot-body">
+    <div className={`echo-slot-body ${index < 0 ? "select" : ""}`}>
       <div className="echo-image-slot">
         <img className="echo-image" alt="echo icon"
           src={`${BASE_URL}/ico/echos/${Echodata?.echoId}.webp`}
@@ -82,14 +83,14 @@ export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
       <div className="divider stat" />
 
       <div className="score-container">
-        <img alt="rank icon" src={`/ico/rank/${getEquipmentRank(equipmentScore[index][1])}.png`} />
+        <img alt="rank icon" src={`/ico/rank/${getEquipmentRank(equipmentScore[Math.abs(index)][1])}.png`} />
         <div className="slot">
           <span className="en-font">Cv.</span>
-          <span className="en-font"> <em className="num-font">{equipmentScore[index][0].toFixed(1)}</em>pt</span>
+          <span className="en-font"> <em className="num-font">{equipmentScore[Math.abs(index)][0].toFixed(1)}</em>pt</span>
         </div>
         <div className="slot">
           <span className="en-font">Av.</span>
-          <span className="en-font"> <em className="num-font">{equipmentScore[index][1].toFixed(1)}</em>pt</span>
+          <span className="en-font"> <em className="num-font">{equipmentScore[Math.abs(index)][1].toFixed(1)}</em>pt</span>
         </div>
       </div>
     </div>

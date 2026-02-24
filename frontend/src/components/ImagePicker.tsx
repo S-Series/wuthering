@@ -32,17 +32,25 @@ export default function ImagePicker(props: Props) {
   const [wrapperSize, setWrapperSize] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+  const wrapper = wrapperRef.current;
+  if (!wrapper) return;
 
-    const observer = new ResizeObserver((entries) => {
-      const rect = entries[0].contentRect;
-      setWrapperSize({ w: rect.width, h: rect.height });
-    });
+  const updateSize = () => {
+    const rect = wrapper.getBoundingClientRect();
+    setWrapperSize({ w: rect.width, h: rect.height });
+  };
 
-    observer.observe(wrapper);
-    return () => observer.disconnect();
-  }, []);
+  requestAnimationFrame(updateSize);
+
+  const observer = new ResizeObserver((entries) => {
+    const rect = entries[0].contentRect;
+    setWrapperSize({ w: rect.width, h: rect.height });
+  });
+
+  observer.observe(wrapper);
+
+  return () => observer.disconnect();
+}, []);
 
   const ImagePositionClamp = (nextScale = scale) => {
     const img = imgRef.current;

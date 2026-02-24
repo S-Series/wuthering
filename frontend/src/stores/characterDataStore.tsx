@@ -100,8 +100,9 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
         (() => {
           let temp = 0;
           for (let j = 0; j < loopData.length; j++) {
-            if (loopData[j].statId === "resonanceBns") {
-              resList[j] = [i, loopData[j].statValue];
+            if (loopData[j].statId === FixedStats.resonanceBns.id) {
+              //resList[j] = [i, loopData[j].statValue];
+              resList[i] = [i, loopData[j].statValue];
               continue;
             }
             const multiply = scoreData[loopData[j].statId] ?? 0;

@@ -9,6 +9,10 @@
     justify-content: flex-start;
 }
 
+.echo-slot-body.select {
+    border: 1px solid #f00;
+}
+
 .echo-slot-body .echo-image-slot {
     display: flex;
     position: relative;

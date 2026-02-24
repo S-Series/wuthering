@@ -361,18 +361,18 @@ export const echoDict = {
       stats: [],
     },
     R65: {
-      en: "",
+      en: "Hyvatia",
       kr: "하이와티아",
-      jp: "",
-      zh: "",
+      jp: "ハイヴェイシャ",
+      zh: "海維夏",
       type: [harmony.Leap.id, harmony.Revelation.id],
       stats: [],
     },
     R66: {
-      en: "",
+      en: "Reactor Husk",
       kr: "리액터 허스크",
-      jp: "",
-      zh: "",
+      jp: "ドライブの機骸",
+      zh: "爐芯機骸",
       type: [harmony.Halo.id, harmony.Foam.id],
       stats: [{ statId: FixedStats.resonanceBns.id, value: 10.0 }],
     },
@@ -477,8 +477,8 @@ export const echoDict = {
       stats: [],
     },
     H72: {
-      en: "Nightmare: Impermanence Heron",
-      kr: "악몽 · 음험한 백로",
+      en: "Impermanence Heron",
+      kr: "음험한 백로",
       jp: "ナイトメア・無情のサギ",
       zh: "无常凶鹭",
       type: [harmony.Clouds.id],
@@ -549,7 +549,7 @@ export const echoDict = {
       stats: [],
     },
     W85: {
-      en: "",
+      en: "Nightmare: Kelpie",
       kr: "악몽 · 켈피",
       jp: "ナイトメア・ケルピー",
       zh: "梦魇·凯尔匹",
@@ -557,7 +557,7 @@ export const echoDict = {
       stats: [],
     },
     W86: {
-      en: "",
+      en: "Lioness of Glory",
       kr: "영광의 사자",
       jp: "誉れのライオネス",
       zh: "荣耀狮像",
@@ -677,7 +677,7 @@ export const echoDict = {
       type: [harmony.Star.id],
       stats: [],
     },
-    S74: {
+    W74: {
       en: "Windlash Coleoid",
       kr: "바람의 기생갑",
       jp: "風纏いの寄生甲",
@@ -923,9 +923,9 @@ export const echoDict = {
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id],
       stats: [],
     },
-    H55: {
+    H56: {
       en: "Kerasaur",
-      kr: "사우로수쿠스",
+      kr: "코로사우루스",
       jp: "クラトスクス",
       zh: "角鳄",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id, harmony.Shadow.id],
@@ -1347,7 +1347,7 @@ export const echoDict = {
       stats: [],
     },
     H29: {
-      en: "",
+      en: "Fusion Drake",
       kr: "드레이크 · 용융",
       jp: "ドレイクの幼体・焦熱",
       zh: "小翼龙·热熔",
@@ -1355,7 +1355,7 @@ export const echoDict = {
       stats: [],
     },
     H30: {
-      en: "",
+      en: "Spectro Drake",
       kr: "드레이크 · 회절",
       jp: "ドレイクの幼体・回折",
       zh: "小翼龙·衍射",
@@ -1363,7 +1363,7 @@ export const echoDict = {
       stats: [],
     },
     H31: {
-      en: "",
+      en: "Havoc Drake",
       kr: "드레이크 · 인멸",
       jp: "ドレイクの幼体・消滅",
       zh: "小翼龙·湮灭",
@@ -1371,7 +1371,7 @@ export const echoDict = {
       stats: [],
     },
     W35: {
-      en: "",
+      en: "Devotee's Flesh",
       kr: "고행자의 인형",
       jp: "狂信者の血肉",
       zh: "苦信者的作俑",
