@@ -31,7 +31,6 @@ export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { equipmentScore } = useCharacter();
-  console.log(index);
 
   return (
     <div className={`echo-slot-body ${index < 0 ? "select" : ""}`}>
@@ -75,6 +74,7 @@ export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
       <div className="stat-container sub">
         {[0, 1, 2, 3, 4].map((idx) => {
           return <MakeStatSlot
+            key={`echo-stat-container-${idx}`}
             StatId={Echodata?.subOptions[idx].statId}
             StatValue={(Echodata?.subOptions[idx].statValue || 0).toFixed(1)} />
         })}

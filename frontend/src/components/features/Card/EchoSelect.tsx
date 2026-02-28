@@ -124,7 +124,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     }, [index, characterData.echoData[index]]);
 
     const selectedEchoData = useMemo<EchoRuntime | null>(() => {
-        console.log("changed");
         return characterData.echoData[index]
     }, [index, characterData]);
 
@@ -135,10 +134,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
         );
         return found ? found[1] : null;
     }, [selectedCost, selectedEchoData]);
-
-    useEffect(() => {
-        console.log(selectedEchoDictionaryData);
-    }, [selectedEchoDictionaryData])
 
     //#endregion ====================================
 
@@ -612,7 +607,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             <div className="divider" />
 
             {[0, 1, 2, 3, 4].map((idx) => {
-                return (<div className="drop-slot">
+                return (
+                <div key={`echo-stat-drop-${idx}`} className="drop-slot">
                     <div style={{width: "65%"}}>
                     <Select options={STAT_OPTION_SUB}
                         styles={STAT_DROP_STYLE_OPTION_WIDE}
@@ -633,7 +629,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     </div>
 
                     <div style={{width: "35%"}}>
-                    <Select options={STAT_OPTION_VALUE_SUBS[idx]}
+                    <Select options={STAT_OPTION_VALUE_SUBS[idx]}   
                         styles={STAT_DROP_STYLE_OPTION_WIDE}
                         menuPlacement="auto"
                         menuPosition="fixed"

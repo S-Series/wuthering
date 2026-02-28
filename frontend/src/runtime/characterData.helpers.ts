@@ -5,6 +5,7 @@ import { characterStat } from "@/datas/characterStats";
 import { weaponStat } from "@/datas/weaponStats";
 import type { WeaponId } from "@/datas/weapon";
 import type { StatId } from "@/datas/stats";
+import type { HarmonyId } from "@/datas/echos";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4;
 
@@ -15,15 +16,16 @@ export const setWeaponId = (
   return { ...data, weaponId };
 };
 
-export const setConstell = (
+export const patchConstell = (
   data: CharacterData,
   isMain: boolean,
-  value: 0 | 1 | 2 | 3 | 4 | 5,
-): CharacterData => {
-  const next: [number, number] = [...data.constell];
-  if (isMain) next[0] = value;
-  else next[1] = value;
-  return { ...data, constell: next };
+  value: number
+): Partial<CharacterData> => {
+  const next: CharacterData["constell"] = [data.constell[0], data.constell[1]];
+
+  next[isMain ? 0 : 1] = value;
+
+  return { constell: next };
 };
 
 const updateEchoAtPatch = (
@@ -32,7 +34,7 @@ const updateEchoAtPatch = (
   fn: (echo: EchoRuntime) => EchoRuntime
 ): Partial<CharacterData> => {
   const prev = data.echoData[echoIndex];
-  if (!prev) return {}; // 방어 (길이 깨졌거나 비어있을 때)
+  if (!prev) return {};
 
   const nextEchoData: CharacterData["echoData"] = [...data.echoData];
   nextEchoData[echoIndex] = fn(prev);
@@ -51,7 +53,7 @@ export const setEchoId = (
 export const setEchoSetId = (
   data: CharacterData,
   echoIndex: EchoIndex,
-  setId: string
+  setId: HarmonyId
 ): Partial<CharacterData> => {
   return updateEchoAtPatch(data, echoIndex, (e) => ({ ...e, setId }));
 };
@@ -225,8 +227,6 @@ export const calcFinalStat = (data: CharacterData) => {
 
   stats[characterData.element] = C_baseStat.typeBns[0] + equipmentStats[`${characterData.element}Bns`] + equipmentStats.typeBns;
   stats[characterData.type] = C_baseStat.typeBns[1] + equipmentStats[`${characterData.type}Bns`];
-
-  console.log(equipmentStats);
 
   return stats;
 };

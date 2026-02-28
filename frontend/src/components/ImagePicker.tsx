@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState, useEffect } from "react";
+import { useRef, useMemo, useState, useEffect, useLayoutEffect, useCallback } from "react";
 import "./ImagePicker.css";
 
 type Props = {
@@ -31,26 +31,28 @@ export default function ImagePicker(props: Props) {
 
   const [wrapperSize, setWrapperSize] = useState({ w: 0, h: 0 });
 
-  useEffect(() => {
-  const wrapper = wrapperRef.current;
-  if (!wrapper) return;
+  const updateWrapperSize = useCallback(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
-  const updateSize = () => {
     const rect = wrapper.getBoundingClientRect();
     setWrapperSize({ w: rect.width, h: rect.height });
-  };
+  }, []);
 
-  requestAnimationFrame(updateSize);
+  useLayoutEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
-  const observer = new ResizeObserver((entries) => {
-    const rect = entries[0].contentRect;
-    setWrapperSize({ w: rect.width, h: rect.height });
-  });
+    updateWrapperSize();
 
-  observer.observe(wrapper);
+    const observer = new ResizeObserver(() => {
+      updateWrapperSize();
+    });
 
-  return () => observer.disconnect();
-}, []);
+    observer.observe(wrapper);
+
+    return () => observer.disconnect();
+  }, [updateWrapperSize]);
 
   const ImagePositionClamp = (nextScale = scale) => {
     const img = imgRef.current;
@@ -103,11 +105,31 @@ export default function ImagePicker(props: Props) {
     ImagePositionClamp();
   };
 
+  /*
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     const zoomSpeed = 0.001;
     ImageScaleClamp(scale - e.deltaY * zoomSpeed);
   };
+  */
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+
+      const zoomSpeed = 0.001;
+      ImageScaleClamp(scale - e.deltaY * zoomSpeed);
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener("wheel", onWheel as EventListener);
+    };
+  }, [scale, ImageScaleClamp]);
 
   useEffect(() => {
     const img = imgRef.current;
@@ -143,6 +165,11 @@ export default function ImagePicker(props: Props) {
     setY(0);
   }, [imageReady, wrapperSize.w, wrapperSize.h]);
 
+  useEffect(() => {
+    setImageReady(false);
+    updateWrapperSize();
+  }, [displaySrc])
+
   return (
     <div className="image-picker-slot"
       ref={wrapperRef}
@@ -151,14 +178,14 @@ export default function ImagePicker(props: Props) {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      onWheel={handleWheel}
     >
       {displaySrc && (
         <img
           ref={imgRef}
           src={displaySrc}
           draggable={false}
-          onLoad={() => setImageReady(true)}
+          onLoad={() => { setImageReady(true); updateWrapperSize(); }}
+          onChange={() => updateWrapperSize}
           style={{
             transform: `
               translate(-50%, -50%)

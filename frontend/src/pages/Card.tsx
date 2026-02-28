@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/appStore";
 import { useImgStore } from "@/stores/imgStore";
@@ -23,12 +23,13 @@ import type { WeaponData } from "@/runtime/character.runtime";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
-import { setWeaponId } from "@/runtime/characterData.helpers";
+import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
 import { getCharacterRank } from "@/types/character.type";
 
 export default function Card() {
 
   const { lang } = useAppStore();
+  const navigate = useNavigate();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore } = useCharacter();
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
@@ -78,7 +79,8 @@ export default function Card() {
   }, [CHARACTER_LIST, elementFilter, weaponFilter]);
 
   const selectedCharacterData = useMemo<Character>(() => {
-    const data = CHARACTER_LIST.find(([key]) => key === characterId)?.[1] || character["rover_spectro"]
+    const data = CHARACTER_LIST.find(
+      ([key]) => key === characterId)?.[1] || character["rover_spectro"]
     return data;
   }, [characterId])
 
@@ -146,7 +148,7 @@ export default function Card() {
   //* == Init Datas ================================================//
 
   function isCharacterId(value: string): value is CharacterId {
-    return value in characterStat;
+    return Object.prototype.hasOwnProperty.call(character, value);
   }
 
   useEffect(() => {
@@ -157,6 +159,7 @@ export default function Card() {
 
     if (fromList) {
       setCharacterId(fromList);
+      navigate("/card", { replace: true });
       return;
     }
 
@@ -331,9 +334,12 @@ export default function Card() {
           {/* == //$ Main Content */}
           <div className="card-contents-slot main">
             <div className="main-item-slot character">
-              <div className="card-character-slot">
-                <ImagePicker
-                  src={characterImage.src}
+              <div className="card-character-slot" style={{
+                  backgroundImage:`${BASE_URL}/character/${characterId?.includes("rover")
+                      ? "rover"
+                      : characterId}/art.webp`
+                }}>
+                <ImagePicker src={characterImage.src}
                   defaultSrc={
                     `${BASE_URL}/character/${characterId?.includes("rover")
                       ? "rover"
@@ -341,17 +347,19 @@ export default function Card() {
                   }
                   onChangeSrc={(src) =>
                     setImageSrc("characterImage", src)
-                  }
-                />
+                  }/>
 
                 <div className="constell-overlay">
                   <img className="" src={`/ui/CharacterC${characterData.constell[0]}.png`} />
                   {UI_BUTTON_POS.map((item, idx) => {
                     return (
-                      <button className={`constell-button ${characterData.constell[0] > idx ? "active" : ""}`}
+                      <button key={`character-constell-button${idx}`}
+                        className={`constell-button ${characterData.constell[0] > idx ? "active" : ""}`}
                         style={{ left: `${item.x}%`, top: `${item.y}%`, }}
-                        onClick={() => {
-
+                        onClick={() => { 
+                          patchCharacterData(patchConstell(
+                            characterData,true,
+                            characterData.constell[0] === idx + 1 ? 0 : idx + 1))
                         }}>
                         <img className="constell-image" src={
                           `${BASE_URL}/character/${characterId?.includes("rover")
@@ -363,7 +371,7 @@ export default function Card() {
                   })}
                 </div>
 
-                <span className="account-info region en-font">{`Asia`}</span>
+                <span className="account-info region en-font">{`Asia Server`}</span>
                 <span className="account-info player-name en-font">{`Lv.-- Guest Player`}</span>
                 <span className="account-info player-uid en-font">{`UID. - - -  - - -  - - -`}</span>
                 <span className={`character-name ${lang}-font`}>
@@ -420,6 +428,7 @@ export default function Card() {
               {STAT_IDS.map((item: StatId) => {
                 return (
                   <StatSlot 
+                    key={`character-stat-slot-${item}`}
                     statId={item}
                     statValue={FINAL_STATS_MAP?.[item] ?? 0}
                     plusValue={(FINAL_STATS_MAP?.[item] ?? 0) - (BASE_STATS_MAP?.[item] ?? 0)}
@@ -484,9 +493,8 @@ export default function Card() {
 
             <div className="main-item-slot echos">
               {[0, 1, 2, 3, 4].map((idx) => {
-                console.log(echoSection === idx);
-
                 return <EchoSlot
+                    key={`echos-slot-${idx}`}
                   index={echoSection === idx ? idx : idx}
                   Echodata={characterData.echoData[idx]} />
               })}
@@ -538,9 +546,8 @@ export default function Card() {
           <div className="filter-slot">
             {WeaponLists.map((item, idx) => {
               return (
-                <button className={
-                  `filter-item ${weaponFilter[idx] ? "active" : ""}`
-                }
+                <button key={`${item}-${idx}`}
+                  className={`filter-item ${weaponFilter[idx] ? "active" : ""}`}
                   onClick={() => {
                     setWeaponFilter((prev) =>
                       prev.map((v, i) => (i === idx ? !v : v)))
@@ -554,9 +561,8 @@ export default function Card() {
           <div className="filter-slot">
             {ElementLists.map((item, idx) => {
               return (
-                <button className={
-                  `filter-item ${elementFilter[idx] ? "active" : ""}`
-                }
+                <button key={`${item}-${idx}`}
+                  className={`filter-item ${elementFilter[idx] ? "active" : ""}`}
                   onClick={() => {
                     setElementFilter((prev) =>
                       prev.map((v, i) => (i === idx ? !v : v)))
@@ -569,10 +575,10 @@ export default function Card() {
           </div>
           {FILTERED_CHARACTER.map((item) => {
             return (
-              <div className={`card-item ${item[1].element}
+              <div key={`character-filter-${item}`}
+                className={`card-item ${item[1].element}
                 ${item[0] === selectedCharacterData.en ? "selected" : ""}`}
                 onClick={() => {
-                  console.log("asdf:", item);
                   setCharacterId(item[0])
                   setCardSection(-1)
                 }}>
@@ -598,9 +604,10 @@ export default function Card() {
         </button>
 
         <div className={`card-slot ${cardSection === 1 ? "active" : ""}`}>
-          {FILTERED_WEAPON.map((item) => {
+          {FILTERED_WEAPON.map((item, idx) => {
             return (
-              <div className={`card-item weapon
+              <div key={`weapon-filter-slot-${item}-${idx}`}
+                className={`card-item weapon
                 ${item.id.includes("00") ? "spectro" : "havoc"}
                 ${item.id === weaponData?.id ? "selected" : ""}`}
                 onClick={() => {
@@ -629,7 +636,8 @@ export default function Card() {
             {
               [0, 1, 2, 3, 4].map((item) => {
                 return (
-                  <img src={`${BASE_URL}/ico/echos/${characterData.echoData[item].echoId}.webp`} 
+                  <img key={`echo-slot-${item}`}
+                    src={`${BASE_URL}/ico/echos/${characterData.echoData[item].echoId}.webp`} 
                     onError={(e) => {
                       const img = e.currentTarget;
                       img.onerror = null;
@@ -644,8 +652,9 @@ export default function Card() {
           <div className="filter-slot">
             {[0, 1, 2, 3, 4].map((idx) => {
               return (
-                <button className={`filter-item ${echoSection === idx
-                  ? "active" : ""}`} onClick={() => { setEchoSection(idx) }}>
+                <button key={`filter-button-${idx}`}
+                  className={`filter-item ${echoSection === idx
+                    ? "active" : ""}`} onClick={() => { setEchoSection(idx) }}>
                   {idx + 1}
                 </button>
               )

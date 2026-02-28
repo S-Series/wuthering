@@ -314,7 +314,7 @@ export const harmony = {
 
 } as const satisfies Record<string, HarmonyOption>;
 
-type HarmonyId = (typeof harmony)[keyof typeof harmony]["id"];
+export type HarmonyId = (typeof harmony)[keyof typeof harmony]["id"];
 
 export interface EchoStat {
   statId: StatId;

@@ -7,6 +7,7 @@ import { calcBaseStat, calcFinalStat } from "@/runtime/characterData.helpers";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
+import { harmony, type HarmonyId } from "@/datas/echos";
 
 type ScoreList = [
   [number, number],
@@ -24,6 +25,7 @@ type ContextType = {
   characterBaseStat: CharacterStat | null;
   characterFinalStat: CharacterStat | null;
   equipmentScore: ScoreList;
+  harmonySet: Record<HarmonyId, number>;
 };
 
 const CharacterContext = createContext<ContextType | null>(null);
@@ -143,6 +145,27 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     return ret;
   }, [characterId, characterData.echoData])
 
+  const harmonySet = useMemo<Record<HarmonyId, number>>(() => {
+    const echoData = characterData.echoData;
+    let ret = Object.fromEntries(Object.values(harmony).map((item) => [item.id, 0])
+    ) as Record<HarmonyId, number>;
+    
+    for (const item of echoData) {
+      if (!item || !item.setId) continue;
+      if (!Object.prototype.hasOwnProperty.call(ret, item.setId)) continue;
+      ret[item.setId] += 1;
+    }
+    
+    return ret;
+  }, [characterData.echoData]);
+
+  //$ ============================================
+
+  useEffect(() => {
+    if (characterId === "rover_spectro") return;
+    localStorage.setItem("selectedCharacterId", characterId);
+  }, [characterId])
+
   useEffect(() => {
     saveCharacterScore(characterId, equipmentScore[0][1] + equipmentScore[1][1] + equipmentScore[2][1] + equipmentScore[3][1] + equipmentScore[4][1]
     )
@@ -155,7 +178,8 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     patchCharacterData,
     characterBaseStat,
     characterFinalStat,
-    equipmentScore
+    equipmentScore,
+    harmonySet
   };
 
   return (
