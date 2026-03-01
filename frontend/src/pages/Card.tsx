@@ -481,9 +481,9 @@ export default function Card() {
               <div className="namecard-image">
                 <ImagePicker src={namecardImage.src}
                   defaultSrc={
-                    `${BASE_URL}/character/${selectedCharacterData.en.includes("rover")
+                    `${BASE_URL}/character/${characterId.includes("rover")
                       ? "rover"
-                      : selectedCharacterData.en}/stand.png`
+                      : characterId}/art.png`
                   }
                   onChangeSrc={(src) =>
                     setImageSrc("namecardImage", src)

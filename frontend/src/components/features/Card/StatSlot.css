@@ -44,6 +44,7 @@
 
 .stat-slot-body em {
     margin: 0;
+    margin-right: auto;
     color: #fa0;
     padding-right: 2.5%;
     font-size: min(0.7vw, 0.7rem);

@@ -13,6 +13,7 @@ import type { EchoRuntime } from "@/runtime/echo.runtime";
 import { setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
 
 import "./EchoSelect.css"
+import { characterScoreSheet } from "@/datas/characterScoreSheet";
 
 interface EchoSelectProps {
     index?: 0 | 1 | 2 | 3 | 4;
@@ -416,18 +417,27 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
         }));
     }, [selectedCost, echoDict]);
 
-    const STAT_OPTION_BASE: SelectOptionStatOriginal[] =
-        Object.entries(FixedStats).filter((v) => v[1].id !== "dummy").map(([statId, stat]) => ({
-            value: statId,
-            label: stat[lang],
-            kr: stat.kr,
-            en: stat.en,
-            jp: stat.jp,
-            zh: stat.zh,
-            path: `/ico/stats/${statId}.webp`,
-            mainValue: stat.ValueMain,
-            subValue: stat.ValueSub,
-        }));
+    const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() => {
+        const score = characterScoreSheet[characterData.characterId];
+        const list = Object.entries(FixedStats).filter(
+            (v) => v[1].id !== "dummy").map(([statId, stat]) => ({
+                value: statId,
+                label: stat[lang],
+                kr: stat.kr,
+                en: stat.en,
+                jp: stat.jp,
+                zh: stat.zh,
+                path: `/ico/stats/${statId}.webp`,
+                mainValue: stat.ValueMain,
+                subValue: stat.ValueSub,
+            }));
+        
+        return [...list].sort((a, b) => {
+            const aScore = score?.[a.value as keyof typeof score] ?? 0;
+            const bScore = score?.[b.value as keyof typeof score] ?? 0;
+            return bScore - aScore;
+        })
+    }, [lang, characterData.characterId])
     //#endregion ====================================
 
     //#region Dropdown Options ====================================
