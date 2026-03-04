@@ -1,0 +1,21 @@
+.ocr-comp-body {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 2%;
+}
+
+.ocr-comp-body .ocr-slot{
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    
+    width: 32%;
+}
+
+.ocr-comp-body .ocr-slot .file-slot{
+    width: calc(90% - 2px);
+    aspect-ratio: 4 / 3;
+    border: 1px solid #ccc;
+}

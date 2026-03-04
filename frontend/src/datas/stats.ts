@@ -35,7 +35,7 @@ export const FixedStats = {
     kr: "생명력%",
     jp: "HP%",
     zh: "生命%",
-    ValueMain: [33.0, 33.0, 33.0],
+    ValueMain: [33.0, 30.0, 22.8],
     ValueSub: [6.4, 7.1, 7.9, 8.6, 9.4, 10.1, 10.9, 11.6,],
   },
   atk: {

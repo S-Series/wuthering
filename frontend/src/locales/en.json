@@ -1,0 +1,27 @@
+{
+    "common": {
+        "open": "열기",
+        "close": "닫기",
+        "select": "선택"
+    },
+    "navbar": {
+        "title": "띵조 Dev",
+        "characters": "캐릭터 목록",
+        "generator": "스펙카드 생성기",
+        "login": "로그인"
+    },
+    "card": {
+        "help": "ⓘ 도움말",
+        "request": "이미지 생성",
+        "download": "이미지 다운",
+        "plate-1": "명함 이미지 초기화",
+        "plate-2": "명함 출처 초기화",
+        "image-1": "캐릭터 이미지 초기화",
+        "image-2": "캐릭터 출처 초기화",
+        "scoreboard": "§에코 점수표 ↗",
+        "c-menu": "캐릭터 선택",
+        "w-menu": "무기 선택",
+        "e-menu": "에코 선택",
+        "o-menu": "에코 이미지 → 스텟"
+    }
+}   

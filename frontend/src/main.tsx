@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "@/stores/appStore";
 import { StyleProvider } from "@/stores/styleStore";
 import { CharacterProvider } from "@/stores/characterDataStore";
-import { PopupProvider } from "@/contexts/PopupContext";
+import { OverlayProvider } from "@/contexts/PopupContext";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -14,11 +14,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <AppProvider>
         <StyleProvider>
-          <PopupProvider>
+          <OverlayProvider>
             <CharacterProvider>
               <App />
             </CharacterProvider>
-          </PopupProvider>
+          </OverlayProvider>
         </StyleProvider>
       </AppProvider>
     </BrowserRouter>

@@ -2,9 +2,7 @@ import { useState, useEffect } from "react"
 
 import { useAppStore } from "@/stores/appStore";
 
-import { YOUTUBE_PLAYLISTS } from "@/lib/youtubePlaylists";
-import { fetchLatestFromPlaylist } from "@/lib/youtubeApi";
-import type { YoutubeLatestVideo } from "@/lib/youtubeApi";
+import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api"
 
 import "@/pages/_Page.css"
 import "@/pages/Home.css"
@@ -13,39 +11,35 @@ import "@/pages/Home.css"
 /* ================================================ */
 
 export default function Home() {
-
   const { lang } = useAppStore();
-
-  //const playlists = YOUTUBE_PLAYLISTS[lang];
 
   const [trailer, setTrailer] = useState<YoutubeLatestVideo | null>(null);
   const [intro, setIntro] = useState<YoutubeLatestVideo | null>(null);
   const [combat, setCombat] = useState<YoutubeLatestVideo | null>(null);
 
   useEffect(() => {
-    let alive = true;
+    const controller = new AbortController();
 
-    async function load() {
-      const playlists = YOUTUBE_PLAYLISTS[lang];
+    (async () => {
+      // lang 바뀌면 로딩 상태로 리셋
+      setTrailer(null);
+      setIntro(null);
+      setCombat(null);
 
       const [t, i, c] = await Promise.all([
-        fetchLatestFromPlaylist(playlists.officialTrailer),
-        fetchLatestFromPlaylist(playlists.characterIntro),
-        fetchLatestFromPlaylist(playlists.characterTrailer),
+        fetchLatestYoutube(lang, "officialTrailer", { signal: controller.signal }),
+        fetchLatestYoutube(lang, "characterIntro", { signal: controller.signal }),
+        fetchLatestYoutube(lang, "characterTrailer", { signal: controller.signal }),
       ]);
 
-      if (!alive) return;
+      if (controller.signal.aborted) return;
 
       setTrailer(t);
       setIntro(i);
       setCombat(c);
-    }
+    })();
 
-    load();
-
-    return () => {
-      alive = false;
-    };
+    return () => controller.abort();
   }, [lang]);
 
   return (

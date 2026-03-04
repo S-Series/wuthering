@@ -5,15 +5,18 @@ import Select, { type FormatOptionLabelMeta } from "react-select";
 import { useAppStore } from "@/stores/appStore"
 import { useStyleStore } from "@/stores/styleStore"
 import { useCharacter } from "@/stores/characterDataStore"
+import { useOverlay } from "@/contexts/PopupContext";
 
 import { FixedStats } from "@/datas/stats";
 import { echoDict, harmony, type EchoData } from "@/datas/echos";
+import { characterScoreSheet } from "@/datas/characterScoreSheet";
 
 import type { EchoRuntime } from "@/runtime/echo.runtime";
 import { setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
 
+import OcrPlayground from "@/components/features/Card/OcrSlot";
+
 import "./EchoSelect.css"
-import { characterScoreSheet } from "@/datas/characterScoreSheet";
 
 interface EchoSelectProps {
     index?: 0 | 1 | 2 | 3 | 4;
@@ -60,6 +63,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     const { lang } = useAppStore();
     const { baseSelectStyles } = useStyleStore();
     const { characterData, patchCharacterData } = useCharacter();
+    const { openOverlay, closeOverlay } = useOverlay();
 
     const wrapRef = useRef<HTMLDivElement | null>(null);
     const [slotHeight, setSlotHeight] = useState(16);
@@ -529,6 +533,17 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     //* =========================================================    
     return (
         <div className="echo-select-wrapper" ref={wrapRef}>
+            <button
+                onClick={() =>
+                    openOverlay(
+                        <OcrPlayground />,
+                        { title: "OCR", width: "min(1000px, 100%)" }
+                    )
+                }
+            >
+                OCR 창 열기
+            </button>
+
             <div className="drop-slot">
                 <Select options={COST_DROP_OPTION}
                     isSearchable={false}

@@ -1,45 +1,127 @@
-import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
-import "./PopupContext.css"
+import "./PopupContext.css";
+import { useAppStore } from "@/stores/appStore";
 
-type PopupContextType = {
-  openPopup: (content: ReactNode) => void;
-  closePopup: () => void;
+type OverlayOptions = {
+  title?: string;
+  width?: number | string;        // "min(1000px, 100%)"
+  closeOnEsc?: boolean;           // default true
+  closeOnBackdrop?: boolean;      // default true
+  showCloseButton?: boolean;      // default true
 };
 
-const PopupContext = createContext<PopupContextType | null>(null);
+type OverlayState =
+  | { open: false; node: null; options: Required<OverlayOptions> }
+  | { open: true; node: React.ReactNode; options: Required<OverlayOptions> };
 
-export function PopupProvider({ children }: { children: ReactNode }) {
-  const [content, setContent] = useState<ReactNode | null>(null);
+type OverlayApi = {
+  openOverlay: (node: React.ReactNode, options?: OverlayOptions) => void;
+  closeOverlay: () => void;
+  isOpen: boolean;
+};
 
-  const openPopup = (node: ReactNode) => {
-    setContent(node);
-  };
+const DEFAULT_OPTIONS: Required<OverlayOptions> = {
+  title: "",
+  width: "min(960px, 100%)",
+  closeOnEsc: true,
+  closeOnBackdrop: true,
+  showCloseButton: true,
+};
 
-  const closePopup = () => {
-    setContent(null);
-  };
+const Ctx = createContext<OverlayApi | null>(null);
+
+export function OverlayProvider({ children }: { children: React.ReactNode }) {
+
+  const { lang } = useAppStore();
+
+  const [state, setState] = useState<OverlayState>({
+    open: false,
+    node: null,
+    options: DEFAULT_OPTIONS,
+  });
+
+  const closeOverlay = useCallback(() => {
+    setState((prev) => ({ ...prev, open: false, node: null }));
+  }, []);
+
+  const openOverlay = useCallback((node: React.ReactNode, options?: OverlayOptions) => {
+    setState({
+      open: true,
+      node,
+      options: { ...DEFAULT_OPTIONS, ...(options ?? {}) },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!state.open) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (state.options.closeOnEsc && e.key === "Escape") closeOverlay();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [state.open, state.options.closeOnEsc, closeOverlay]);
+
+  const api = useMemo<OverlayApi>(
+    () => ({
+      openOverlay,
+      closeOverlay,
+      isOpen: state.open,
+    }),
+    [openOverlay, closeOverlay, state.open]
+  );
 
   return (
-    <PopupContext.Provider value={{ openPopup, closePopup }}>
+    <Ctx.Provider value={api}>
       {children}
-      {content && (
-        <div className="global-popup" onClick={closePopup}>
-          <div
-            className="global-popup-inner"
-            onClick={(e) => e.stopPropagation()}
+      {state.open
+        ? createPortal(
+          <div className="overlay-backdrop"
+            role="dialog"
+            aria-modal="true"
+            onMouseDown={(e) => {
+              if (!state.options.closeOnBackdrop) return;
+              if (e.target === e.currentTarget) closeOverlay();
+            }}
           >
-            {content}
-          </div>
-        </div>
-      )}
-    </PopupContext.Provider>
+            <div className="overlay-panel">
+              {(state.options.title || state.options.showCloseButton) && (
+                <div className="overlay-header">
+                  <span className={`${lang}-font`}>{state.options.title}</span>
+
+                  {state.options.showCloseButton && (
+                    <button
+                      onClick={closeOverlay}
+                      className="overlay-close-btn"
+                    />
+                  )}
+                </div>
+              )}
+
+              <div className="overlay-body">
+                {state.node}
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+        : null}
+    </Ctx.Provider>
   );
 }
 
-export function usePopup() {
-  const ctx = useContext(PopupContext);
-  if (!ctx) throw new Error("usePopup must be used inside PopupProvider");
+export function useOverlay() {
+  const ctx = useContext(Ctx);
+  if (!ctx) throw new Error("useOverlay must be used within OverlayProvider");
   return ctx;
 }

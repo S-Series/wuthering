@@ -10,27 +10,29 @@ import StatSlot from "@/components/features/Card/StatSlot";
 import EchoSlot from "@/components/features/Card/EchoSlot";
 import EchoSelect from "@/components/features/Card/EchoSelect";
 
-
 import { character, WeaponTypes as WeaponLists, ElementTypes as ElementLists } from "@/datas/characters"
-import type { Character} from "@/datas/characters"
-import { characterStat, type CharacterId } from "@/datas/characterStats";
+import { type Character } from "@/datas/characters"
+import { type CharacterId } from "@/datas/characterStats";
 import { weapon, weaponDict, type Weapon } from "@/datas/weapon";
 import { weaponStat } from "@/datas/weaponStats";
 import { harmony } from "@/datas/echos";
 import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
 
-import type { WeaponData } from "@/runtime/character.runtime";
+import { getCharacterRank } from "@/types/character.type";
+import { type WeaponData } from "@/runtime/character.runtime";
+import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
+
+import { local } from "@/locales/local";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
-import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
-import { getCharacterRank } from "@/types/character.type";
 
 export default function Card() {
 
   const { lang } = useAppStore();
   const navigate = useNavigate();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore } = useCharacter();
+
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
@@ -230,82 +232,7 @@ export default function Card() {
   return (
     <div id="card-page-slot">
       <div className="card-section left">
-        <div className="card-header">
-          {/* filter buttons */}
-          {/*
-          <div className="header-slot">
-            <div className="item-slot filter">
-              <div style={{display: "flex", gap: "min(0.5vw, 1rem)"}}>
-                {WeaponLists.map((item, idx) => {
-                  return (
-                    <button className={
-                      `card-page-button filter ${weaponFilter[idx] ? "active" : ""}`
-                    }
-                      onClick={() => {
-                        setWeaponFilter((prev) =>
-                          prev.map((v, i) => (i === idx ? !v : v)))
-                      }}>
-                      <img alt="weapon icon"
-                        src={`${BASE_URL}/ico/weapon_type/${item}.webp`} />
-                    </button>
-                  )
-                })}
-                <div style={{ width: "4px" }} />
-              </div>
-
-              <div style={{display: "flex", gap: "min(0.5vw, 1rem)"}}>
-                {ElementLists.map((item, idx) => {
-                  return (
-                    <button className={
-                      `card-page-button filter ${elementFilter[idx] ? "active" : ""}`
-                    }
-                      onClick={() => {
-                        setElementFilter((prev) =>
-                          prev.map((v, i) => (i === idx ? !v : v)))
-                      }}>
-                      <img alt="filter icon"
-                        src={`${BASE_URL}/ico/element/${item}.png`} />
-                    </button>
-                  )
-                })}
-                <div style={{ width: "4px" }} />
-                <button className="card-page-button"
-                  onClick={() => {
-                    setWeaponFilter([false, false, false, false, false]);
-                    setElementFilter([false, false, false, false, false, false]);
-                  }}><span className="en-font">Reset</span></button>
-              </div>
-            </div>
-
-            <div className="item-slot">
-              asdf
-            </div>
-          </div>
-          */}
-
-          {/* Select Field */}
-          {/*
-          <div className="header-slot">
-            <div className="item-slot">
-              <Select
-                options={[
-                  { value: 1, label: "Cost 1" },
-                  { value: 2, label: "Cost 2" },
-                ]}
-              />
-
-              <div style={{ width: "4px" }} />
-
-              <Select
-                options={[
-                  { value: 1, label: "Cost 1" },
-                  { value: 2, label: "Cost 2" },
-                ]}
-              />
-            </div>
-          </div>
-          */}
-        </div>
+        <div/>
 
         <div className="card-contents">
           <div className="card-contents-slot header">
@@ -427,12 +354,12 @@ export default function Card() {
             <div className="main-item-slot stats">
               {STAT_IDS.map((item: StatId) => {
                 return (
-                  <StatSlot 
+                  <StatSlot
                     key={`character-stat-slot-${item}`}
                     statId={item}
                     statValue={FINAL_STATS_MAP?.[item] ?? 0}
                     plusValue={(FINAL_STATS_MAP?.[item] ?? 0) - (BASE_STATS_MAP?.[item] ?? 0)}
-                    />
+                  />
                 )
               })}
 
@@ -494,9 +421,8 @@ export default function Card() {
             <div className="main-item-slot echos">
               {[0, 1, 2, 3, 4].map((idx) => {
                 return <EchoSlot
-                    key={`echos-slot-${idx}`}
-                  index={echoSection === idx ? idx : idx}
-                  Echodata={characterData.echoData[idx]} />
+                  key={`echos-slot-${idx}`}
+                  index={echoSection === idx ? idx : idx}/>
               })}
             </div>
           </div>

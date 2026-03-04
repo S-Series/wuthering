@@ -5,10 +5,10 @@ import { useCharacter } from "@/stores/characterDataStore";
 import { getEquipmentRank } from "@/types/character.type";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import { FixedStats, type StatId } from "@/datas/stats";
+import { useMemo } from "react";
 
 interface StatSlotProps {
   index: number;
-  Echodata?: EchoRuntime;
 }
 
 const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
@@ -28,29 +28,41 @@ function MakeStatSlot({ StatId = "", StatValue = 0, color = "#666" }
     </div>
   );
 }
+
 function StatToColor({StatId, StatValue, scoreValue} 
   : {StatId?: StatId; StatValue: number; scoreValue: number; }) {
   if (!StatId || !StatValue) return "#555";
+  if (!(scoreValue > 0)) return "#555"
   const StatMin: number = FixedStats[StatId].ValueSub[0] ?? -1;
   const StatMax: number = FixedStats[StatId].ValueSub[FixedStats[StatId].ValueSub.length - 1] ?? -1;
 
   if (StatMax === -1 || StatMin === -1) return "#555";
 
-  const reTouch = 150;
-  const baseValue = 255 * scoreValue / 1.5;
+  const baseValue = 255;
+  const grayValue = scoreValue > 1 ? 0 : scoreValue > 0 ? 75 : 150;
 
   const ratio: number = 1 - ((StatValue - StatMin) / (StatMax - StatValue)) / scoreValue;
-  console.log(StatId, baseValue)
-
   
-  return `rgb(${baseValue + reTouch}, ${baseValue + reTouch}, ${baseValue * ratio + reTouch})`
-  return `rgb(${baseValue + reTouch}, ${baseValue * ratio + reTouch}, ${baseValue * ratio + reTouch})`
+  return `rgb(${baseValue - grayValue}, ${baseValue - grayValue}, ${baseValue * ratio - (grayValue * 1.1)})`
 }
 
-export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
+export default function EchoSlot({index = 0 }: StatSlotProps) {
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
-  const { characterId, equipmentScore } = useCharacter();
+  const { characterId, characterData, equipmentScore } = useCharacter();
+  const Echodata = useMemo<EchoRuntime>(() => { return characterData.echoData[index] }, [index, characterData])
+
+  const STAT_TEXT_COLOR = useMemo(() => {
+    const scoreMap = characterScoreSheet[characterId];
+
+    return [
+      StatToColor({ StatId: Echodata.subOptions[0].statId, StatValue: Echodata.subOptions[0].statValue, scoreValue: (scoreMap[Echodata.subOptions[0].statId] ?? 0) }),
+      StatToColor({ StatId: Echodata.subOptions[1].statId, StatValue: Echodata.subOptions[1].statValue, scoreValue: (scoreMap[Echodata.subOptions[1].statId] ?? 0) }),
+      StatToColor({ StatId: Echodata.subOptions[2].statId, StatValue: Echodata.subOptions[2].statValue, scoreValue: (scoreMap[Echodata.subOptions[2].statId] ?? 0) }),
+      StatToColor({ StatId: Echodata.subOptions[3].statId, StatValue: Echodata.subOptions[3].statValue, scoreValue: (scoreMap[Echodata.subOptions[3].statId] ?? 0) }),
+      StatToColor({ StatId: Echodata.subOptions[4].statId, StatValue: Echodata.subOptions[4].statValue, scoreValue: (scoreMap[Echodata.subOptions[4].statId] ?? 0) })
+    ]
+  }, [index, characterId, characterData])
 
   return (
     <div className={`echo-slot-body ${index < 0 ? "select" : ""}`}>
@@ -95,7 +107,6 @@ export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
 
       <div className="stat-container sub">
         {(() => {
-          const scoreMap = characterScoreSheet[characterId];
           return [0, 1, 2, 3, 4].map((idx) => {
             const statId: StatId = Echodata?.subOptions?.[idx]?.statId ?? "dummy";
             const statValue = Echodata?.subOptions?.[idx]?.statValue || 0;
@@ -103,10 +114,7 @@ export default function EchoSlot({index = 0, Echodata }: StatSlotProps) {
               key={`echo-stat-container-${idx}`}
               StatId={statId}
               StatValue={statValue.toFixed(1)}
-              color={(() => {
-                const scoreValue = scoreMap?.[statId] ?? 0;
-                return StatToColor({ StatId: statId, StatValue: statValue, scoreValue: scoreValue });
-              })()} />
+              color={STAT_TEXT_COLOR[idx]} />
           })
         })()}
       </div>
