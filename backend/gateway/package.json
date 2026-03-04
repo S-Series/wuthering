@@ -4,14 +4,15 @@
     "start": "tsx server.ts"
   },
   "dependencies": {
-    "fastify": "^4",
     "@fastify/cors": "^9",
     "@fastify/multipart": "^7",
     "@fastify/rate-limit": "^8",
-    "p-limit": "^4",
-    "dotenv": "^16"
+    "dotenv": "^16",
+    "fastify": "^4",
+    "p-limit": "^4"
   },
   "devDependencies": {
+    "@types/node": "^25.3.3",
     "tsx": "^4",
     "typescript": "^5"
   }
