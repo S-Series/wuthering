@@ -1,20 +1,18 @@
 {
+  "type": "module",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+    "start": "tsx server.ts"
   },
   "dependencies": {
-    "@fastify/cors": "^11.2.0",
-    "@fastify/http-proxy": "^11.4.1",
-    "@fastify/multipart": "^9.4.0",
-    "@fastify/rate-limit": "^10.3.0",
-    "dotenv": "^17.3.1",
-    "fastify": "^5.7.4",
-    "p-limit": "^7.3.0",
-    "undici": "^7.22.0"
+    "fastify": "^4",
+    "@fastify/cors": "^9",
+    "@fastify/multipart": "^7",
+    "@fastify/rate-limit": "^8",
+    "p-limit": "^4",
+    "dotenv": "^16"
   },
   "devDependencies": {
-    "@types/node": "^25.3.3",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "tsx": "^4",
+    "typescript": "^5"
   }
 }

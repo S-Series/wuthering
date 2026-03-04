@@ -52,7 +52,10 @@
 }
 
 .overlay-body {
-    padding: 16px;
+    display: flex;
+    width: 96%;
+    height: 100%;
+    padding: 2%;
     overflow: auto;
 }
 

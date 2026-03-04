@@ -23,7 +23,7 @@ export const FixedStats = {
   hp: {
     id: "hp",
     en: "HP",
-    kr: "생명력",
+    kr: "HP",
     jp: "HP",
     zh: "生命",
     ValueMain: [0, 0, 0],
@@ -32,7 +32,7 @@ export const FixedStats = {
   hpPct: {
     id: "hpPct",
     en: "HP%",
-    kr: "생명력%",
+    kr: "HP%",
     jp: "HP%",
     zh: "生命%",
     ValueMain: [33.0, 30.0, 22.8],
