@@ -13,7 +13,7 @@ export async function fetchLatestYoutube(
   opts?: { signal?: AbortSignal }
 ): Promise<YoutubeLatestVideo | null> {
   const url =
-    `http://localhost:8080/api/youtube/latest?` +
+    `${import.meta.env.VITE_GATEWAY_URL}/api/youtube/latest?` +
     `lang=${encodeURIComponent(lang)}&` +
     `type=${encodeURIComponent(type)}`;
   const res = await fetch(url, { signal: opts?.signal });

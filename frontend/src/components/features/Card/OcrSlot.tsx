@@ -19,7 +19,7 @@ export default function OcrPlayground() {
 
   const [isFocused, setFocused] = useState(false);
 
-  const endpointUrl = "http://localhost:8080/api/ocr" as string;
+  const endpointUrl = `${import.meta.env.VITE_GATEWAY_URL}/api/ocr` as string;
 
   const run = async () => {
     if (!file) return;
