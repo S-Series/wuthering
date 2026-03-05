@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { requestOcrByUrl } from "@/api/ocr.api";
-import { normalizeOcrTexts, ocrImageBase64ToDataUrl, retouchOcrTexts } from "@/api/ocr.api.helper";
+import { normalizeOcrTexts, ocrImageBase64ToDataUrl, retouchOcrTexts, textsToStats } from "@/api/ocr.api.helper";
 
 import { useAppStore } from "@/stores/appStore";
 
@@ -42,7 +42,7 @@ export default function OcrPlayground() {
             ok: true,
             textsCount: texts.length,
             full_text: data.full_text,
-            texts: retouchOcrTexts(texts, "kr"),
+            texts: textsToStats(retouchOcrTexts(texts, lang), lang),
           },
           null,
           2
@@ -86,23 +86,18 @@ export default function OcrPlayground() {
       const blob = imageItem.getAsFile();
       if (!blob) return;
 
-      // 이름이 없을 수 있으니 임의로 만들어줌
       const ext = blob.type.split("/")[1] || "png";
       const pastedFile = new File([blob], `pasted-${Date.now()}.${ext}`, { type: blob.type });
 
-      // React state 업데이트
       setFile(pastedFile);
 
-      // input에도 파일 주입(가능한 브라우저에서)
       if (fileInputRef.current) {
         const dt = new DataTransfer();
         dt.items.add(pastedFile);
 
-        // TS가 싫어할 수 있어서 캐스팅
         (fileInputRef.current as HTMLInputElement).files = dt.files;
       }
 
-      // 기본 paste 동작 방지 (원치 않으면 제거)
       e.preventDefault();
     };
 
@@ -113,6 +108,8 @@ export default function OcrPlayground() {
   return (
     <div className="ocr-comp-body">
       <div className="ocr-slot">
+        <span className="en-font">status: {status}</span>
+
         <div className={`file-slot ${isFocused ? "focused" : ""}`}
           ref={slotRef}
           tabIndex={0}
@@ -127,23 +124,39 @@ export default function OcrPlayground() {
             accept="image/*"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
           />
-          {file ? <img src={URL.createObjectURL(file)} /> : null}
+          {file ? (
+            <img src={URL.createObjectURL(file)} />
+          ) : (
+            isFocused ? (
+              <span className={`${lang}-font`} style={{whiteSpace:"pre", textAlign:"center"}}>
+                {`Click to Select Image\nor\n"Ctrl+V" to Paste Image`}
+              </span>
+            ) : (
+              <span>Click me to Start!</span>
+            )
+          )}
         </div>
 
-        <button onClick={run} disabled={!file || status === "Requested"}>
-          OCR 요청
-        </button>
-
-        <div>
-          {preview ? <img src={preview} /> : null}
+        <div style={{ display: "flex", width: "100%", height:"auto" }}>
+          {status === "Requested" ? (
+            <div className="ocr-loading-slot">
+              <div className="ocr-loading" />
+              <span className="en-font">OCR Loading...</span>
+            </div>
+          ) : (
+            <button className="ocr-button" onClick={run} disabled={!file}>
+              OCR 요청
+            </button>
+          )}
         </div>
-        
-        <div>status: {status}</div>
       </div>
 
       <div className="ocr-slot">
-          <span>{debug}</span>
-          <span>{debug}</span>
+        <span className="en-font">OCR Result</span>
+        <div className="file-slot">
+          {preview ? <img src={preview} /> : null}
+        </div>
+        <span>{debug}</span>
       </div>
 
       <div className="ocr-slot">

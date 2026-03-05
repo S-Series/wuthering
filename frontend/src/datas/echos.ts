@@ -1,3 +1,4 @@
+import type { LangType } from "@/stores/appStore";
 import { FixedStats, type StatId } from "./stats";
 
 export interface EchoRuntime {
@@ -1629,4 +1630,23 @@ export const echoDict = {
   },
 } as const satisfies Record<string, Record<string, Omit<EchoData, "id">>>;
 
+export type EchoId = keyof (typeof echoDict)[keyof typeof echoDict];
 
+export const ECHO_CANDIDATES: Record<LangType, { echoId: EchoId; text: string }[]> =
+  {
+    kr: [],
+    en: [],
+    jp: [],
+    zh: [],
+  };
+
+for (const cost of Object.values(echoDict)) {
+  for (const [echoId, data] of Object.entries(cost)) {
+    const id = echoId as EchoId;
+
+    ECHO_CANDIDATES.kr.push({ echoId: id, text: data.kr });
+    ECHO_CANDIDATES.en.push({ echoId: id, text: data.en });
+    ECHO_CANDIDATES.jp.push({ echoId: id, text: data.jp });
+    ECHO_CANDIDATES.zh.push({ echoId: id, text: data.zh });
+  }
+}

@@ -1,9 +1,11 @@
-import { search } from "fast-fuzzy";
+import { search as fuzzySearch } from "fast-fuzzy";
 
 import type { OcrApiResponse } from "@/api/ocr.api";
 import { FixedStats, type StatId } from "@/datas/stats";
+import type { LangType } from "@/stores/appStore";
+import { ECHO_CANDIDATES, type EchoId } from "@/datas/echos";
 
-const RETOUCH_LIST = {
+const RETOUCH_LIST:Record<LangType, [RegExp, string][]> = {
   kr: [
     [/라어용|라어움|라어요|라어워|라어운|라o운|라워/g, "방어력"],
     [/H위프|H위lI프|H위표|피혜|피해프|H위l표/g, "피해"],
@@ -14,9 +16,16 @@ const RETOUCH_LIST = {
     [/유우|음우/g, "해방"],
     [/H위l프룸콩/g, "인멸피해"],
   ],
-} as const;
+  jp: [
 
-type Lang = keyof typeof RETOUCH_LIST;
+  ],
+  en: [
+
+  ],
+  zh: [
+
+  ],
+};
 
 export function ocrImageBase64ToDataUrl(b64?: string) {
   if (!b64) return null;
@@ -27,7 +36,7 @@ export function normalizeOcrTexts(res: OcrApiResponse): string[] {
   return Array.isArray(res.texts) ? res.texts : [];
 }
 
-export function retouchOcrTexts(texts: string[], lang: Lang) {
+export function retouchOcrTexts(texts: string[], lang: LangType) {
   const rules = RETOUCH_LIST[lang] ?? []
   const retouched = texts.map((item) => {
     let s = (item ?? "").toString();
@@ -56,7 +65,11 @@ export function retouchOcrTexts(texts: string[], lang: Lang) {
   return joined;
 }
 
-export function textsToStats(texts: string[][], lang: Lang) {
+export function textsToStats(texts: string[][], lang: LangType):{
+  echoId: EchoId | null,
+  cost: number,
+  echoStats: [StatId, number][]
+} {
   const data = texts;
   const filtered = data.filter((item) => (item.length > 1));
   const merged = filtered.map((item) => {
@@ -65,7 +78,19 @@ export function textsToStats(texts: string[][], lang: Lang) {
     return [head, tail];
   })
   const startIdx:number = merged.findIndex((item) => item[0].toLowerCase().includes("cost"))
-  if (startIdx === -1) return { [FixedStats.dummy.id]: 0 };
+  if (startIdx === -1)
+    return {
+      echoId: null,
+      cost: 1,
+      echoStats: [
+        [FixedStats.dummy.id, 0 ],
+        [FixedStats.dummy.id, 0 ],
+        [FixedStats.dummy.id, 0 ],
+        [FixedStats.dummy.id, 0 ],
+        [FixedStats.dummy.id, 0 ],
+        [FixedStats.dummy.id, 0 ],
+      ],
+    };
 
   const head = merged.slice(0, startIdx).flat();
   const body = merged[startIdx];
@@ -77,12 +102,34 @@ export function textsToStats(texts: string[][], lang: Lang) {
     id: item.id,
     text: item[lang],
   }));
-  let tail: Array<[string, string] >= temp.map(([label, value]) => {
-    const best = search(label, candidates.map(c => c.text))[0];
-    return [best, value];
-  });
 
-  const result = [head, body, tail];
+  const textToId = new Map(candidates.map((c) => [c.text, c.id]));
+  const candidateTexts = candidates.map((c) => c.text);
+  
+  const tail: [StatId, string][] = [];
+  for (const [label, value] of temp) {
+    const bestText = fuzzySearch(label, candidateTexts)[0];
+    const statId = textToId.get(bestText) ?? FixedStats.dummy.id;
 
-  return result;
+    if (statId === FixedStats.dummy.id) continue;
+    tail.push([statId, value]);
+  }
+  const echoCandidates = ECHO_CANDIDATES[lang];
+  const bestEcho = fuzzySearch(
+    head.join(""),
+    echoCandidates.map((c) => c.text)
+  );
+  console.log(bestEcho);
+  console.log(tail)
+
+  return {
+    echoId: null,
+    cost: Number(body.join("").replace(/\D/g, "")) ?? 1,
+    echoStats: tail.map(([statId, valueText]): [StatId, number] => [
+      statId,
+      valueText.includes("%")
+        ? Number(valueText.replace(/\D/g, "")) / 10
+        : Number(valueText.replace(/\D/g, "")),
+    ]),
+  };
 }
