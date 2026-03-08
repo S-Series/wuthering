@@ -203,21 +203,21 @@ export const weapon = {
       zh: "驭冕铸雷之权",
       imgKey: "ico005",
     },
-    broadblade006:{ //* 치사
+    broadblade006:{ //* 신상시
 			id: "broadblade006",
-      en: "Kumokiri",
-      kr: "쿠모키리",
-      jp: "曇斬",
-      zh: "昙切",
-      imgKey: "ico006",
-    },
-    broadblade007:{ //* 신상시
-			id: "broadblade007",
       en: "Radiance Cleaver",
       kr: "에너지 절단",
       jp: "ラディアンスの切っ先",
       zh: "源能机锋",
       imgKey: "ico007",
+    },
+    broadblade007:{ //* 치사
+			id: "broadblade007",
+      en: "Kumokiri",
+      kr: "쿠모키리",
+      jp: "曇斬",
+      zh: "昙切",
+      imgKey: "ico006",
     },
     broadblade008:{ //* 모니에
 			id: "broadblade008",

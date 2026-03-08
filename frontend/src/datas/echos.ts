@@ -924,12 +924,20 @@ export const echoDict = {
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id],
       stats: [],
     },
-    H56: {
+    H55: {
       en: "Kerasaur",
-      kr: "코로사우루스",
+      kr: "케라사우르스",
       jp: "クラトスクス",
       zh: "角鳄",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id, harmony.Shadow.id],
+      stats: [],
+    },
+    H56: {
+      en: "Corrosaurus",
+      kr: "코로사우루스",
+      jp: "コロサウルス",
+      zh: "蝕脊龍",
+      type: [harmony.Clawprint.id, harmony.Shadow.id],
       stats: [],
     },
     H42N: {
@@ -1042,6 +1050,14 @@ export const echoDict = {
       jp: "黒棘熊",
       zh: "箭簇熊",
       type: [harmony.Clouds.id, harmony.Eclipse.id],
+      stats: [],
+    },
+    W60N: {
+      en: "Nightmare: Tambourinist",
+      kr: "악몽 · 초혼의 악사",
+      jp: "ナイトメア・金鈴の楽手",
+      zh: "梦魇·振鐸樂師",
+      type: [harmony.Dream.id],
       stats: [],
     },
   },

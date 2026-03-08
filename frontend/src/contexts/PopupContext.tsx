@@ -57,17 +57,10 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!state.open) return;
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (state.options.closeOnEsc && e.key === "Escape") closeOverlay();
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
     };
   }, [state.open, state.options.closeOnEsc, closeOverlay]);

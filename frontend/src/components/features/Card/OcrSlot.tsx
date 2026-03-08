@@ -1,8 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { requestOcrByUrl } from "@/api/ocr.api";
 import { normalizeOcrTexts, ocrImageBase64ToDataUrl, retouchOcrTexts, textsToStats } from "@/api/ocr.api.helper";
 
 import { useAppStore } from "@/stores/appStore";
+
+import { locale } from "@/locales/locale";
+import type { EchoId } from "@/datas/echos";
+import { FixedStats, type StatId } from "@/datas/stats";
 
 import "./OcrSlot.css"
 
@@ -14,10 +18,19 @@ export default function OcrPlayground() {
 
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"Idle" | "Requested" | "Successed" | "Failed">("Idle");
-  const [debug, setDebug] = useState<string>("");
+  const [debug, setDebug] = useState<{
+    echoId: EchoId | null,
+    echoName: string | null,
+    cost: number,
+    echoStats: [StatId, number][]
+  } | null>();
   const [preview, setPreview] = useState<string | null>(null);
 
+  const [isBoaring, setBoaring] = useState(false);
+
   const [isFocused, setFocused] = useState(false);
+
+  const localeText = useMemo(() => locale(lang).ocr, [lang]);
 
   const endpointUrl = `${import.meta.env.VITE_GATEWAY_URL}/api/ocr` as string;
 
@@ -25,7 +38,7 @@ export default function OcrPlayground() {
     if (!file) return;
 
     setStatus("Requested");
-    setDebug("");
+    setDebug(null);
     setPreview(null);
 
     try {
@@ -36,28 +49,34 @@ export default function OcrPlayground() {
 
       if (img) setPreview(img);
 
-      setDebug(
-        JSON.stringify(
-          {
-            ok: true,
-            textsCount: texts.length,
-            full_text: data.full_text,
-            texts: textsToStats(retouchOcrTexts(texts, lang), lang),
-          },
-          null,
-          2
-        )
-      );
+      setDebug(textsToStats(retouchOcrTexts(texts, lang), lang));
 
       setStatus("Successed");
     } catch (e) {
       setStatus("Failed");
-      setDebug(String(e));
+      setDebug(null);
       console.error(e);
     }
   };
 
+  const StatsToText = (data: [StatId, number] | null): string => {
+    if (!data) return "Error"
+    const head: string = FixedStats[data[0]][lang];
+    const tail = data[1].toString()
+      + (["pct", "bns", "crit"].some((keyword) =>
+        FixedStats[data[0]].id.toLowerCase().includes(keyword)
+      )
+        ? "%" : "");
+
+    return `${head}: ${tail}`;
+  }
+
   useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFocused(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+
     const handleClickOutside = (e: MouseEvent) => {
       if (!slotRef.current) return;
 
@@ -65,10 +84,10 @@ export default function OcrPlayground() {
         setFocused(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
+      document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
@@ -105,61 +124,115 @@ export default function OcrPlayground() {
     return () => window.removeEventListener("paste", onPaste);
   }, [isFocused]);
 
+  useEffect(() => {
+    setBoaring(false);
+    if (status !== "Requested") return;
+
+    const timer = setTimeout(() => { setBoaring(true) }, 1 * 1000);
+
+    return () => clearTimeout(timer);
+  }, [status])
+
   return (
     <div className="ocr-comp-body">
       <div className="ocr-slot">
-        <span className="en-font">status: {status}</span>
+        <div className="inner-slot top">
+          <span className="en-font">{localeText.status}: {status}</span>
 
-        <div className={`file-slot ${isFocused ? "focused" : ""}`}
-          ref={slotRef}
-          tabIndex={0}
-          onClick={() => {
-            isFocused
-              ? fileInputRef.current?.click()
-              : setFocused(true)
-          }}>
-          <input className="image-input"
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          />
-          {file ? (
-            <img src={URL.createObjectURL(file)} />
-          ) : (
-            isFocused ? (
-              <span className={`${lang}-font`} style={{whiteSpace:"pre", textAlign:"center"}}>
-                {`Click to Select Image\nor\n"Ctrl+V" to Paste Image`}
-              </span>
+          <div className={`file-slot ${isFocused ? "focused" : ""}`}
+            style={{ height: "60%" }}
+            ref={slotRef}
+            tabIndex={0}
+            onClick={() => {
+              isFocused
+                ? fileInputRef.current?.click()
+                : setFocused(true)
+            }}>
+            <input className="image-input"
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            />
+            {file ? (
+              <img src={URL.createObjectURL(file)} />
             ) : (
-              <span>Click me to Start!</span>
-            )
-          )}
+              !isFocused ? (
+                <span style={{ textDecoration: "underline" }}>{localeText.description1}</span>
+              ) : (
+                <span className={`${lang}-font`} style={{ whiteSpace: "pre", textAlign: "center" }}>
+                  {localeText.description2}
+                </span>
+              )
+            )}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "20%" }}>
+            {isBoaring ? (
+              <span className={`${lang}-font`}
+                style={{ whiteSpace: "pre", textAlign: "left", fontSize: "min(1vw, 1rem)", marginLeft: "10%" }}>
+                {localeText.description3}
+              </span>
+            ) : (null)}
+
+            {status === "Requested" ? (
+              <div className="ocr-loading-slot">
+                <div className="ocr-loading" />
+
+                <span className="en-font">{localeText.loading}</span>
+              </div>
+            ) : (
+              <button className="ocr-button" onClick={run} disabled={!file}>
+                {localeText.request}
+              </button>
+            )}
+          </div>
         </div>
 
-        <div style={{ display: "flex", width: "100%", height:"auto" }}>
-          {status === "Requested" ? (
-            <div className="ocr-loading-slot">
-              <div className="ocr-loading" />
-              <span className="en-font">OCR Loading...</span>
+        <div className="inner-slot bottom">
+          <span className="en-font">{localeText.result}</span>
+
+          <div style={{ display: "flex", width: "95%" }}>
+            <div style={{ display: "flex", width: "65%" }}>
+              <div className="file-slot">
+                {preview ? <img src={preview} /> : null}
+              </div>
             </div>
-          ) : (
-            <button className="ocr-button" onClick={run} disabled={!file}>
-              OCR 요청
-            </button>
-          )}
+
+            <div style={{ display: "flex", flexDirection: "column", width: "30%"}}>
+              <span className="ocr-span-font-sizing" style={{ marginTop: "auto" }}>
+                §EchoId
+              </span>
+              <span className="ocr-span-font-sizing">
+                {debug?.echoId ?? "undefined"}
+              </span>
+              <span className="ocr-span-font-sizing">
+                §Cost
+              </span>
+              <span className="ocr-span-font-sizing" style={{ marginBottom: "10%" }}>
+                EchoId
+              </span>
+            </div>
+          </div>
+
+          <div className="text-box">
+            {debug ? (<>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[0]) ?? "undefined"}</span>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[1]) ?? "undefined"}</span>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[2]) ?? "undefined"}</span>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[3]) ?? "undefined"}</span>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[4]) ?? "undefined"}</span>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[5]) ?? "undefined"}</span>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[6]) ?? "undefined"}</span>
+              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[7]) ?? "undefined"}</span>
+            </>) : (null)}
+          </div>
         </div>
       </div>
 
-      <div className="ocr-slot">
-        <span className="en-font">OCR Result</span>
-        <div className="file-slot">
-          {preview ? <img src={preview} /> : null}
-        </div>
-        <span>{debug}</span>
-      </div>
 
-      <div className="ocr-slot">
+
+      <div className="ocr-slot big">
       </div>
     </div>
   );

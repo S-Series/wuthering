@@ -17,6 +17,7 @@ import { setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEch
 import OcrPlayground from "@/components/features/Card/OcrSlot";
 
 import "./EchoSelect.css"
+import { locale } from "@/locales/locale";
 
 interface EchoSelectProps {
     index?: 0 | 1 | 2 | 3 | 4;
@@ -541,7 +542,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                     )
                 }
             >
-                OCR 창 열기
+                {locale(lang).card.oMenu}
             </button>
 
             <div className="drop-slot">

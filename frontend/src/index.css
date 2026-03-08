@@ -15,8 +15,24 @@
 }
 
 @font-face {
+  font-family: 'jpFont';
+  src: url("@/assets/fonts/jp.ttf") format("truetype");
+  font-weight: 500 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'zhFont';
+  src: url("@/assets/fonts/NotoSansTC-Regular.ttf") format("truetype");
+  font-weight: 500 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'numFont';
-  src: url("@/assets/fonts/SUITE-Medium.ttf") format("truetype");
+  src: url("@/assets/fonts/NotoSansJP-Regular.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -28,6 +44,14 @@
 
 .en-font {
     font-family: 'enFont', sans-serif;
+}
+
+.jp-font {
+    font-family: 'jpFont', 'zhFont', sans-serif;
+}
+
+.zh-font {
+    font-family: 'zhFont', sans-serif;
 }
 
 .num-font {

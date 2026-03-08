@@ -67,6 +67,7 @@ export function retouchOcrTexts(texts: string[], lang: LangType) {
 
 export function textsToStats(texts: string[][], lang: LangType):{
   echoId: EchoId | null,
+  echoName: string | null,
   cost: number,
   echoStats: [StatId, number][]
 } {
@@ -81,6 +82,7 @@ export function textsToStats(texts: string[][], lang: LangType):{
   if (startIdx === -1)
     return {
       echoId: null,
+      echoName: null,
       cost: 1,
       echoStats: [
         [FixedStats.dummy.id, 0 ],
@@ -109,6 +111,7 @@ export function textsToStats(texts: string[][], lang: LangType):{
   const tail: [StatId, string][] = [];
   for (const [label, value] of temp) {
     const bestText = fuzzySearch(label, candidateTexts)[0];
+    console.log(bestText);
     const statId = textToId.get(bestText) ?? FixedStats.dummy.id;
 
     if (statId === FixedStats.dummy.id) continue;
@@ -124,9 +127,32 @@ export function textsToStats(texts: string[][], lang: LangType):{
 
   return {
     echoId: null,
+    echoName: null,
     cost: Number(body.join("").replace(/\D/g, "")) ?? 1,
     echoStats: tail.map(([statId, valueText]): [StatId, number] => [
-      statId,
+      (() => {
+        console.log("console: ", statId, valueText);
+        console.log(
+          statId,
+          ["atk", "hp", "def"].some((keyword) => 
+            statId.toString().toLocaleLowerCase().includes(keyword)
+          )
+        );
+        if (valueText.includes("%")) {
+          if (
+            ["atk", "hp", "def"].some((keyword) => 
+              statId.toString().toLocaleLowerCase().includes(keyword)
+            )
+          ) {
+            switch(statId) {
+              case FixedStats.hp.id: return FixedStats.hpPct.id;
+              case FixedStats.atk.id: return FixedStats.atkPct.id;
+              case FixedStats.def.id: return FixedStats.defPct.id;
+            }
+          }
+        }
+        return statId;
+      })(),
       valueText.includes("%")
         ? Number(valueText.replace(/\D/g, "")) / 10
         : Number(valueText.replace(/\D/g, "")),

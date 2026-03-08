@@ -293,8 +293,9 @@
 }
 
 #card-page-slot .card-section.right .card-item.selected {
-    border: 1px solid rgb(255, 255, 100);
-    filter: drop-shadow(0 0 0.5vw rgb(255, 255, 100));
+    width: calc(85% - 4px);
+    border: 2px solid rgb(255, 215, 100);
+    filter: drop-shadow(0 0 0.5vw rgb(255, 215, 100));
 }
 #card-page-slot .card-section.right .card-item img {
     width: 90%;
@@ -401,11 +402,20 @@
     justify-content: center;
 
     color: #fff;
-    font-size: min(1.2vw, 1.1rem);
+    font-size: min(1.1vw, 1.1rem);
     font-weight: 500;
     text-align: center;
     border-radius: 4px;
     background: linear-gradient(0deg, #333366ff, #0b0b44ff, #333366ff);
+
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+}
+
+.card-page-button:disabled {
+    color: #ffffff22;
+    background: linear-gradient(0deg, #111144ff, #0e0e22ff, #111144ff);
+    cursor: not-allowed;
 }
 
 .card-page-button span {
@@ -415,6 +425,11 @@
 .card-page-button:hover {
     border: 1px solid #fff;
     background: linear-gradient(0deg, #6666aaff, #3e3e77ff, #6666aaff);
+}
+
+.card-page-button:disabled:hover {
+    color: #ffffff22;
+    background: linear-gradient(0deg, #111144ff, #0e0e22ff, #111144ff);
 }
 
 .card-page-button:active,
@@ -452,7 +467,6 @@
     width: fit-content;
     height: 100%;
 
-    font-size: min(1.1vw, 1rem);
     border: 1px solid #888;
     border-radius: 0;
 }

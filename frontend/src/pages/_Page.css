@@ -9,8 +9,6 @@
     margin: 0 auto;
     align-items: center;
     justify-content: flex-start;
-
-    background-color: #ff000011;
 }
 
 @media (max-width: 780px) {

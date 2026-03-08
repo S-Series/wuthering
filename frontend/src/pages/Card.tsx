@@ -22,7 +22,7 @@ import { getCharacterRank } from "@/types/character.type";
 import { type WeaponData } from "@/runtime/character.runtime";
 import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
 
-import { local } from "@/locales/local";
+import { locale } from "@/locales/locale";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
@@ -30,9 +30,9 @@ import "@/pages/Card.contents.main.css"
 export default function Card() {
 
   const { lang } = useAppStore();
-  const navigate = useNavigate();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore } = useCharacter();
-
+  const navigate = useNavigate();
+  const localeText = locale(lang).card;
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
@@ -237,23 +237,23 @@ export default function Card() {
         <div className="card-contents">
           <div className="card-contents-slot header">
             <div className="item-slot">
-              <button className="card-page-button content top">
-                <span>ⓘ&nbsp;&nbsp;Help</span>
+              <button disabled={true} className="card-page-button content top">
+                <span>{localeText.help}</span>
               </button>
-              <button className="card-page-button content top">
-                <span>Request Generate</span>
+              <button disabled={true} className="card-page-button content top">
+                <span>{localeText.request}</span>
               </button>
-              <button className="card-page-button content top">
-                <span>Download Image</span>
+              <button disabled={true} className="card-page-button content top">
+                <span>{localeText.download}</span>
               </button>
             </div>
 
             <div className="item-slot">
               <button className="card-page-button content top">
-                <span>Reset Plate Image</span>
+                <span>{localeText.plate1}</span>
               </button>
               <button className="card-page-button content top">
-                <span>Idle</span>
+                <span>{localeText.plate2}</span>
               </button>
             </div>
           </div>
@@ -431,14 +431,14 @@ export default function Card() {
           <div className="card-contents-slot footer">
             <div className="item-slot">
               <button className="card-page-button content bottom">
-                <span>Reset Character Image</span>
+                <span>{localeText.image1}</span>
               </button>
             </div>
 
             <div className="item-slot">
               <button className="card-page-button content bottom"
                 onClick={() => window.open(SCOREBOARD_URL, "_blank")}>
-                <span>§Echo Scoreboard ↗</span>
+                <span>{localeText.scoreboard}</span>
               </button>
             </div>
           </div>
@@ -447,8 +447,8 @@ export default function Card() {
 
       <div className="card-section right">
         {/* == Character ============ */}
-        <button className={`en-font ${cardSection === 0 ? "active" : ""}`}
-          onClick={() => { setCardSection((p) => { return (p === 0 ? -1 : 0) }) }}>Character</button>
+        <button className={`${lang}-font ${cardSection === 0 ? "active" : ""}`}
+          onClick={() => { setCardSection((p) => { return (p === 0 ? -1 : 0) }) }}>{localeText.cMenu}</button>
 
         <button className={`card-preview character ${cardSection === 0 ? "" : "active"}`}
           onClick={() => { setCardSection((p) => { return (p === 0 ? -1 : 0) }) }}>
@@ -518,8 +518,8 @@ export default function Card() {
         </div>
 
         {/* == Weapon ============ */}
-        <button className={`en-font ${cardSection === 1 ? "active" : ""}`}
-          onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>Weapon</button>
+        <button className={`${lang}-font ${cardSection === 1 ? "active" : ""}`}
+          onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>{localeText.wMenu}</button>
 
         <button className={`card-preview weapon ${cardSection === 1 ? "" : "active"}`}
           onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>
@@ -554,8 +554,8 @@ export default function Card() {
         </div>
 
         {/* == Echos ============ */}
-        <button className={`en-font ${cardSection === 2 ? "active" : ""}`}
-          onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>Echos</button>
+        <button className={`${lang}-font ${cardSection === 2 ? "active" : ""}`}
+          onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>{localeText.eMenu}</button>
 
         <button className={`card-preview echo ${cardSection === 2 ? "" : "active"}`}
           onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>

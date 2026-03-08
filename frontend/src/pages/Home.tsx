@@ -48,24 +48,23 @@ export default function Home() {
       <div className="article-slot">
         <h2 className="title en-font">Wuwa Dev News</h2>
 
-        <div style={{fontSize: "13px", whiteSpace: "pre"}}>
+        <div style={{fontSize: "16px", whiteSpace: "pre", fontWeight: 700, backgroundColor: "#ffffff66", padding: "16px"}}>
           {
-`        띵데브는 현재 공사중입니다! 정식 서비스가 아니니, 양해 바랍니다.
-        문의사항은 아래의 연락처로 연락 바랍니다.
+`띵데브는 현재 공사중입니다! 정식 서비스가 아니니, 양해 바랍니다.
+문의사항은 아래의 연락처로 연락 바랍니다.
 
-        WuWa DEV is currently under construction. Please note that this is not the official service yet.
-        For inquiries, please contact the information below.
+WuWa DEV is currently under construction. Please note that this is not the official service yet.
+For inquiries, please contact the information below.
 
-        鳴潮DEVは現在工事中です。正式サービスではありませんので、ご了承ください。
-        お問い合わせは、下記の連絡先までご連絡ください。
+鳴潮DEVは現在工事中です。正式サービスではありませんので、ご了承ください。
+お問い合わせは、下記の連絡先までご連絡ください。
 
-        鸣潮DEV目前正在施工中！尚未正式上线，敬请谅解。
-        如有问题，请通过以下联系方式联系我们。
+鸣潮DEV目前正在施工中！尚未正式上线，敬请谅解。
+如有问题，请通过以下联系方式联系我们。
         
-        ∮Contact SSeries
-        Discord: SSeries0923 || E-mail: SSeries000923@gmail.com`}
+∮Contact SSeries
+Discord: SSeries0923 || E-mail: SSeries000923@gmail.com`}
         </div>
-        
       </div>
 
       <div className="article-slot">

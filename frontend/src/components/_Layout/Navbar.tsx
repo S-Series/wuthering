@@ -1,88 +1,113 @@
 import { useState } from "react";
 import Select from "react-select";
-import type { SingleValue } from "react-select";
 
-import { useAppStore } from "@/stores/appStore";
+import { locale } from "@/locales/locale";
+
+import { useAppStore, type LangType } from "@/stores/appStore";
 import "@/components/_Layout/Navbar.css"
-
-interface LangOption {
-    value: "kr" | "en" | "jp" | "zh";
-    label: string;
-}
 
 export default function Navbar() {
 
-    const { lang, setLang } = useAppStore();
-    const [isActive, setIsActive] = useState(false);
+  const { lang, setLang } = useAppStore();
+  const [isActive, setIsActive] = useState(false);
 
+  const localeText = locale(lang).navbar;
+
+  function LangLabel({ v, src, text }: { v: string; src: string; text: string; }) {
     return (
-        <>
-            <div id="navbar-body">
-                <div className="item-slot">
-                    <a href="/" className="title">
-                        <img className="navbar-icon title"
-                            alt="title"
-                            src="/default.webp" />
-                        <p className={`${lang}-font title`}>띵조 DEV</p>
-                    </a>
-                </div>
-                <div className="item-slot">
-                    <Select className="lang-select"
-                        options={[
-                            { value: "kr", label: "한국어" },
-                            { value: "en", label: "English" },
-                            { value: "jp", label: "日本語" },
-                            { value: "zh", label: "中國語" },
-                        ]}
-                        onChange={(e: SingleValue<LangOption>) => {
-                            if (e) setLang(e.value);
-                        }} />
-                    <a href="/characters">
-                        <img className="navbar-icon"
-                            alt="title"
-                            src="/default.webp" />
-                        <p className={`${lang}-font`}>캐릭터 목록</p>
-                    </a>
-                    <a href="/card">
-                        <img className="navbar-icon"
-                            alt="title"
-                            src="/default.webp" />
-                        <p className={`${lang}-font`}>스펙카드 생성기</p>
-                    </a>
-                    <a href="#">
-                        <img className="navbar-icon"
-                            alt="title"
-                            src="/default.webp" />
-                        <p className={`${lang}-font`}>로그인</p>
-                    </a>
-                    <button onClick={() => setIsActive((prev) => !prev)}>
-                        <img className="navbar-icon"
-                            alt="title"
-                            src="/menu.svg" />
-                    </button>
-                </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, filter: "drop-shadow(0px 0px 4px #444)" }}>
+        <img src={src} style={{ width: "20%"}} />
+        <span className={`${v}-font`} style={{ fontSize: "min(1.3vw, 1.3rem)" }}>{text}</span>
+      </div>
+    );
+  }
 
-            </div>
-            <div id="navbar-sidebar" className={`${isActive ? "active" : "idle"}`}>
-                <a href="#">
-                    <img className="navbar-icon"
-                        alt="title"
-                        src="/default.webp" />
-                    <p className={`${lang}-font`}>로그인</p>
-                </a>
-                <a href="#">
-                    <img className="navbar-icon"
-                        alt="title"
-                        src="/default.webp" />
-                    <p className={`${lang}-font`}>캐릭터 목록</p>
-                </a>
-                <a href="#">
-                    <img className="navbar-icon"
-                        alt="title"
-                        src="/default.webp" />
-                    <p className={`${lang}-font`}>스펙카드 생성기</p>
-                </a>
-            </div>
-        </>
-    )
+  const LANG_OPTION: {value: LangType, label: React.ReactNode}[] = [
+    { value: "kr", label: <LangLabel v="kr" src="/flag-kr.png" text="한국어" /> },
+    { value: "en", label: <LangLabel v="en" src="/flag-en.png" text="English" /> },
+    { value: "jp", label: <LangLabel v="jp" src="/flag-jp.png" text="日本語" /> },
+    { value: "zh", label: <LangLabel v="zh" src="/flag-zh.png" text="中文" /> },
+  ];
+
+  return (
+    <>
+      <div id="navbar-body">
+        <div className="item-slot">
+          <a href="/" className="title">
+            <img className="navbar-icon title"
+              alt="title"
+              src="/default.webp" />
+            <p className={`${lang}-font title`}>{localeText.title}</p>
+          </a>
+        </div>
+        <div className="item-slot">
+          <Select className="lang-select"
+            styles={{
+              control: (base) => ({
+                ...base,
+                width:"min(11.5vw, 11.5rem)",
+                backgroundColor: "transparent",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "#fff",
+              }),
+              option: (base) => ({
+                ...base,
+                backgroundColor: "#eee",
+              })
+            }}
+            value={LANG_OPTION.find((item) => item.value === lang)}
+            options={LANG_OPTION}
+            onChange={(opt) => {
+              if (opt) setLang(opt.value);
+            }} />
+          <a href="/characters">
+            <img className="navbar-icon"
+              alt="title"
+              src="/default.webp" />
+            <p className={`${lang}-font`}>{localeText.characters}</p>
+          </a>
+          <a href="/card">
+            <img className="navbar-icon"
+              alt="title"
+              src="/default.webp" />
+            <p className={`${lang}-font`}>{localeText.generator}</p>
+          </a>
+          <a href="#">
+            <img className="navbar-icon"
+              alt="title"
+              src="/default.webp" />
+            <p className={`${lang}-font`}>{localeText.login}</p>
+          </a>
+          <button onClick={() => setIsActive((prev) => !prev)}>
+            <img className="navbar-icon"
+              alt="title"
+              src="/menu.svg" />
+          </button>
+        </div>
+
+      </div>
+      <div id="navbar-sidebar" className={`${isActive ? "active" : "idle"}`}>
+        <a href="#">
+          <img className="navbar-icon"
+            alt="title"
+            src="/default.webp" />
+          <p className={`${lang}-font`}>로그인</p>
+        </a>
+        <a href="#">
+          <img className="navbar-icon"
+            alt="title"
+            src="/default.webp" />
+          <p className={`${lang}-font`}>캐릭터 목록</p>
+        </a>
+        <a href="#">
+          <img className="navbar-icon"
+            alt="title"
+            src="/default.webp" />
+          <p className={`${lang}-font`}>스펙카드 생성기</p>
+        </a>
+      </div>
+    </>
+  )
 }
