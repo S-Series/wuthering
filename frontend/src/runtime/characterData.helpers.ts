@@ -7,13 +7,32 @@ import type { WeaponId } from "@/datas/weapon";
 import type { StatId } from "@/datas/stats";
 import type { HarmonyId } from "@/datas/echos";
 
-type EchoIndex = 0 | 1 | 2 | 3 | 4;
+type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type SubIndex = 0 | 1 | 2 | 3 | 4;
 
 export const setWeaponId = (
   data: CharacterData,
   weaponId: WeaponId | null
 ): CharacterData => {
   return { ...data, weaponId };
+};
+
+export const setEchoDataIndexes = (
+  data: CharacterData,
+  echoDataIndexes: [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number
+  ]
+): CharacterData => {
+  return { ...data, echoDataIndex: echoDataIndexes };
 };
 
 export const patchConstell = (
@@ -80,7 +99,7 @@ export const patchEchoMainOption = (
 export const patchEchoSubOption = (
   data: CharacterData,
   echoIndex: EchoIndex,
-  subIndex: EchoIndex,
+  subIndex: SubIndex,
   patch: Partial<EchoStatOption>
 ): Partial<CharacterData> => {
   return updateEchoAtPatch(data, echoIndex, (e) => {

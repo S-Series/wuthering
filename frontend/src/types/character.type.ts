@@ -5,11 +5,34 @@ import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime
 export type CharacterRank = "Empty" | "B" | "A" | "S" | "SS" | "SSS";
 
 export type CharacterData = {
-    characterId: CharacterId;
-    weaponId: WeaponId | null;
-    constell: [number, number];
-    echoData: [EchoRuntime, EchoRuntime, EchoRuntime, EchoRuntime, EchoRuntime];
-}
+  characterId: CharacterId;
+  weaponId: WeaponId | null;
+  constell: [number, number];
+  echoData: [
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime
+  ];
+  echoDataIndex: [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+  ]
+};
 
 export type CharacterStat = {
   hp: number;
@@ -36,16 +59,22 @@ export type CharacterStat = {
 };
 
 export const createEmptyCharacterData = (id: CharacterId): CharacterData => ({
-    characterId: id,
-    weaponId: null,
-    constell: [0, 1],
-    echoData: [
-        createEmptyEchoRuntime(4),
-        createEmptyEchoRuntime(3),
-        createEmptyEchoRuntime(3),
-        createEmptyEchoRuntime(1),
-        createEmptyEchoRuntime(1),
-    ]
+  characterId: id,
+  weaponId: null,
+  constell: [0, 1],
+  echoData: [
+    createEmptyEchoRuntime(4),
+    createEmptyEchoRuntime(3),
+    createEmptyEchoRuntime(3),
+    createEmptyEchoRuntime(1),
+    createEmptyEchoRuntime(1),
+    createEmptyEchoRuntime(4),
+    createEmptyEchoRuntime(3),
+    createEmptyEchoRuntime(3),
+    createEmptyEchoRuntime(1),
+    createEmptyEchoRuntime(1),
+  ],
+  echoDataIndex: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 });
 
 export const getCharacterRank = (score: number):CharacterRank => {

@@ -40,6 +40,8 @@ export function StyleProvider({ children }: { children: ReactNode }) {
       option: (base) => ({
         ...base,
         background: `linear-gradient(330deg, ${UI_COLOR[0]} 0%, ${UI_COLOR[1]} 100%)`,
+        width: "100%",
+        justifyContent: "flex-start",
         color: "white",
       }),
       menuList: (base) => ({

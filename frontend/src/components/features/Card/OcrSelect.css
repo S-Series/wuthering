@@ -1,0 +1,71 @@
+.ocr-select-body {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: space-evenly;
+}
+
+.ocr-select-body .select-item-slot {
+    display: flex;
+    flex-direction: column;
+
+    width: 45%;
+    min-width: 5rem;
+    height: 100%;
+    margin: 0.5% 0 0.5% 0;
+
+    align-items: center;
+    gap: 1%;
+}
+
+.ocr-select-body .select-item-slot .item-slot-title {
+    width: 100%;
+    height: 5%;
+    text-align: center;
+}
+
+.ocr-select-body .select-item-slot .item-slot-container {
+    display: flex;
+    width: 100%;
+    height: 70%;
+}
+
+.ocr-select-body .select-item-slot .echo-item {
+    display: flex;
+
+    width: 95%;
+    height: 8%;
+
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5%;
+
+    border: 1px solid #000;
+    background-color: #ffffff44;
+    font-size: 0.75rem;
+}
+
+.ocr-select-body .select-item-slot .echo-item.selected {
+    border: 1px solid #fc0;
+    filter: drop-shadow(0px 1px 2px #fc0);
+}
+
+.ocr-select-body .select-item-slot .echo-item.locked {
+    background-color: #00000044;
+    filter: brightness(0.5);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.ocr-select-body .select-item-slot .echo-item img {
+    display: flex;
+    width: auto;
+    height: 90%;
+    margin-left: 0.5%;
+    border: 1px solid #000;
+    aspect-ratio: 1 / 1;
+}
+
+.ocr-select-body .select-item-slot .echo-item span {
+    font-size: min(1vw, 1rem);
+}

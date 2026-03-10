@@ -126,8 +126,8 @@ export function textsToStats(texts: string[][], lang: LangType):{
   console.log(tail)
 
   return {
-    echoId: null,
-    echoName: null,
+    echoId: bestEcho.length < 1 ? null : echoCandidates.find((c) => c.text === bestEcho[0])?.echoId as EchoId,
+    echoName: bestEcho.length < 1 ? null : bestEcho[0],
     cost: Number(body.join("").replace(/\D/g, "")) ?? 1,
     echoStats: tail.map(([statId, valueText]): [StatId, number] => [
       (() => {

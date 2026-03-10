@@ -24,7 +24,7 @@ export const en = {
     cMenu: "Character Select",
     wMenu: "Weapon Select",
     eMenu: "Echo Select",
-    oMenu: "Analyze Echo Image (OCR)",
+    oMenu: "Manage Echo Data",
   },
   ocr: {
     status: "Status",
@@ -33,6 +33,6 @@ export const en = {
     result: "OCR Result",
     description1: "Click to Start",
     description2: `Click to select an image file\nor\nPaste an image with "Ctrl+V"`,
-    description3: `Waking up the server...\nThe first request may take about 20–30 seconds\nThank you for your patience :)`,
+    description3: `Waking up the server...\nThe first request may take\nabout 20–30 seconds\nThank you for your patience :)`,
   }
 }satisfies LocaleSchema;

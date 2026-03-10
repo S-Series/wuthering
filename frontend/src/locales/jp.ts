@@ -24,7 +24,7 @@ export const jp = {
     cMenu: "キャラクター選択",
     wMenu: "武器選択",
     eMenu: "エコー選択",
-    oMenu: "エコー画像解析（OCR）",
+    oMenu: "エコーデータ管理",
   },
   ocr: {
     status: "ステータス",

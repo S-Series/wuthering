@@ -6,7 +6,7 @@ export type EchoStatOption = {
   statValue: number | -1;
 };
 
-export type EchoStatOptionSUb = {
+export type EchoStatOptionSub = {
   statId: "hp" | "hpPct";
   statValue: number | -1;
 };

@@ -24,7 +24,7 @@ export const zh = {
     cMenu: "选择角色",
     wMenu: "选择武器",
     eMenu: "选择回声",
-    oMenu: "解析回声图片（OCR）",
+    oMenu: "回音数据管理",
   },
   ocr: {
     status: "状态",

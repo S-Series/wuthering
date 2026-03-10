@@ -12,10 +12,10 @@
 .overlay-panel {
     display: flex;
     flex-direction: column;
-    width: min(80vw, 70rem);
-    height: 70vh;
-    min-height: 500px;
-    max-height: 800px;
+    width: min(75vw, 70rem);
+    min-width: 45rem;
+    max-width: 70rem;
+    aspect-ratio: 120 / 89;
 
     overflow: hidden;
     border-radius: 2%;
@@ -116,5 +116,11 @@
     to {
         transform: scale(1);
         opacity: 1
+    }
+}
+
+@media (max-width: 1024px) {
+    .overlay-panel {
+        width: min(90vw, 70rem);
     }
 }

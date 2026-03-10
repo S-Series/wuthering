@@ -24,7 +24,7 @@ export const kr = {
     cMenu: "캐릭터 선택",
     wMenu: "무기 선택",
     eMenu: "에코 선택",
-    oMenu: "에코 이미지 분석(OCR)",
+    oMenu: "에코 데이터 관리",
   },
   ocr: {
     status: "요청 상태",

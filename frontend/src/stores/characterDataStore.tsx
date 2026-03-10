@@ -14,6 +14,11 @@ type ScoreList = [
   [number, number],
   [number, number],
   [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
   [number, number]
 ]
 
@@ -32,6 +37,51 @@ const CharacterContext = createContext<ContextType | null>(null);
 
 const STORAGE_KEY = "wm-character-data";
 
+const normalizeCharacterData = (
+  id: CharacterId,
+  savedData?: Partial<CharacterData>
+): CharacterData => {
+  const base = createEmptyCharacterData(id);
+
+  if (!savedData) return base;
+
+  const safeEchoData = Array.from(
+    { length: 10 },
+    (_, index) => savedData.echoData?.[index] ?? base.echoData[index]
+  ) as CharacterData["echoData"];
+
+  const safeEchoIndex = (() => {
+    const used = new Set<number>();
+
+    const result = Array.from({ length: 10 }, (_, index) => {
+      const v = savedData.echoDataIndex?.[index] ?? base.echoDataIndex[index];
+
+      if (v >= 0 && v < 10 && !used.has(v)) {
+        used.add(v);
+        return v;
+      }
+
+      return null;
+    });
+
+    const missing = Array.from({ length: 10 }, (_, i) => i).filter(v => !used.has(v));
+
+    let ptr = 0;
+
+    return result.map(v => {
+      if (v !== null) return v;
+      return missing[ptr++];
+    }) as CharacterData["echoDataIndex"];
+  })();
+
+  return {
+    ...base,
+    ...savedData,
+    echoData: safeEchoData,
+    echoDataIndex: safeEchoIndex,
+  };
+};
+
 export function CharacterProvider({ children }: { children: React.ReactNode }) {
 
   const ALL_IDS = useMemo(() => Object.keys(character) as CharacterId[], []);
@@ -46,7 +96,10 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     }
 
     const full = Object.fromEntries(
-      ALL_IDS.map((id) => [id, saved[id] ?? createEmptyCharacterData(id)])
+      ALL_IDS.map((id) => [
+        id,
+        normalizeCharacterData(id, saved[id]),
+      ])
     ) as Record<CharacterId, CharacterData>;
 
     return full;
@@ -83,12 +136,12 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     const echoData = characterData.echoData;
     const scoreData = characterScoreSheet[characterId];
 
-    if (!scoreData || !echoData) return [[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]];
+    if (!scoreData || !echoData) return [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
 
-    let resList: ScoreList = [[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]];
-    let ret: ScoreList = [[0, 0],[0, 0],[0, 0],[0, 0],[0, 0]];
+    let resList: ScoreList = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+    let ret: ScoreList = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
       const loopData = echoData[i].subOptions;
       const score: [number, number] = [
         (() => {
@@ -129,7 +182,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
       10.5 * (scoreData.critRate ?? 0),
       21.0 * (scoreData.critDmg ?? 0),
       11.6 * (scoreData.basicBns ?? 0),
-      11.6 * (scoreData.heavyBns?? 0),
+      11.6 * (scoreData.heavyBns ?? 0),
       11.6 * (scoreData.skillBns ?? 0),
       11.6 * (scoreData.liberationBns ?? 0),
     ];
@@ -138,7 +191,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
 
     const magicNumber = 100 / ((score * (5 - scoreData.maxResCount) + scoreWithRes * scoreData.maxResCount) / 5);
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
       ret[i][1] = Math.ceil(ret[i][1] * 10 * magicNumber) / 10;
     }
 
@@ -149,13 +202,13 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     const echoData = characterData.echoData;
     let ret = Object.fromEntries(Object.values(harmony).map((item) => [item.id, 0])
     ) as Record<HarmonyId, number>;
-    
+
     for (const item of echoData) {
       if (!item || !item.setId) continue;
       if (!Object.prototype.hasOwnProperty.call(ret, item.setId)) continue;
       ret[item.setId] += 1;
     }
-    
+
     return ret;
   }, [characterData.echoData]);
 

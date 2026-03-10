@@ -14,11 +14,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <AppProvider>
         <StyleProvider>
-          <OverlayProvider>
-            <CharacterProvider>
+          <CharacterProvider>
+            <OverlayProvider>
               <App />
-            </CharacterProvider>
-          </OverlayProvider>
+            </OverlayProvider>
+          </CharacterProvider>
         </StyleProvider>
       </AppProvider>
     </BrowserRouter>

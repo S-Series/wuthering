@@ -28,6 +28,6 @@ export const makeEchoRuntime = (echoId: string): EchoRuntime => {
 
   const fallback = createEmptyEchoRuntime(1);
   fallback.echoId = echoId;
-  fallback.setId = "";
+  fallback.setId = null;
   return fallback;
 };

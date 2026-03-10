@@ -16,6 +16,11 @@ export type SelectedCharacterRuntime = {
     EchoRuntime,
     EchoRuntime,
     EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
     EchoRuntime
   ];
 };
@@ -38,6 +43,11 @@ export const createInitialSelectedCharacterRuntime =
     weaponData: null,
     constell: [0, 0],
     echoes: [
+      createEmptyEchoRuntime(4),
+      createEmptyEchoRuntime(3),
+      createEmptyEchoRuntime(3),
+      createEmptyEchoRuntime(1),
+      createEmptyEchoRuntime(1),
       createEmptyEchoRuntime(4),
       createEmptyEchoRuntime(3),
       createEmptyEchoRuntime(3),

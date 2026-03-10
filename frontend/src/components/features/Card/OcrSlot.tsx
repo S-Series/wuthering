@@ -7,8 +7,12 @@ import { useAppStore } from "@/stores/appStore";
 import { locale } from "@/locales/locale";
 import type { EchoId } from "@/datas/echos";
 import { FixedStats, type StatId } from "@/datas/stats";
+import { type EchoStatOptionSub } from "@/runtime/echo.runtime";
 
+import OcrSelect from "@/components/features/Card/OcrSelect";
 import "./OcrSlot.css"
+import OcrSelectDrag from "./OcrSelectDrag";
+
 
 export default function OcrPlayground() {
   const { lang } = useAppStore();
@@ -128,111 +132,114 @@ export default function OcrPlayground() {
     setBoaring(false);
     if (status !== "Requested") return;
 
-    const timer = setTimeout(() => { setBoaring(true) }, 1 * 1000);
+    const timer = setTimeout(() => { setBoaring(true) }, 10 * 1000);
 
     return () => clearTimeout(timer);
   }, [status])
 
   return (
     <div className="ocr-comp-body">
-      <div className="ocr-slot">
-        <div className="inner-slot top">
-          <span className="en-font">{localeText.status}: {status}</span>
+      <div className="ocr-slot ocr">
+        <div className="container">
+          <div className="inner-slot top">
+            <span className="en-font">{localeText.status}: {status}</span>
 
-          <div className={`file-slot ${isFocused ? "focused" : ""}`}
-            style={{ height: "60%" }}
-            ref={slotRef}
-            tabIndex={0}
-            onClick={() => {
-              isFocused
-                ? fileInputRef.current?.click()
-                : setFocused(true)
-            }}>
-            <input className="image-input"
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            />
-            {file ? (
-              <img src={URL.createObjectURL(file)} />
-            ) : (
-              !isFocused ? (
-                <span style={{ textDecoration: "underline" }}>{localeText.description1}</span>
+            <div className={`file-slot ${isFocused ? "focused" : ""}`}
+              ref={slotRef}
+              tabIndex={0}
+              onClick={() => {
+                isFocused
+                  ? fileInputRef.current?.click()
+                  : setFocused(true)
+              }}>
+              <input className="image-input"
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
+              {file ? (
+                <img src={URL.createObjectURL(file)} />
               ) : (
-                <span className={`${lang}-font`} style={{ whiteSpace: "pre", textAlign: "center" }}>
-                  {localeText.description2}
+                !isFocused ? (
+                  <span style={{ textDecoration: "underline" }}>{localeText.description1}</span>
+                ) : (
+                  <span className={`${lang}-font`} style={{ whiteSpace: "pre", textAlign: "center" }}>
+                    {localeText.description2}
+                  </span>
+                )
+              )}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "20%" }}>
+              {isBoaring ? (
+                <span className={`${lang}-font`}
+                  style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)"}}>
+                  {localeText.description3}
                 </span>
-              )
-            )}
+              ) : (null)}
+
+              {status === "Requested" ? (
+                <div className="ocr-loading-slot">
+                  <div className="ocr-loading" />
+
+                  <span className="en-font">{localeText.loading}</span>
+                </div>
+              ) : (
+                <button className="ocr-button" onClick={run} disabled={!file}>
+                  {localeText.request}
+                </button>
+              )}
+            </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "20%" }}>
-            {isBoaring ? (
-              <span className={`${lang}-font`}
-                style={{ whiteSpace: "pre", textAlign: "left", fontSize: "min(1vw, 1rem)", marginLeft: "10%" }}>
-                {localeText.description3}
-              </span>
-            ) : (null)}
+          <div className="inner-slot bottom">
+            <span className="en-font">{localeText.result}</span>
 
-            {status === "Requested" ? (
-              <div className="ocr-loading-slot">
-                <div className="ocr-loading" />
-
-                <span className="en-font">{localeText.loading}</span>
-              </div>
-            ) : (
-              <button className="ocr-button" onClick={run} disabled={!file}>
-                {localeText.request}
-              </button>
-            )}
+            <div className="text-box">
+              {debug ? (<>
+                <span style={{ fontSize: "min(1vw, 0.85rem)" }}>EchoName: {debug?.echoName ?? "undefined"}</span>
+                <span style={{ fontSize: "min(1vw, 0.85rem)" }}>Cost: {debug?.cost ?? "undefined"}</span>
+                {debug.echoStats.map((item) =>
+                  <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(item) ?? "undefined"}</span>
+                )}
+              </>) : (null)}
+            </div>
           </div>
         </div>
 
-        <div className="inner-slot bottom">
-          <span className="en-font">{localeText.result}</span>
-
-          <div style={{ display: "flex", width: "95%" }}>
-            <div style={{ display: "flex", width: "65%" }}>
-              <div className="file-slot">
-                {preview ? <img src={preview} /> : null}
-              </div>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", width: "30%"}}>
-              <span className="ocr-span-font-sizing" style={{ marginTop: "auto" }}>
-                §EchoId
-              </span>
-              <span className="ocr-span-font-sizing">
-                {debug?.echoId ?? "undefined"}
-              </span>
-              <span className="ocr-span-font-sizing">
-                §Cost
-              </span>
-              <span className="ocr-span-font-sizing" style={{ marginBottom: "10%" }}>
-                EchoId
-              </span>
+        <div className="container">
+          <div className="inner-slot result">
+            <span className="en-font">{localeText.result}</span>
+            <div className="file-slot">
+              {preview ? <img src={preview} /> : null}
             </div>
           </div>
 
-          <div className="text-box">
-            {debug ? (<>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[0]) ?? "undefined"}</span>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[1]) ?? "undefined"}</span>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[2]) ?? "undefined"}</span>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[3]) ?? "undefined"}</span>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[4]) ?? "undefined"}</span>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[5]) ?? "undefined"}</span>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[6]) ?? "undefined"}</span>
-              <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(debug.echoStats[7]) ?? "undefined"}</span>
-            </>) : (null)}
+          <div style={{ display: "flex", flexDirection: "column", width: "90%", height: "67.5%", alignItems: "center" }}>
+            {
+            /*
+              <OcrSelectDrag datas={debug?.echoStats ?? null}/>
+            */
+            }
+              <OcrSelectDrag datas={[
+                [FixedStats.hpPct.id, 100],
+                [FixedStats.hpPct.id, 100],
+                [FixedStats.hpPct.id, 100],
+                [FixedStats.atkPct.id, 100],
+                [FixedStats.defPct.id, 100],
+                [FixedStats.critRate.id, 100],
+                [FixedStats.critDmg.id, 100],
+                [FixedStats.critDmg.id, 100],
+                [FixedStats.critDmg.id, 100],
+                [FixedStats.critDmg.id, 100],
+              ]}/>
           </div>
         </div>
       </div>
 
-
-
-      <div className="ocr-slot big">
+      <div className="ocr-slot echo">
+        <OcrSelect/>
       </div>
     </div>
   );

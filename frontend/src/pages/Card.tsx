@@ -3,12 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/appStore";
 import { useImgStore } from "@/stores/imgStore";
+import { useOverlay } from "@/contexts/PopupContext";
 import { useCharacter } from "@/stores/characterDataStore";
 
 import ImagePicker from "@/components/ImagePicker";
 import StatSlot from "@/components/features/Card/StatSlot";
 import EchoSlot from "@/components/features/Card/EchoSlot";
-import EchoSelect from "@/components/features/Card/EchoSelect";
+import OcrPlayground from "@/components/features/Card/OcrSlot";
 
 import { character, WeaponTypes as WeaponLists, ElementTypes as ElementLists } from "@/datas/characters"
 import { type Character } from "@/datas/characters"
@@ -26,12 +27,14 @@ import { locale } from "@/locales/locale";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
+import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
 
 export default function Card() {
 
   const { lang } = useAppStore();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore } = useCharacter();
   const navigate = useNavigate();
+  const { openOverlay } = useOverlay();
   const localeText = locale(lang).card;
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
@@ -47,8 +50,8 @@ export default function Card() {
   const [searchParams] = useSearchParams();
   const paramData = searchParams.get("character") ?? "empty";
 
+
   const [cardSection, setCardSection] = useState(2);
-  const [echoSection, setEchoSection] = useState(0);
   const [weaponFilter, setWeaponFilter] = useState([false, false, false, false, false])
   const [elementFilter, setElementFilter] = useState([false, false, false, false, false, false])
 
@@ -101,8 +104,16 @@ export default function Card() {
 
   const scores = useMemo(() => {
     return [
-      equipmentScore[0][0] + equipmentScore[1][0] + equipmentScore[2][0] + equipmentScore[3][0] + equipmentScore[4][0],
-      equipmentScore[0][1] + equipmentScore[1][1] + equipmentScore[2][1] + equipmentScore[3][1] + equipmentScore[4][1]
+      equipmentScore[characterData.echoDataIndex[0]][0] +
+      equipmentScore[characterData.echoDataIndex[1]][0] +
+      equipmentScore[characterData.echoDataIndex[2]][0] +
+      equipmentScore[characterData.echoDataIndex[3]][0] +
+      equipmentScore[characterData.echoDataIndex[4]][0],
+      equipmentScore[characterData.echoDataIndex[0]][1] +
+      equipmentScore[characterData.echoDataIndex[1]][1] +
+      equipmentScore[characterData.echoDataIndex[2]][1] +
+      equipmentScore[characterData.echoDataIndex[3]][1] +
+      equipmentScore[characterData.echoDataIndex[4]][1],
     ]
   }, [equipmentScore])
 
@@ -422,7 +433,7 @@ export default function Card() {
               {[0, 1, 2, 3, 4].map((idx) => {
                 return <EchoSlot
                   key={`echos-slot-${idx}`}
-                  index={echoSection === idx ? idx : idx}/>
+                  index={characterData.echoDataIndex[idx]}/>
               })}
             </div>
           </div>
@@ -575,20 +586,14 @@ export default function Card() {
         </button>
 
         <div className={`card-slot echo ${cardSection === 2 ? "active" : ""}`}>
-          <div className="filter-slot">
-            {[0, 1, 2, 3, 4].map((idx) => {
-              return (
-                <button key={`filter-button-${idx}`}
-                  className={`filter-item ${echoSection === idx
-                    ? "active" : ""}`} onClick={() => { setEchoSection(idx) }}>
-                  {idx + 1}
-                </button>
-              )
-            })}
+          <div className="echo-slot" ref={echoSlotRef}>
+            <button onClick={() => openOverlay(<OcrPlayground />)}>
+                {locale(lang).card.oMenu}
+            </button>
           </div>
 
-          <div className="echo-slot" ref={echoSlotRef}>
-            <EchoSelect index={echoSection as 0 | 1 | 2 | 3 | 4} />
+          <div className="drag-slot">
+            <EchoDragSelect/>
           </div>
         </div>
       </div>

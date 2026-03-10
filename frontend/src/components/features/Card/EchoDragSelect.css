@@ -1,0 +1,87 @@
+.echo-drag-select {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.echo-drag-list {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.echo-drag-item {
+    display: flex;
+    flex-direction: row;
+
+    width: calc(97.5% - 2px);
+    aspect-ratio: 6.5 / 1;
+    
+    padding-left: 2.5%;
+    align-items: center;
+
+    border: 1px solid #000;
+    background-color: #ffffff66;
+    cursor: grab;
+    user-select: none;
+    overflow: hidden;
+    transition:
+        background-color 0.2s ease-out,
+        border-color 0.2s ease-out,
+        box-shadow 0.2s ease-out;
+}
+
+.echo-drag-item.selected {
+    border: 1px solid #fc0;
+    filter: drop-shadow(0px 2px 4px #ffcc0066);
+}
+
+.echo-drag-item.main {
+    border: 1px solid #5cf;
+    filter: drop-shadow(0px 2px 4px #55ccff66);
+}
+
+.echo-drag-item.dragging {
+    background: #dbeafe;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.echo-drag-item.disable {
+    filter: brightness(0.5);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.echo-drag-item .hover-motion {
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    gap: 2.5%;
+    align-items: center;
+    
+    transition: all 0.2s ease-out;
+}
+
+.echo-drag-item .hover-motion:hover {
+    transform: scale(1.05);
+}
+
+.echo-drag-item .hover-motion .echo-drag-label {
+    font-size: min(1.125vw, 1.125rem) !important;
+}
+.echo-drag-item .hover-motion .echo-img {
+    width: auto;
+    height: 95%;
+    aspect-ratio: 1/1;
+    background-color: #00000066;
+}
+
+.echo-drag-item .hover-motion .score-img {
+    margin-left: auto;
+    height: 80%;
+    width: auto;
+}
