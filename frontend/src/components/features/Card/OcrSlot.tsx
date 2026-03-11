@@ -7,7 +7,6 @@ import { useAppStore } from "@/stores/appStore";
 import { locale } from "@/locales/locale";
 import type { EchoId } from "@/datas/echos";
 import { FixedStats, type StatId } from "@/datas/stats";
-import { type EchoStatOptionSub } from "@/runtime/echo.runtime";
 
 import OcrSelect from "@/components/features/Card/OcrSelect";
 import "./OcrSlot.css"
@@ -33,6 +32,8 @@ export default function OcrPlayground() {
   const [isBoaring, setBoaring] = useState(false);
 
   const [isFocused, setFocused] = useState(false);
+
+  const [selectIdx, setSelectIdx] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(0);
 
   const localeText = useMemo(() => locale(lang).ocr, [lang]);
 
@@ -216,30 +217,16 @@ export default function OcrPlayground() {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", width: "90%", height: "67.5%", alignItems: "center" }}>
-            {
-            /*
-              <OcrSelectDrag datas={debug?.echoStats ?? null}/>
-            */
-            }
-              <OcrSelectDrag datas={[
-                [FixedStats.hpPct.id, 100],
-                [FixedStats.hpPct.id, 100],
-                [FixedStats.hpPct.id, 100],
-                [FixedStats.atkPct.id, 100],
-                [FixedStats.defPct.id, 100],
-                [FixedStats.critRate.id, 100],
-                [FixedStats.critDmg.id, 100],
-                [FixedStats.critDmg.id, 100],
-                [FixedStats.critDmg.id, 100],
-                [FixedStats.critDmg.id, 100],
-              ]}/>
+          <div style={{ display: "flex", flexDirection: "column", width: "90%", height: "67.5%", alignItems: "center", marginTop: "2.5%" }}>
+              <OcrSelectDrag datas={{
+                stats: debug?.echoStats ?? null,
+              }} selectIdx={selectIdx}/>
           </div>
         </div>
       </div>
 
       <div className="ocr-slot echo">
-        <OcrSelect/>
+        <OcrSelect selectIdx={selectIdx} setSelectIdx={setSelectIdx}/>
       </div>
     </div>
   );

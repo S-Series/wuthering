@@ -308,8 +308,123 @@ export const getStatDropStyleLarge = (
                 color: "white",
             };
         },
+        clearIndicator: (base, state) => {
+            const common = baseSelectStyles.clearIndicator
+                ? baseSelectStyles.clearIndicator(base, state)
+                : base;
+
+            return {
+                ...common,
+                position: "relative",
+                zIndex: 999,
+                pointerEvents: "auto",
+                cursor: "pointer",
+            }
+        },
     })
 
+export const getStatDropStyleDrag = (
+    baseSelectStyles: StylesConfig<any, false>,
+    slotHeight: number, isWide: boolean): StylesConfig<any, false> => ({
+        ...baseSelectStyles,
+        menu: (base, state) => {
+            const common = baseSelectStyles.menu
+                ? baseSelectStyles.menu(base, state)
+                : base;
+
+            return {
+                ...common,
+                right: 0,
+                minWidth: `${slotHeight / 3.8}px`,
+                width: "max-content",
+                maxWidth: `${slotHeight / 1.8}px`,
+            };
+        },
+        control: (base, state) => {
+            const common = baseSelectStyles.control
+                ? baseSelectStyles.control(base, state)
+                : base;
+
+            return {
+                ...common,
+                display: "flex",
+                alignItems: "center",
+                minHeight: 0,
+                width: "auto",
+                height: `${slotHeight / 13}px`,
+                aspectRatio: `${isWide ? "3.15 / 1" : "2 / 1"}`,
+                overflow: "hidden",
+            };
+        },
+        container: (base, state) => {
+            const common = baseSelectStyles.container
+                ? baseSelectStyles.container(base, state)
+                : base;
+
+            return {
+                ...common,
+                minHeight: 0,
+            };
+        },
+        singleValue: (base, state) => {
+            const common = baseSelectStyles.singleValue
+                ? baseSelectStyles.singleValue(base, state)
+                : base;
+
+            return {
+                ...common,
+                minHeight: 0,
+                height: `${slotHeight / 13}px`,
+                lineHeight: `${slotHeight / 13}px`,
+                overflow: "hidden",
+                color: "white",
+            };
+        },
+        valueContainer: (base, state) => {
+            const common = baseSelectStyles.valueContainer
+                ? baseSelectStyles.valueContainer(base, state)
+                : base;
+
+            return {
+                ...common,
+                minHeight: 0,
+                height: `${slotHeight / 13}px`,
+                paddingTop: 0,
+                paddingBottom: 0,
+                paddingLeft: `${slotHeight / 80}px`,
+                paddingRight: `${slotHeight / 160}px`,
+                overflow: "hidden",
+            };
+        },
+        dropdownIndicator: (base, state) => {
+            const common = baseSelectStyles.dropdownIndicator
+                ? baseSelectStyles.dropdownIndicator(base, state)
+                : base;
+
+            return {
+                ...common,
+                paddingTop: "20%",
+                paddingBottom: "20%",
+                paddingLeft: `${slotHeight / 400}px`,
+                paddingRight: `${slotHeight / 400}px`,
+            };
+        },
+        placeholder: (base, state) => {
+            const common = baseSelectStyles.placeholder
+                ? baseSelectStyles.placeholder(base, state)
+                : base;
+
+            return {
+                ...common,
+                margin: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
+                paddingLeft: `${slotHeight / 160}px`,
+                paddingRight: `${slotHeight / 320}px`,
+                lineHeight: `${slotHeight / 13}px`,
+            };
+        },
+    })
 
 export const HARMONY_OPTIONS_BASE: SelectOriginalOption[] = Object.values(harmony).map((v) => ({
     value: v.id,
@@ -327,13 +442,15 @@ export const getEchoOptionBase = (
 ): SelectOriginalOption[] => {
     const costKey = `Cost${selectedCost}` as const;
 
-    return Object.entries(echoDict[costKey]).map(([echoId, echo]) => ({
+    return Object.entries(echoDict[costKey]).map(([echoId, echo]) => (
+    {
         value: echoId,
         label: echo[lang],
         kr: echo.kr,
         en: echo.en,
         jp: echo.jp,
         zh: echo.zh,
+        harmonies: echo.type,
         path: `${BASE_URL}/ico/echos/${echoId}.webp`,
     }));
 }

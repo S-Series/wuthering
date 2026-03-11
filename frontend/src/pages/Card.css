@@ -304,8 +304,7 @@
 }
 
 #card-page-slot .card-section.right .card-item.selected {
-    width: calc(85% - 4px);
-    border: 2px solid rgb(255, 215, 100);
+    border: 1px solid rgb(255, 215, 100);
     filter: drop-shadow(0 0 0.5vw rgb(255, 215, 100));
 }
 #card-page-slot .card-section.right .card-item img {

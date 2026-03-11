@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	DndContext,
 	closestCenter,
@@ -25,16 +25,18 @@ import { getEquipmentRank } from "@/types/character.type";
 
 type DragItem = {
 	id: number;
+	num: number;
 	echoName: string | null;
 	src: string[];
 	label: EchoRuntime | null;
 };
 
-const createItems = (data: EchoRuntime[] | null, scores: any, lang: LangType): DragItem[] => {
+const createItems = (num: number, data: EchoRuntime[] | null, scores: any, lang: LangType): DragItem[] => {
 	const names = ECHO_CANDIDATES[lang];
 
 	return Array.from({ length: 10 }, (_, index) => ({
 		id: index,
+		num: num,
 		echoName: names.find(item => item.echoId === data?.[index].echoId)?.text ?? null,
 		src: [`${data?.[index].echoId}.webp`, `${getEquipmentRank(scores?.[Math.abs(index)][1] ?? 0)}.png`],
 		label: null,
@@ -47,9 +49,10 @@ const reOrderItems = (order: number[], items: DragItem[]) => {
 
 type SortableItemProps = {
 	baseUrl: string;
+	num: number;
 	item: DragItem;
 	index: number;
-	onClick?: React.Dispatch<React.SetStateAction<number>>;
+	onClick?: React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>>;
 };
 
 type EchoIndexTuple =
@@ -78,6 +81,7 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
 	};
 
 	const isSelected = index < 5;
+	const isActivated = (item.num === index);
 
 	return (
 		<div
@@ -87,10 +91,11 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
 				"echo-drag-item",
 				index === 0 ? "main" : "",
 				isDragging ? "dragging" : "",
+				isActivated ? "activated" : "",
 				isSelected ? "selected" : "",
 				item.echoName === null ? "disable" : ""
 			].join(" ").trim()}
-			onClick={() => { if (onClick) onClick(item.id); }}
+			onClick={() => { if (onClick) onClick(item.id as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9); }}
 			{...attributes}
 			{...listeners}
 		>
@@ -108,23 +113,24 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
 }
 
 type Props = {
-	onClick?: React.Dispatch<React.SetStateAction<number>>;
+	num: number;
+	onClick?: React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>>;
 }
 
-export default function EchoDragSelect({onClick}: Props) {
+export default function EchoDragSelect({num, onClick}: Props) {
 	const { lang } = useAppStore();
 	const { characterData, equipmentScore, patchCharacterData } = useCharacter();
-	const [items, setItems] = useState<DragItem[]>(createItems(null, equipmentScore, lang));
+	const [items, setItems] = useState<DragItem[]>(createItems(num, null, equipmentScore, lang));
 	const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
 
 	useEffect(() => {
 		setItems(
 			reOrderItems(
 				characterData.echoDataIndex,
-				createItems(characterData.echoData, equipmentScore, lang)
+				createItems(num, characterData.echoData, equipmentScore, lang)
 			)
 		);
-	}, [characterData.echoData, characterData.echoDataIndex, lang, equipmentScore]);
+	}, [num, characterData.echoData, characterData.echoDataIndex, lang, equipmentScore]);
 
 	const patchEchoDataIndexes = (nextIndexes: number[]) => {
 		assertEchoIndexTuple(nextIndexes);
@@ -170,7 +176,7 @@ export default function EchoDragSelect({onClick}: Props) {
 				>
 					<div className="echo-drag-list">
 						{items.map((item, index) => (
-							<SortableItem key={item.id} baseUrl={BASE_URL} item={item} index={index} onClick={onClick} />
+							<SortableItem key={item.id} num={num} baseUrl={BASE_URL} item={item} index={item.id} onClick={onClick} />
 						))}
 					</div>
 				</SortableContext>

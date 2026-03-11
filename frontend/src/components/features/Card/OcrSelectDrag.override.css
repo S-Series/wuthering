@@ -10,7 +10,6 @@
     height: 100%;
     gap: min(1vw, 0.8rem);
     flex-direction: column;
-    overflow: hidden;
 }
 
 .stat-drag-item {
@@ -25,7 +24,7 @@
     background-color: #ffffff66;
     cursor: grab;
     user-select: none;
-    overflow: hidden;
+    filter: brightness(0.5);
     transition:
         background-color 0.2s ease-out,
         border-color 0.2s ease-out,
@@ -42,7 +41,6 @@
     width: 100%;
     height: 100%;
 
-    gap: 2.5%;
     align-items: center;
     
     transition: all 0.2s ease-out;
@@ -61,7 +59,7 @@
     padding: 0;
     width: auto;
     height: 100%;
-    aspect-ratio: 1 / 2;
+    aspect-ratio: 1 / 1;
     background-color: transparent;
 }
 
@@ -70,4 +68,17 @@
     height: 95%;
     aspect-ratio: 1/1;
     background-color: #00000066;
+}
+
+.ocr-drag-select-apply-button {
+    width: 70%;
+    height: auto;
+    aspect-ratio: 4 / 1;
+    
+    margin: 0;
+    padding: 0;
+}
+
+.ocr-drag-select-apply-button span{
+    font-size: min(1vw, 1rem) !important;
 }

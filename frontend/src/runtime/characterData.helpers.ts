@@ -109,6 +109,17 @@ export const patchEchoSubOption = (
   });
 };
 
+export const patchEchoAt = (
+  data: CharacterData,
+  echoIndex: EchoIndex,
+  patch: Partial<EchoRuntime>
+): Partial<CharacterData> => {
+  return updateEchoAtPatch(data, echoIndex, (e) => ({
+    ...e,
+    ...patch,
+  }));
+};
+
 export const calcBaseStat = (data: CharacterData) => {
   const id = data.characterId
   const characterData = character[id];

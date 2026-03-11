@@ -1,22 +1,23 @@
-import Select, { type SingleValue } from "react-select";
+import Select, { type SingleValue, type StylesConfig } from "react-select";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
-
-type SelectOption = {
-  value: string;
-  label: string;
-};
+import type { SelectOpt, SelectOptionStatOriginal } from "./EchoSelect.type";
+import type { StatId } from "@/datas/stats";
+import type React from "react";
+import type { EchoRuntime } from "@/runtime/echo.runtime";
+import { useEffect } from "react";
 
 type SortableItemProps = {
   item: {
     id: number;
+    statId: StatId;
+    statValue: number;
     statName: string | null;
-    src: string;
   };
-  baseUrl: string;
   index: number;
-  options: SelectOption[];
-  onSelectChange: (itemId: number, value: SelectOption | null) => void;
+  styles: [StylesConfig<any,false>, StylesConfig<any,false>];
+  options: [SelectOptionStatOriginal[], SelectOpt[]];
+  onSelectChange: React.Dispatch<React.SetStateAction<EchoRuntime>>;
 };
 
 //$ =================================================
@@ -24,6 +25,7 @@ export function OcrDragSelectItem({
   item,
   index,
   options,
+  styles,
   onSelectChange,
 }: SortableItemProps) {
   const {
@@ -42,9 +44,20 @@ export function OcrDragSelectItem({
 
   const isSelected = index < 5;
 
-  const handleSelectChange = (next: SingleValue<SelectOption>) => {
-    onSelectChange(item.id, next ?? null);
-  };
+  useEffect(() => onSelectChange((prev) => {
+    const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
+
+    nextSubOptions[index] = {
+      ...nextSubOptions[index],
+      statId: item.statId,
+      statValue: item.statValue,
+    };
+
+    return {
+      ...prev,
+      subOptions: nextSubOptions,
+    };
+  }), [item])
 
   return (
     <div
@@ -72,28 +85,62 @@ export function OcrDragSelectItem({
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <Select<SelectOption, false>
-            options={options}
-            onChange={handleSelectChange}
+          <Select
+            styles={styles[0]}
+            options={options[0]}
+            onChange={(opt) => {
+              console.log(opt);
+              onSelectChange((prev) => {
+                const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
+
+                nextSubOptions[index] = {
+                  ...nextSubOptions[index],
+                  statId: opt?.value ?? "dummy",
+                };
+
+                return {
+                  ...prev,
+                  subOptions: nextSubOptions,
+                };
+              })
+            }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
-            isClearable
             isSearchable={false}
+            value={options[0].find((opt) => { return opt.value === item.statId })}
           />
         </div>
+
+        <div style={{width: "2.5%"}}/>
 
         <div
           className="stat-select-wrap"
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <Select<SelectOption, false>
-            options={options}
-            onChange={handleSelectChange}
+          <Select
+            styles={styles[1]}
+            options={options[1]}
+            onChange={(opt) => {
+              console.log(opt);
+              onSelectChange((prev) => {
+                const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
+
+                nextSubOptions[index] = {
+                  ...nextSubOptions[index],
+                  statValue: opt?.value ?? 0,
+                };
+
+                return {
+                  ...prev,
+                  subOptions: nextSubOptions,
+                };
+              })
+            }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
-            isClearable
             isSearchable={false}
+            value={options[1].find((opt) => opt.value.toString() === item.statValue.toString())}
           />
         </div>
       </div>

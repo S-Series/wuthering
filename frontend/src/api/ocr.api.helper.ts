@@ -131,13 +131,6 @@ export function textsToStats(texts: string[][], lang: LangType):{
     cost: Number(body.join("").replace(/\D/g, "")) ?? 1,
     echoStats: tail.map(([statId, valueText]): [StatId, number] => [
       (() => {
-        console.log("console: ", statId, valueText);
-        console.log(
-          statId,
-          ["atk", "hp", "def"].some((keyword) => 
-            statId.toString().toLocaleLowerCase().includes(keyword)
-          )
-        );
         if (valueText.includes("%")) {
           if (
             ["atk", "hp", "def"].some((keyword) => 

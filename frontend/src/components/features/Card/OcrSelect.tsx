@@ -1,22 +1,17 @@
-import { useMemo, useState } from "react";
-import { useCharacter } from "@/stores/characterDataStore"
-import OcrSelectItem from "@/components/features/Card/OcrSelectItem"
+import { useState } from "react";
 
 import EchoSelect from "./EchoSelect";
-import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime";
 import EchoDragSelect from "./EchoDragSelect";
 
 import "./OcrSelect.css"
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
-export default function OcrSelect() {
-	const { characterData } = useCharacter();
-	const [selectIdx, setSelectIdx] = useState(0);
-	const [ocrEchoData, setocrEchoData] = useState<EchoRuntime>(createEmptyEchoRuntime(4));
-	const handleSelect = (idx: number) => {
-		setSelectIdx(idx);
-	};
+type Props = {
+	selectIdx: EchoIndex;
+	setSelectIdx: React.Dispatch<React.SetStateAction<EchoIndex>>;
+}
+export default function OcrSelect({selectIdx, setSelectIdx}: Props) {
 
 	return (
 		<div className="ocr-select-body">
@@ -24,7 +19,7 @@ export default function OcrSelect() {
 				<span className="item-slot-title"> asdf </span>
 
 				<div className="item-slot-container">
-					<EchoDragSelect onClick={setSelectIdx} />
+					<EchoDragSelect num={selectIdx} onClick={setSelectIdx} />
 				</div>
 			</div>
 

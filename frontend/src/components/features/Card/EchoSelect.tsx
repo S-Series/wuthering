@@ -6,22 +6,16 @@ import { useAppStore } from "@/stores/appStore"
 import { useStyleStore } from "@/stores/styleStore"
 import { useCharacter } from "@/stores/characterDataStore"
 
-import { useOverlay } from "@/contexts/PopupContext";
-
 import { FixedStats } from "@/datas/stats";
-import { echoDict, harmony, type EchoData } from "@/datas/echos";
-import { characterScoreSheet } from "@/datas/characterScoreSheet";
+import { echoDict, type EchoData } from "@/datas/echos";
 
-import type { EchoSelectProps, SelectOption, SelectOriginalOption, SelectOptionWithImage, SelectOptionStatOriginal, Cost } from "./EchoSelect.type";
-import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyle, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase } from "./EchoSelect.helper";
+import type { EchoSelectProps, SelectOption, SelectOriginalOption, SelectOptionWithImage, SelectOptionStatOriginal, Cost, SelectOpt } from "./EchoSelect.type";
+import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase } from "./EchoSelect.helper";
 
 import type { EchoRuntime } from "@/runtime/echo.runtime";
 import { setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
 
-import OcrPlayground from "@/components/features/Card/OcrSlot";
-
 import "./EchoSelect.css"
-import { locale } from "@/locales/locale";
 
 
 
@@ -32,7 +26,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const { lang } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData, patchCharacterData } = useCharacter();
-  const { openOverlay } = useOverlay();
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [slotHeight, setSlotHeight] = useState(16);
@@ -63,14 +56,14 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
 
   /// const HARMONY_OPTIONS_BASE; <<= imported, unChange data
-  const ECHO_ID_OPTION_BASE : SelectOriginalOption[] = 
-  useMemo<SelectOriginalOption[]>(() => 
-    getEchoOptionBase(lang, selectedCost, BASE_URL)
-  , [lang, selectedCost]);
+  const ECHO_ID_OPTION_BASE: SelectOriginalOption[] =
+    useMemo<SelectOriginalOption[]>(() =>
+      getEchoOptionBase(lang, selectedCost, BASE_URL)
+      , [lang, selectedCost]);
 
-  const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() => 
+  const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() =>
     getStatOptionBase(lang, characterData.characterId)
-  , [lang, characterData.characterId])
+    , [lang, characterData.characterId])
 
 
   const COST_DROP_OPTION: SelectOption<Cost>[] = [
@@ -95,12 +88,17 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   }, [selectedEchoDictionaryData, lang]);
 
   const ECHO_ID_DROP_OPTION = useMemo<SelectOptionWithImage<string>[]>(() => {
-    return ECHO_ID_OPTION_BASE.map((opt) => ({
-      value: opt.value,
-      label: opt[lang],
-      path: opt.path,
-    }));
-  }, [ECHO_ID_OPTION_BASE, lang]);
+    return ECHO_ID_OPTION_BASE
+      .filter((item) => {
+        if (!item.harmonies) return true;
+        if (!characterData.echoData[index].setId) return true;
+        return item.harmonies.includes(characterData.echoData[index].setId)
+      }).map((opt) => ({
+        value: opt.value,
+        label: opt[lang],
+        path: opt.path,
+      }));
+  }, [ECHO_ID_OPTION_BASE, lang, characterData.echoData[index], index]);
 
   const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[0] !== 0
@@ -115,7 +113,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     (opt) => opt.subValue.length !== 0
   )
 
-  type SelectOpt = { value: number; label: string };
 
   const isFixedStatId = (id: string): id is keyof typeof FixedStats => id in FixedStats;
 
@@ -169,6 +166,21 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
       </div>
 
       <div className="drop-slot large">
+        <Select options={HARMONY_DROP_OPTION}
+          isClearable={true}
+          isSearchable={false}
+          styles={STAT_DROP_STYLE_LARGE}
+          formatOptionLabel={(opt, meta) => formatOptionWithImage_Smaller(opt, lang, meta)}
+          value={HARMONY_DROP_OPTION.find((e) => e.value
+            === characterData.echoData[index].setId) ?? null
+          }
+          onChange={(opt) => {
+            patchCharacterData(setEchoSetId(characterData, index, opt?.value ?? null))
+          }}
+        />
+      </div>
+
+      <div className="drop-slot large">
         <Select options={ECHO_ID_DROP_OPTION}
           isClearable={true}
           isSearchable={false}
@@ -178,24 +190,12 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             === characterData.echoData[index].echoId) ?? null
           }
           onChange={(opt) => {
-            patchCharacterData(setEchoId(characterData, index as 0 | 1 | 2 | 3 | 4, opt.value));
+            patchCharacterData(setEchoId(characterData, index as 0 | 1 | 2 | 3 | 4, opt?.value ?? null));
           }}
         />
       </div>
 
-      <div className="drop-slot large">
-        <Select options={HARMONY_DROP_OPTION}
-          isSearchable={false}
-          styles={STAT_DROP_STYLE_LARGE}
-          formatOptionLabel={(opt, meta) => formatOptionWithImage_Smaller(opt, lang, meta)}
-          value={HARMONY_DROP_OPTION.find((e) => e.value
-            === characterData.echoData[index].setId) ?? null
-          }
-          onChange={(opt) => {
-            patchCharacterData(setEchoSetId(characterData, index, opt.value))
-          }}
-        />
-      </div>
+
 
       <div className="divider" />
 
@@ -208,6 +208,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             default: return [];
           }
         })()}
+
           styles={STAT_DROP_STYLE_OPTION_WIDE}
           formatOptionLabel={(opt, meta) => formatOptionWithImage_Smaller(opt, lang, meta)}
           menuPortalTarget={document.body}
@@ -255,7 +256,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
               <Select options={STAT_OPTION_SUB}
                 styles={STAT_DROP_STYLE_OPTION_WIDE}
                 formatOptionLabel={(opt, meta) => formatOptionWithImage_Smaller(opt, lang, meta)}
-                menuPlacement="auto"
                 menuPosition="fixed"
                 minMenuHeight={200}
                 menuShouldScrollIntoView={false}
