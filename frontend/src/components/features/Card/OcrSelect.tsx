@@ -23,7 +23,9 @@ export default function OcrSelect() {
 			<div className="select-item-slot">
 				<span className="item-slot-title"> asdf </span>
 
-				<div className="item-slot-container"><EchoDragSelect /></div>
+				<div className="item-slot-container">
+					<EchoDragSelect onClick={setSelectIdx} />
+				</div>
 			</div>
 
 			<div className="select-item-slot">

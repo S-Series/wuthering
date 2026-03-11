@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
 	DndContext,
 	closestCenter,
@@ -49,6 +49,7 @@ type SortableItemProps = {
 	baseUrl: string;
 	item: DragItem;
 	index: number;
+	onClick?: React.Dispatch<React.SetStateAction<number>>;
 };
 
 type EchoIndexTuple =
@@ -61,7 +62,7 @@ function assertEchoIndexTuple(arr: number[]): asserts arr is EchoIndexTuple {
 	}
 }
 
-function SortableItem({ item, baseUrl, index }: SortableItemProps) {
+function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
 	const {
 		attributes,
 		listeners,
@@ -89,6 +90,7 @@ function SortableItem({ item, baseUrl, index }: SortableItemProps) {
 				isSelected ? "selected" : "",
 				item.echoName === null ? "disable" : ""
 			].join(" ").trim()}
+			onClick={() => { if (onClick) onClick(item.id); }}
 			{...attributes}
 			{...listeners}
 		>
@@ -105,7 +107,11 @@ function SortableItem({ item, baseUrl, index }: SortableItemProps) {
 	);
 }
 
-export default function EchoDragSelect() {
+type Props = {
+	onClick?: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export default function EchoDragSelect({onClick}: Props) {
 	const { lang } = useAppStore();
 	const { characterData, equipmentScore, patchCharacterData } = useCharacter();
 	const [items, setItems] = useState<DragItem[]>(createItems(null, equipmentScore, lang));
@@ -164,7 +170,7 @@ export default function EchoDragSelect() {
 				>
 					<div className="echo-drag-list">
 						{items.map((item, index) => (
-							<SortableItem key={item.id} baseUrl={BASE_URL} item={item} index={index} />
+							<SortableItem key={item.id} baseUrl={BASE_URL} item={item} index={index} onClick={onClick} />
 						))}
 					</div>
 				</SortableContext>

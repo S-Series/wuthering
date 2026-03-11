@@ -68,7 +68,7 @@ export function OcrDragSelectItem({
         </button>
 
         <div
-          className="echo-select-wrap"
+          className="stat-select-wrap"
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
@@ -83,7 +83,7 @@ export function OcrDragSelectItem({
         </div>
 
         <div
-          className="echo-select-wrap"
+          className="stat-select-wrap"
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >

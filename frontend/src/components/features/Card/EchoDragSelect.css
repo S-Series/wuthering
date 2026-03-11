@@ -51,8 +51,6 @@
 
 .echo-drag-item.disable {
     filter: brightness(0.5);
-    cursor: not-allowed;
-    pointer-events: none;
 }
 
 .echo-drag-item .hover-motion {

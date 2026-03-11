@@ -6,9 +6,9 @@ export default function Footer() {
         <div id="footer-body">
             <div className="item-slot en-font">
                 {
-                    `All assets © Kuro Games 2024
-                    Non-Official fan project. By SSeries
-                    Contact: SSeries000923@gmail.com`
+                    `Wuthering Waves and all related assets are © Kuro Games.
+This website is an unofficial fan project and is not affiliated with Kuro Games.
+Contact: SSeries000923@gmail.com`
                 }
             </div>
             <div className="item-slot">
