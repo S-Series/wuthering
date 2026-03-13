@@ -1,0 +1,41 @@
+.home-post-card {
+    display: flex;
+    flex-direction: column;
+
+    width: 90%;
+    height: auto;
+
+    padding: 5%;
+
+    border-radius: 1rem;
+    border: 1px solid #ffcc9966;
+
+    background: url("/cardBg.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.home-post-card h3 {
+    font-size: min(1.5vw, 1.5rem);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    word-break: keep-all;
+    margin-bottom: 5%;
+}
+
+.home-post-card p {
+    font-size: min(1vw, 1rem);
+    color: #ccc;
+    margin: 0;
+    padding: 0;
+    white-space: pre-line;
+    word-break: keep-all;
+}
+
+.home-post-card time {
+    color: #fff;
+    text-align: right;
+    word-break: keep-all;
+}

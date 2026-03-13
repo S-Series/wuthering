@@ -7,11 +7,20 @@ export const jp = {
     select: "",
   },
   navbar: {
-  title: "WuWa ラボ",
-  characters: "キャラクター一覧",
-  generator: "スペックカード生成",
-  login: "ログイン",
-},
+    title: "WuWa ラボ",
+    characters: "キャラクター一覧",
+    generator: "スペックカード生成",
+    login: "ログイン",
+  },
+  home: {
+    title1: "お知らせ",
+    title2: "ゲーム内情報",
+    title3: "キャラクター展示",
+    video1: "バージョントレーラー",
+    video2: "キャラクタートレーラー",
+    video3: "共鳴者バトルモーション",
+    click: "クリックして動画を再生",
+  },
   card: {
     help: "ⓘ ヘルプ",
     request: "画像を生成",
@@ -34,5 +43,5 @@ export const jp = {
     description1: "クリックして開始",
     description2: `クリックして画像ファイルを選択\nまたは\n「Ctrl+V」で画像を貼り付け`,
     description3: `サーバーを起動しています...\n最初のリクエストは20〜30秒ほどかかる場合があります\nしばらくお待ちください :)`,
-  }
+  },
 } satisfies LocaleSchema;

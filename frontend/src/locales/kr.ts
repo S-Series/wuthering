@@ -12,6 +12,15 @@ export const kr = {
     generator: "스펙카드 생성기",
     login: "로그인",
   },
+  home: {
+    title1: "공지사항",
+    title2: "인게임 정보",
+    title3: "캐릭터 진열장",
+    video1: "버전 트레일러",
+    video2: "캐릭터 트레일러",
+    video3: "공명자 전투모션",
+    click: "클릭하여 영상 재생",
+  },
   card: {
     help: "ⓘ 도움말",
     request: "이미지 파일 생성",

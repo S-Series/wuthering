@@ -12,6 +12,15 @@ export const en = {
     generator: "SpecCard Generator",
     login: "Log-in",
   },
+  home: {
+    title1: "Announcements",
+    title2: "In-Game Information",
+    title3: "Character Showcase",
+    video1: "Version Trailer",
+    video2: "Character Trailer",
+    video3: "Resonator Combat Motion",
+    click: "Click to Play Video",
+  },
   card: {
     help: "ⓘ Help",
     request: "Image File Generate",
@@ -34,5 +43,5 @@ export const en = {
     description1: "Click to Start",
     description2: `Click to select an image file\nor\nPaste an image with "Ctrl+V"`,
     description3: `Waking up the server...\nThe first request may take\nabout 20–30 seconds\nThank you for your patience :)`,
-  }
-}satisfies LocaleSchema;
+  },
+} satisfies LocaleSchema;

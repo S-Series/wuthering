@@ -7,11 +7,20 @@ export const zh = {
     select: "",
   },
   navbar: {
-  title: "鸣潮 工具",
-  characters: "角色列表",
-  generator: "属性卡生成器",
-  login: "登录",
-},
+    title: "鸣潮 工具",
+    characters: "角色列表",
+    generator: "属性卡生成器",
+    login: "登录",
+  },
+  home: {
+    title1: "公告",
+    title2: "游戏内信息",
+    title3: "角色展示",
+    video1: "版本预告",
+    video2: "角色预告",
+    video3: "共鸣者战斗动作",
+    click: "点击播放视频",
+  },
   card: {
     help: "ⓘ 帮助",
     request: "生成图片",
@@ -34,5 +43,5 @@ export const zh = {
     description1: "点击开始",
     description2: `点击选择图片文件\n或\n使用“Ctrl+V”粘贴图片`,
     description3: `正在唤醒服务器...\n首次请求可能需要20~30秒\n感谢您的耐心等待 :)`,
-  }
-} //satisfies LocaleSchema;
+  },
+}; //satisfies LocaleSchema;

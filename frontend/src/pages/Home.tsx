@@ -4,14 +4,20 @@ import { useAppStore } from "@/stores/appStore";
 
 import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api"
 
+import HomePostCard from "@/components/features/Home/HomePostCard";
+import { HOME_POSTS } from "@/posts/homePosts";
+
 import "@/pages/_Page.css"
 import "@/pages/Home.css"
+import { locale } from "@/locales/locale";
 
 
 /* ================================================ */
 
 export default function Home() {
   const { lang } = useAppStore();
+
+  const localeText = locale(lang).home;
 
   const [trailer, setTrailer] = useState<YoutubeLatestVideo | null>(null);
   const [intro, setIntro] = useState<YoutubeLatestVideo | null>(null);
@@ -42,62 +48,67 @@ export default function Home() {
     return () => controller.abort();
   }, [lang]);
 
+  const sortedPosts = [...HOME_POSTS].sort((a, b) => {
+    if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+
   return (
-    <div id="page-slot">
+    <div id="page-slot" className="home-page-slot">
+      <div className="page-body" style={{width: "37.5%"}}>
+        <div className="article-slot">
+          <h2 className={`title-text ${lang}-font`}>{localeText.title1}</h2>
 
-      <div className="article-slot">
-        <h2 className="title en-font">Wuwa Dev News</h2>
-
-        <div style={{fontSize: "16px", whiteSpace: "pre", fontWeight: 700, backgroundColor: "#ffffff66", padding: "16px"}}>
-          {
-`띵데브는 현재 공사중입니다! 정식 서비스가 아니니, 양해 바랍니다.
-문의사항은 아래의 연락처로 연락 바랍니다.
-
-WuWa DEV is currently under construction. Please note that this is not the official service yet.
-For inquiries, please contact the information below.
-
-鳴潮DEVは現在工事中です。正式サービスではありませんので、ご了承ください。
-お問い合わせは、下記の連絡先までご連絡ください。
-
-鸣潮DEV目前正在施工中！尚未正式上线，敬请谅解。
-如有问题，请通过以下联系方式联系我们。
-        
-∮Contact SSeries
-Discord: SSeries0923 || E-mail: SSeries000923@gmail.com`}
+          {sortedPosts.map((post) => (<>
+            <HomePostCard key={post.id} post={post} lang={lang} />
+            </>
+          ))}
         </div>
       </div>
 
-      <div className="article-slot">
-        <h2 className="title en-font">In-Game News</h2>
+      <div className="page-body" style={{width: "60%"}}>
+        <div className="article-slot">
+          <h2 className={`title-text ${lang}-font`}>{localeText.title2}</h2>
 
-        <div className="article trailer">
-          {trailer ? (
-            <a href={`https://www.youtube.com/watch?v=${trailer.videoId}`}
-              target="_blank"
-              rel="noopener noreferrer">
-              <img src={trailer.thumbnail} alt={trailer.title} width={320} />
-              <p>{trailer.title}</p>
-            </a>
-          ) : (<p>loading...</p>)}
+          <div style={{ display: "flex", width: "100%", height: "auto", justifyContent: "space-between" }}>
+            <div className="article trailer">
+              <span className={`article-title ${lang}-font`}>{localeText.video1}</span>
+              {trailer ? (
+                <>
+                  <img src={trailer.thumbnail} alt={trailer.title} />
+                  <span className={`${lang}-font`}>{trailer.title}</span>
+                  <span className={`${lang}-font click`}>{localeText.click}</span>
+                </>
+              ) : (<p className={`${lang}-font click`}>loading...</p>)}
+            </div>
 
-          {combat ? (
-            <a>
-              <img src={combat.thumbnail} alt={combat.title} width={320} />
-              <p>{combat.title}</p>
-            </a>
-          ) : (<p>loading...</p>)}
+            <div className="article combat">
+              <span className={`article-title ${lang}-font`}>{localeText.video2}</span>
+              {combat ? (
+                <>
+                  <img src={combat.thumbnail} alt={combat.title} />
+                  <span className={`${lang}-font`}>{combat.title}</span>
+                  <span className={`${lang}-font click`}>{localeText.click}</span>
+                </>
+              ) : (<p>loading...</p>)}
+            </div>
 
-          {intro ? (
-            <a>
-              <img src={intro.thumbnail} alt={intro.title} width={320} />
-              <p>{intro.title}</p>
-            </a>
-          ) : (<p>loading...</p>)}
+            <div className="article intro">
+              <span className={`article-title ${lang}-font`}>{localeText.video3}</span>
+              {intro ? (
+                <>
+                  <img src={intro.thumbnail} alt={intro.title} />
+                  <span className={`${lang}-font`}>{intro.title}</span>
+                  <span className={`${lang}-font click`}>{localeText.click}</span>
+                </>
+              ) : (<p>loading...</p>)}
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="article-slot">
-        <h2 className="title en-font">Character Showcase</h2>
+        <div className="article-slot">
+          <h2 className={`title-text ${lang}-font`}>{localeText.title3}</h2>
+        </div>
       </div>
     </div>
   )

@@ -156,7 +156,6 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
           let temp = 0;
           for (let j = 0; j < loopData.length; j++) {
             if (loopData[j].statId === FixedStats.resonanceBns.id) {
-              //resList[j] = [i, loopData[j].statValue];
               resList[i] = [i, loopData[j].statValue];
               continue;
             }
@@ -186,8 +185,12 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
       11.6 * (scoreData.skillBns ?? 0),
       11.6 * (scoreData.liberationBns ?? 0),
     ];
-    const score = [...scoreList].sort((a, b) => b - a).slice(0, 5).reduce((sum, value) => sum + value, 0);
-    const scoreWithRes = [...scoreList, 12.4 * (scoreData.resonanceBns ?? 0)].sort((a, b) => b - a).slice(0, 5).reduce((sum, value) => sum + value, 0);
+     
+    const score = [...scoreList].sort((a, b) => b - a)
+      .slice(0, 5).reduce((sum, value) => sum + value, 0);
+    const scoreWithRes = [...scoreList, 12.4 * (scoreData.resonanceBns ?? 0)]
+      .sort((a, b) => b - a).slice(0, 5)
+      .reduce((sum, value) => sum + value, 0);
 
     const magicNumber = 100 / ((score * (5 - scoreData.maxResCount) + scoreWithRes * scoreData.maxResCount) / 5);
 
@@ -220,9 +223,14 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   }, [characterId])
 
   useEffect(() => {
-    saveCharacterScore(characterId, equipmentScore[0][1] + equipmentScore[1][1] + equipmentScore[2][1] + equipmentScore[3][1] + equipmentScore[4][1]
-    )
-  }, [equipmentScore])
+    const finalScore
+      = equipmentScore[characterData.echoDataIndex[0]][1]
+      + equipmentScore[characterData.echoDataIndex[1]][1]
+      + equipmentScore[characterData.echoDataIndex[2]][1]
+      + equipmentScore[characterData.echoDataIndex[3]][1]
+      + equipmentScore[characterData.echoDataIndex[4]][1]
+    saveCharacterScore(characterId, finalScore);
+  }, [characterData.echoDataIndex, equipmentScore])
 
   const values = {
     characterId,

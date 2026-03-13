@@ -10,6 +10,15 @@ export type LocaleSchema = {
     generator: string;
     login: string;
   };
+  home: {
+    title1: string;
+    title2: string;
+    title3: string;
+    video1: string;
+    video2: string;
+    video3: string;
+    click: string;
+  };
   card: {
     help: string;
     request: string;

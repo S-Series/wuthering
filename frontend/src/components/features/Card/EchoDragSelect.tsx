@@ -175,7 +175,7 @@ export default function EchoDragSelect({num, onClick}: Props) {
 					strategy={verticalListSortingStrategy}
 				>
 					<div className="echo-drag-list">
-						{items.map((item, index) => (
+						{items.map((item) => (
 							<SortableItem key={item.id} num={num} baseUrl={BASE_URL} item={item} index={item.id} onClick={onClick} />
 						))}
 					</div>

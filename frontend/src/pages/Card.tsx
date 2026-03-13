@@ -593,7 +593,7 @@ export default function Card() {
           </div>
 
           <div className="drag-slot">
-            <EchoDragSelect/>
+            <EchoDragSelect num={-999}/>
           </div>
         </div>
       </div>
