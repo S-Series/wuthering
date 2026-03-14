@@ -7,6 +7,22 @@ interface CharacterScore extends StatWeightMap {
 }
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
+  sigrika: {
+    [FixedStats.hpPct.id]: 0,
+    [FixedStats.atkPct.id]: 1.0,
+    [FixedStats.defPct.id]: 0,
+
+    [FixedStats.critRate.id]: 3.0,
+    [FixedStats.critDmg.id]: 1.5,
+
+    [FixedStats.basicBns.id]: 0,
+    [FixedStats.heavyBns.id]: 0,
+    [FixedStats.skillBns.id]: 0,
+    [FixedStats.liberationBns.id]: 0,
+
+    [FixedStats.resonanceBns.id]: 1.2,
+    maxResCount: 5,
+  },
   luuk_herssen: {
     [FixedStats.hpPct.id]: 0,
     [FixedStats.atkPct.id]: 1.0,

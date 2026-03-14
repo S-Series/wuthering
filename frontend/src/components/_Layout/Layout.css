@@ -66,3 +66,7 @@ body.page-card::before {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+body.page-profile {
+  background-image: url("/bg.png");
+}

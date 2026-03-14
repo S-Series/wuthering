@@ -45,10 +45,35 @@ const normalizeCharacterData = (
 
   if (!savedData) return base;
 
-  const safeEchoData = Array.from(
-    { length: 10 },
-    (_, index) => savedData.echoData?.[index] ?? base.echoData[index]
-  ) as CharacterData["echoData"];
+  const safeEchoData = Array.from({ length: 10 }, (_, index) => {
+    const baseEcho = base.echoData[index];
+    const savedEcho = savedData.echoData?.[index];
+
+    return {
+      ...baseEcho,
+      ...savedEcho,
+      echoId: savedEcho?.echoId ?? baseEcho.echoId ?? "",
+      setId: savedEcho?.setId ?? baseEcho.setId ?? "",
+      cost: savedEcho?.cost ?? baseEcho.cost,
+      mainOption: {
+        ...baseEcho.mainOption,
+        ...savedEcho?.mainOption,
+        statId: savedEcho?.mainOption?.statId ?? baseEcho.mainOption.statId ?? "dummy",
+        statValue: savedEcho?.mainOption?.statValue ?? baseEcho.mainOption.statValue ?? -1,
+      },
+      subOptions: Array.from({ length: 5 }, (_, subIndex) => {
+        const baseSub = baseEcho.subOptions[subIndex];
+        const savedSub = savedEcho?.subOptions?.[subIndex];
+
+        return {
+          ...baseSub,
+          ...savedSub,
+          statId: savedSub?.statId ?? baseSub.statId ?? "dummy",
+          statValue: savedSub?.statValue ?? baseSub.statValue ?? -1,
+        };
+      }),
+    };
+  }) as CharacterData["echoData"];
 
   const safeEchoIndex = (() => {
     const used = new Set<number>();
@@ -56,7 +81,13 @@ const normalizeCharacterData = (
     const result = Array.from({ length: 10 }, (_, index) => {
       const v = savedData.echoDataIndex?.[index] ?? base.echoDataIndex[index];
 
-      if (v >= 0 && v < 10 && !used.has(v)) {
+      if (
+        typeof v === "number" &&
+        Number.isInteger(v) &&
+        v >= 0 &&
+        v < 10 &&
+        !used.has(v)
+      ) {
         used.add(v);
         return v;
       }
@@ -64,19 +95,28 @@ const normalizeCharacterData = (
       return null;
     });
 
-    const missing = Array.from({ length: 10 }, (_, i) => i).filter(v => !used.has(v));
+    const missing = Array.from({ length: 10 }, (_, i) => i).filter(
+      (v) => !used.has(v)
+    );
 
     let ptr = 0;
 
-    return result.map(v => {
+    return result.map((v) => {
       if (v !== null) return v;
       return missing[ptr++];
     }) as CharacterData["echoDataIndex"];
   })();
 
+  const safeConstell = Array.from(
+    { length: base.constell.length },
+    (_, index) => savedData.constell?.[index] ?? base.constell[index]
+  ) as CharacterData["constell"];
+
   return {
     ...base,
     ...savedData,
+    weaponId: savedData.weaponId ?? base.weaponId,
+    constell: safeConstell,
     echoData: safeEchoData,
     echoDataIndex: safeEchoIndex,
   };

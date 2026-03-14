@@ -74,7 +74,7 @@ export default function Navbar() {
               src="/default.webp" />
             <p className={`${lang}-font`}>{localeText.generator}</p>
           </a>
-          <a href="#">
+          <a href="/profile">
             <img className="navbar-icon"
               alt="title"
               src="/default.webp" />
@@ -89,19 +89,19 @@ export default function Navbar() {
 
       </div>
       <div id="navbar-sidebar" className={`${isActive ? "active" : "idle"}`}>
-        <a href="#">
+        <a href="/profile">
           <img className="navbar-icon"
             alt="title"
             src="/default.webp" />
           <p className={`${lang}-font`}>로그인</p>
         </a>
-        <a href="#">
+        <a href="/characters">
           <img className="navbar-icon"
             alt="title"
             src="/default.webp" />
           <p className={`${lang}-font`}>캐릭터 목록</p>
         </a>
-        <a href="#">
+        <a href="/card">
           <img className="navbar-icon"
             alt="title"
             src="/default.webp" />

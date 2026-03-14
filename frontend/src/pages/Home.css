@@ -35,7 +35,7 @@
     filter: drop-shadow(0 2px 4px #000);
 }
 
-.article-slot .article {
+.article-slot .article-item {
     display: flex;
     position: relative;
     flex-direction: column;
@@ -63,7 +63,7 @@
     transition: transform 0.2s ease-out;
 }
 
-.article-slot .article::before {
+.article-slot .article-item::before {
     content: "";
     position: absolute;
     width: 100%;
@@ -78,14 +78,19 @@
     opacity: 0.25;
     z-index: 1;
     pointer-events: none;
+    transition: all 0.2s ease-out;
 }
 
-.article-slot .article:hover {
+.article-slot .article-item:hover {
     cursor: pointer;
     transform: scale(1.05);
 }
 
-.article-slot .article img {
+.article-slot .article-item:hover::before {
+    opacity: 0.5;
+}
+
+.article-slot .article-item img {
     width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;
@@ -95,20 +100,27 @@
     z-index: 2;
 }
 
-.article-slot .article .article-title {
+.article-slot .article-item .article-title {
     color: #fff;
+    height: 10%;
     font-size: min(1.5vw, 1.5rem);
     font-weight: 500;
 }
 
-.article-slot .article span {
+.article-slot .article-item span {
     z-index: 2;
     pointer-events: none;
 }
 
-.article-slot .article .click {
+.article-slot .article-item .click {
     color: #fff;
     text-decoration: underline;
-    margin-top: auto;
-    margin-bottom: 2.5%;
+}
+
+.article-slot .article-item .article {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 85%;
+    justify-content: space-between;
 }

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 
 import { useAppStore } from "@/stores/appStore";
+import { useOverlay } from "@/contexts/PopupContext";
 
 import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api"
 
-import HomePostCard from "@/components/features/Home/HomePostCard";
 import { HOME_POSTS } from "@/posts/homePosts";
+import HomePostCard from "@/components/features/Home/HomePostCard";
+import YoutubeVideoCard from "@/components/features/Home/YoutubeVideoCard";
 
 import "@/pages/_Page.css"
 import "@/pages/Home.css"
@@ -16,6 +18,7 @@ import { locale } from "@/locales/locale";
 
 export default function Home() {
   const { lang } = useAppStore();
+  const { openOverlay } = useOverlay();
 
   const localeText = locale(lang).home;
 
@@ -71,36 +74,42 @@ export default function Home() {
           <h2 className={`title-text ${lang}-font`}>{localeText.title2}</h2>
 
           <div style={{ display: "flex", width: "100%", height: "auto", justifyContent: "space-between" }}>
-            <div className="article trailer">
+            <div className="article-item trailer">
               <span className={`article-title ${lang}-font`}>{localeText.video1}</span>
               {trailer ? (
-                <>
+                <div className="article" onClick={() => openOverlay(
+                  <YoutubeVideoCard video={trailer} />, { title: `${trailer.title}` }
+                )}>
                   <img src={trailer.thumbnail} alt={trailer.title} />
                   <span className={`${lang}-font`}>{trailer.title}</span>
                   <span className={`${lang}-font click`}>{localeText.click}</span>
-                </>
+                </div>
               ) : (<p className={`${lang}-font click`}>loading...</p>)}
             </div>
 
-            <div className="article combat">
+            <div className="article-item combat">
               <span className={`article-title ${lang}-font`}>{localeText.video2}</span>
               {combat ? (
-                <>
+                <div className="article" onClick={() => openOverlay(
+                  <YoutubeVideoCard video={combat} />, { title: `${combat.title}` }
+                )}>
                   <img src={combat.thumbnail} alt={combat.title} />
                   <span className={`${lang}-font`}>{combat.title}</span>
                   <span className={`${lang}-font click`}>{localeText.click}</span>
-                </>
+                </div>
               ) : (<p>loading...</p>)}
             </div>
 
-            <div className="article intro">
+            <div className="article-item intro">
               <span className={`article-title ${lang}-font`}>{localeText.video3}</span>
               {intro ? (
-                <>
+                <div className="article" onClick={() => openOverlay(
+                  <YoutubeVideoCard video={intro} />, { title: `${intro.title}` }
+                )}>
                   <img src={intro.thumbnail} alt={intro.title} />
                   <span className={`${lang}-font`}>{intro.title}</span>
                   <span className={`${lang}-font click`}>{localeText.click}</span>
-                </>
+                </div>
               ) : (<p>loading...</p>)}
             </div>
           </div>

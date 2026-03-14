@@ -13,7 +13,8 @@ export default function Layout() {
     document.body.classList.remove(
       "page-home",
       "page-characters",
-      "page-card"
+      "page-card",
+      "page-profile"
     );
 
     switch (location.pathname) {
@@ -28,13 +29,18 @@ export default function Layout() {
       case "/card":
         document.body.classList.add("page-card");
         break;
+
+      case "/profile":
+        document.body.classList.add("page-profile");
+        break;
     }
 
     return () => {
       document.body.classList.remove(
         "page-home",
         "page-characters",
-        "page-card"
+        "page-card",
+        "page-profile"
       );
     };
   }, [location.pathname]);

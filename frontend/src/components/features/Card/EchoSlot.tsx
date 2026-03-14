@@ -32,6 +32,7 @@ function MakeStatSlot({ StatId = "", StatValue = 0, color = "#666" }
 function StatToColor({StatId, StatValue, scoreValue} 
   : {StatId?: StatId; StatValue: number; scoreValue: number; }) {
   if (!StatId || !StatValue) return "#555";
+  if (StatId === "dummy") return "#555";
   if (!(scoreValue > 0)) return "#555"
   const StatMin: number = FixedStats[StatId].ValueSub[0] ?? -1;
   const StatMax: number = FixedStats[StatId].ValueSub[FixedStats[StatId].ValueSub.length - 1] ?? -1;

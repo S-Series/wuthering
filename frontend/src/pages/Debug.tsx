@@ -1,132 +1,115 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { login, loginWithGoogle, logout, signup, type UserProfile } from "@/firebase/auth";
 
-type ItemId = "A" | "B";
-type Position = { x: number; y: number };
+export default function Debug() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nickname, setNickname] = useState("");
 
-const INITIAL_POSITIONS: Record<ItemId, Position> = {
-  A: { x: 100, y: 100 },
-  B: { x: 250, y: 100 },
-};
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [message, setMessage] = useState("");
 
-export default function DragTwoItemsWithDropZone() {
-  const dropRef = useRef<HTMLDivElement | null>(null);
+  console.log(import.meta.env.VITE_FIREBASE_API_KEY);
 
-  const [positions, setPositions] = useState<Record<ItemId, Position>>(INITIAL_POSITIONS);
-  const [draggingId, setDraggingId] = useState<ItemId | null>(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const handleSignup = async () => {
+    setMessage("");
 
-  const handlePointerDown = (id: ItemId, e: React.PointerEvent<HTMLDivElement>) => {
-    const pos = positions[id];
-
-    setDraggingId(id);
-    setOffset({
-      x: e.clientX - pos.x,
-      y: e.clientY - pos.y,
-    });
+    try {
+      const userData = await signup(email, password, nickname);
+      setUser(userData);
+      setMessage("회원가입 성공");
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "회원가입 실패");
+    }
   };
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!draggingId) return;
+  const handleGoogleLogin = async () => {
+    setMessage("");
 
-    setPositions((prev) => ({
-      ...prev,
-      [draggingId]: {
-        x: e.clientX - offset.x,
-        y: e.clientY - offset.y,
-      },
-    }));
+    try {
+      const userData = await loginWithGoogle();
+      setUser(userData);
+      setMessage("Google 로그인 성공");
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "Google 로그인 실패");
+    }
   };
 
-  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!draggingId) return;
+  const handleLogin = async () => {
+    setMessage("");
 
-    const releasedId = draggingId;
-    setDraggingId(null);
+    try {
+      const userData = await login(email, password);
+      setUser(userData);
+      setMessage("로그인 성공");
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "로그인 실패");
+    }
+  };
 
-    const rect = dropRef.current?.getBoundingClientRect();
+  const handleLogout = async () => {
+    setMessage("");
 
-    const isInsideDropZone =
-      !!rect &&
-      e.clientX >= rect.left &&
-      e.clientX <= rect.right &&
-      e.clientY >= rect.top &&
-      e.clientY <= rect.bottom;
-
-    if (isInsideDropZone) {
-      setPositions((prev) => ({
-        ...prev,
-        [releasedId]: {
-          x: rect!.left,
-          y: rect!.top,
-        },
-      }));
-    } else {
-      setPositions((prev) => ({
-        ...prev,
-        [releasedId]: INITIAL_POSITIONS[releasedId],
-      }));
+    try {
+      await logout();
+      setUser(null);
+      setMessage("로그아웃 성공");
+    } catch (error) {
+      console.error(error);
+      setMessage(error instanceof Error ? error.message : "로그아웃 실패");
     }
   };
 
   return (
-    <div
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      style={{
-        width: "100vw",
-        height: "100vh",
-        position: "relative",
-        background: "#f5f5f5",
-      }}
-    >
-      <div
-        ref={dropRef}
-        style={{
-          position: "absolute",
-          left: 500,
-          top: 100,
-          width: 140,
-          height: 140,
-          border: "2px dashed #666",
-          background: "#ffffff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        DROP
+    <div style={{ padding: "24px" }}>
+      <h2>Firebase Auth Debug</h2>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxWidth: "320px" }}>
+        <input
+          type="text"
+          placeholder="닉네임"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+        />
+
+        <input
+          type="email"
+          placeholder="이메일"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button onClick={handleSignup}>회원가입</button>
+        <button onClick={handleLogin}>로그인</button>
+        <button onClick={handleGoogleLogin}>Google 로그인</button>
+        <button onClick={handleLogout}>로그아웃</button>
       </div>
 
-      <div
-        onPointerDown={(e) => handlePointerDown("A", e)}
-        style={{
-          position: "absolute",
-          left: positions.A.x,
-          top: positions.A.y,
-          width: 100,
-          height: 100,
-          background: "skyblue",
-          cursor: "grab",
-          transition: draggingId === "A" ? "none" : "left 220ms ease-out, top 220ms ease-out",
-        }}
-      >
-        A
+      <div style={{ marginTop: "16px" }}>
+        <p>{message}</p>
       </div>
 
-      <div
-        onPointerDown={(e) => handlePointerDown("B", e)}
-        style={{
-          position: "absolute",
-          left: positions.B.x,
-          top: positions.B.y,
-          width: 100,
-          height: 100,
-          background: "salmon",
-          cursor: "grab",
-          transition: draggingId === "B" ? "none" : "left 220ms ease-out, top 220ms ease-out",
-        }}
-      >
-        B
+      <div style={{ marginTop: "16px" }}>
+        <h3>유저 데이터</h3>
+        {user ? (
+          <div>
+            <p>uid: {user.uid}</p>
+            <p>email: {user.email}</p>
+            <p>nickname: {user.nickname}</p>
+          </div>
+        ) : (
+          <p>로그인된 유저 없음</p>
+        )}
       </div>
     </div>
   );

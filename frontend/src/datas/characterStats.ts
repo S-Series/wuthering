@@ -53,18 +53,35 @@ export const characterStat = {
     typeBns: [0, 0.0],
   },
   */
-  // == 3.1 ======================================= //
-  luuk_herssen: {
-    baseHp: 0,
-    baseAtk: 0,
-    baseDef: 0,
+  // == 3.2 ======================================= //
+  sigrika: {
+    baseHp: 10775,
+    baseAtk: 437,
+    baseDef: 1136,
 
-    CritRate: 5.0,
+    CritRate: 13.0,
     CritDmg: 150.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
 
-    atkPct: 0.0,
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  // == 3.1 ======================================= //
+  luuk_herssen: {
+    baseHp: 10300,
+    baseAtk: 462,
+    baseDef: 1112,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
     hpPct: 0.0,
     defPct: 0.0,
 

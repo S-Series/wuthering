@@ -134,19 +134,19 @@ export const character: Record<CharacterId, Character> = {
   },*/
 
   //*== ver 3.2 ===========================//
-  /* sigrika: {
+  sigrika: {
     en: "Sigrika",
     kr: "시그리카",
     jp: "",
     zh: "",
     hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
+    weapon: "gauntlet",
+    element: "aero",
+    type: "skill",
     version: 3.2,
     isElite: true,
-    region: ,
-  },*/
+    region: "Spacetrek Collective",
+  },
 
   //*== ver 3.1 ===========================//
   luuk_herssen: {

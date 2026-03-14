@@ -7,7 +7,7 @@ import { useAppStore } from "@/stores/appStore";
 type OverlayOptions = {
   title?: string;
   width?: number | string;        // "min(1000px, 100%)"
-  closeOnEsc?: boolean;           // default true
+  closeOnEsc?: boolean;           // default false
   closeOnBackdrop?: boolean;      // default true
   showCloseButton?: boolean;      // default true
 };
@@ -90,7 +90,7 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
             <div className="overlay-panel">
               {(state.options.title || state.options.showCloseButton) && (
                 <div className="overlay-header">
-                  <span className={`${lang}-font`}>{state.options.title}</span>
+                  <span className={`overlay-header-text ${lang}-font`}>{state.options.title}</span>
 
                   {state.options.showCloseButton && (
                     <button

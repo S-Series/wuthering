@@ -8,27 +8,6 @@ type HomePostCardProps = {
   lang: LangType;
 };
 
-const TYPE_LABEL: Record<HomePost["type"], Record<LangType, string>> = {
-  notice: {
-    kr: "공지",
-    en: "Notice",
-    jp: "お知らせ",
-    zh: "公告",
-  },
-  update: {
-    kr: "업데이트",
-    en: "Update",
-    jp: "アップデート",
-    zh: "更新",
-  },
-  event: {
-    kr: "이벤트",
-    en: "Event",
-    jp: "イベント",
-    zh: "活动",
-  },
-};
-
 function formatHomePostDate(dateString: string) {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return dateString;

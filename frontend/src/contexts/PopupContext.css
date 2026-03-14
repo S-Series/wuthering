@@ -32,9 +32,11 @@
     animation: scaleIn 0.15s ease-out;
 }
 
-.overlay-panel span {
+.overlay-panel .overlay-header-text {
     font-size: min(1.75vw, 1.75rem);
     font-weight: bold;
+    margin-left: min(1vw, 1rem);
+    filter: drop-shadow(0 2px 4px #000)
 }
 
 .overlay-header {
