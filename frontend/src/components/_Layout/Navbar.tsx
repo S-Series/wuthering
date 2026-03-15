@@ -4,11 +4,13 @@ import Select from "react-select";
 import { locale } from "@/locales/locale";
 
 import { useAppStore, type LangType } from "@/stores/appStore";
+import { useAuthStore } from "@/stores/authStore";
 import "@/components/_Layout/Navbar.css"
 
 export default function Navbar() {
 
   const { lang, setLang } = useAppStore();
+  const { user, isLoading } = useAuthStore();
   const [isActive, setIsActive] = useState(false);
 
   const localeText = locale(lang).navbar;
@@ -16,8 +18,8 @@ export default function Navbar() {
   function LangLabel({ v, src, text }: { v: string; src: string; text: string; }) {
     return (
       <div style={{ display: "flex", alignItems: "center", gap: 6, filter: "drop-shadow(0px 0px 4px #444)" }}>
-        <img src={src} style={{ width: "20%"}} />
-        <span className={`${v}-font`} style={{ fontSize: "min(1.3vw, 1.3rem)" }}>{text}</span>
+        <img src={src} style={{ width: "20%", minWidth: "1.25rem"}} />
+        <span className={`${v}-font`} style={{ fontSize: "max(min(1.3vw, 1.3rem), 0.75rem)" }}>{text}</span>
       </div>
     );
   }
@@ -28,6 +30,16 @@ export default function Navbar() {
     { value: "jp", label: <LangLabel v="jp" src="/flag-jp.png" text="日本語" /> },
     { value: "zh", label: <LangLabel v="zh" src="/flag-zh.png" text="中文" /> },
   ];
+
+  const profileName = isLoading
+    ? ""
+    : user
+      ? user.nickname
+      : "로그인";
+
+  const profileImage = isLoading
+    ? "/default.webp"
+    : user?.imageUrl ?? "/default.webp";
 
   return (
     <>
@@ -45,7 +57,7 @@ export default function Navbar() {
             styles={{
               control: (base) => ({
                 ...base,
-                width:"min(11.5vw, 11.5rem)",
+                width:"max(min(11.5vw, 11.5rem), 7.5rem)",
                 backgroundColor: "transparent",
               }),
               singleValue: (base) => ({
@@ -55,6 +67,10 @@ export default function Navbar() {
               option: (base) => ({
                 ...base,
                 backgroundColor: "#eee",
+              }),
+              dropdownIndicator: (base) => ({
+                ...base,
+                padding: "min(1vw, 1rem)"
               })
             }}
             value={LANG_OPTION.find((item) => item.value === lang)}
@@ -77,8 +93,8 @@ export default function Navbar() {
           <a href="/profile">
             <img className="navbar-icon"
               alt="title"
-              src="/default.webp" />
-            <p className={`${lang}-font`}>{localeText.login}</p>
+              src={profileImage} />
+            <p className={`${lang}-font`}>{profileName}</p>
           </a>
           <button onClick={() => setIsActive((prev) => !prev)}>
             <img className="navbar-icon"
@@ -91,9 +107,9 @@ export default function Navbar() {
       <div id="navbar-sidebar" className={`${isActive ? "active" : "idle"}`}>
         <a href="/profile">
           <img className="navbar-icon"
-            alt="title"
-            src="/default.webp" />
-          <p className={`${lang}-font`}>로그인</p>
+              alt="title"
+              src={profileImage} />
+            <p className={`${lang}-font`}>{profileName}</p>
         </a>
         <a href="/characters">
           <img className="navbar-icon"

@@ -97,10 +97,10 @@ export default function Characters() {
           </input>
         </div>
       </div>
+      
       <div className="slot-container">
         {
           filteredCharacters.map(([key, item]) => {
-            console.log("item: ", item)
             return <CharacterSlot isGrid={isDisplayGrid}
               key={key}
               id={key}

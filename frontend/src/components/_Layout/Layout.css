@@ -70,3 +70,8 @@ body.page-card::before {
 body.page-profile {
   background-image: url("/bg.png");
 }
+@media (max-width: 780px) {
+  #main-container {
+    padding-top: 80px;
+  }
+}

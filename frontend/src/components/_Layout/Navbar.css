@@ -152,4 +152,14 @@
     #navbar-sidebar.active {
         left: 0
     }
+
+    #navbar-body .item-slot p.title {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 420px) {
+    #navbar-body .navbar-icon.title {
+        height: 2.25rem;
+    }
 }

@@ -13,7 +13,6 @@ interface CharaterSlotProps {
 export default function CharacterSlot({ id, isGrid, prop }: CharaterSlotProps) {
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
-  console.log(BASE_URL);
   const { lang } = useAppStore();
 
   return (
@@ -35,10 +34,6 @@ export default function CharacterSlot({ id, isGrid, prop }: CharaterSlotProps) {
         <div className="character-info-slot">
           <span className={`name ${lang}-font`}>{prop[lang].charAt(0).toUpperCase() + prop[lang].slice(1)}</span>
           <img alt="" className="bigger" src={`${BASE_URL}/ico/element/${prop.element}.png`} />
-          {/*
-          <img alt="" src={`${BASE_URL}/ico/weapon_type/${prop.weapon}.webp`} />
-          <img alt="" src={`${BASE_URL}/ico/stats/${prop.type}Bns.webp`} />
-          */}
         </div>
 
       </a>

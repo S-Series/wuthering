@@ -351,6 +351,14 @@ export const weapon = {
       zh: "白昼之脊",
       imgKey: "ico007",
     },
+    gauntlet008:{ //* 시그리카
+			id: "gauntlet008",
+      en: "Solsworn Ciphers",
+      kr: "솔스원의 해석",
+      jp: "ソル・スウォーンの注釈",
+      zh: "昭日譯註",
+      imgKey: "ico008",
+    },
     
     //$ 4-Starts
     gauntlet101:{

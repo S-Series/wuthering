@@ -6,7 +6,9 @@ import { useAppStore } from "@/stores/appStore";
 
 type OverlayOptions = {
   title?: string;
-  width?: number | string;        // "min(1000px, 100%)"
+  width?: string | null;
+  height?: string | null;
+  ratio?: string | null;
   closeOnEsc?: boolean;           // default false
   closeOnBackdrop?: boolean;      // default true
   showCloseButton?: boolean;      // default true
@@ -24,8 +26,10 @@ type OverlayApi = {
 
 const DEFAULT_OPTIONS: Required<OverlayOptions> = {
   title: "",
-  width: "min(960px, 100%)",
-  closeOnEsc: true,
+  width: null,
+  height: null,
+  ratio: null,
+  closeOnEsc: false,
   closeOnBackdrop: true,
   showCloseButton: true,
 };
@@ -87,7 +91,11 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
               if (e.target === e.currentTarget) closeOverlay();
             }}
           >
-            <div className="overlay-panel">
+            <div className="overlay-panel" style={{
+                width: state.options.width ?? undefined,
+                height: state.options.height ?? undefined,
+                aspectRatio: state.options.ratio ?? undefined,
+              }}>
               {(state.options.title || state.options.showCloseButton) && (
                 <div className="overlay-header">
                   <span className={`overlay-header-text ${lang}-font`}>{state.options.title}</span>

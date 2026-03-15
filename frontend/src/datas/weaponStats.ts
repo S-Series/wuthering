@@ -221,6 +221,11 @@ export const weaponStat = {
     value: [24.3, 12],
     statType: [FixedStats.critRate.id, FixedStats.atkPct.id],
   },
+  gauntlet008: { //* 솔스원의 해석: 시그리카 전무
+    atk: 587,
+    value: [48.6, 12],
+    statType: [FixedStats.critDmg.id, FixedStats.atkPct.id],
+  },
   //$ ---------------------------------------
   gauntlet101: {
     atk: 337,

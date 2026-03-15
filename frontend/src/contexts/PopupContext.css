@@ -124,5 +124,8 @@
 @media (max-width: 1024px) {
     .overlay-panel {
         width: min(90vw, 70rem);
+        min-width: 400px;
+        aspect-ratio: none;
+
     }
 }

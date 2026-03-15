@@ -24,13 +24,19 @@
 }
 
 #card-page-slot .card-section.left {
-    min-width: 600px;
+    min-width: 400px;
     width: 77.5%;
     gap: 2rem;
 }
 
 #card-page-slot .card-section.right {
     width: 20%;
+}
+
+#card-page-slot .card-section.right .card-section-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     gap: 0.4rem;
 }
 
@@ -85,7 +91,6 @@
 
 #card-page-slot .card-section.right .card-slot.active {
     height: min(20vw, 22.2rem);
-    padding: 5% 0;
     border: 1px solid #ccc;
     transform: translateY(-1.0rem);
     transition: all 0.3s ease-in;
@@ -210,9 +215,6 @@
     outline: 0;
 }
 
-
-
-
 #card-page-slot .card-section.right .filter-item {
     display: flex;
     position: relative;
@@ -274,6 +276,8 @@
 }
 
 #card-page-slot .card-section.right .card-item.weapon {
+    display: flex;
+    position: relative;
     background: linear-gradient(45deg, #4d4d4d, #d8d8d8, #fff, #d8d8d8, #4d4d4d);
     flex-direction: row;
     padding: 0 2.5%;
@@ -285,7 +289,13 @@
     font-size: min(1.2vw, 0.975rem);
 }
 
-#card-page-slot .card-section.right .card-item.weapon span {
+#card-page-slot .card-section.right .card-item.weapon > img {
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+#card-page-slot .card-section.right .card-item.weapon > div > span {
     transform: translateX(min(4.8vw, 4.8rem));
 }
 
@@ -381,8 +391,8 @@
 .card-contents .card-contents-slot.footer {
     display: flex;
     width: 97%;
-    min-width: 480px;
-    height: min(2.75vw, 3rem);
+    min-width: 400px;
+    height: min(2.75vw, 2.75rem);
     justify-content: space-between;
 
     z-index: 99;
@@ -514,17 +524,18 @@
         min-width: 400px;
         flex-direction: column;
 
-        gap: 2rem;
+        gap: 2vh;
+        margin: 0;
         align-items: center;
     }
 
     #card-page-slot .card-section.left {
-        min-width: 480px;
+        min-width: 400px;
         width: 95%;
     }
 
     #card-page-slot .card-section.right {
-        min-width: 480px;
+        min-width: 400px;
         width: 95%;
     }
 
@@ -547,4 +558,59 @@
         gap: 0.5rem;
     }
 
+    #card-page-slot .card-section.left {
+    }
+
+    #card-page-slot .card-section.right{
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #card-page-slot .card-section.right .card-section-wrapper {
+        width: 32%;
+        align-items: center;
+    }
+
+    #card-page-slot .card-section.right .card-preview {
+        height: 5vh !important;
+    }
+
+    #card-page-slot .card-section.right .card-slot {
+        height: 30vh !important;
+        border: 1px solid #fff !important;
+        overflow-y: scroll !important;
+    }
+
+    .card-contents .card-contents-slot.header,
+    .card-contents .card-contents-slot.footer {
+        height: min(3vh, 1.5rem) !important;
+    }
+
+    .card-page-button {
+        height: min(3vh, 1.5rem) !important;
+        font-size: min(1vh, 0.5rem) !important;
+    }
+
+    #card-page-slot .card-section.right .card-item.weapon {
+        width: 85%;
+        aspect-ratio: 4 / 1;
+    }
+
+    #card-page-slot .card-section.right .card-item.weapon > img {
+        width: auto;
+        height: 100%;
+        aspect-ratio: 1 / 1;
+    }
+
+    #card-page-slot .card-section.right .card-slot.active {
+        transform: none !important;
+    }
+
+    #card-page-slot .card-section.right .card-slot.echo {
+        gap: 0;
+    }
+
+    #card-page-slot .card-section.right .card-item.weapon > div > span {
+        transform: translateX(max(8vw, 1rem));
+    }
 }

@@ -10,6 +10,8 @@
     border-top: 1px #000 solid;
     background: linear-gradient(0deg, #ccc, #aaa 40%, #aaa 60%, #ccc);
 
+    transition: height 0.2s ease-out;
+
     z-index: 1001;
 }
 
@@ -24,7 +26,7 @@
 
     color: #000;
     align-items: center;
-    white-space: pre-line;
+    white-space: pre;
     line-height: 1rem;
     font-size: 0.7rem;
 }
@@ -41,4 +43,18 @@
     aspect-ratio: 1/1;
     object-fit: contain;
     border-radius: 50%;
+}
+
+@media (max-width: 560px) {
+    #footer-body {
+        flex-direction: column-reverse;
+        height: 95px;
+        padding-top: 5px;
+        padding-bottom: 10px;
+        align-items: center;
+    }
+
+    #footer-body .item-slot {
+        text-align: center;
+    }
 }

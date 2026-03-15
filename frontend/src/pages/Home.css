@@ -12,6 +12,14 @@
     gap: min(2.4vw, 2.4rem);
 }
 
+.page-body.small {
+    width: 37.5%;
+}
+
+.page-body.large {
+    width: 60%;
+}
+
 .article-slot {
     display: flex;
     flex-direction: column;
@@ -33,6 +41,13 @@
     font-size: min(2.4vw, 2.4rem);
     font-weight: 700;
     filter: drop-shadow(0 2px 4px #000);
+}
+
+.page-body .article-slot .notice-slot {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
 }
 
 .article-slot .article-item {
@@ -123,4 +138,30 @@
     width: 100%;
     height: 85%;
     justify-content: space-between;
+}
+
+@media (max-width: 720px) {
+    .home-page-slot {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .page-body.large {
+        width: 90%;
+    }
+    .page-body.small {
+        width: 90%;
+        min-width: 320px;
+    }
+
+    .page-body .article-slot .notice-slot {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 30vh;
+        max-height: 20rem;
+        flex-wrap: wrap; 
+        overflow: scroll;
+
+        justify-content: center;
+    }
 }

@@ -58,18 +58,23 @@ export default function Home() {
 
   return (
     <div id="page-slot" className="home-page-slot">
-      <div className="page-body" style={{width: "37.5%"}}>
+      <div className="page-body small">
         <div className="article-slot">
           <h2 className={`title-text ${lang}-font`}>{localeText.title1}</h2>
-
+          <div className="notice-slot">
           {sortedPosts.map((post) => (<>
+            <HomePostCard key={post.id} post={post} lang={lang} />
+            <HomePostCard key={post.id} post={post} lang={lang} />
+            <HomePostCard key={post.id} post={post} lang={lang} />
+            <HomePostCard key={post.id} post={post} lang={lang} />
             <HomePostCard key={post.id} post={post} lang={lang} />
             </>
           ))}
+          </div>
         </div>
       </div>
 
-      <div className="page-body" style={{width: "60%"}}>
+      <div className="page-body large">
         <div className="article-slot">
           <h2 className={`title-text ${lang}-font`}>{localeText.title2}</h2>
 

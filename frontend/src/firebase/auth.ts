@@ -10,14 +10,16 @@ import { auth, db } from "./firebase";
 
 export type UserProfile = {
   uid: string;
-  email: string;
+  email: string | null;
   nickname: string;
+  imageUrl: string | null;
+  createdAt: number;
 };
 
 export async function signup(
   email: string,
   password: string,
-  nickname: string
+  nickname: string,
 ): Promise<UserProfile> {
   const credential = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -25,6 +27,8 @@ export async function signup(
     uid: credential.user.uid,
     email: credential.user.email ?? email,
     nickname,
+    imageUrl: null,
+    createdAt: Date.now(),
   };
 
   await setDoc(doc(db, "users", credential.user.uid), userProfile);
@@ -55,6 +59,7 @@ export async function loginWithGoogle(): Promise<UserProfile> {
   const user = credential.user;
   const userDocRef = doc(db, "users", user.uid);
   const userDocSnap = await getDoc(userDocRef);
+  console.log(user, credential, userDocRef, userDocSnap);
 
   if (userDocSnap.exists()) {
     return userDocSnap.data() as UserProfile;
@@ -64,6 +69,8 @@ export async function loginWithGoogle(): Promise<UserProfile> {
     uid: user.uid,
     email: user.email ?? "",
     nickname: user.displayName ?? "Google User",
+    imageUrl: user.photoURL ?? null,
+    createdAt: Date.now(),
   };
 
   await setDoc(userDocRef, userProfile);
@@ -73,4 +80,19 @@ export async function loginWithGoogle(): Promise<UserProfile> {
 
 export async function logout(): Promise<void> {
   await signOut(auth);
+}
+
+export function normalizeUserProfile(raw: unknown): UserProfile {
+  const data =
+    raw && typeof raw === "object"
+      ? (raw as Record<string, unknown>)
+      : {};
+
+  return {
+    uid: typeof data.uid === "string" ? data.uid : "",
+    email: typeof data.email === "string" ? data.email : null,
+    nickname: typeof data.nickname === "string" ? data.nickname : "Unknown",
+    imageUrl: typeof data.photoURL === "string" ? data.photoURL : null,
+    createdAt: typeof data.createdAt === "number" ? data.createdAt : Date.now(),
+  };
 }

@@ -39,3 +39,16 @@
     text-align: right;
     word-break: keep-all;
 }
+
+@media (max-width: 720px) {
+    .home-post-card {
+        padding: 2.5%;
+        width: auto;
+        height: 35%;
+        aspect-ratio: 4 / 2;
+    }
+
+    .home-post-card time {
+        margin-top: auto;
+    }
+}

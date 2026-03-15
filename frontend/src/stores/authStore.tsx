@@ -1,18 +1,21 @@
 import { create } from "zustand";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase/firebase";
+
 import {
   login,
   loginWithGoogle,
   logout,
+  normalizeUserProfile,
   signup,
   type UserProfile,
 } from "@/firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase/firebase";
+import { getGameProfile, saveGameProfile, type GameProfile } from "@/firebase/user";
 
 type AuthState = {
   user: UserProfile | null;
+  gameProfile: GameProfile | null;
   isLoading: boolean;
   setUser: (user: UserProfile | null) => void;
   initAuth: () => void;
@@ -22,8 +25,9 @@ type AuthState = {
   logoutAction: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
+  gameProfile: null,
   isLoading: true,
 
   setUser: (user) => set({ user }),
@@ -31,41 +35,65 @@ export const useAuthStore = create<AuthState>((set) => ({
   initAuth: () => {
     onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
-        set({ user: null, isLoading: false });
+        set({ user: null, gameProfile: null, isLoading: false });
         return;
       }
 
-      const snap = await getDoc(doc(db, "users", firebaseUser.uid));
+      const userSnap = await getDoc(doc(db, "users", firebaseUser.uid));
 
-      if (!snap.exists()) {
-        set({ user: null, isLoading: false });
+      if (!userSnap.exists()) {
+        set({ user: null, gameProfile: null, isLoading: false });
         return;
       }
+
+      const user = normalizeUserProfile(userSnap.data());
+      const gameProfile = await getGameProfile(firebaseUser.uid);
 
       set({
-        user: snap.data() as UserProfile,
+        user: user,
+        gameProfile: gameProfile,
         isLoading: false,
       });
     });
   },
 
+  refreshGameProfile: async () => {
+    const uid = get().user?.uid;
+    if (!uid) return;
+
+    const gameProfile = await getGameProfile(uid);
+    set({ gameProfile });
+  },
+
   signupAction: async (email, password, nickname) => {
     const user = await signup(email, password, nickname);
-    set({ user });
+    const gameProfile = await getGameProfile(user.uid)
+    set({ user, gameProfile });
   },
 
   loginAction: async (email, password) => {
     const user = await login(email, password);
-    set({ user });
+    const gameProfile = await getGameProfile(user.uid);
+
+    set({ user, gameProfile });
   },
 
   loginWithGoogleAction: async () => {
     const user = await loginWithGoogle();
-    set({ user });
+    const gameProfile = await getGameProfile(user.uid);
+    set({ user, gameProfile });
   },
 
   logoutAction: async () => {
     await logout();
-    set({ user: null });
+    set({ user: null, gameProfile: null });
+  },
+
+  saveGameProfileAction: async (next: GameProfile) => {
+    const uid = get().user?.uid;
+    if (!uid) return;
+
+    const gameProfile = await saveGameProfile(uid, next);
+    set({ gameProfile });
   },
 }));
