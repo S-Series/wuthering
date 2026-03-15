@@ -64,10 +64,6 @@ export default function Home() {
           <div className="notice-slot">
           {sortedPosts.map((post) => (<>
             <HomePostCard key={post.id} post={post} lang={lang} />
-            <HomePostCard key={post.id} post={post} lang={lang} />
-            <HomePostCard key={post.id} post={post} lang={lang} />
-            <HomePostCard key={post.id} post={post} lang={lang} />
-            <HomePostCard key={post.id} post={post} lang={lang} />
             </>
           ))}
           </div>
