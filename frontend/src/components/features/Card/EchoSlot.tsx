@@ -43,8 +43,9 @@ function StatToColor({StatId, StatValue, scoreValue}
   const grayValue = scoreValue > 1 ? 0 : scoreValue > 0 ? 75 : 150;
 
   const ratio: number = 1 - ((StatValue - StatMin) / (StatMax - StatValue)) / scoreValue;
-  
-  return `rgb(${baseValue - grayValue}, ${baseValue - grayValue}, ${baseValue * ratio - (grayValue * 1.1)})`
+  const safeRatio =  Math.max(0, Math.min(1, ratio));
+
+  return `rgb(${baseValue - grayValue}, ${baseValue - grayValue}, ${baseValue * safeRatio - (grayValue * 1.1)})`
 }
 
 export default function EchoSlot({index = 0 }: StatSlotProps) {
