@@ -1,5 +1,3 @@
-import type { LocaleSchema } from "./locale.schema";
-
 export const kr = {
   common: {
     open: "열기",
@@ -44,4 +42,4 @@ export const kr = {
     description2: `클릭해서 이미지파일을 선택\n혹은\n"Ctrl+V"로 이미지 붙여넣기`,
     description3: `낮잠자는 서버를 깨우고 있습니다...\n첫 요청은 20~30초 정도 걸릴 수 있습니다\n사용자님의 인내에 감사드립니다 :)`,
   }
-} satisfies LocaleSchema;
+};

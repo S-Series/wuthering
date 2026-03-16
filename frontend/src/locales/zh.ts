@@ -1,5 +1,3 @@
-import type { LocaleSchema } from "./locale.schema";
-
 export const zh = {
   common: {
     open: "",
