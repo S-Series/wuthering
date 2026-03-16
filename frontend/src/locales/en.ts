@@ -1,5 +1,3 @@
-import type { LocaleSchema } from "./locale.schema";
-
 export const en = {
   common: {
     open: "",
@@ -44,4 +42,4 @@ export const en = {
     description2: `Click to select an image file\nor\nPaste an image with "Ctrl+V"`,
     description3: `Waking up the server...\nThe first request may take\nabout 20–30 seconds\nThank you for your patience :)`,
   },
-} satisfies LocaleSchema;
+};

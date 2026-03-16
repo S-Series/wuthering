@@ -1,17 +1,12 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import vue from "@vitejs/plugin-vue";
+import { resolve } from "path";
 
 export default defineConfig({
-  plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
-    }),
-  ],
+  plugins: [vue()],
   resolve: {
     alias: {
-      "@": "/src",
+      "@": resolve(__dirname, "src"),
     },
   },
 });

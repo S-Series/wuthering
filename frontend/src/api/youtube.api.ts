@@ -16,7 +16,12 @@ export async function fetchLatestYoutube(
     `${import.meta.env.VITE_GATEWAY_URL}/api/youtube/latest?` +
     `lang=${encodeURIComponent(lang)}&` +
     `type=${encodeURIComponent(type)}`;
-  const res = await fetch(url, { signal: opts?.signal });
-  if (!res.ok) return null;
-  return (await res.json()) as YoutubeLatestVideo | null;
+  try {
+    const res = await fetch(url, { signal: opts?.signal });
+    if (!res.ok) return null;
+    return (await res.json()) as YoutubeLatestVideo | null;
+  } catch (e) {
+    if (e instanceof Error && e.name === 'AbortError') throw e;
+    return null;
+  }
 }
