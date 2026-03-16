@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/appStore";
 import { useImgStore } from "@/stores/imgStore";
@@ -31,10 +31,10 @@ import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
 
 export default function Card() {
 
-  const { lang } = useAppStore();
+  const { lang, imgVer } = useAppStore();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore } = useCharacter();
-  const navigate = useNavigate();
   const { openOverlay } = useOverlay();
+  const navigate = useNavigate();
   const localeText = locale(lang).card;
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
@@ -48,7 +48,8 @@ export default function Card() {
     { x: 13, y: 88.9 },
   ]
   const [searchParams] = useSearchParams();
-  const paramData = searchParams.get("character") ?? "empty";
+  const { characterId: paramCharacterId } = useParams<{ characterId?: string }>();
+  const queryCharacterId = searchParams.get("character") ?? "empty";
 
 
   const [cardSection, setCardSection] = useState(2);
@@ -165,13 +166,21 @@ export default function Card() {
   }
 
   useEffect(() => {
-    const fromList =
-      CHARACTER_LIST.find(([key]) => key === paramData)?.[0];
+    const fromParam =
+      CHARACTER_LIST.find(([key]) => key === paramCharacterId)?.[0];
+
+    const fromQuery  =
+      CHARACTER_LIST.find(([key]) => key === queryCharacterId)?.[0];
 
     const fromStorage = localStorage.getItem("selectedCharacterId");
 
-    if (fromList) {
-      setCharacterId(fromList);
+    if (fromParam) {
+      setCharacterId(fromParam);
+      return;
+    }
+
+    if (fromQuery) {
+      setCharacterId(fromQuery);
       navigate("/card", { replace: true });
       return;
     }
@@ -210,7 +219,6 @@ export default function Card() {
       [FixedStats.healBns.id]: characterBaseStat?.heal || 0,
     }
   }, [characterBaseStat]);
-
 
   const FINAL_STATS_MAP = useMemo<Partial<Record<StatId, number>>>(() => {
     return {
@@ -270,16 +278,12 @@ export default function Card() {
           {/* == //$ Main Content */}
           <div className="card-contents-slot main">
             <div className="main-item-slot character">
-              <div className="card-character-slot" style={{
-                backgroundImage: `${BASE_URL}/character/${characterId?.includes("rover")
-                  ? "rover"
-                  : characterId}/art.webp`
-              }}>
+              <div className="card-character-slot">
                 <ImagePicker src={characterImage.src}
                   defaultSrc={
                     `${BASE_URL}/character/${characterId?.includes("rover")
-                      ? "rover"
-                      : characterId}/stand.png`
+                      ? `rover?v=${imgVer}`
+                  : characterId}/stand.png?v=${imgVer}`
                   }
                   onChangeSrc={(src) =>
                     setImageSrc("characterImage", src)
@@ -332,7 +336,7 @@ export default function Card() {
             <div className="main-item-slot weapon">
               <div className="weapon-info-img">
                 <img alt="weapon icon" src={
-                  `${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png`}
+                  `${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png?v=${imgVer}`}
                   onError={(e) => {
                     e.currentTarget.dataset.fallback = "true";
                     e.currentTarget.src = "/default.webp";
@@ -471,7 +475,11 @@ export default function Card() {
               src={`${BASE_URL}/character/${selectedCharacterData.en}/ico.webp`}
               style={{ display: imageLoad.character === "loaded" ? "block" : "none" }}
               onLoad={() => setImageLoad(v => ({ ...v, character: "loaded" }))}
-              onError={() => setImageLoad(v => ({ ...v, character: "error" }))}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/default.webp"
+                setImageLoad(v => ({ ...v, character: "error" }));
+              }}
             />
 
             <span className={`${lang}-font`}>{selectedCharacterData[lang]}</span>
@@ -516,6 +524,7 @@ export default function Card() {
                   onClick={() => {
                     setCharacterId(item[0])
                     setCardSection(-1)
+                    navigate(`/card/${item[0]}`);
                   }}>
                   <img alt="character icon" src={`${BASE_URL}/character/${item[0].includes("rover")
                     ? "rover"
@@ -544,7 +553,7 @@ export default function Card() {
             {FILTERED_WEAPON.map((item, idx) => {
               return (
                 <div key={`weapon-filter-slot-${item}-${idx}`}
-                  className={`card-item weapon ${item.id.includes("00") ? "spectro" : "havoc"}${item.id === weaponData?.id ? "selected" : ""}`}
+                  className={`card-item weapon ${item.id.includes("00") ? "spectro" : "havoc"} ${item.id === weaponData?.id ? "selected" : ""}`}
                   onClick={() => {
                     const stat = weaponStat[item.id];
                     if (!stat) return;
@@ -576,9 +585,8 @@ export default function Card() {
                   <img key={`echo-slot-${item}`}
                     src={`${BASE_URL}/ico/echos/${characterData.echoData[item].echoId}.webp`}
                     onError={(e) => {
-                      const img = e.currentTarget;
-                      img.onerror = null;
-                      img.src = "default.webp"
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/default.webp"
                     }} />
                 )
               })

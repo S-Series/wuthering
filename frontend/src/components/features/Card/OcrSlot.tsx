@@ -10,7 +10,7 @@ import { FixedStats, type StatId } from "@/datas/stats";
 
 import OcrSelect from "@/components/features/Card/OcrSelect";
 import "./OcrSlot.css"
-import OcrSelectDrag from "./OcrSelectDrag";
+import OcrSelectDrag from "./OcrDragSelect";
 
 
 export default function OcrPlayground() {
@@ -201,8 +201,10 @@ export default function OcrPlayground() {
               {debug ? (<>
                 <span style={{ fontSize: "min(1vw, 0.85rem)" }}>EchoName: {debug?.echoName ?? "undefined"}</span>
                 <span style={{ fontSize: "min(1vw, 0.85rem)" }}>Cost: {debug?.cost ?? "undefined"}</span>
-                {debug.echoStats.map((item) =>
-                  <span style={{ fontSize: "min(1vw, 0.85rem)" }}>{StatsToText(item) ?? "undefined"}</span>
+                {debug.echoStats.map((item, idx) =>
+                  <span key={`stat-text-${idx}`} style={{ fontSize: "min(1vw, 0.85rem)" }}>
+                    {StatsToText(item) ?? "undefined"}
+                  </span>
                 )}
               </>) : (null)}
             </div>
@@ -219,6 +221,8 @@ export default function OcrPlayground() {
 
           <div style={{ display: "flex", flexDirection: "column", width: "90%", height: "67.5%", alignItems: "center", marginTop: "2.5%" }}>
               <OcrSelectDrag datas={{
+                cost: debug?.cost as 4 | 3 | 1 ?? 4,
+                echoId: debug?.echoId ?? null,
                 stats: debug?.echoStats ?? null,
               }} selectIdx={selectIdx}/>
           </div>

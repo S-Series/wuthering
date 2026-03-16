@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 export type LangType = "kr" | "en" | "jp" | "zh";
 
 export interface AppStore {
+    imgVer: number;
     lang: LangType;
     setLang: (v: LangType) => void;
 
@@ -24,6 +25,9 @@ export function isLangType(v: string | null): v is LangType {
 const AppContext = createContext<AppStore | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+
+    const imgVer = 1;
+
     const [lang, setLang] = useState<LangType>(() => {
         const saved = localStorage.getItem("LastLang");
         if (
@@ -59,6 +63,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }, [characterId])
 
     const value: AppStore = {
+        imgVer,
         lang,
         setLang,
         characterId,

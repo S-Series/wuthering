@@ -18,11 +18,11 @@ export default function CharacterSlot({ id, isGrid, prop }: CharaterSlotProps) {
   return (
     isGrid ? (
       <a className={`character-slot ${prop.isElite ? "elite" : ""}`}
-        href={`/card?character=${id}`}>
+        href={`/card/${id}`}>
 
         <div className="character-image-slot">
           <img className={`character-image ${prop.rank}`} alt="character image" 
-            src={`${BASE_URL}/character/${id.includes("rover") ? "rover" : id}/stand.png`} 
+            src={`${BASE_URL}/character/${id.includes("rover") ? "rover" : id}/stand.png?ver=2`} 
             />
           <div className={`card-bg ${prop.rank === "Empty" ? "empty" : prop.element}`} />
           <div className="overlay" />

@@ -23,6 +23,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/characters" element={<Characters />} />
         <Route path="/card" element={<Card />} />
+        <Route path="/card/:characterId" element={<Card />} />
         <Route path="/profile" element={<Profile />} />
 
         <Route path="/debug" element={<DragDebugPage />} />

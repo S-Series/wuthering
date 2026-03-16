@@ -36,6 +36,7 @@
 #card-page-slot .card-section.right .card-section-wrapper {
     display: flex;
     flex-direction: column;
+    align-items: center;
     width: 100%;
     gap: 0.4rem;
 }

@@ -6,6 +6,7 @@ import type { StatId } from "@/datas/stats";
 import type React from "react";
 import type { EchoRuntime } from "@/runtime/echo.runtime";
 import { useEffect } from "react";
+import type { DragItem } from "./OcrDragSelect";
 
 type SortableItemProps = {
   item: {
@@ -17,7 +18,7 @@ type SortableItemProps = {
   index: number;
   styles: [StylesConfig<any,false>, StylesConfig<any,false>];
   options: [SelectOptionStatOriginal[], SelectOpt[]];
-  onSelectChange: React.Dispatch<React.SetStateAction<EchoRuntime>>;
+  onSelectChange: React.Dispatch<React.SetStateAction<DragItem[]>>;
 };
 
 //$ =================================================
@@ -43,21 +44,6 @@ export function OcrDragSelectItem({
   };
 
   const isSelected = index < 5;
-
-  useEffect(() => onSelectChange((prev) => {
-    const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
-
-    nextSubOptions[index] = {
-      ...nextSubOptions[index],
-      statId: item.statId,
-      statValue: item.statValue,
-    };
-
-    return {
-      ...prev,
-      subOptions: nextSubOptions,
-    };
-  }), [item])
 
   return (
     <div
@@ -89,25 +75,19 @@ export function OcrDragSelectItem({
             styles={styles[0]}
             options={options[0]}
             onChange={(opt) => {
-              console.log(opt);
               onSelectChange((prev) => {
-                const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
-
-                nextSubOptions[index] = {
-                  ...nextSubOptions[index],
-                  statId: opt?.value ?? "dummy",
+                const next = [...prev];
+                next[index] = {
+                  ...prev[index],
+                  statId: opt.value
                 };
-
-                return {
-                  ...prev,
-                  subOptions: nextSubOptions,
-                };
+                return next;
               })
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
             isSearchable={false}
-            value={options[0].find((opt) => { return opt.value === item.statId })}
+            value={options[0].find((opt) => { return opt.value === item?.statId })}
           />
         </div>
 
@@ -124,23 +104,18 @@ export function OcrDragSelectItem({
             onChange={(opt) => {
               console.log(opt);
               onSelectChange((prev) => {
-                const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
-
-                nextSubOptions[index] = {
-                  ...nextSubOptions[index],
-                  statValue: opt?.value ?? 0,
+                const next = [...prev];
+                next[index] = {
+                  ...prev[index],
+                  statValue: opt.value
                 };
-
-                return {
-                  ...prev,
-                  subOptions: nextSubOptions,
-                };
+                return next;
               })
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
             isSearchable={false}
-            value={options[1].find((opt) => opt.value.toString() === item.statValue.toString())}
+            value={options[1].find((opt) => opt.value.toString() === item?.statValue?.toString())}
           />
         </div>
       </div>

@@ -17,21 +17,25 @@ export default function Layout() {
       "page-profile"
     );
 
-    switch (location.pathname) {
-      case "/":
+    switch (true) {
+      case location.pathname === "/":
         document.body.classList.add("page-home");
         break;
 
-      case "/characters":
+      case location.pathname.startsWith("/characters"):
         document.body.classList.add("page-characters");
         break;
 
-      case "/card":
+      case location.pathname.startsWith("/card"):
         document.body.classList.add("page-card");
         break;
 
-      case "/profile":
+      case location.pathname.startsWith("/profile"):
         document.body.classList.add("page-profile");
+        break;
+
+      default:
+        document.body.classList.add("page-home");
         break;
     }
 

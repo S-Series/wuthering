@@ -1,4 +1,4 @@
-import type { HarmonyId } from "@/datas/echos";
+import type { EchoId, HarmonyId } from "@/datas/echos";
 import { type StatId } from "@/datas/stats";
 
 export type EchoStatOption = {
@@ -12,7 +12,7 @@ export type EchoStatOptionSub = {
 };
 
 export type EchoRuntime = {
-  echoId: string;
+  echoId: EchoId | null;
   setId: HarmonyId | null;
   cost: 4 | 3 | 1;
 
@@ -27,7 +27,7 @@ export type EchoRuntime = {
 };
 
 export const createEmptyEchoRuntime = (cost: 4 | 3 | 1): EchoRuntime => ({
-  echoId: "",
+  echoId: null,
   setId: null,
   cost,
   mainOption: {

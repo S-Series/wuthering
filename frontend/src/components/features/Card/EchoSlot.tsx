@@ -6,6 +6,7 @@ import { getEquipmentRank } from "@/types/character.type";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import { FixedStats, type StatId } from "@/datas/stats";
 import { useMemo } from "react";
+import { useAppStore } from "@/stores/appStore";
 
 interface StatSlotProps {
   index: number;
@@ -49,7 +50,7 @@ function StatToColor({StatId, StatValue, scoreValue}
 }
 
 export default function EchoSlot({index = 0 }: StatSlotProps) {
-
+  const {imgVer} = useAppStore();
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { characterId, characterData, equipmentScore } = useCharacter();
   const Echodata = useMemo<EchoRuntime>(() => { return characterData.echoData[index] }, [index, characterData])
@@ -70,18 +71,16 @@ export default function EchoSlot({index = 0 }: StatSlotProps) {
     <div className={`echo-slot-body ${index < 0 ? "select" : ""}`}>
       <div className="echo-image-slot">
         <img className="echo-image" alt="echo icon"
-          src={`${BASE_URL}/ico/echos/${Echodata?.echoId}.webp`}
+          src={`${BASE_URL}/ico/echos/${Echodata?.echoId}.webp?v=${imgVer}`}
           onError={(e) => {
-            const img = e.currentTarget;
-            img.onerror = null;
-            img.src = "default.webp"
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/default.webp"
           }} />
         <img className="harmony-image" alt="echo icon"
-          src={`/ico/harmony/${Echodata?.setId}.png`}
+          src={`/ico/harmony/${Echodata?.setId}.png?v=${imgVer}`}
           onError={(e) => {
-            const img = e.currentTarget;
-            img.onerror = null;
-            img.src = "default.webp"
+            e.currentTarget.src = "/default.webp"
+            e.currentTarget.onerror = null;
           }} />
         <div className="divider echo" />
       </div>
@@ -124,7 +123,7 @@ export default function EchoSlot({index = 0 }: StatSlotProps) {
       <div className="divider stat" />
 
       <div className="score-container">
-        <img alt="rank icon" src={`/ico/rank/${getEquipmentRank(equipmentScore?.[Math.abs(index)][1] ?? 0)}.png`} />
+        <img alt="rank icon" src={`/ico/rank/${getEquipmentRank(equipmentScore?.[Math.abs(index)][1] ?? 0)}.png?v=${imgVer}`} />
         <div className="slot">
           <span className="en-font">Cv.</span>
           <span className="en-font"> <em className="num-font">{equipmentScore[Math.abs(index)][0].toFixed(1)}</em>pt</span>

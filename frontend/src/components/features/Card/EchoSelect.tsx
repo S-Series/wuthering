@@ -17,13 +17,11 @@ import { setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEch
 
 import "./EchoSelect.css"
 
-
-
 //#endregion ====================================
 
 export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
-  const { lang } = useAppStore();
+  const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData, patchCharacterData } = useCharacter();
 
@@ -41,7 +39,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const selectedEchoDictionaryData = useMemo<EchoData | null>(() => {
     const costKey = `Cost${selectedCost}` as const;
     const found = Object.entries(echoDict[costKey]).find(
-      ([echoId]) => echoId === selectedEchoData?.echoId
+      ([echoId]) => echoId === (selectedEchoData?.echoId ?? "")
     );
     return found ? found[1] : null;
   }, [selectedCost, selectedEchoData]);
@@ -96,7 +94,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
       }).map((opt) => ({
         value: opt.value,
         label: opt[lang],
-        path: opt.path,
+        path: opt.path + `?v=${imgVer}`,
       }));
   }, [ECHO_ID_OPTION_BASE, lang, characterData.echoData[index], index]);
 
@@ -112,7 +110,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const STAT_OPTION_SUB = STAT_OPTION_BASE.filter(
     (opt) => opt.subValue.length !== 0
   )
-
 
   const isFixedStatId = (id: string): id is keyof typeof FixedStats => id in FixedStats;
 
@@ -194,8 +191,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
           }}
         />
       </div>
-
-
 
       <div className="divider" />
 
