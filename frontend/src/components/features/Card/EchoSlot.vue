@@ -1,14 +1,22 @@
 <template>
   <div :class="`echo-slot-body ${index < 0 ? 'select' : ''}`">
-    <div class="echo-image-slot">
-      <img class="echo-image" alt="echo icon"
-        :src="`/ico/echos/${echoData?.echoId}.webp`"
-        @error="(e) => { (e.currentTarget as HTMLImageElement).src = 'default.webp' }" />
-      <img class="harmony-image" alt="harmony icon"
-        :src="`/ico/harmony/${echoData?.setId}.png`"
-        @error="(e) => { (e.currentTarget as HTMLImageElement).src = 'default.webp' }" />
-      <div class="divider echo" />
-    </div>
+    <template v-if="echoData && echoData.echoId">
+      <div class="echo-image-slot">
+        <img class="echo-image" alt="echo icon"
+          :src="getEchoIcon(echoData?.echoId)"
+          @error="(e) => { (e.currentTarget as HTMLImageElement).src = 'default.webp' }" />
+        <img class="harmony-image" alt="harmony icon"
+          :src="getHarmonyIconPng(echoData?.setId || 'default')"
+          @error="(e) => { (e.currentTarget as HTMLImageElement).src = 'default.webp' }" />
+        <div class="divider echo" />
+      </div>
+    </template>
+    <template v-else-if="index >= 0">
+      <div class="echo-image-slot">
+        <Skeleton width="100%" height="100%" />
+        <div class="divider echo" />
+      </div>
+    </template>
 
     <div class="stat-container main">
       <EchoStatSlot
@@ -38,7 +46,7 @@
     <div class="divider stat" />
 
     <div class="score-container">
-      <img alt="rank icon" :src="`/ico/rank/${getEquipmentRank(charStore.equipmentScore?.[Math.abs(index)][1] ?? 0)}.png`" />
+      <img alt="rank icon" :src="getRankIcon(getEquipmentRank(charStore.equipmentScore?.[Math.abs(index)][1] ?? 0))" />
       <div class="slot">
         <span class="en-font">Cv.</span>
         <span class="en-font"> <em class="num-font">{{ charStore.equipmentScore[Math.abs(index)][0].toFixed(1) }}</em>pt</span>
@@ -57,6 +65,8 @@ import { useCharacterStore } from "@/stores/characterDataStore";
 import { getEquipmentRank } from "@/types/character.type";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import { FixedStats, type StatId } from "@/datas/stats";
+import Skeleton from "@/components/Skeleton.vue";
+import { getEchoIcon, getHarmonyIconPng, getRankIcon, getStatIcon } from "@/utils/assetHelper";
 import "./EchoSlot.css";
 
 const props = defineProps<{ index: number }>();
@@ -74,7 +84,7 @@ const EchoStatSlot = defineComponent({
       h("div", { class: "echo-stat-slot" }, [
         h("img", {
           alt: "stat icon",
-          src: `/ico/stats/${p.statId}.webp`,
+          src: getStatIcon(p.statId || 'dummy'),
           onError: (e: Event) => {
             const img = e.currentTarget as HTMLImageElement;
             img.onerror = null;

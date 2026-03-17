@@ -78,7 +78,7 @@ const LANG_OPTIONS = [
   { value: "kr", src: "/flag-kr.png", text: "한국어" },
   { value: "en", src: "/flag-en.png", text: "English" },
   { value: "jp", src: "/flag-jp.png", text: "日本語" },
-  { value: "zh", src: "/flag-kr.png", text: "中文" },
+  { value: "zh", src: "/flag-zh.png", text: "中文" },
 ];
 
 const currentLangOption = computed(

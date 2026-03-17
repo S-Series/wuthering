@@ -12,6 +12,20 @@
     margin-top: 1rem;
     align-items: flex-start;
     justify-content: space-between;
+
+    /* Entry Animation */
+    animation: fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 #card-page-slot .card-section {
@@ -122,6 +136,31 @@
     height: 16px;
     align-items: center;
     justify-content: space-between;
+}
+
+#card-page-slot .card-section.right .search-slot {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+#card-page-slot .card-section.right .search-input {
+    width: 100%;
+    height: 2rem;
+    padding: 0 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #fff;
+    font-size: 0.9rem;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+#card-page-slot .card-section.right .search-input:focus {
+    outline: none;
+    border-color: #ffffffaa;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 #card-page-slot .card-section.right .card-slot.echo .echo-slot .stats {
@@ -310,7 +349,14 @@
 }
 
 #card-page-slot .card-section.right .card-item:hover {
-    transform: scale(1.1);
+    transform: scale(1.05) translateY(-5px);
+    border-color: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
+
+#card-page-slot .card-section.right .card-item:active {
+    transform: scale(0.98);
 }
 
 #card-page-slot .card-section.right .card-item.selected {
@@ -559,6 +605,7 @@
     }
 
     #card-page-slot .card-section.left {
+        width: 95%; /* fixed placeholder */
     }
 
     #card-page-slot .card-section.right{

@@ -10,10 +10,11 @@
     <iframe
       v-else
       class="youtube-iframe"
-      :src="`https://www.youtube.com/embed/${video.videoId}?autoplay=1`"
+      :src="`https://www.youtube-nocookie.com/embed/${video.videoId}?autoplay=1`"
       :title="video.title"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       referrerpolicy="strict-origin-when-cross-origin"
+      sandbox="allow-scripts allow-same-origin allow-presentation"
       allowfullscreen
     />
     <div class="youtube-panel-control">

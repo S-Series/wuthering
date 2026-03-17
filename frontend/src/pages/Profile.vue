@@ -1,6 +1,27 @@
 <template>
   <div id="page-slot">
-    <div v-if="authStore.isLoading" style="align-self: center">Loading...</div>
+    <div v-if="authStore.isLoading" class="profile-field loading">
+      <Skeleton width="400px" height="600px" border-radius="20px" class="main-stand-skeleton" />
+      <div class="container">
+        <div class="user-info">
+          <div class="profile-image-wrap">
+            <Skeleton type="circle" width="100%" height="100%" />
+          </div>
+          <div class="profile-image-wrap">
+            <Skeleton type="circle" width="100%" height="100%" />
+          </div>
+          <div class="text-box">
+            <Skeleton width="200px" height="24px" />
+            <Skeleton width="250px" height="20px" />
+            <Skeleton width="180px" height="18px" />
+          </div>
+          <div class="button-box">
+            <Skeleton width="100px" height="40px" />
+            <Skeleton width="100px" height="40px" />
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div v-else-if="authStore.user" class="profile-field">
       <img class="main-stand-image" :src="userImageUrl[2]" />
@@ -50,6 +71,7 @@
 import { ref, computed } from "vue";
 import { useAppStore } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
+import Skeleton from "@/components/Skeleton.vue";
 import "./Profile.css";
 
 const appStore = useAppStore();

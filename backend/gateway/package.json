@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^9",
+    "@fastify/helmet": "^11.1.1",
     "@fastify/multipart": "^7",
     "@fastify/rate-limit": "^8",
     "dotenv": "^16",

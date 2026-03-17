@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
+import helmet from "@fastify/helmet";
 import pLimit from "p-limit";
 import "dotenv/config";
 
@@ -92,6 +93,12 @@ async function main() {
     },
   });
 
+  await app.register(helmet, {
+    contentSecurityPolicy: false, // CSP is handle by frontend or disabled for dev
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  });
+
   await app.register(rateLimit, {
     global: true,
 
@@ -113,6 +120,18 @@ async function main() {
       cb(null, CORS_ORIGINS.includes(origin));
     },
     credentials: true,
+  });
+
+  app.setErrorHandler((error, request, reply) => {
+    app.log.error(error);
+    const statusCode = error.statusCode || 500;
+    const isClientError = statusCode >= 400 && statusCode < 500;
+    
+    reply.status(statusCode).send({
+      error: isClientError ? error.message : "Internal Server Error",
+      statusCode,
+      timestamp: new Date().toISOString()
+    });
   });
 
   app.get("/health", async () => ({ ok: true, upstream: OCR_UPSTREAM }));

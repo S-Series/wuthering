@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import { useOverlay, overlayOpen, overlayComponent, overlayProps, overlayOptions } from "@/composables/useOverlay";
 import { useAppStore } from "@/stores/appStore";
+import "./OverlayPanel.css";
 
 const appStore = useAppStore();
 const { closeOverlay } = useOverlay();
