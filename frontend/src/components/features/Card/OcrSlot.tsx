@@ -76,6 +76,12 @@ export default function OcrPlayground() {
     return `${head}: ${tail}`;
   }
 
+  const handleResetDebug = () => {
+    setFile(null);
+    setPreview(null);
+    setDebug(null);
+  }
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setFocused(false);
@@ -224,7 +230,7 @@ export default function OcrPlayground() {
                 cost: debug?.cost as 4 | 3 | 1 ?? 4,
                 echoId: debug?.echoId ?? null,
                 stats: debug?.echoStats ?? null,
-              }} selectIdx={selectIdx}/>
+              }} selectIdx={selectIdx} resetAction={handleResetDebug}/>
           </div>
         </div>
       </div>

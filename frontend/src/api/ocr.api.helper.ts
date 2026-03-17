@@ -7,7 +7,7 @@ import { ECHO_CANDIDATES, type EchoId } from "@/datas/echos";
 
 const RETOUCH_LIST:Record<LangType, [RegExp, string][]> = {
   kr: [
-    [/라어용|라어움|라어요|라어워|라어운|라o운|라워|라어음/g, "방어력"],
+    [/라어용|라어움|라어요|라어워|라어운|라o운|라워|라어음|늘어워/g, "방어력"],
     [/H위프|H위lI프|H위표|피혜|피해프|H위l표|H위표|H위I프/g, "피해"],
     [/룡푸음운/g, "공명 효율"],
     [/음운|옮운/g, "공명"],

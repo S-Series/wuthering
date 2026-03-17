@@ -14,7 +14,7 @@ export default function OcrSelect({selectIdx, setSelectIdx}: Props) {
 	return (
 		<div className="ocr-select-body">
 			<div className="select-item-slot">
-				<span className="item-slot-title"> asdf </span>
+				<span className="item-slot-title"> 에코 목록 </span>
 
 				<div className="item-slot-container">
 					<EchoDragSelect num={selectIdx} onClick={setSelectIdx} />
@@ -22,7 +22,7 @@ export default function OcrSelect({selectIdx, setSelectIdx}: Props) {
 			</div>
 
 			<div className="select-item-slot">
-				<span className="item-slot-title"> asdf </span>
+				<span className="item-slot-title"> 에코 데이터 </span>
 
 				<div className="item-slot-container">
 					<EchoSelect index={selectIdx as EchoIndex} />

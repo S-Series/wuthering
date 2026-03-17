@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -64,10 +64,11 @@ type Props = {
     echoId: EchoId | null,
     stats: [StatId, number][] | null,
   },
-  selectIdx: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+  selectIdx: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
+  resetAction: () => void,
 }
 
-export default function OcrSelectDrag({ datas, selectIdx }: Props) {
+export default function OcrSelectDrag({ datas, selectIdx, resetAction }: Props) {
   const { lang } = useAppStore();
   const { characterData, patchCharacterData } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
@@ -305,9 +306,11 @@ export default function OcrSelectDrag({ datas, selectIdx }: Props) {
 
       <button className="ocr-drag-select-apply-button"
         onClick={() => {
-          patchCharacterData(patchEchoAt(characterData, selectIdx, echoData))
+          patchCharacterData(patchEchoAt(characterData, selectIdx, echoData));
+          resetAction();
+          setEchoData(createEmptyEchoRuntime(4));
         }}>
-        <span> asdf </span>
+        <span> 데이터 적용 </span>
       </button>
     </>
   );

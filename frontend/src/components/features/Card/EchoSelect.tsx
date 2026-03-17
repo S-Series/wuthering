@@ -238,7 +238,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
         />
 
         <span className="main-stat-span num-font">
-          {characterData.echoData[index].mainOption.statValue.toFixed(1)}%
+          {(characterData?.echoData[index]?.mainOption?.statValue ?? 0).toFixed(1) }%
         </span>
       </div>
 

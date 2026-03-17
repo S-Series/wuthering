@@ -82,6 +82,10 @@
     padding: 0;
 }
 
+.ocr-drag-select-apply-button:disabled {
+    opacity: 0.25;
+}
+
 .ocr-drag-select-apply-button span{
     font-size: min(1vw, 1rem) !important;
 }

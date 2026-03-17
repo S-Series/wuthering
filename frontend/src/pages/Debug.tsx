@@ -12,7 +12,7 @@ export type RenderPayload = {
     uid: string;
   };
   character: {
-    imgKey: string;
+    id: string;
     name: string;
     constell: number;
     elementType: string;
@@ -21,7 +21,7 @@ export type RenderPayload = {
     mainStatType: string;
   };
   weapon: {
-    imgKey: string;
+    id: string;
     name: string;
     stats: [string, string];
     statType: string;
@@ -30,8 +30,15 @@ export type RenderPayload = {
     statName: string[];
     statValue: string[];
     additionalValue: string[];
+    harmony: [string, number][];
+    score: [number, number];
   };
-  echoes: { id: string }[];
+  echoes: { 
+    id: string,
+    statName: string[];
+    statValue: string[];
+    statColorHex: string[];
+  }[];
 };
 
 export async function requestRenderCard(payload: RenderPayload) {
@@ -59,19 +66,24 @@ export default function Debug() {
     const blob = await requestRenderCard({
       base: {
         lang: lang,
-        storage: BASE_URL,
       },
       user: { 
+        server: "Asia",
         name: "sharp", 
-        uid: "800123456" 
+        uid: "800123456",
+        level: 80,
       },
       character: { 
-        imgKey: "phoebe", 
+        id: "phoebe", 
         name: "피비", 
-        level: 90 
+        constell: 0,
+        elementType: "spectro",
+        weaponType: "string",
+        attackType: "string",
+        mainStatType: "string",
       },
       weapon: { 
-        imgKey: "fantasy_variation", 
+        id: "fantasy_variation", 
         name: "판타지 변주", 
       },
       stats: { 

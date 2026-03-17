@@ -15,6 +15,10 @@ def open_image(image_source) -> Image.Image:
     raise TypeError("Unsupported image source type")
 
 
+def open_image_from_path(image_path: str) -> Image.Image:
+    return Image.open(image_path).convert("RGBA")
+
+
 def paste_image(
     base: Image.Image,
     image_source,
