@@ -126,12 +126,12 @@ export default function OcrSelectDrag({ datas, selectIdx }: Props) {
   )
 
   const mainStatOptionBase = useMemo<SelectOptionStatOriginal[]>(() => {
-    const cost = 4;
+    const cost = echoData.cost;
     const index = cost === 4 ? 0 : cost === 3 ? 1 : 2;
 
-    return getStatOptionBase(lang, characterData.characterId).filter(
+    return getStatOptionBase(lang).filter(
       (opt) => opt.mainValue[index] > 0
-    )}, [lang, characterData.characterId]
+    )}, [lang, echoData.cost]
   )
 
   const statSelectOption = useMemo(() => {
@@ -187,7 +187,32 @@ export default function OcrSelectDrag({ datas, selectIdx }: Props) {
     }));
   }, [datas])
 
-  useEffect(() => console.log("items: ", items), [items]);
+  useEffect(() => {
+    const changed: EchoStatOption[] = items
+      .filter(
+        (item): item is DragItem & { statId: StatId; statValue: number } =>
+          item.statId !== null && item.statValue !== null
+      )
+      .map((item) => ({
+        statId: item.statId,
+        statValue: item.statValue,
+      }));
+
+    console.log(changed);
+
+    setEchoData((prev) => {
+      return {
+        ...prev, subOptions: [
+          changed[0] ?? { statId: "dummy", statValue: 0 },
+          changed[1] ?? { statId: "dummy", statValue: 0 },
+          changed[2] ?? { statId: "dummy", statValue: 0 },
+          changed[3] ?? { statId: "dummy", statValue: 0 },
+          changed[4] ?? { statId: "dummy", statValue: 0 },
+        ]
+      }
+    })
+  }, [items]);
+
   useEffect(() => console.log("echos: ", echoData), [echoData]);
 
   return (
@@ -213,7 +238,7 @@ export default function OcrSelectDrag({ datas, selectIdx }: Props) {
               menuPosition="fixed"
               minMenuHeight={200}
               menuShouldScrollIntoView={false}
-              value={mainStatOptionBase.find((e) => e.value === echoData.mainOption.statId)}
+              value={mainStatOptionBase.find((e) => {console.log(e); return e.value === echoData.mainOption.statId})}
               onChange={(opt) => setEchoData((prev) => ({...prev, mainOption: {
                 statId: opt.value,
                   statValue: (() => {
@@ -280,27 +305,6 @@ export default function OcrSelectDrag({ datas, selectIdx }: Props) {
 
       <button className="ocr-drag-select-apply-button"
         onClick={() => {
-          const changed: EchoStatOption[] = items
-            .filter(
-              (item): item is DragItem & { statId: StatId; statValue: number } =>
-                item.statId !== null && item.statValue !== null
-            )
-            .map((item) => ({
-              statId: item.statId,
-              statValue: item.statValue,
-            }));
-
-          console.log(changed);
-
-          setEchoData((prev) => {
-            return { ...prev, subOptions: [
-              changed[0] ?? {statId: "dummy", statValue: 0},
-              changed[1] ?? {statId: "dummy", statValue: 0},
-              changed[2] ?? {statId: "dummy", statValue: 0},
-              changed[3] ?? {statId: "dummy", statValue: 0},
-              changed[4] ?? {statId: "dummy", statValue: 0},
-            ] }
-          })
           patchCharacterData(patchEchoAt(characterData, selectIdx, echoData))
         }}>
         <span> asdf </span>

@@ -440,9 +440,10 @@ export const getEchoOptionBase = (
     selectedCost: Cost,
     BASE_URL: string
 ): SelectOriginalOption[] => {
-    const costKey = `Cost${selectedCost}` as const;
+    const safeCost = (selectedCost ?? 4);
+    const costKey = `Cost${safeCost}` as const;
 
-    return Object.entries(echoDict[costKey]).map(([echoId, echo]) => (
+    return Object.entries(echoDict[costKey] ?? []).map(([echoId, echo]) => (
     {
         value: echoId,
         label: echo[lang],
@@ -457,9 +458,9 @@ export const getEchoOptionBase = (
 
 export const getStatOptionBase = (
     lang: LangType,
-    characterId: CharacterId,
+    characterId?: CharacterId,
 ): SelectOptionStatOriginal[] => {
-    const score = characterScoreSheet[characterId];
+    const score = characterId ? characterScoreSheet[characterId] : null;
     const list = Object.entries(FixedStats).filter(
       (v) => v[1].id !== "dummy").map(([statId, stat]) => ({
         value: statId,
@@ -472,6 +473,8 @@ export const getStatOptionBase = (
         mainValue: stat.ValueMain,
         subValue: stat.ValueSub,
       }));
+
+    if (!score) return list;
 
     return [...list].sort((a, b) => {
       const aScore = score?.[a.value as keyof typeof score] ?? 0;

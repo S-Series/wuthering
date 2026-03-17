@@ -1,0 +1,4 @@
+CANVAS_WIDTH = 2140
+CANVAS_HEIGHT = 940
+
+BG_IMAGE_PATH = "./assets/BG.jpg"

@@ -7,10 +7,10 @@ import { ECHO_CANDIDATES, type EchoId } from "@/datas/echos";
 
 const RETOUCH_LIST:Record<LangType, [RegExp, string][]> = {
   kr: [
-    [/라어용|라어움|라어요|라어워|라어운|라o운|라워/g, "방어력"],
-    [/H위프|H위lI프|H위표|피혜|피해프|H위l표/g, "피해"],
+    [/라어용|라어움|라어요|라어워|라어운|라o운|라워|라어음/g, "방어력"],
+    [/H위프|H위lI프|H위표|피혜|피해프|H위l표|H위표|H위I프/g, "피해"],
     [/룡푸음운/g, "공명 효율"],
-    [/음운/g, "공명"],
+    [/음운|옮운/g, "공명"],
     [/룡우/g, "효율"],
     [/ㄱ릉|균릉|눈운공릉|눈운릉/g, "일반"],
     [/유우|음우/g, "해방"],
@@ -37,7 +37,10 @@ export function normalizeOcrTexts(res: OcrApiResponse): string[] {
 }
 
 export function retouchOcrTexts(texts: string[], lang: LangType) {
+  console.log(texts);
+
   const rules = RETOUCH_LIST[lang] ?? []
+
   const retouched = texts.map((item) => {
     let s = (item ?? "").toString();
     for (const [pattern, replacement] of rules) {
@@ -60,8 +63,8 @@ export function retouchOcrTexts(texts: string[], lang: LangType) {
     joined.push(retouched.slice(indexes[i], indexes[i + 1]));
   }
 
-  console.log(textsToStats(joined, lang));
-  
+  console.log(joined);
+
   return joined;
 }
 
@@ -111,7 +114,6 @@ export function textsToStats(texts: string[][], lang: LangType):{
   const tail: [StatId, string][] = [];
   for (const [label, value] of temp) {
     const bestText = fuzzySearch(label, candidateTexts)[0];
-    console.log(bestText);
     const statId = textToId.get(bestText) ?? FixedStats.dummy.id;
 
     if (statId === FixedStats.dummy.id) continue;
@@ -123,12 +125,15 @@ export function textsToStats(texts: string[][], lang: LangType):{
     echoCandidates.map((c) => c.text)
   );
   console.log(bestEcho);
+  console.log(body)
   console.log(tail)
 
   return {
     echoId: bestEcho.length < 1 ? null : echoCandidates.find((c) => c.text === bestEcho[0])?.echoId as EchoId,
     echoName: bestEcho.length < 1 ? null : bestEcho[0],
-    cost: Number(body.join("").replace(/\D/g, "")) ?? 1,
+    cost: (/\d/.test(body[0])
+      ? Number(body[0].replace(/\D/g, ""))
+      : Number(body.join("").replace(/\D/g, ""))) || 1,
     echoStats: tail.map(([statId, valueText]): [StatId, number] => [
       (() => {
         if (valueText.includes("%")) {
