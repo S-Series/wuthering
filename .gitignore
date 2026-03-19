@@ -49,7 +49,8 @@ pnpm-debug.log*
 # ================================
 # Python Backend
 # ================================
-/backend/__pycache__/
+**/__pycache__/
+**/*.pyc
 /backend/*.py[cod]
 /backend/.venv/
 /backend/env/
