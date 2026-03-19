@@ -1,6 +1,5 @@
 .card-contents .card-contents-slot.main {
-    background: url("/temp/result.png");
-    background: url("/cardBg.jpg");
+    background-image: url("/cardBg.jpg");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
