@@ -7,6 +7,7 @@ import { AppProvider } from "@/stores/appStore";
 import { StyleProvider } from "@/stores/styleStore";
 import { CharacterProvider } from "@/stores/characterDataStore";
 import { OverlayProvider } from "@/contexts/PopupContext";
+import { Analytics } from "@vercel/analytics/react";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <CharacterProvider>
             <OverlayProvider>
               <App />
+              <Analytics />
             </OverlayProvider>
           </CharacterProvider>
         </StyleProvider>
