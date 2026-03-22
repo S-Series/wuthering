@@ -1,50 +1,8 @@
+import type { RenderCardPayload } from "@/api/render.api";
 import { useAppStore } from "@/stores/appStore";
 import { useState } from "react";
 
-  type RenderPayload = {
-    base: {
-      lang: string;
-    };
-    user: {
-      server: string;
-      level: number;
-      name: string;
-      uid: string;
-    };
-    character: {
-      id: string;
-      name: string;
-      constell: number;
-      elementType: string;
-      weaponType: string;
-      attackType: string;
-      mainStatType: string;
-    };
-    weapon: {
-      id: string;
-      name: string;
-      stats: [string, string];
-      statType: string;
-      imgKey: string;
-    };
-    stats: {
-      statId: string[];
-      statName: string[];
-      statValue: string[];
-      additionalValue: string[];
-      harmony: [string, number][];
-      score: [number, number];
-    };
-    echoes: {
-      id: string,
-      statId: string[];
-      statValue: string[];
-      statColorHex: string[];
-    }[];
-  };
-
-
-export async function requestRenderCard(payload: RenderPayload) {
+export async function requestRenderCard(payload: RenderCardPayload) {
   const response = await fetch("http://localhost:8080/render/card", {
     method: "POST",
     headers: {
@@ -62,7 +20,6 @@ export async function requestRenderCard(payload: RenderPayload) {
 
 export default function Debug() {
   const {lang} = useAppStore();
-  const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const [previewUrl, setPreviewUrl] = useState<string>("")
 
   const handleClick = async () => {

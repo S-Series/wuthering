@@ -2,6 +2,19 @@ import { type CharacterId } from "@/datas/characterStats";
 import { type WeaponId } from "@/datas/weapon";
 import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime";
 
+export type ScoreList = [
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number],
+  [number, number]
+]
+
 export type CharacterRank = "Empty" | "B" | "A" | "S" | "SS" | "SSS";
 
 export type CharacterData = {

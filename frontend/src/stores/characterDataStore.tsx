@@ -2,25 +2,12 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { character } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
-import { createEmptyCharacterData, type CharacterData, type CharacterStat } from "@/types/character.type";
+import { createEmptyCharacterData, type CharacterData, type CharacterStat, type ScoreList } from "@/types/character.type";
 import { calcBaseStat, calcFinalStat } from "@/runtime/characterData.helpers";
 import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
-
-type ScoreList = [
-  [number, number],
-  [number, number],
-  [number, number],
-  [number, number],
-  [number, number],
-  [number, number],
-  [number, number],
-  [number, number],
-  [number, number],
-  [number, number]
-]
 
 type ContextType = {
   characterId: CharacterId;
@@ -298,7 +285,6 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
 
     return ret;
   }, [characterId, characterData.echoData, characterData.echoDataIndex])
-
 
 
   //$ ============================================

@@ -1,6 +1,6 @@
 from PIL import Image
 from app.utils.draw import draw_rect
-from app.utils.image import draw_image, draw_rect_topleft_round
+from app.utils.image import draw_icon, draw_rect_topleft_round
 from app.utils.text import draw_text
 
 
@@ -36,6 +36,6 @@ def draw_character_panel(
     icon_rects = [layout["icon1"], layout["icon2"], layout["icon3"], layout["icon4"]]
 
     for i, path in enumerate(icon_paths):
-        draw_image(base, path, icon_rects[i])
+        draw_icon(base, path, icon_rects[i])
 
-    draw_text(base,character_data.get("name"), layout["characer_name_text"], "kr", 51, anchor="rb", is_bold=True)
+    draw_text(base,character_data.get("name"), layout["characer_name_text"], character_data.get("lang"), 51, anchor="rb", is_bold=True)

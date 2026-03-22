@@ -8,3 +8,4 @@ export type CharacterSummaryStore = {
   version: number;
   data: Record<string, CharacterSummary>;
 };
+

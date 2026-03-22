@@ -9,11 +9,12 @@ def draw_weapon_panel(
     weapon: dict,
     layout: dict
 ):
-    draw_rect(base, layout["weapon_img"], (11, 11, 68), (255, 255, 255))
-
-    draw_text(base, weapon.get("name"), layout["weapon_name_text"], "kr", 30, is_bold=True)
-
+    draw_rect(base, layout["weapon_img"], (11, 11, 68))
     draw_image(base, weapon.get("weapon_image_path"),layout["weapon_img"])
+    draw_rect(base, layout["weapon_img"], (0, 0, 0, 0), (255, 255, 255))
+
+
+    draw_text(base, weapon.get("name"), layout["weapon_name_text"], weapon.get("lang"), 30, is_bold=True)
 
     draw_image(base, weapon.get("stat_icon_paths")[0],layout["weapon_icon"][0])
     draw_image(base, weapon.get("stat_icon_paths")[1],layout["weapon_icon"][1])

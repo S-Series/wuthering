@@ -168,3 +168,70 @@ def draw_rect_topleft_round(base, xy1, xy2, radius, fill = None, color_filter=(2
         draw.arc((0, 0, radius * 2, radius * 2), 180, 270, fill=color, width=round(width/1.5))
     # --------------------------------------------------------
     base.alpha_composite(rounded, dest=(x1, y1))
+
+
+def draw_icon(
+    base,
+    path,
+    xy1,
+    xy2=(0, 0, 1),
+    color_filter=(255, 255, 255),
+    opacity=1.0,
+    alpha_boost=1.8
+):
+    x, y, w, h = xy1
+    x_off, y_off, scale = xy2
+
+    try:
+        if not path:
+            return
+
+        if path.startswith("http"):
+            response = requests.get(path)
+            overlay = Image.open(BytesIO(response.content)).convert("RGBA")
+        else:
+            overlay = Image.open(path).convert("RGBA")
+
+        if alpha_boost != 1.0:
+            r, g, b, a = overlay.split()
+            a = a.point(lambda p: min(255, int(p * alpha_boost)))
+            overlay = Image.merge("RGBA", (r, g, b, a))
+
+        src_w, src_h = overlay.size
+        src_ratio = src_w / src_h
+        target_ratio = w / h
+
+        if src_ratio > target_ratio:
+            base_h = h
+            base_w = int(src_w * (h / src_h))
+        else:
+            base_w = w
+            base_h = int(src_h * (w / src_w))
+
+        new_w = max(1, int(base_w * scale))
+        new_h = max(1, int(base_h * scale))
+        overlay = overlay.resize((new_w, new_h), Image.LANCZOS)
+
+        cx = w / 2
+        cy = h / 2
+
+        paste_x = int(cx + x_off - new_w / 2)
+        paste_y = int(cy + y_off - new_h / 2)
+
+        frame = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        frame.paste(overlay, (paste_x, paste_y), overlay)
+
+        if opacity < 1:
+            alpha = frame.split()[3]
+            alpha = alpha.point(lambda p: int(p * opacity))
+            frame.putalpha(alpha)
+
+        if color_filter != (255, 255, 255):
+            r, g, b = color_filter
+            color_layer = Image.new("RGBA", frame.size, (r, g, b, 255))
+            frame = ImageChops.multiply(frame, color_layer)
+
+        base.paste(frame, (x, y), frame)
+
+    except Exception as err:
+        print("*Icon Load Failed*:", err)

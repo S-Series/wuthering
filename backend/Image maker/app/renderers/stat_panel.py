@@ -1,6 +1,6 @@
 from PIL import Image, ImageFont
 from app.utils.draw import draw_rect, draw_rounded_rect
-from app.utils.image import draw_image
+from app.utils.image import draw_image, draw_icon
 from app.utils.text import draw_text, FONT_MAP
 
 
@@ -25,8 +25,8 @@ def draw_stat_panel(
 
     for i in [0,1,2,3,4,5,6,7]:
         draw_rect(base, (710, 230 + 64 * i, 580 , 50), (255,255,255,25))
-        draw_image(base, paths[i], (720,233 + 64 * i, 44, 44))
-        draw_text(base, names[i], (775, 256 + 64 * i), "kr", 28, anchor="lm", is_bold=True)
+        draw_icon(base, paths[i], (720,233 + 64 * i, 44, 44))
+        draw_text(base, names[i], (775, 256 + 64 * i), stat.get("lang"), 28, anchor="lm", is_bold=True)
         draw_text(base, values[i], (1160, 256 + 64 * i), "num", 28, anchor="rm")
         draw_text(base, "+" + adds[i], (1180, 258 + 64 * i), "num", 20, anchor="lm", color=(255, 170, 0))
 
@@ -45,7 +45,7 @@ def draw_stat_panel(
     text_gap_x = 3
     text_half_gap = 18
 
-    font_lang = "jp"
+    font_lang = stat.get("lang")
     font_size = 28
     is_bold = True
 

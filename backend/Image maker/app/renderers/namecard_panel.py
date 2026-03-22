@@ -14,4 +14,4 @@ def draw_namecard_panel(
 
     #draw_rect(base, layout["rank_icon"], (0,0,0,0), (255,255,255), 2)
     draw_image(base, namecard.get("rank_icon_path"), layout["rank_icon"])
-    draw_text(base, namecard.get("score_text"), layout["rank_text"], "kr", 34, anchor="mb", is_bold=True)
+    draw_text(base, namecard.get("score_text"), layout["rank_text"], namecard.get("lang"), 34, anchor="mb", is_bold=True)

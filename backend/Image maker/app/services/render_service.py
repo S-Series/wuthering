@@ -3,9 +3,13 @@ from app.renderers.profile_card import render_profile_card
 
 
 def prepare_render_data(payload: dict) -> bytes:
+    base = payload.get("base", {})
+    lang = str(base.get("lang"))
+    print(lang)
 
     #region CharacterData Format ============================
     character = payload.get("character", {})
+    character["lang"] = lang
 
     #stand image
     c_id = character.get("id") or "rover_spectro"
@@ -30,6 +34,7 @@ def prepare_render_data(payload: dict) -> bytes:
 
     #region UserData Format ============================
     user = payload.get("user", {})
+    user["lang"] = lang
 
     #text value
     server_text = (user.get("server") or "Guest") + " Server"
@@ -46,6 +51,7 @@ def prepare_render_data(payload: dict) -> bytes:
 
     #region WeaponData Format ============================
     weapon = payload.get("weapon", {})
+    weapon["lang"] = lang
 
     w_type = character.get("weaponType") or None
     w_img_key = weapon.get("imgKey") or "default"
@@ -69,6 +75,7 @@ def prepare_render_data(payload: dict) -> bytes:
 
     #region StatData Format ============================
     stats = payload.get("stats", {})
+    stats["lang"] = lang
 
     stat_ids = stats.get("statId")
     stats["stat_icon_paths"] = [
@@ -100,6 +107,7 @@ def prepare_render_data(payload: dict) -> bytes:
 
     #region NamecardData Format ============================
     namecard = payload.get("namecard", {})
+    namecard["lang"] = lang
 
     score = namecard.get("score") or 0.0
     namecard["score_text"] = f"Tv. {score:.1f}pt"
@@ -120,6 +128,7 @@ def prepare_render_data(payload: dict) -> bytes:
     formatted_echoes = []
 
     for e in echoes[:5]:
+        e["lang"] = lang
         echo_id = e.get("id") or "default"
         harmony_id = e.get("harmonyId") or "default"
         rank = (e.get("rank") or "default").lower()

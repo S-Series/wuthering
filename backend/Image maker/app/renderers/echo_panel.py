@@ -1,6 +1,6 @@
 from PIL import Image
 from app.utils.draw import draw_rect, draw_line
-from app.utils.image import draw_image, draw_rect_topleft_round
+from app.utils.image import draw_image, draw_icon
 from app.utils.text import draw_text
 
 def hex_to_rgb(hex_color):
@@ -33,7 +33,7 @@ def draw_echo_panel(
 
         j_gap = 45
         for j, stat in enumerate(echo_data["stats"]):
-            draw_image(base, stat.get("path"), (1330 + i_gap * i, 477 + j_gap * j + (13 if j > 1 else 0), 30, 30))
+            draw_icon(base, stat.get("path"), (1330 + i_gap * i, 477 + j_gap * j + (13 if j > 1 else 0), 30, 30))
             draw_text(
                 base, 
                 stat.get("value"), 

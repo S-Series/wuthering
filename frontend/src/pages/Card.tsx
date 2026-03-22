@@ -28,6 +28,7 @@ import { locale } from "@/locales/locale";
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
 import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
+import { createPayloadData, requestRenderCard } from "@/api/render.api";
 
 export default function Card() {
 
@@ -197,7 +198,7 @@ export default function Card() {
     return {
       //* base stats
       [FixedStats.hp.id]: characterBaseStat?.hp || 0,
-      [FixedStats.atk.id]: characterBaseStat?.atk || 0,
+      [FixedStats.atk.id]: (characterBaseStat?.atk || 0) + (weaponData?.atk || 0),
       [FixedStats.def.id]: characterBaseStat?.def || 0,
       [FixedStats.resonanceBns.id]: characterBaseStat?.resonanceBns || 0,
       [FixedStats.critRate.id]: characterBaseStat?.critRate || 0,
@@ -247,186 +248,30 @@ export default function Card() {
     }
   }, [characterFinalStat]);
 
-  //! debug ============================================
+  const [testUrl, setTestUrl] = useState("");
+  const testing = createPayloadData(
+    lang, characterData, characterFinalStat, harmonySet, equipmentScore
+  );
+  const handleDownload = async () => {
+    try {
+      const blob = await requestRenderCard(testing);
 
-  type RenderPayload = {
-    base: {
-      lang: string;
-    };
-    user: {
-      server: string;
-      level: number;
-      name: string;
-      uid: string;
-    };
-    character: {
-      id: string;
-      name: string;
-      constell: number;
-      elementType: string;
-      weaponType: string;
-      attackType: string;
-      mainStatType: string;
-    };
-    weapon: {
-      id: string;
-      name: string;
-      stats: [string, string];
-      statType: string;
-      imgKey: string;
-    };
-    stats: {
-      statId: string[];
-      statName: string[];
-      statValue: string[];
-      additionalValue: string[];
-      harmony: [string, number][];
-      score: [number, number];
-    };
-    echoes: {
-      id: string,
-      statId: string[];
-      statValue: string[];
-      statColorHex: string[];
-    }[];
-  };
+      const url = URL.createObjectURL(blob);
+      setTestUrl(url);
 
-  async function requestRenderCard(payload) {
-    const response = await fetch("http://localhost:8080/render/card", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "card.png"; // 파일 이름
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
 
-    if (!response.ok) {
-      throw new Error(`Render request failed: ${response.status}`);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
     }
-
-    return response.blob();
-  }
-
-  const [previewUrl, setPreviewUrl] = useState<string>("")
-
-  const handleClick = async () => {
-    setPreviewUrl("");
-    const blob = await requestRenderCard({
-      base: {
-        lang: lang,
-      },
-      user: {
-        server: "Asia",
-        name: "SSeries",
-        uid: "800123456",
-        level: 80,
-      },
-      character: {
-        id: "phoebe",
-        name: "페비",
-        constell: 0,
-        elementType: "spectro",
-        weaponType: "rectifier",
-        attackType: "heavy",
-        mainStatType: "atk",
-      },
-      weapon: {
-        id: "fantasy_variation",
-        name: "꼭두각시의 손",
-        stats: ["500", "36.0"],
-        statType: "critRate",
-        imgKey: "ico002",
-      },
-      stats: {
-        statId: ["hp","atk","def","resonanceBns","critRate","critDmg","spectroBns","heavyBns"],
-        statName: ["HP","공격력","방어력","공명 효율","크리티컬","크리티컬 피해","회절 피해보너스","강공격 피해보너스"],
-        statValue: ["15384","1370","1259","100.0%","41.0%","166.0%","12.0%","0.0%"],
-        additionalValue: ["4559","1557","413","0.0%","36.0%","16.0%","12.0%","0.0%"],
-        harmony: [["Star", "Tesing 01", "3"], ["Cloud", "Testing 02", "3"]],
-        score: [150.3, 314.6],
-      },
-      namecard: {
-        score: 273.9,
-        rank: "ss",
-      },
-      echoes: [{
-        id: "Z04",
-        harmonyId: "Rift",
-        stats: [
-          { "statId": "atkPct", "statValue": "18.0%", "statColorHex": "#fff" },
-          { "statId": "hp", "statValue": "2280", "statColorHex": "#fff" },
-          { "statId": "critRate", "statValue": "10.5%", "statColorHex": "#fc0" },
-          { "statId": "critDmg", "statValue": "21.0%", "statColorHex": "#555" },
-          { "statId": "atkPct", "statValue": "11.6%", "statColorHex": "#c90" },
-          { "statId": "ResonanceBns", "statValue": "12.6%", "statColorHex": "#fff" },
-          { "statId": "atk", "statValue": "50", "statColorHex": "#fff" }
-        ],
-        scores: ["34.8", "49.1"],
-        rank: "sss"
-      }, {
-        id: "Z04",
-        harmonyId: "Rift",
-        stats: [
-          { "statId": "atkPct", "statValue": "18.0%", "statColorHex": "#fff" },
-          { "statId": "hp", "statValue": "2280", "statColorHex": "#fff" },
-          { "statId": "critRate", "statValue": "10.5%", "statColorHex": "#fc0" },
-          { "statId": "critDmg", "statValue": "21.0%", "statColorHex": "#555" },
-          { "statId": "atkPct", "statValue": "11.6%", "statColorHex": "#c90" },
-          { "statId": "ResonanceBns", "statValue": "12.6%", "statColorHex": "#fff" },
-          { "statId": "atk", "statValue": "50", "statColorHex": "#fff" }
-        ],
-        scores: ["34.8", "49.1"],
-        rank: "sss"
-      }, {
-        id: "Z04",
-        harmonyId: "Rift",
-        stats: [
-          { "statId": "atkPct", "statValue": "18.0%", "statColorHex": "#fff" },
-          { "statId": "hp", "statValue": "2280", "statColorHex": "#fff" },
-          { "statId": "critRate", "statValue": "10.5%", "statColorHex": "#fc0" },
-          { "statId": "critDmg", "statValue": "21.0%", "statColorHex": "#555" },
-          { "statId": "atkPct", "statValue": "11.6%", "statColorHex": "#c90" },
-          { "statId": "ResonanceBns", "statValue": "12.6%", "statColorHex": "#fff" },
-          { "statId": "atk", "statValue": "50", "statColorHex": "#fff" }
-        ],
-        scores: ["34.8", "49.1"],
-        rank: "sss"
-      }, {
-        id: "Z04",
-        harmonyId: "Rift",
-        stats: [
-          { "statId": "atkPct", "statValue": "18.0%", "statColorHex": "#fff" },
-          { "statId": "hp", "statValue": "2280", "statColorHex": "#fff" },
-          { "statId": "critRate", "statValue": "10.5%", "statColorHex": "#fc0" },
-          { "statId": "critDmg", "statValue": "21.0%", "statColorHex": "#555" },
-          { "statId": "atkPct", "statValue": "11.6%", "statColorHex": "#c90" },
-          { "statId": "ResonanceBns", "statValue": "12.6%", "statColorHex": "#fff" },
-          { "statId": "atk", "statValue": "50", "statColorHex": "#fff" }
-        ],
-        scores: ["34.8", "49.1"],
-        rank: "sss"
-      }, {
-        id: "Z04",
-        harmonyId: "Rift",
-        stats: [
-          { "statId": "atkPct", "statValue": "18.0%", "statColorHex": "#fff" },
-          { "statId": "hp", "statValue": "2280", "statColorHex": "#fff" },
-          { "statId": "critRate", "statValue": "10.5%", "statColorHex": "#fc0" },
-          { "statId": "critDmg", "statValue": "21.0%", "statColorHex": "#555" },
-          { "statId": "atkPct", "statValue": "11.6%", "statColorHex": "#c90" },
-          { "statId": "ResonanceBns", "statValue": "12.6%", "statColorHex": "#fff" },
-          { "statId": "atk", "statValue": "50", "statColorHex": "#fff" }
-        ],
-        scores: ["34.8", "49.1"],
-        rank: "sss"
-      },],
-    });
-
-    const imageUrl = URL.createObjectURL(blob);
-    setPreviewUrl(imageUrl);
   };
-
-  //! debug end ============================================
+  console.log(testing);
 
   //* == return data ================================================//
   return (
@@ -636,8 +481,10 @@ export default function Card() {
           </div>
         </div>
         {/* 
-        <button onClick={handleClick}>Request</button>
-        <button onClick={() => setPreviewUrl("")}>Clear</button>
+        */}
+        <button onClick={handleDownload}>Request</button>
+        <img src={testUrl} style={{width: "100%"}}/>
+        {/* 
         */}
       </div>
 

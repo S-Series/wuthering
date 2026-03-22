@@ -1,5 +1,6 @@
-import { Outlet, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 
 import Navbar from "@/components/_Layout/Navbar";
 import Footer from "@/components/_Layout/Footer";
@@ -62,6 +63,8 @@ export default function Layout() {
       <footer>
         <Footer />
       </footer>
+
+      <Analytics />
     </>
   );
 }
