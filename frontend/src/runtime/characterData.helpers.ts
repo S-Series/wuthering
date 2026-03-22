@@ -1,11 +1,11 @@
 import { character } from "@/datas/characters";
 import type { CharacterData, CharacterStat } from "@/types/character.type";
 import type { EchoRuntime, EchoStatOption } from "@/runtime/echo.runtime";
-import { characterStat } from "@/datas/characterStats";
+import { characterStat, type CharacterId } from "@/datas/characterStats";
 import { weaponStat } from "@/datas/weaponStats";
 import type { WeaponId } from "@/datas/weapon";
 import type { StatId } from "@/datas/stats";
-import type { EchoId } from "@/datas/echos";
+import { echoDict, getEchoCostKey, type EchoCostKey, type EchoData, type EchoId } from "@/datas/echos";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -168,7 +168,7 @@ export const calcFinalStat = (
   data: CharacterData,
   harmonySet: Partial<Record<HarmonyId, number>>
 ) => {
-  const id = data.characterId;
+  const id : CharacterId = data.characterId;
   const characterData = character[id];
   const characterEchoData = data.echoData;
   const C_baseStat = characterStat[id];
@@ -253,6 +253,25 @@ export const calcFinalStat = (
     }
   }
 
+  const cost = data.echoData[0].cost;
+  const mainEchoId = data.echoData[0].echoId;
+
+  console.log(mainEchoId);
+
+  if (mainEchoId) {
+    const costKey: EchoCostKey | null = getEchoCostKey(cost);
+    if (costKey){
+      const mainEcho: Omit<EchoData, "id"> | null  = echoDict[costKey][mainEchoId];
+
+      if (mainEcho) {
+        const mainEchoStats = mainEcho.getStats(id);
+        for (const stat of mainEchoStats) {
+          equipmentStats[stat.statId] += stat.value;
+        }
+      }
+    }
+  }
+
   /// ======================================================
 
   const harmonyStats: Record<StatId, number> = {
@@ -299,6 +318,10 @@ export const calcFinalStat = (
       harmonyStats[stat.statId] += stat.value;
     }
   }
+
+  /// ======================================================
+
+
 
   /// ======================================================
 
