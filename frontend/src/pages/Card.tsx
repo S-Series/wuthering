@@ -481,10 +481,8 @@ export default function Card() {
           </div>
         </div>
         {/* 
-        */}
         <button onClick={handleDownload}>Request</button>
         <img src={testUrl} style={{width: "100%"}}/>
-        {/* 
         */}
       </div>
 
