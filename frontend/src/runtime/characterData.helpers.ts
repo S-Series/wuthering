@@ -5,7 +5,8 @@ import { characterStat } from "@/datas/characterStats";
 import { weaponStat } from "@/datas/weaponStats";
 import type { WeaponId } from "@/datas/weapon";
 import type { StatId } from "@/datas/stats";
-import type { HarmonyId } from "@/datas/echos";
+import type { EchoId } from "@/datas/echos";
+import { harmony, type HarmonyId } from "@/datas/harmonies";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;
@@ -64,7 +65,7 @@ const updateEchoAtPatch = (
 export const setEchoId = (
   data: CharacterData,
   echoIndex: EchoIndex,
-  echoId: string
+  echoId: EchoId
 ): Partial<CharacterData> => {
   return updateEchoAtPatch(data, echoIndex, (e) => ({ ...e, echoId }));
 };
@@ -121,7 +122,7 @@ export const patchEchoAt = (
 };
 
 export const calcBaseStat = (data: CharacterData) => {
-  const id = data.characterId
+  const id = data.characterId;
   const characterData = character[id];
   const C_baseStat = characterStat[id];
   const W_baseStat = weaponStat[data?.weaponId || "dummy"];
@@ -163,10 +164,13 @@ export const calcBaseStat = (data: CharacterData) => {
   return stats;
 };
 
-export const calcFinalStat = (data: CharacterData) => {
-  const id = data.characterId
+export const calcFinalStat = (
+  data: CharacterData,
+  harmonySet: Partial<Record<HarmonyId, number>>
+) => {
+  const id = data.characterId;
   const characterData = character[id];
-  const characterEchoData = data.echoData
+  const characterEchoData = data.echoData;
   const C_baseStat = characterStat[id];
   const W_baseStat = weaponStat[data?.weaponId || "dummy"];
   const stats: CharacterStat = {
@@ -192,6 +196,7 @@ export const calcFinalStat = (data: CharacterData) => {
 
     dummy: 0,
   };
+
   const equipmentStats: Record<StatId, number> = {
     dummy: 0,
     hp: 0,
@@ -205,7 +210,7 @@ export const calcFinalStat = (data: CharacterData) => {
     critRate: 0,
     critDmg: 0,
     healBns: 0,
-    
+
     typeBns: 0, // All Element Bonus
     aeroBns: 0,
     fusionBns: 0,
@@ -218,15 +223,14 @@ export const calcFinalStat = (data: CharacterData) => {
     heavyBns: 0,
     skillBns: 0,
     liberationBns: 0,
-    
-  }
-  
+  };
+
   equipmentStats.hpPct += C_baseStat.hpPct;
   equipmentStats.atkPct += C_baseStat.atkPct;
   equipmentStats.defPct += C_baseStat.defPct;
-  
-  equipmentStats[`${characterData.element}Bns`] += C_baseStat.typeBns[0] 
-  equipmentStats[`${characterData.type}Bns`] += C_baseStat.typeBns[1]
+
+  equipmentStats[`${characterData.element}Bns`] += C_baseStat.typeBns[0];
+  equipmentStats[`${characterData.type}Bns`] += C_baseStat.typeBns[1];
 
   equipmentStats[W_baseStat.statType[0]] += W_baseStat.value[0];
   equipmentStats[W_baseStat.statType[1]] += W_baseStat.value[1];
@@ -241,22 +245,108 @@ export const calcFinalStat = (data: CharacterData) => {
     equipmentStats[loopData.mainOption.statId] +=
       loopData.mainOption.statValue !== -1 ? loopData.mainOption.statValue : 0;
 
-    for (let j = 0; j < 5; j++){
+    for (let j = 0; j < 5; j++) {
       equipmentStats[loopData.subOptions[j].statId] +=
-        loopData.subOptions[j].statValue !== -1 ? loopData.subOptions[j].statValue : 0;
+        loopData.subOptions[j].statValue !== -1
+          ? loopData.subOptions[j].statValue
+          : 0;
     }
   }
 
-  stats.hp = -1 + Math.round(C_baseStat.baseHp + equipmentStats.hp + C_baseStat.baseHp * equipmentStats.hpPct / 100);
-  stats.atk = -1 + Math.round(C_baseStat.baseAtk + W_baseStat.atk + equipmentStats.atk + (C_baseStat.baseAtk + W_baseStat.atk) * equipmentStats.atkPct / 100);
-  stats.def = +1 + Math.round(C_baseStat.baseDef + equipmentStats.def + C_baseStat.baseDef * equipmentStats.defPct / 100);
+  /// ======================================================
 
-  stats.resonanceBns = C_baseStat.ResonanceBns + equipmentStats.resonanceBns;
-  stats.critRate = C_baseStat.CritRate + equipmentStats.critRate;
-  stats.critDmg = C_baseStat.CritDmg + equipmentStats.critDmg;
+  const harmonyStats: Record<StatId, number> = {
+    dummy: 0,
+    hp: 0,
+    hpPct: 0,
+    atk: 0,
+    atkPct: 0,
+    def: 0,
+    defPct: 0,
 
-  stats[characterData.element] = C_baseStat.typeBns[0] + equipmentStats[`${characterData.element}Bns`] + equipmentStats.typeBns;
-  stats[characterData.type] = C_baseStat.typeBns[1] + equipmentStats[`${characterData.type}Bns`];
+    resonanceBns: 0,
+    critRate: 0,
+    critDmg: 0,
+    healBns: 0,
+
+    typeBns: 0, // All Element Bonus
+    aeroBns: 0,
+    fusionBns: 0,
+    glacioBns: 0,
+    electroBns: 0,
+    spectroBns: 0,
+    havocBns: 0,
+
+    basicBns: 0,
+    heavyBns: 0,
+    skillBns: 0,
+    liberationBns: 0,
+  };
+
+  for (const [id, activeCount] of Object.entries(harmonySet)) {
+    const harmonyId = id as HarmonyId;
+    if (!activeCount) continue;
+
+    const harmonyData = harmony[harmonyId];
+    if (!harmonyData) continue;
+
+    const activeOption = harmonyData.option.find(
+      (opt) => opt.count === activeCount
+    );
+    if (!activeOption) continue;
+
+    for (const stat of activeOption.options) {
+      harmonyStats[stat.statId] += stat.value;
+    }
+  }
+
+  /// ======================================================
+
+  stats.hp =
+    -1 +
+    Math.round(
+      C_baseStat.baseHp +
+        equipmentStats.hp +
+        (C_baseStat.baseHp * equipmentStats.hpPct) / 100 +
+        (C_baseStat.baseHp * harmonyStats.hpPct) / 100
+    );
+  stats.atk =
+    -1 +
+    Math.round(
+      C_baseStat.baseAtk +
+        W_baseStat.atk +
+        equipmentStats.atk +
+        ((C_baseStat.baseAtk + W_baseStat.atk) * equipmentStats.atkPct) / 100 +
+        ((C_baseStat.baseAtk + W_baseStat.atk) * harmonyStats.atkPct) / 100
+    );
+  stats.def =
+    +1 +
+    Math.round(
+      C_baseStat.baseDef +
+        equipmentStats.def +
+        (C_baseStat.baseDef * equipmentStats.defPct) / 100 +
+        (C_baseStat.baseDef * harmonyStats.defPct) / 100
+    );
+
+  stats.resonanceBns =
+    C_baseStat.ResonanceBns +
+    equipmentStats.resonanceBns +
+    harmonyStats.resonanceBns;
+  stats.critRate =
+    C_baseStat.CritRate + equipmentStats.critRate + harmonyStats.critRate;
+  stats.critDmg =
+    C_baseStat.CritDmg + equipmentStats.critDmg + harmonyStats.critDmg;
+
+  stats[characterData.element] =
+    C_baseStat.typeBns[0] +
+    equipmentStats[`${characterData.element}Bns`] +
+    +harmonyStats[`${characterData.element}Bns`] +
+    equipmentStats.typeBns +
+    harmonyStats.typeBns;
+  stats[characterData.type] =
+    C_baseStat.typeBns[1] +
+    equipmentStats[`${characterData.type}Bns`] +
+    harmonyStats[`${characterData.type}Bns`];
 
   return stats;
 };

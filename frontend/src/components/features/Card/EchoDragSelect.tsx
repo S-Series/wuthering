@@ -75,12 +75,14 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
 		isDragging,
 	} = useSortable({ id: item.id });
 
+	const {characterData} = useCharacter();
+
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 	};
 
-	const isSelected = index < 5;
+	const isSelected = characterData.echoDataIndex.slice(0, 5).includes(index);
 	const isActivated = (item.num === index);
 
 	return (

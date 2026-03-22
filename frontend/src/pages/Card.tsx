@@ -16,7 +16,7 @@ import { type Character } from "@/datas/characters"
 import { type CharacterId } from "@/datas/characterStats";
 import { weapon, weaponDict, type Weapon } from "@/datas/weapon";
 import { weaponStat } from "@/datas/weaponStats";
-import { harmony } from "@/datas/echos";
+import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
 
 import { getCharacterRank } from "@/types/character.type";
@@ -32,7 +32,7 @@ import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
 export default function Card() {
 
   const { lang, imgVer } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, harmonySet } = useCharacter();
   const { openOverlay } = useOverlay();
   const navigate = useNavigate();
   const localeText = locale(lang).card;
@@ -291,7 +291,7 @@ export default function Card() {
     }[];
   };
 
-  async function requestRenderCard(payload: RenderPayload) {
+  async function requestRenderCard(payload) {
     const response = await fetch("http://localhost:8080/render/card", {
       method: "POST",
       headers: {
@@ -457,12 +457,7 @@ export default function Card() {
           </div>
 
           {/* == //$ Main Content */}
-          <div className="card-contents-slot main" style={{
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            backgroundImage: `url(${previewUrl})`,
-          }}>
+          <div className="card-contents-slot main">
             <div className="main-item-slot character">
               <div className="card-character-slot">
                 <ImagePicker src={characterImage.src}
@@ -563,19 +558,17 @@ export default function Card() {
               })}
 
               <div className="harmony-slot">
-                <div className="container">
-                  <img src={`/ico/harmony/${harmony.Clouds.id}.webp`} />
-                  <span className={`${lang}-font`}>
-                    {harmony.Clouds[lang]} <em className="num-font">{"[5]"}</em>
-                  </span>
-                </div>
-
-                <div className="container">
-                  <img src={`/ico/harmony/${harmony.Revelation.id}.webp`} />
-                  <span className={`${lang}-font`}>
-                    {harmony.Revelation[lang]} <em className="num-font">{"[5]"}</em>
-                  </span>
-                </div>
+                {Object.entries(harmonySet).map(([id, number]) => {
+                  const harmonyId = id as HarmonyId;
+                  return (
+                    <div className="container" key={harmonyId}>
+                      <img src={`/ico/harmony/${harmonyId}.png`} />
+                      <span className={`${lang}-font`}>
+                        {harmony[harmonyId][lang]} <em className="num-font">[{number}]</em>
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="score-slot">

@@ -1,9 +1,13 @@
+import type { EchoRuntime } from "@/runtime/echo.runtime";
 import type { CharacterId } from "./characterStats";
 import { FixedStats, type StatId } from "./stats";
+import type { WeaponId } from "./weapon";
 
 type StatWeightMap = Partial<Record<StatId, number>>;
 interface CharacterScore extends StatWeightMap {
   maxResCount: number;
+  //notSigWeaponComp: number;
+  scoreComp?: number;
 }
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
@@ -36,8 +40,8 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.skillBns.id]: 0,
     [FixedStats.liberationBns.id]: 0,
 
-    [FixedStats.resonanceBns.id]: 1.0,
-    maxResCount: 3,
+    [FixedStats.resonanceBns.id]: 1.1,
+    maxResCount: 4,
   },
   aemeath: {
     [FixedStats.hpPct.id]: 0,
@@ -178,7 +182,7 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
 
 
     [FixedStats.resonanceBns.id]: 1.0,
-    maxResCount: 2,
+    maxResCount: 4,
   },
   camellya: {
     [FixedStats.hpPct.id]: 0,
@@ -226,7 +230,7 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.liberationBns.id]: 0,
 
     [FixedStats.resonanceBns.id]: 1.0,
-    maxResCount: 3,
+    maxResCount: 4,
   },
   changli: {
     [FixedStats.hpPct.id]: 0,
@@ -354,7 +358,7 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.liberationBns.id]: 0,
 
     [FixedStats.resonanceBns.id]: 1.0,
-    maxResCount: 2,
+    maxResCount: 3,
   },
   lingyang: { //능ㅋㅋ
     [FixedStats.hpPct.id]: 0,
@@ -434,7 +438,7 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.liberationBns.id]: 0,
 
     [FixedStats.resonanceBns.id]: 1.0,
-    maxResCount: 3,
+    maxResCount: 4,
   },
   rover_spectro: {
     [FixedStats.hpPct.id]: 0,
@@ -594,7 +598,7 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.liberationBns.id]: 0.5,
 
     [FixedStats.resonanceBns.id]: 1.0,
-    maxResCount: 3,
+    maxResCount: 4,
   },
   youhu: {
     [FixedStats.hpPct.id]: 0,
@@ -773,3 +777,90 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     maxResCount: 3,
   },
 } as const;
+
+export function getCharacterScore(
+  characterId: CharacterId,
+  weaponId: WeaponId | null,
+  constell: number,
+  echoData: [EchoRuntime,EchoRuntime,EchoRuntime,EchoRuntime,EchoRuntime],
+): CharacterScore {
+  const base = characterScoreSheet[characterId];
+
+  if (!base) throw new Error(`Unknown characterId: ${characterId}`);
+
+  const result: CharacterScore = {...base};
+
+  switch (characterId) {
+
+    //$ Cost3 Res Option
+    case "sigrika": {
+      const cost3MainOptionResCount =
+        echoData
+          ?.filter(
+            (item) =>
+              item.cost === 3 &&
+              item.mainOption.statId === FixedStats.resonanceBns.id
+          ).length ?? 0;
+
+      if (cost3MainOptionResCount >= 1){
+        result[FixedStats.resonanceBns.id] = 1;
+        result["maxResCount"] = 2;
+        result["scoreComp"] = -30;
+      }
+      break;
+    }
+    case "brant": {
+      const cost3MainOptionResCount =
+        echoData
+          ?.filter(
+            (item) =>
+              item.cost === 3 &&
+              item.mainOption.statId === FixedStats.resonanceBns.id
+          ).length ?? 0;
+
+      if (cost3MainOptionResCount >= 2){
+        if (weaponId === "sword004") { // 브랜트 전무
+          result[FixedStats.resonanceBns.id] = 1;
+          result["maxResCount"] = 3;
+        }
+        result["scoreComp"] = -24;
+      }
+      break;
+    }
+
+    //$ Constell
+    case "iuno": { //유노 1돌+
+      if (constell >= 1) {
+        result[FixedStats.resonanceBns.id] = 1;
+        result["maxResCount"] = 2;
+      }
+      break;
+    }
+    case "encore": { //앙코 2돌+
+      if (constell >= 2) {
+        result["maxResCount"] = 1;
+      }
+      break;
+    }
+    case "zhezhi": { //절지 1돌+ 
+      if (constell >= 1) {
+        result["maxResCount"] = 3;
+      }
+      break;
+    }
+    case "yinlin": { //음림 2돌+
+      if (constell >= 2) {
+        result["maxResCount"] = 3;
+      }
+      break;
+    }
+    case "calcharo": { //카카루 1돌+
+      if (constell >= 2) {
+        result["maxResCount"] = 2;
+      }
+      break;
+    }
+  }
+
+  return result;
+}

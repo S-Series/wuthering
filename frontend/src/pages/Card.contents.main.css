@@ -308,8 +308,9 @@
 }
 
 .main-item-slot.stats .harmony-slot .container img {
-    width: min(1.1vw, 1.1rem);
-    height: min(1.1vw, 1.1rem);
+    width: auto;
+    height: 80%;
+    aspect-ratio: 1 / 1;
 }
 
 .main-item-slot.stats .score-slot {

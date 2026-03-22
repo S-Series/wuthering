@@ -4,10 +4,10 @@ import { character } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
 import { createEmptyCharacterData, type CharacterData, type CharacterStat } from "@/types/character.type";
 import { calcBaseStat, calcFinalStat } from "@/runtime/characterData.helpers";
-import { characterScoreSheet } from "@/datas/characterScoreSheet";
+import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
-import { harmony, type HarmonyId } from "@/datas/echos";
+import { harmony, type HarmonyId } from "@/datas/harmonies";
 
 type ScoreList = [
   [number, number],
@@ -30,7 +30,7 @@ type ContextType = {
   characterBaseStat: CharacterStat | null;
   characterFinalStat: CharacterStat | null;
   equipmentScore: ScoreList;
-  harmonySet: Record<HarmonyId, number>;
+  harmonySet: Partial<Record<HarmonyId, number>>;
 };
 
 const CharacterContext = createContext<ContextType | null>(null);
@@ -73,7 +73,7 @@ const normalizeCharacterData = (
         };
       }),
     };
-  }) as CharacterData["echoData"];
+  }) as unknown as CharacterData["echoData"];
 
   const safeEchoIndex = (() => {
     const used = new Set<number>();
@@ -164,19 +164,66 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     return ALL_CHARACTERS[characterId] ?? createEmptyCharacterData(characterId);
   }, [ALL_CHARACTERS, characterId]);
 
+  const harmonySet = useMemo<Partial<Record<HarmonyId, number>>>(() => {
+    const echoData = characterData.echoData;
+
+    const values = Object.fromEntries(
+      Object.values(harmony).map((item) => [item.id, 0])
+    ) as Record<HarmonyId, number>;
+
+    for (const item of echoData) {
+      if (!item?.setId) continue;
+      if (!Object.prototype.hasOwnProperty.call(values, item.setId)) continue;
+      values[item.setId] += 1;
+    }
+
+    const adjusted = Object.fromEntries(
+      Object.entries(values)
+        .map(([id, count]) => {
+          const harmonyId = id as HarmonyId;
+          const optionCounts = harmony[harmonyId].option.map((opt) => opt.count);
+
+          const activeCount = optionCounts
+            .filter((requiredCount) => count >= requiredCount)
+            .sort((a, b) => b - a)[0] ?? 0;
+
+          return [harmonyId, activeCount] as const;
+        })
+        .filter(([_, activeCount]) => activeCount > 0)
+    ) as Partial<Record<HarmonyId, number>>;
+
+    console.log(adjusted);
+
+    return adjusted;
+  }, [characterData]);
+
   const characterBaseStat = useMemo<CharacterStat | null>(() => {
     return calcBaseStat(characterData);
   }, [characterData]);
 
   const characterFinalStat = useMemo<CharacterStat | null>(() => {
-    return calcFinalStat(characterData);
+    return calcFinalStat(characterData, harmonySet ?? {});
   }, [characterData]);
 
+  const [compensation, setCompensation] = useState(0);
   const equipmentScore = useMemo<ScoreList>(() => {
     const echoData = characterData.echoData;
-    const scoreData = characterScoreSheet[characterId];
+    const scoreData = getCharacterScore(
+      characterData.characterId,
+      characterData.weaponId ?? null,
+      characterData.constell[0],
+      [
+        characterData.echoData[characterData.echoDataIndex[0]],
+        characterData.echoData[characterData.echoDataIndex[1]],
+        characterData.echoData[characterData.echoDataIndex[2]],
+        characterData.echoData[characterData.echoDataIndex[3]],
+        characterData.echoData[characterData.echoDataIndex[4]],
+      ]
+    );
 
     if (!scoreData || !echoData) return [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+    
+    setCompensation(scoreData.scoreComp ?? 0);
 
     let resList: ScoreList = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
     let ret: ScoreList = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
@@ -207,10 +254,20 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
       ]
       ret[i] = score;
     }
+    
+    const resonanceBns = scoreData.resonanceBns ?? 0;
+    const pickedList = characterData.echoDataIndex.slice(0, 5);
+    const unPickedList = characterData.echoDataIndex.slice(5);
 
-    const sortedResList = [...resList].sort((a, b) => b[1] - a[1]) as ScoreList;
-    for (let i = 0; i < scoreData.maxResCount; i++) {
-      ret[sortedResList[i][0]][1] += (scoreData.resonanceBns ?? 0) * sortedResList[i][1];
+    const picked = pickedList
+      .map(i => resList[i])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, scoreData.maxResCount);
+
+    const unpicked = unPickedList.map(i => resList[i]);
+
+    for (const [index, value] of [...picked, ...unpicked]) {
+      ret[index][1] += resonanceBns * value;
     }
 
     const scoreList = [
@@ -228,6 +285,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
      
     const score = [...scoreList].sort((a, b) => b - a)
       .slice(0, 5).reduce((sum, value) => sum + value, 0);
+
     const scoreWithRes = [...scoreList, 12.4 * (scoreData.resonanceBns ?? 0)]
       .sort((a, b) => b - a).slice(0, 5)
       .reduce((sum, value) => sum + value, 0);
@@ -239,21 +297,9 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     }
 
     return ret;
-  }, [characterId, characterData.echoData])
+  }, [characterId, characterData.echoData, characterData.echoDataIndex])
 
-  const harmonySet = useMemo<Record<HarmonyId, number>>(() => {
-    const echoData = characterData.echoData;
-    let ret = Object.fromEntries(Object.values(harmony).map((item) => [item.id, 0])
-    ) as Record<HarmonyId, number>;
 
-    for (const item of echoData) {
-      if (!item || !item.setId) continue;
-      if (!Object.prototype.hasOwnProperty.call(ret, item.setId)) continue;
-      ret[item.setId] += 1;
-    }
-
-    return ret;
-  }, [characterData.echoData]);
 
   //$ ============================================
 
@@ -269,6 +315,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
       + equipmentScore[characterData.echoDataIndex[2]][1]
       + equipmentScore[characterData.echoDataIndex[3]][1]
       + equipmentScore[characterData.echoDataIndex[4]][1]
+      + compensation;
     saveCharacterScore(characterId, finalScore);
   }, [characterData.echoDataIndex, equipmentScore])
 

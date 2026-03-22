@@ -1,10 +1,11 @@
-import { echoDict, harmony } from "@/datas/echos";
+import { echoDict } from "@/datas/echos";
 import type { SelectOptionWithImage, SelectOptionStatOriginal, SelectOriginalOption, Cost } from "./EchoSelect.type";
 import Select, { type FormatOptionLabelMeta, type StylesConfig } from "react-select";
 import type { LangType } from "@/stores/appStore";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import type { CharacterId } from "@/datas/characterStats";
 import { FixedStats } from "@/datas/stats";
+import { harmony } from "@/datas/harmonies";
 
 export const formatOptionWithImage = <
     T extends SelectOptionWithImage<any>

@@ -1,4 +1,4 @@
-import { echoDict } from "@/datas/echos";
+import { echoDict, type EchoId } from "@/datas/echos";
 import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime";
 
 type CostKey = "Cost4" | "Cost3" | "Cost1";
@@ -9,7 +9,7 @@ const costFromKey = (k: CostKey): 4 | 3 | 1 => {
   return 1;
 };
 
-export const makeEchoRuntime = (echoId: string): EchoRuntime => {
+export const makeEchoRuntime = (echoId: EchoId): EchoRuntime => {
   const keys: CostKey[] = ["Cost4", "Cost3", "Cost1"];
 
   for (const k of keys) {

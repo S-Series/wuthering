@@ -1,4 +1,5 @@
-import type { EchoId, HarmonyId } from "@/datas/echos";
+import type { EchoId } from "@/datas/echos";
+import type { HarmonyId } from "@/datas/harmonies";
 import { type StatId } from "@/datas/stats";
 
 export type EchoStatOption = {
