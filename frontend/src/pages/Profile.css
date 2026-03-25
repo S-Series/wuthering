@@ -1,235 +1,260 @@
-.login-field {
-    display: flex;
-    flex-direction: column;
-    width: 30vw;
-    min-width: 15rem;
-    max-width: 20rem;
-    height: 100%;
-    gap: 1.5vw;
-    align-items: center;
+.profile-page {
+  width: 100%;
+  max-width: 1200px;
+  height: 45rem;
+  display: flex;
+  grid-template-columns: 1.1fr 0.9fr;
+  color: #f5f7ff;
+  gap: 10%;
 }
 
-.login-field > span {
-    color: #fff;
-    font-size: min(2vw, 2rem);
-    font-weight: 700;
+.profile-info {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  margin-top: 5rem;
 }
 
-.login-field .input-field {
-    width: calc(95% - 4px);
-    height: auto;
-    aspect-ratio: 8 / 1;
-
-    border: 2px solid #fff;
-    padding: 0 2.5%;
-    background-color: #dfdfdf;
+.profile-info-inner {
+  width: 100%;
 }
 
-.login-field .input-field:disabled {
-    border: 2px solid #aaa;
-    background-color: #999;
-    cursor: not-allowed;
+.profile-info-eyebrow {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9fb2ff;
 }
 
-.login-field .login-button {
-    display: flex;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 8 / 1;
-    align-items: center;
-
-    margin: 0;
-    border: 0;
-    padding: 0 2.5%;
-    border-radius: 0;
-    color: #000;
-    background-color: #fff;
-    transition: all 0.2s ease-out;
+.profile-info-title {
+  margin: 0;
+  font-size: min(3.5vw, 3.5rem);
+  white-space: pre;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  filter: drop-shadow(0 2px 4px #000);
 }
 
-.login-field .login-button:hover {
-    background-color: #ccc;
+.profile-info-title>em {
+  text-decoration: underline;
+  color: #9fb2ff;
 }
 
-.login-field .login-button:disabled {
-    background-color: #666;
-    cursor: not-allowed;
+.profile-info-desc {
+  margin: 24px 0 0;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #f5f7ffb8;
 }
 
-
-.login-field .login-button > img {
-    width: 10%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    pointer-events: none;
+.profile-info-list {
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
 }
 
-.login-field .login-button > span {
-    width: 80%;
-    text-align: center;
-    margin-right: 10%;
-    pointer-events: none;
+.profile-info-list li {
+  display: flex;
+  align-items: center;
+  min-height: 4rem;
+  padding: 0 1.5rem;
+  border: 1px solid #00000022;
+  border-radius: 1rem;
+  background: #88888811;
+  color: #fff;
+  backdrop-filter: blur(8px);
+  font-size: min(1.3vw, 1.3rem);
+}
+
+.profile-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+  height: 100%;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 460px;
+  height: 90%;
+  padding: 32px;
+  border-radius: 24px;
+  background: #ffffff22;
+  border: 1px solid #00000022;
+  box-shadow: 0 20px 60px #00000052;
+  backdrop-filter: blur(16px);
+}
+
+.profile-card-header {
+  margin-bottom: 24px;
+}
+
+.profile-card-header h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.profile-card-header p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: rgba(245, 247, 255, 0.7);
 }
 
 .profile-field {
-    display: flex;
-    position: relative;
-    width: calc(100%  - 2px);
-    max-width: 940px;
-    height: auto;
-    aspect-ratio: 21 / 9;
-    align-items: center;
-
-    border: 1px solid #fc0;
-    border-radius: min(2vw, 1.6rem);
-
-    background-image: url("/cardBg.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
-.profile-field > .main-stand-image {
-    position: absolute;
-    height: 100%;
-    right: -10%;
-    mix-blend-mode:luminosity;
+.profile-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(245, 247, 255, 0.9);
 }
 
-.profile-field .container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: space-evenly;
-    z-index: 1;
+.profile-field input {
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(10, 14, 28, 0.7);
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
-.profile-field .container .user-info {
-    display: flex;
-    width: 75%;
-    height: 20%;
-    margin-right: 20%;
-    gap: 1%;
-    align-items: center;
+.profile-field input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
 }
 
-.profile-field .container .user-info .profile-image-wrap {
-    width: auto;
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    padding: 1px;
-    border-radius: 25%;
-    background: linear-gradient(45deg,
-            #a47a1e,
-            #d3a84c,
-            #ffec94,
-            #e6be69,
-            #ffd87c,
-            #b58f3e,
-            #956d13);
-    overflow: hidden;
-    flex-shrink: 0;
+.profile-field input:focus {
+  border-color: rgba(126, 156, 255, 0.95);
+  box-shadow: 0 0 0 4px rgba(110, 140, 255, 0.16);
+  background: rgba(10, 14, 28, 0.92);
 }
 
-.profile-field .container .user-info .profile-image-wrap .profile-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 25%;
-    display: block;
-   
-    background-image: url("/cardBg.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+.profile-field-hint {
+  height: 16px;
+  margin: 2px 0 0;
+  font-size: 13px;
 }
 
-
-.profile-field .container .user-info .text-box {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    justify-content: flex-end;
-    gap: 2%;
-    white-space: pre;
+.profile-field-hint.success {
+  color: #7ee081;
 }
 
-.profile-field .container .user-info .text-box > span {
-    color: #fff;
-    font-size: min(1vw, 0.8rem);
-    font-weight: 500;
+.profile-field-hint.error {
+  color: #ff8f8f;
 }
 
-.profile-field .container .user-info .text-box > span > em {
-    text-decoration: underline;
+.profile-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0 20px;
+  font-size: 14px;
+  color: rgba(245, 247, 255, 0.82);
 }
 
-.profile-field .container .user-info .text-box > span > img {
-    width: auto;
-    height: min(1vw, 0.8rem);
-    transform: scale(1.5) translateY(min(0.08vw, 0.066rem));
+.profile-check input {
+  margin-top: 3px;
 }
 
-.profile-field .container .user-info .button-box {
-    display: flex;
-
-    width: 40%;
-    height: 100%;
-    gap: 5%;
-    
-    align-items: center;
-    justify-content: flex-end;
-
-    margin-left: auto;
+.profile-check > span > em {
+  color: #3154ff;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
-.profile-field .container .user-info .button-box button {
-    width: auto;
-    height: 40%;
-    aspect-ratio: 3.5 / 1;
-
-    padding: 0;
-    color: #000;
-    background-color: #ccc;
-    border: 1px solid #444;
-    font-size: min(1.1vw, 0.88rem);
-    transition: all 0.2s ease-out;
+.profile-submit {
+  width: 100%;
+  height: 54px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #6f87ff, #8f6fff);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    opacity 0.2s ease;
 }
 
-.profile-field .container .user-info .button-box button:hover {
-    color: #fff;
-    background-color: #444;
-    border: 1px solid #fff;
+.profile-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
-.profile-field .container .user-info .profile-button {
-    display: flex;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 8 / 1;
-    align-items: center;
-
-    margin: 0;
-    border: 0;
-    padding: 0 2.5%;
-    border-radius: 0;
-    color: #000;
-    background-color: #fff;
-    transition: all 0.2s ease-out;
+.profile-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-.profile-field .container .game-info {
-    display: flex;
-    width: 95%;
-    height: 70%;
-    gap: 1%;
-    border: 1px solid #000;
-    align-items: center;
+.profile-card-footer {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(245, 247, 255, 0.68);
 }
-.profile-field .container .game-info .profile-button {
-    
+
+.profile-text-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #a9bbff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 980px) {
+  .profile-page {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-info {
+    padding: 56px 24px 20px;
+  }
+
+  .profile-panel {
+    padding: 24px;
+  }
+
+  .profile-info-title {
+    font-size: 42px;
+  }
+}
+
+@media (max-width: 560px) {
+  .profile-card {
+    padding: 24px 18px;
+    border-radius: 20px;
+  }
+
+  .profile-info {
+    padding: 40px 18px 8px;
+  }
+
+  .profile-panel {
+    padding: 18px;
+  }
+
+  .profile-info-title {
+    font-size: 34px;
+  }
 }

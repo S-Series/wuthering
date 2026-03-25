@@ -11,7 +11,7 @@ import {
   signup,
   type UserProfile,
 } from "@/firebase/auth";
-import { getGameProfile, saveGameProfile, type GameProfile } from "@/firebase/user";
+import { getGameProfile, saveGameProfile, saveUserNickname, type GameProfile } from "@/firebase/user";
 
 type AuthState = {
   user: UserProfile | null;
@@ -23,6 +23,8 @@ type AuthState = {
   loginAction: (email: string, password: string) => Promise<void>;
   loginWithGoogleAction: () => Promise<void>;
   logoutAction: () => Promise<void>;
+  saveUserNicknameAction: (nickname: string) => Promise<void>;
+  saveGameProfileAction: (next: GameProfile) => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -87,6 +89,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logoutAction: async () => {
     await logout();
     set({ user: null, gameProfile: null });
+  },
+
+  saveUserNicknameAction: async (nickname: string) => {
+    const user = get().user;
+    if (!user) throw new Error("로그인이 필요합니다.");
+
+    await saveUserNickname(user.uid, nickname);
+
+    set((state) => ({
+      user: state.user ? { ...state.user, nickname } : state.user,
+    }));
   },
 
   saveGameProfileAction: async (next: GameProfile) => {

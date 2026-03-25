@@ -45,6 +45,7 @@
     height: 35px;
     aspect-ratio: 1/1;
     object-fit: contain;
+    border-radius: 25%;
 }
 
 #navbar-body .navbar-icon.title {

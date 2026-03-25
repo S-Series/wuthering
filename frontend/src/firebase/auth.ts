@@ -4,6 +4,7 @@ import {
   signOut,
   signInWithPopup,
   GoogleAuthProvider,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
@@ -54,28 +55,39 @@ export async function login(
 
 export async function loginWithGoogle(): Promise<UserProfile> {
   const provider = new GoogleAuthProvider();
-  const credential = await signInWithPopup(auth, provider);
+  provider.addScope("email");
+  provider.addScope("profile");
 
-  const user = credential.user;
+  const result = await signInWithPopup(auth, provider);
+  const user = result.user;
+  const additionalInfo = getAdditionalUserInfo(result);
+
+  const googleProvider = user.providerData.find(
+    (item) => item.providerId === "google.com"
+  );
+
+  const googleEmail =
+    user.email ||
+    googleProvider?.email ||
+    (additionalInfo?.profile as { email?: string } | null)?.email ||
+    "";
+
   const userDocRef = doc(db, "users", user.uid);
   const userDocSnap = await getDoc(userDocRef);
-  console.log(user, credential, userDocRef, userDocSnap);
 
-  if (userDocSnap.exists()) {
-    return userDocSnap.data() as UserProfile;
-  }
-
-  const userProfile: UserProfile = {
+  const nextProfile: UserProfile = {
     uid: user.uid,
-    email: user.email ?? "",
-    nickname: user.displayName ?? "Google User",
-    imageUrl: user.photoURL ?? null,
-    createdAt: Date.now(),
+    email: googleEmail,
+    nickname: user.displayName ?? googleProvider?.displayName ?? "Google User",
+    imageUrl: user.photoURL || googleProvider?.photoURL || null,
+    createdAt: userDocSnap.exists()
+      ? (userDocSnap.data() as UserProfile).createdAt
+      : Date.now(),
   };
 
-  await setDoc(userDocRef, userProfile);
-
-  return userProfile;
+  await setDoc(userDocRef, nextProfile, { merge: true });
+  
+  return nextProfile;
 }
 
 export async function logout(): Promise<void> {
@@ -92,7 +104,12 @@ export function normalizeUserProfile(raw: unknown): UserProfile {
     uid: typeof data.uid === "string" ? data.uid : "",
     email: typeof data.email === "string" ? data.email : null,
     nickname: typeof data.nickname === "string" ? data.nickname : "Unknown",
-    imageUrl: typeof data.photoURL === "string" ? data.photoURL : null,
+    imageUrl:
+      typeof data.imageUrl === "string"
+        ? data.imageUrl
+        : typeof data.photoURL === "string"
+        ? data.photoURL
+        : null,
     createdAt: typeof data.createdAt === "number" ? data.createdAt : Date.now(),
   };
 }

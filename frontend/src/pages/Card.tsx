@@ -252,6 +252,7 @@ export default function Card() {
   const testing = createPayloadData(
     lang, characterData, characterFinalStat, harmonySet, equipmentScore
   );
+  
   const handleDownload = async () => {
     try {
       const blob = await requestRenderCard(testing);

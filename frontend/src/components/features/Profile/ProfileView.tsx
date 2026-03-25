@@ -1,10 +1,16 @@
 import { useMemo } from "react";
 import { useAuthStore } from "@/stores/authStore";
+import { useOverlay } from "@/contexts/PopupContext";
+
+import GameProfileEdit from "@/components/features/Profile/ProfileEdit";
+
+import "./ProfileView.override.css"
 
 export default function ProfileView() {
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
 
   const { user, gameProfile, logoutAction } = useAuthStore();
+  const { openOverlay } = useOverlay();
 
   const userImageUrl = useMemo(() => {
     return [
@@ -16,7 +22,7 @@ export default function ProfileView() {
   }, [user?.imageUrl, gameProfile?.characterId])
 
   return (
-    <div className="profile-field">
+    <div className="profile-info-field">
       <img className="main-stand-image" src={userImageUrl[2]} />
       <div className="container">
         <div className="user-info">
@@ -38,7 +44,7 @@ export default function ProfileView() {
             </span>
           </div>
           <div className="button-box">
-            <button>정보수정</button>
+            <button onClick={() => openOverlay(<GameProfileEdit/>, {title: "게임 프로필 정보수정", width: "auto", height: "min(85vh, 80rem)", ratio: "7 / 16"})}>정보수정</button>
             <button onClick={() => logoutAction()}>로그아웃</button>
           </div>
         </div>

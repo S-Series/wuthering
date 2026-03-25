@@ -60,6 +60,14 @@ export async function getGameProfile(uid: string): Promise<GameProfile> {
   return normalizeGameProfile(snap.data(), uid);
 }
 
+export async function saveUserNickname(uid: string, nickname: string) {
+  await setDoc(
+    doc(db, "users", uid),
+    { nickname: nickname.trim() },
+    { merge: true }
+  );
+}
+
 export async function saveGameProfile(
   uid: string,
   next: Partial<Omit<GameProfile, "uid">>

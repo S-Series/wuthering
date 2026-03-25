@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 
 import { locale } from "@/locales/locale";
@@ -41,6 +41,8 @@ export default function Navbar() {
     ? "/default.webp"
     : user?.imageUrl ?? "/default.webp";
 
+  useEffect(() => {console.log(user)}, [user]);
+
   return (
     <>
       <div id="navbar-body">
@@ -70,7 +72,7 @@ export default function Navbar() {
               }),
               dropdownIndicator: (base) => ({
                 ...base,
-                padding: "min(1vw, 1rem)"
+                padding: "0 min(1vw, 1rem)"
               })
             }}
             value={LANG_OPTION.find((item) => item.value === lang)}
@@ -102,24 +104,24 @@ export default function Navbar() {
               src="/menu.svg" />
           </button>
         </div>
-
       </div>
+
       <div id="navbar-sidebar" className={`${isActive ? "active" : "idle"}`}>
         <a href="/profile">
           <img className="navbar-icon"
-              alt="title"
+              alt="profile"
               src={profileImage} />
             <p className={`${lang}-font`}>{profileName}</p>
         </a>
         <a href="/characters">
           <img className="navbar-icon"
-            alt="title"
+            alt="characters"
             src="/default.webp" />
           <p className={`${lang}-font`}>캐릭터 목록</p>
         </a>
         <a href="/card">
           <img className="navbar-icon"
-            alt="title"
+            alt="generator"
             src="/default.webp" />
           <p className={`${lang}-font`}>스펙카드 생성기</p>
         </a>

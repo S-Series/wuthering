@@ -87,15 +87,28 @@ the page.
 
 # Architecture
 
-User Browser\
-↓\
-React Frontend (Vercel)\
-↓\
-Gateway Server (Railway)\
-↓\
-OCR Server (HuggingFace / Python)\
-↓\
-Firestore Database
+```mermaid
+sequenceDiagram
+  participant User as User
+  participant FE as Frontend (Vercel)
+  participant GW as Gateway (Railway)
+  participant OCR as OCR Server (HuggingFace)
+  participant R as Image maker
+  participant DB as Firestore
+
+  User->>FE: Paste / Upload screenshot
+  FE->>GW: POST /api/ocr (multipart: file + lang)
+  GW->>GW: Validate mime/ext/size + rate limit + queue(p-limit)
+  GW->>OCR: POST /ocr (timeout 60s)
+  OCR->>OCR: preprocess (grayscale/contrast) + crop + OCR
+  OCR-->>GW: {texts, full_text, image_base64}
+  GW-->>FE: JSON passthrough
+  FE->>FE: retouch(regex) + fuzzy mapping + stat calc
+  FE->>R: POST /render/card (payload)
+  R-->>FE: image/png
+  FE->>DB: Save user/build metadata (optional)
+  FE-->>User: Render spec card + share/download
+ ```
 
 ------------------------------------------------------------------------
 
