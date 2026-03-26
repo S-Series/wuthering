@@ -46,25 +46,46 @@ function StatToColor({StatId, StatValue, scoreValue}
   const ratio: number = 1 - ((StatValue - StatMin) / (StatMax - StatValue)) / scoreValue;
   const safeRatio =  Math.max(0, Math.min(1, ratio));
 
-  return `rgb(${baseValue - grayValue}, ${baseValue - grayValue}, ${baseValue * safeRatio - (grayValue * 1.1)})`
+  const r = baseValue - grayValue;
+  const g = baseValue - grayValue;
+  const b = baseValue * safeRatio - (grayValue * 1.1);
+
+  const toHex = (value: number) => {
+    const clamped = Math.max(0, Math.min(255, Math.round(value)));
+    return clamped.toString(16).padStart(2, "0");
+  };
+
+  const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+  return hex;
 }
 
 export default function EchoSlot({index = 0 }: StatSlotProps) {
-  const {imgVer} = useAppStore();
+  const { imgVer } = useAppStore();
+  const { characterId, characterData, equipmentScore, setStatColors } = useCharacter();
+
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
-  const { characterId, characterData, equipmentScore } = useCharacter();
+
   const Echodata = useMemo<EchoRuntime>(() => { return characterData.echoData[index] }, [index, characterData])
 
   const STAT_TEXT_COLOR = useMemo(() => {
     const scoreMap = characterScoreSheet[characterId];
 
-    return [
+    const colorMaps = [
       StatToColor({ StatId: Echodata.subOptions[0].statId, StatValue: Echodata.subOptions[0].statValue, scoreValue: (scoreMap[Echodata.subOptions[0].statId] ?? 0) }),
       StatToColor({ StatId: Echodata.subOptions[1].statId, StatValue: Echodata.subOptions[1].statValue, scoreValue: (scoreMap[Echodata.subOptions[1].statId] ?? 0) }),
       StatToColor({ StatId: Echodata.subOptions[2].statId, StatValue: Echodata.subOptions[2].statValue, scoreValue: (scoreMap[Echodata.subOptions[2].statId] ?? 0) }),
       StatToColor({ StatId: Echodata.subOptions[3].statId, StatValue: Echodata.subOptions[3].statValue, scoreValue: (scoreMap[Echodata.subOptions[3].statId] ?? 0) }),
       StatToColor({ StatId: Echodata.subOptions[4].statId, StatValue: Echodata.subOptions[4].statValue, scoreValue: (scoreMap[Echodata.subOptions[4].statId] ?? 0) })
     ]
+
+    setStatColors((prev) => {
+      const next = [...prev];
+      next[index] = colorMaps;
+      return next;
+    });
+
+    return colorMaps;
   }, [index, characterId, characterData])
 
   return (

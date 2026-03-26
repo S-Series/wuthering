@@ -5,17 +5,10 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   getAdditionalUserInfo,
+  type UserProfile,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
-
-export type UserProfile = {
-  uid: string;
-  email: string | null;
-  nickname: string;
-  imageUrl: string | null;
-  createdAt: number;
-};
 
 export async function signup(
   email: string,

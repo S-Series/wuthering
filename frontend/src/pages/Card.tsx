@@ -29,12 +29,14 @@ import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
 import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
 import { createPayloadData, requestRenderCard } from "@/api/render.api";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function Card() {
 
   const { lang, imgVer } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, harmonySet } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, harmonySet, statColors } = useCharacter();
   const { openOverlay } = useOverlay();
+  const {user, gameProfile} = useAuthStore();
   const navigate = useNavigate();
   const localeText = locale(lang).card;
 
@@ -249,30 +251,27 @@ export default function Card() {
   }, [characterFinalStat]);
 
   const [testUrl, setTestUrl] = useState("");
-  const testing = createPayloadData(
-    lang, characterData, characterFinalStat, harmonySet, equipmentScore
-  );
+  const testing = characterFinalStat ? createPayloadData(
+    lang, user, gameProfile, characterData, characterFinalStat, harmonySet, equipmentScore, statColors
+  ) : null;
   
-  const handleDownload = async () => {
+  const handlePreview = async () => {
+    if (!testing) return;
+
+    setTestUrl("");
+
     try {
       const blob = await requestRenderCard(testing);
-
       const url = URL.createObjectURL(blob);
-      setTestUrl(url);
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "card.png"; // 파일 이름
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      URL.revokeObjectURL(url);
+      setTestUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return url;
+      });
     } catch (e) {
       console.error(e);
     }
   };
-  console.log(testing);
 
   //* == return data ================================================//
   return (
@@ -482,8 +481,10 @@ export default function Card() {
           </div>
         </div>
         {/* 
-        <button onClick={handleDownload}>Request</button>
+        */}
+        <button onClick={handlePreview}>Request</button>
         <img src={testUrl} style={{width: "100%"}}/>
+        {/* 
         */}
       </div>
 

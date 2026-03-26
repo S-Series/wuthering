@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, type GameProfile } from "./firebase";
 import { characterStat, type CharacterId } from "@/datas/characterStats";
 
 const GAME_SERVERS = ["Asia", "Europe", "America", "HMT (HK, MO, TW)", "Sea"] as const;
@@ -12,15 +12,6 @@ function isGameServer(value: unknown): value is GameServer {
 function isCharacterId(value: unknown): value is CharacterId {
   return typeof value === "string" && value in characterStat;
 }
-
-export type GameProfile = {
-  uid: string;
-  server: GameServer | null;
-  gameUid: string | null;
-  gameLevel: number;
-  characterId: CharacterId | null;
-  updatedAt: number;
-};
 
 function createDefaultGameProfile(uid: string): GameProfile {
   return {

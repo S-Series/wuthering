@@ -2,6 +2,7 @@ DEFAULT_LAYOUT = {
     "character": {
         "image": (20, 20, 650, 800),
         "image_anchor": (0, 0, 1),
+        "constell_image": (20, 13, 650, 813),
         "image_shadow_1": (675, 25, 5, 800),
         "image_shadow_2": (25, 825, 655, 5),
         "characer_name_text": (670, 925),

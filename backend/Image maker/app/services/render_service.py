@@ -16,6 +16,11 @@ def prepare_render_data(payload: dict) -> bytes:
     character["stand_image_url"] = (
         f"{ASSET_BASE_URL}/character/{c_id}/stand.png?v={IMAGE_VERSION}"
     )
+
+    c_constell = character.get("constell") or "0"
+    character["overlay_image_url"] = (
+        f"{ASSET_DIR}/ui/CharacterC{c_constell}.png"
+    )
     
     #data icon
     ico_id1 = character.get("elementType") or "default"

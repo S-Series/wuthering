@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { character } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
@@ -18,6 +18,8 @@ type ContextType = {
   characterFinalStat: CharacterStat | null;
   equipmentScore: ScoreList;
   harmonySet: Partial<Record<HarmonyId, number>>;
+  statColors: string[][];
+  setStatColors: React.Dispatch<React.SetStateAction<string[][]>>;
 };
 
 const CharacterContext = createContext<ContextType | null>(null);
@@ -287,6 +289,8 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   }, [characterId, characterData.echoData, characterData.echoDataIndex])
 
 
+  const [statColors, setStatColors] = useState([[""]]);
+
   //$ ============================================
 
   useEffect(() => {
@@ -305,6 +309,8 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     saveCharacterScore(characterId, finalScore);
   }, [characterData.echoDataIndex, equipmentScore])
 
+  useEffect(() => console.log(statColors), [statColors]);
+
   const values = {
     characterId,
     setCharacterId,
@@ -313,7 +319,9 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     characterBaseStat,
     characterFinalStat,
     equipmentScore,
-    harmonySet
+    harmonySet,
+    statColors,
+    setStatColors,
   };
 
   return (

@@ -10,6 +10,8 @@ def draw_character_panel(
     layout: dict
 ):
     stand_image_url = character_data.get("stand_image_url")
+    overlay_image_url = character_data.get("overlay_image_url")
+    print(overlay_image_url)
     
     draw_rect(
         base,
@@ -30,6 +32,14 @@ def draw_character_panel(
         radius=layout["radius"], 
         border=((200, 200, 200), 5), 
         img_path=stand_image_url
+    )
+
+    draw_rect_topleft_round(
+        base, 
+        xy1=layout["constell_image"], 
+        xy2=layout["image_anchor"], 
+        radius=layout["radius"], 
+        img_path=overlay_image_url
     )
 
     icon_paths =  character_data.get("icon_image_urls")

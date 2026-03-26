@@ -1,6 +1,25 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import type { GameServer } from "./user";
+import type { CharacterId } from "@/datas/characterStats";
+
+export type UserProfile = {
+  uid: string;
+  email: string | null;
+  nickname: string;
+  imageUrl: string | null;
+  createdAt: number;
+};
+
+export type GameProfile = {
+  uid: string;
+  server: GameServer | null;
+  gameUid: string | null;
+  gameLevel: number;
+  characterId: CharacterId | null;
+  updatedAt: number;
+};
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,

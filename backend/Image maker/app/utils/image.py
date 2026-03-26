@@ -1,7 +1,22 @@
 from pathlib import Path
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageChops
+from PIL import Image, ImageDraw, ImageChops, ImageFilter
 import requests
+
+
+def premultiply_alpha(img: Image.Image) -> Image.Image:
+    r, g, b, a = img.split()
+
+    r = r.point(lambda p: p)
+    g = g.point(lambda p: p)
+    b = b.point(lambda p: p)
+
+    # 핵심: RGB * alpha
+    r = ImageChops.multiply(r, a)
+    g = ImageChops.multiply(g, a)
+    b = ImageChops.multiply(b, a)
+
+    return Image.merge("RGBA", (r, g, b, a))
 
 
 def resize_and_crop_cover(img, target_size):
@@ -81,7 +96,9 @@ def draw_image(base, path, xy1, xy2=(0, 0, 1), color_filter=(255, 255, 255), opa
 
         new_w = max(1, int(base_w * scale))
         new_h = max(1, int(base_h * scale))
-        overlay = overlay.resize((new_w, new_h), Image.LANCZOS)
+
+        overlay = premultiply_alpha(overlay)
+        overlay = overlay.resize((new_w, new_h), Image.Resampling.LANCZOS)
 
         cx = w / 2
         cy = h / 2
@@ -189,8 +206,10 @@ def draw_icon(
         if path.startswith("http"):
             response = requests.get(path)
             overlay = Image.open(BytesIO(response.content)).convert("RGBA")
+            overlay = premultiply_alpha(overlay)
         else:
             overlay = Image.open(path).convert("RGBA")
+            overlay = premultiply_alpha(overlay)
 
         if alpha_boost != 1.0:
             r, g, b, a = overlay.split()

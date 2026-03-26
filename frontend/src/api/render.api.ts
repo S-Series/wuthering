@@ -12,6 +12,8 @@ import { characterStat, type CharacterId } from "@/datas/characterStats";
 import { weaponDict, type WeaponId } from "@/datas/weapon";
 import { weaponStat } from "@/datas/weaponStats";
 import { FixedStats, type StatId } from "@/datas/stats";
+import type { UserProfile } from "@/firebase/firebase";
+import type { GameProfile } from "@/firebase/firebase";
 
 export type RenderCardPayload = {
   base: {
@@ -69,16 +71,18 @@ const formatStatValue = (statId: StatId, value: number) => {
     statId.toLowerCase().includes(item)
   );
 
-  return `${value}${needPercent ? "%" : ""}`;
+  return `${needPercent ? value.toFixed(1) : value}${needPercent ? "%" : ""}`;
 };
 
 export function createPayloadData(
   lang: LangType,
+  userProfile: UserProfile,
+  gameProfile: GameProfile,
   characterData: CharacterData,
   finalStat: CharacterStat,
   harmonySet: Partial<Record<HarmonyId, number>>,
   equipmentScore: ScoreList,
-  //statColors: string[][],
+  statColors: string[][],
 ): RenderCardPayload {
   const cId: CharacterId = characterData.characterId;
   const cData = cDict[cId];
@@ -94,10 +98,10 @@ export function createPayloadData(
   };
 
   const user: RenderCardPayload["user"] = {
-    server: "",
-    name: "",
-    uid: "",
-    level: 0,
+    server: gameProfile?.server ?? "Guest",
+    name: userProfile?.nickname ?? "Guest",
+    uid: gameProfile?.gameUid ?? "--- --- ---",
+    level: gameProfile?.gameLevel ?? "--",
   };
 
   const character: RenderCardPayload["character"] = {
@@ -183,6 +187,8 @@ export function createPayloadData(
     rank: getCharacterRank(stats.score[1]),
   };
 
+  const safeStatColors = statColors.map((row) => ["#fff", "#fff", ...row]);
+
   const echoes: RenderCardPayload["echoes"] = characterData.echoDataIndex
     .slice(0, 5)
     .map((realIndex, idx) => {
@@ -205,8 +211,7 @@ export function createPayloadData(
         (stat, innerIdx) => ({
           statId: stat.statId,
           statValue: formatStatValue(stat?.statId ?? "dummy", stat?.statValue ?? 0),
-          //statColorHex: statColors?.[idx]?.[innerIdx] ?? "#555",
-          statColorHex: "#555",
+          statColorHex: safeStatColors?.[idx]?.[innerIdx] ?? "#555",
         })
       );
 

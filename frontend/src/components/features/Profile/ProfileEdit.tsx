@@ -6,10 +6,11 @@ import { useStyleStore } from "@/stores/styleStore";
 
 import { character } from "@/datas/characters";
 
-import type { GameProfile, GameServer } from "@/firebase/user";
+import type { GameServer } from "@/firebase/user";
 import type { CharacterId } from "@/datas/characterStats";
 
 import "./ProfileEdit.css";
+import type { GameProfile } from "@/firebase/firebase";
 
 export default function GameProfileEdit() {
   const { user, gameProfile, saveUserNicknameAction, saveGameProfileAction } = useAuthStore();
