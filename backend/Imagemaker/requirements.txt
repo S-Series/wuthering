@@ -6,7 +6,7 @@ python-multipart==0.0.6
 
 # --- Image processing ---
 Pillow==11.1.0
-opencv-python-headless==4.8.1.78
+opencv-python-headless==4.10.0.84
 
 # --- Basic dependencies ---
-numpy==1.23.5
+numpy==2.1.3
