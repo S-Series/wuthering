@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db, type GameProfile } from "./firebase";
+import { db} from "./firebase";
 import { characterStat, type CharacterId } from "@/datas/characterStats";
+import { type GameProfile } from "@/firebase/firebase"
 
 const GAME_SERVERS = ["Asia", "Europe", "America", "HMT (HK, MO, TW)", "Sea"] as const;
 export type GameServer = typeof GAME_SERVERS[number];

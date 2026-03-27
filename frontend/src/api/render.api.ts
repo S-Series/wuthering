@@ -1,3 +1,4 @@
+import { auth } from "@/firebase/firebase";
 import type { LangType } from "@/stores/appStore";
 import { harmony as hDict, type HarmonyId } from "@/datas/harmonies";
 import {
@@ -241,11 +242,19 @@ export function createPayloadData(
 }
 
 export async function requestRenderCard(payload: RenderCardPayload) {
-  //const response = await fetch(`http://localhost:8080/render/card`, {
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("Login required");
+  }
+
+  const idToken = await user.getIdToken();
+
   const response = await fetch(`${renderEndPoint}/api/render/card`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
     },
     body: JSON.stringify(payload),
   });
@@ -255,4 +264,30 @@ export async function requestRenderCard(payload: RenderCardPayload) {
   }
 
   return response.blob();
+}
+
+export async function getRenderCardStatus() {
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("Login required");
+  }
+
+  const idToken = await user.getIdToken();
+
+  const response = await fetch(`${renderEndPoint}/api/render/card/status`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Render status request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<{
+    status: "ready" | "lock" | "cooldown";
+    retryAfterSec: number;
+  }>;
 }

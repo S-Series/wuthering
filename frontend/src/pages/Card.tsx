@@ -28,11 +28,11 @@ import { locale } from "@/locales/locale";
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
 import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
-import { createPayloadData, requestRenderCard } from "@/api/render.api";
+import { createPayloadData, getRenderCardStatus, requestRenderCard } from "@/api/render.api";
 import { useAuthStore } from "@/stores/authStore";
 import Select, { type StylesConfig } from "react-select";
 import { useStyleStore, type SelectOption } from "@/stores/styleStore";
-import { getStatDropStyleOptionWide } from "@/components/features/Card/EchoSelect.helper";
+import { useRenderStore } from "@/stores/renderStore";
 
 export default function Card() {
 
@@ -40,7 +40,9 @@ export default function Card() {
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
   const { openOverlay } = useOverlay();
-  const {user, gameProfile} = useAuthStore();
+  const { user, gameProfile } = useAuthStore();
+  const {renderedBlob, setRenderedImage} = useRenderStore();
+
   const navigate = useNavigate();
   const localeText = locale(lang).card;
 
@@ -141,11 +143,11 @@ export default function Card() {
   }, [characterData.weaponId])
 
   const weaponConstellOption: SelectOption[] = [
-    {value: "1", label: "✦"},
-    {value: "2", label: "✦✦"},
-    {value: "3", label: "✦✦✦"},
-    {value: "4", label: "✦✦✦✦"},
-    {value: "5", label: "✦✦✦✦✦"},
+    { value: "1", label: "✦" },
+    { value: "2", label: "✦✦" },
+    { value: "3", label: "✦✦✦" },
+    { value: "4", label: "✦✦✦✦" },
+    { value: "5", label: "✦✦✦✦✦" },
   ]
 
   //* == Image ================================================//
@@ -184,7 +186,7 @@ export default function Card() {
     const fromParam =
       CHARACTER_LIST.find(([key]) => key === paramCharacterId)?.[0];
 
-    const fromQuery  =
+    const fromQuery =
       CHARACTER_LIST.find(([key]) => key === queryCharacterId)?.[0];
 
     const fromStorage = localStorage.getItem("selectedCharacterId");
@@ -280,28 +282,85 @@ export default function Card() {
     },
   }
 
-  const [testUrl, setTestUrl] = useState("");
-  const testing = characterFinalStat ? createPayloadData(
-    lang, user, gameProfile, characterData, characterFinalStat, harmonySet, equipmentScore, statColors
-  ) : null;
-  
-  const handlePreview = async () => {
-    if (!testing) return;
-
-    setTestUrl("");
-
+  const refreshRenderStatus = async () => {
     try {
-      const blob = await requestRenderCard(testing);
-      const url = URL.createObjectURL(blob);
-
-      setTestUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return url;
-      });
+      const data = await getRenderCardStatus();
+      setRenderStatus(data.status);
+      setRetryAfterSec(data.retryAfterSec);
     } catch (e) {
       console.error(e);
     }
   };
+
+  const handlePreview = async () => {
+    if (!user) {
+      alert("Need to login")
+    }
+
+    const testing = (user && gameProfile && characterFinalStat) ? createPayloadData(
+      lang, user, gameProfile, characterData, characterFinalStat, harmonySet, equipmentScore, statColors
+    ) : null;
+
+    if (!testing) return;
+
+    try {
+      const blob = await requestRenderCard(testing);
+      setRenderedImage(blob);
+      alert("Complete!")
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await refreshRenderStatus();
+    }
+  };
+
+  type RenderStatus = "ready" | "lock" | "cooldown";
+  const [renderStatus, setRenderStatus] = useState<RenderStatus>("ready");
+  const [retryAfterSec, setRetryAfterSec] = useState(0);
+
+  useEffect(() => {
+    const loadStatus = async () => {
+      try {
+        const data = await getRenderCardStatus();
+        setRenderStatus(data.status);
+        setRetryAfterSec(data.retryAfterSec);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    loadStatus();
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRetryAfterSec((prev) => {
+        if (prev <= 1) {
+          setRenderStatus((current) =>
+            current === "lock" || current === "cooldown" ? "ready" : current
+          );
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatRemain = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
+
+  const renderedImageUrl = useRenderStore((state) => state.renderedImageUrl);
+  const hydrateRenderedImage = useRenderStore((state) => state.hydrateRenderedImage);
+
+  useEffect(() => {
+    hydrateRenderedImage();
+  }, [hydrateRenderedImage]);
+
 
   //* == return data ================================================//
   return (
@@ -313,10 +372,31 @@ export default function Card() {
               <button disabled={true} className="card-page-button content top">
                 <span>{localeText.help}</span>
               </button>
-              <button disabled={true} className="card-page-button content top">
-                <span>{localeText.request}</span>
+              <button className="card-page-button content top"
+                disabled={renderStatus !== "ready" || retryAfterSec > 0} 
+                onClick={handlePreview}
+                onMouseOver={() => console.log(renderStatus)}>
+                <span>{localeText.request} {formatRemain(retryAfterSec)}</span>
               </button>
-              <button disabled={true} className="card-page-button content top">
+              <button className="card-page-button content top"
+                disabled={!renderedImageUrl}
+                onClick={() => openOverlay(
+                  <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", alignItems: "center" }}>
+                    <img src={renderedImageUrl ?? ""} style={{ width: "100%", height: "auto", border: "1px solid #fff", filter: "drop-shadow(0 2px 4px #000)" }} />
+                    <button style={{ marginTop: "2rem", height: "2rem", width: "fit-content",minWidth: "8rem", color: "#fff", fontSize: "min(1vw, 1rem)" }}
+                      onClick={() => {
+                        if (!renderedImageUrl) return;
+                        const a = document.createElement("a");
+                        a.href = renderedImageUrl;
+                        a.download = `${characterId}.png`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                      }}>
+                      {localeText.download}
+                    </button>
+                  </div>
+                ,{title:`${localeText.download}`})}>
                 <span>{localeText.download}</span>
               </button>
             </div>
@@ -339,7 +419,7 @@ export default function Card() {
                   defaultSrc={
                     `${BASE_URL}/character/${characterId?.includes("rover")
                       ? `rover?v=${imgVer}`
-                  : characterId}/stand.png?v=${imgVer}`
+                      : characterId}/stand.png?v=${imgVer}`
                   }
                   onChangeSrc={(src) =>
                     setImageSrc("characterImage", src)
@@ -525,12 +605,6 @@ export default function Card() {
             </div>
           </div>
         </div>
-        {/* 
-        */}
-        <button onClick={handlePreview}>Request</button>
-        <img src={testUrl} style={{width: "100%"}}/>
-        {/* 
-        */}
       </div>
 
       <div className="card-section right">

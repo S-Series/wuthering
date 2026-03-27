@@ -9,9 +9,10 @@ import {
   logout,
   normalizeUserProfile,
   signup,
-  type UserProfile,
 } from "@/firebase/auth";
-import { getGameProfile, saveGameProfile, saveUserNickname, type GameProfile } from "@/firebase/user";
+import { getGameProfile, saveGameProfile, saveUserNickname } from "@/firebase/user";
+
+import { type UserProfile, type GameProfile } from "@/firebase/firebase"
 
 type AuthState = {
   user: UserProfile | null;
@@ -48,7 +49,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      const user = normalizeUserProfile(userSnap.data());
+      const user : UserProfile = normalizeUserProfile(userSnap.data());
       const gameProfile = await getGameProfile(firebaseUser.uid);
 
       set({

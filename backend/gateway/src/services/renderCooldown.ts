@@ -14,6 +14,11 @@ const RENDER_COOLDOWN_MS = 5 * 60 * 1000;
 const renderLocks = new Map<string, number>();
 const renderCooldowns = new Map<string, number>();
 
+type RenderStatus =
+  | { status: "ready"; retryAfterSec: 0 }
+  | { status: "lock"; retryAfterSec: number }
+  | { status: "cooldown"; retryAfterSec: number };
+
 function now() {
   return Date.now();
 }
@@ -35,18 +40,20 @@ function clearExpired(clientKey: string) {
 }
 
 //$ Membership
-export function hasRenderBypass(_clientKey: string): boolean {
+type RenderUserKey = string;
+
+export function hasRenderBypass(uid: RenderUserKey): boolean {
   return false;
 }
 
-export function canStartRender(clientKey: string): RenderAccessResult {
-  if (hasRenderBypass(clientKey)) {
+export function canStartRender(uid: RenderUserKey): RenderAccessResult {
+  if (hasRenderBypass(uid)) {
     return { ok: true };
   }
 
-  clearExpired(clientKey);
+  clearExpired(uid);
 
-  const lockExpiresAt = renderLocks.get(clientKey);
+  const lockExpiresAt = renderLocks.get(uid);
   if (lockExpiresAt) {
     return {
       ok: false,
@@ -55,7 +62,7 @@ export function canStartRender(clientKey: string): RenderAccessResult {
     };
   }
 
-  const cooldownExpiresAt = renderCooldowns.get(clientKey);
+  const cooldownExpiresAt = renderCooldowns.get(uid);
   if (cooldownExpiresAt) {
     return {
       ok: false,
@@ -67,34 +74,29 @@ export function canStartRender(clientKey: string): RenderAccessResult {
   return { ok: true };
 }
 
-export function acquireRenderLock(clientKey: string) {
-  if (hasRenderBypass(clientKey)) return;
-  renderLocks.set(clientKey, now() + RENDER_LOCK_MS);
+export function acquireRenderLock(uid: RenderUserKey) {
+  if (hasRenderBypass(uid)) return;
+  renderLocks.set(uid, now() + RENDER_LOCK_MS);
 }
 
-export function releaseRenderLock(clientKey: string) {
-  if (hasRenderBypass(clientKey)) return;
-  renderLocks.delete(clientKey);
+export function releaseRenderLock(uid: RenderUserKey) {
+  if (hasRenderBypass(uid)) return;
+  renderLocks.delete(uid);
 }
 
-export function startRenderCooldown(clientKey: string) {
-  if (hasRenderBypass(clientKey)) return;
-  renderCooldowns.set(clientKey, now() + RENDER_COOLDOWN_MS);
+export function startRenderCooldown(uid: RenderUserKey) {
+  if (hasRenderBypass(uid)) return;
+  renderCooldowns.set(uid, now() + RENDER_COOLDOWN_MS);
 }
 
-type RenderStatus =
-  | { status: "ready"; retryAfterSec: 0 }
-  | { status: "lock"; retryAfterSec: number }
-  | { status: "cooldown"; retryAfterSec: number };
-
-export function getRenderStatus(clientKey: string): RenderStatus {
-  if (hasRenderBypass(clientKey)) {
+export function getRenderStatus(uid: RenderUserKey): RenderStatus {
+  if (hasRenderBypass(uid)) {
     return { status: "ready", retryAfterSec: 0 };
   }
 
-  clearExpired(clientKey);
+  clearExpired(uid);
 
-  const lockExpiresAt = renderLocks.get(clientKey);
+  const lockExpiresAt = renderLocks.get(uid);
   if (lockExpiresAt) {
     return {
       status: "lock",
@@ -102,7 +104,7 @@ export function getRenderStatus(clientKey: string): RenderStatus {
     };
   }
 
-  const cooldownExpiresAt = renderCooldowns.get(clientKey);
+  const cooldownExpiresAt = renderCooldowns.get(uid);
   if (cooldownExpiresAt) {
     return {
       status: "cooldown",

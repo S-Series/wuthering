@@ -8,47 +8,49 @@ import {
   getRenderStatus,
 } from "../services/renderCooldown.js";
 import { requestRenderUpstream } from "../services/renderUpstream.js";
-
+import { requireUid } from "../lib/requireAuth.js"
 export async function registerRenderRoutes(app: FastifyInstance) {
   app.post("/api/render/card", async (req, reply) => {
-    const body = req.body;
+    let uid: string;
 
-    if (!body || typeof body !== "object") {
-      return reply.code(400).send({ error: "invalid json body" });
-    }
-
-    const clientKey = getClientKey(req);
-    const access = canStartRender(clientKey);
-
-    if (!access.ok) {
-      return reply.code(429).send({
-        error:
-          access.reason === "lock"
-            ? "render request already in progress"
-            : "render cooldown active",
-        reason: access.reason,
-        retryAfterSec: access.retryAfterSec,
+    try {
+      uid = await requireUid(req);
+    } catch {
+      return reply.status(401).send({
+        message: "Unauthorized",
       });
     }
 
-    acquireRenderLock(clientKey);
-
-    const result = await requestRenderUpstream(body);
-
-    if (!result.ok) {
-      releaseRenderLock(clientKey);
-      return reply.code(result.statusCode).send(result.body);
+    const access = canStartRender(uid);
+    if (!access.ok) {
+      return reply.status(429).send(access);
     }
 
-    releaseRenderLock(clientKey);
-    startRenderCooldown(clientKey);
+    acquireRenderLock(uid);
 
-    return reply.header("content-type", result.contentType).send(result.buffer);
+    try {
+      // render upstream call
+      // const image = await requestRender(...)
+
+      startRenderCooldown(uid);
+
+      // return image
+    } catch (error) {
+      throw error;
+    } finally {
+      releaseRenderLock(uid);
+    }
   });
 
   app.get("/api/render/card/status", async (req, reply) => {
-    const clientKey = getClientKey(req);
-    const status = getRenderStatus(clientKey);
-    return reply.send(status);
+    try {
+      const uid = await requireUid(req);
+      const status = getRenderStatus(uid);
+      return reply.send(status);
+    } catch (error) {
+      return reply.status(401).send({
+        message: "Unauthorized",
+      });
+    }
   });
 }

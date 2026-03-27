@@ -9,6 +9,7 @@
     "@fastify/rate-limit": "^8",
     "dotenv": "^16",
     "fastify": "^4",
+    "firebase-admin": "^13.7.0",
     "p-limit": "^4"
   },
   "devDependencies": {

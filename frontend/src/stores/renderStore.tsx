@@ -1,5 +1,11 @@
 import { create } from "zustand";
 
+import {
+  saveRenderedBlob,
+  loadRenderedBlob,
+  clearRenderedBlob as clearRenderedBlobFromDb,
+} from "@/lib/renderedImage.db";
+
 type RenderStore = {
   renderedBlob: Blob | null;
   renderedImageUrl: string | null;
@@ -10,6 +16,7 @@ type RenderStore = {
   setError: (value: string | null) => void;
   setRenderedImage: (blob: Blob | null) => void;
   clearRenderedImage: () => void;
+  hydrateRenderedImage: () => Promise<void>;
 };
 
 export const useRenderStore = create<RenderStore>((set, get) => ({
@@ -21,7 +28,7 @@ export const useRenderStore = create<RenderStore>((set, get) => ({
   setRendering: (value) => set({ isRendering: value }),
   setError: (value) => set({ error: value }),
 
-  setRenderedImage: (blob) => {
+  setRenderedImage: async (blob) => {
     const prevUrl = get().renderedImageUrl;
     if (prevUrl) URL.revokeObjectURL(prevUrl);
 
@@ -30,6 +37,7 @@ export const useRenderStore = create<RenderStore>((set, get) => ({
         renderedBlob: null,
         renderedImageUrl: null,
       });
+      await clearRenderedBlobFromDb();
       return;
     }
 
@@ -39,9 +47,11 @@ export const useRenderStore = create<RenderStore>((set, get) => ({
       renderedBlob: blob,
       renderedImageUrl: nextUrl,
     });
+
+    await saveRenderedBlob(blob);
   },
 
-  clearRenderedImage: () => {
+  clearRenderedImage: async () => {
     const prevUrl = get().renderedImageUrl;
     if (prevUrl) URL.revokeObjectURL(prevUrl);
 
@@ -49,6 +59,23 @@ export const useRenderStore = create<RenderStore>((set, get) => ({
       renderedBlob: null,
       renderedImageUrl: null,
       error: null,
+    });
+
+    await clearRenderedBlobFromDb();
+  },
+
+  hydrateRenderedImage: async () => {
+    const blob = await loadRenderedBlob();
+    if (!blob) return;
+
+    const prevUrl = get().renderedImageUrl;
+    if (prevUrl) URL.revokeObjectURL(prevUrl);
+
+    const nextUrl = URL.createObjectURL(blob);
+
+    set({
+      renderedBlob: blob,
+      renderedImageUrl: nextUrl,
     });
   },
 }));
