@@ -61,6 +61,8 @@ async function main() {
       : "officialTrailer";
   }
 
+  //@ ==================================================
+
   const OCR_UPSTREAM = {
     kr: (process.env.OCR_UPSTREAM_KR ?? "").trim(),
     en: (process.env.OCR_UPSTREAM_EN ?? "").trim(),
@@ -68,9 +70,17 @@ async function main() {
     zh: (process.env.OCR_UPSTREAM_ZH ?? "").trim(),
   } as const;
 
+  const RENDER_UPSTREAM = (process.env.RENDER_UPSTREAM ?? "").trim();
+
   if (!OCR_UPSTREAM.kr) {
     throw new Error("OCR_UPSTREAM_KR is missing in .env");
   }
+
+  if (!RENDER_UPSTREAM) {
+    throw new Error("RENDER_UPSTREAM is missing in .env");
+  }
+
+  //@ ==================================================
 
   const MAX_BYTES = 15 * 1024 * 1024; // 15mb
   const ALLOWED_MIME = new Set(["image/png", "image/jpeg", "image/webp"]);
@@ -217,6 +227,58 @@ async function main() {
     }
 
     return reply.send(text);
+  });
+
+  app.post("/api/render/card", async (req, reply) => {
+    const body = req.body;
+
+    if (!body || typeof body !== "object") {
+      return reply.code(400).send({ error: "invalid json body" });
+    }
+
+    const upstreamUrl = new URL("/render/card", RENDER_UPSTREAM).toString();
+
+    const controller = new AbortController();
+    const timeoutMs = 60_000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    let upstreamRes: Response;
+    try {
+      upstreamRes = await fetch(upstreamUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+    } catch (e: any) {
+      const msg =
+        e?.name === "AbortError" ? "upstream timeout" : "upstream fetch failed";
+      return reply
+        .code(504)
+        .send({ error: msg, detail: String(e?.message ?? e) });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+
+    if (!upstreamRes.ok) {
+      const text = await upstreamRes.text();
+      return reply.code(502).send({
+        error: "render upstream error",
+        upstreamStatus: upstreamRes.status,
+        upstreamBody: text.slice(0, 2000),
+      });
+    }
+
+    const contentType =
+      upstreamRes.headers.get("content-type") ?? "application/octet-stream";
+    const arrayBuffer = await upstreamRes.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    return reply
+      .header("content-type", contentType)
+      .send(buffer);
   });
 
   app.get("/api/youtube/latest", async (req, reply) => {
