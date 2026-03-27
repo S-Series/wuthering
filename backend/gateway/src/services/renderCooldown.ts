@@ -81,3 +81,37 @@ export function startRenderCooldown(clientKey: string) {
   if (hasRenderBypass(clientKey)) return;
   renderCooldowns.set(clientKey, now() + RENDER_COOLDOWN_MS);
 }
+
+type RenderStatus =
+  | { status: "ready"; retryAfterSec: 0 }
+  | { status: "lock"; retryAfterSec: number }
+  | { status: "cooldown"; retryAfterSec: number };
+
+export function getRenderStatus(clientKey: string): RenderStatus {
+  if (hasRenderBypass(clientKey)) {
+    return { status: "ready", retryAfterSec: 0 };
+  }
+
+  clearExpired(clientKey);
+
+  const lockExpiresAt = renderLocks.get(clientKey);
+  if (lockExpiresAt) {
+    return {
+      status: "lock",
+      retryAfterSec: Math.ceil(getRemainingMs(lockExpiresAt) / 1000),
+    };
+  }
+
+  const cooldownExpiresAt = renderCooldowns.get(clientKey);
+  if (cooldownExpiresAt) {
+    return {
+      status: "cooldown",
+      retryAfterSec: Math.ceil(getRemainingMs(cooldownExpiresAt) / 1000),
+    };
+  }
+
+  return {
+    status: "ready",
+    retryAfterSec: 0,
+  };
+}

@@ -5,6 +5,7 @@ import {
   canStartRender,
   releaseRenderLock,
   startRenderCooldown,
+  getRenderStatus,
 } from "../services/renderCooldown.js";
 import { requestRenderUpstream } from "../services/renderUpstream.js";
 
@@ -42,8 +43,12 @@ export async function registerRenderRoutes(app: FastifyInstance) {
     releaseRenderLock(clientKey);
     startRenderCooldown(clientKey);
 
-    return reply
-      .header("content-type", result.contentType)
-      .send(result.buffer);
+    return reply.header("content-type", result.contentType).send(result.buffer);
+  });
+
+  app.get("/api/render/card/status", async (req, reply) => {
+    const clientKey = getClientKey(req);
+    const status = getRenderStatus(clientKey);
+    return reply.send(status);
   });
 }
