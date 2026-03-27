@@ -127,9 +127,77 @@ async function main() {
 
   app.get("/health", async () => ({ ok: true, upstream: "ocr server is ready" }));
 
-  app.get("/health/ocr", async () => ({ ok: true, upstream: OCR_UPSTREAM }));
+  app.get("/health/ocr", async (req, reply) => {
+    const results = await Promise.all(
+      Object.entries(OCR_UPSTREAM).map(async ([lang, baseUrl]) => {
+        if (!baseUrl) {
+          return {
+            lang,
+            ok: false,
+            upstream: baseUrl,
+            error: "upstream url is missing",
+          };
+        }
 
-  app.get("/health/render", async () => ({ ok: true, upstream: RENDER_UPSTREAM }));
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        try {
+          const upstreamUrl = new URL("/health", baseUrl).toString();
+
+          const res = await fetch(upstreamUrl, {
+            method: "GET",
+            signal: controller.signal,
+          });
+
+          return {
+            lang,
+            ok: res.ok,
+            status: res.status,
+            upstream: upstreamUrl,
+          };
+        } catch (e) {
+          return {
+            lang,
+            ok: false,
+            upstream: baseUrl,
+            error: "upstream fetch failed",
+            detail: e instanceof Error ? e.message : String(e),
+          };
+        } finally {
+          clearTimeout(timeoutId);
+        }
+      })
+    );
+
+    const allOk = results.every((item) => item.ok);
+
+    return reply.code(allOk ? 200 : 502).send({
+      ok: allOk,
+      results,
+    });
+  });
+
+  app.get("/health/render", async (req, reply) => {
+    try {
+      const res = await fetch(new URL("/health", RENDER_UPSTREAM).toString(), {
+        method: "GET",
+      });
+
+      return {
+        ok: res.ok,
+        status: res.status,
+        upstream: RENDER_UPSTREAM,
+      };
+    } catch (e) {
+      return reply.code(502).send({
+        ok: false,
+        upstream: RENDER_UPSTREAM,
+        error: "upstream fetch failed",
+        detail: e instanceof Error ? e.message : String(e),
+      });
+    }
+  });
 
   app.post("/api/ocr", async (req, reply) => {
     //#region Part
