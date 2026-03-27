@@ -1,16 +1,7 @@
 from PIL import Image, ImageFont
 from app.utils.draw import draw_rect, draw_rounded_rect
 from app.utils.image import draw_image, draw_icon
-from app.utils.text import draw_text, FONT_MAP
-
-
-def get_text_size(lang:str, text:str, size:int, is_bold:bool):
-    font_code = f"{lang}{"_bold" if is_bold else ""}"
-    font = ImageFont.truetype(FONT_MAP[font_code] or FONT_MAP["kr"], size)
-    bbox = font.getbbox(text)
-    width = bbox[2] - bbox[0]
-    height = bbox[3] - bbox[1]
-    return width, height
+from app.utils.text import draw_text, get_text_size
 
 
 def draw_stat_panel(

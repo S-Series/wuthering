@@ -30,11 +30,15 @@ import "@/pages/Card.contents.main.css"
 import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
 import { createPayloadData, requestRenderCard } from "@/api/render.api";
 import { useAuthStore } from "@/stores/authStore";
+import Select, { type StylesConfig } from "react-select";
+import { useStyleStore, type SelectOption } from "@/stores/styleStore";
+import { getStatDropStyleOptionWide } from "@/components/features/Card/EchoSelect.helper";
 
 export default function Card() {
 
   const { lang, imgVer } = useAppStore();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, harmonySet, statColors } = useCharacter();
+  const { baseSelectStyles } = useStyleStore();
   const { openOverlay } = useOverlay();
   const {user, gameProfile} = useAuthStore();
   const navigate = useNavigate();
@@ -135,6 +139,14 @@ export default function Card() {
 
     return { ...base, ...stat }
   }, [characterData.weaponId])
+
+  const weaponConstellOption: SelectOption[] = [
+    {value: "1", label: "✦"},
+    {value: "2", label: "✦✦"},
+    {value: "3", label: "✦✦✦"},
+    {value: "4", label: "✦✦✦✦"},
+    {value: "5", label: "✦✦✦✦✦"},
+  ]
 
   //* == Image ================================================//
   const characterImage = useImgStore((s) => s.characterImage);
@@ -249,6 +261,24 @@ export default function Card() {
       [FixedStats.healBns.id]: characterFinalStat?.heal || 0,
     }
   }, [characterFinalStat]);
+
+  const dropStyle: StylesConfig<any, false> = {
+    ...baseSelectStyles,
+    menu: (base, state) => {
+      const common = baseSelectStyles.menu
+        ? baseSelectStyles.menu(base, state)
+        : base;
+
+      return {
+        ...common,
+        right: 0,
+        minWidth: "100%",
+        width: "max-content",
+        maxWidth: "200%",
+        textAlign: "center",
+      };
+    },
+  }
 
   const [testUrl, setTestUrl] = useState("");
   const testing = characterFinalStat ? createPayloadData(
@@ -367,6 +397,21 @@ export default function Card() {
                     e.currentTarget.dataset.fallback = "true";
                     e.currentTarget.src = "/default.webp";
                   }} />
+              </div>
+
+              <div className="weapon-constell-select en-font">
+                <Select
+                  isSearchable={false}
+                  styles={dropStyle}
+                  options={weaponConstellOption}
+                  value={weaponConstellOption.find((item) => item.value === characterData.constell[1].toString())}
+                  menuShouldScrollIntoView={false}
+                  menuPortalTarget={document.body}
+                  onChange={(opt) => {
+                    const value = Number(opt.value);
+                    patchCharacterData(patchConstell(characterData, false, value))
+                  }}
+                />
               </div>
 
               <div className="weapon-info-slot">

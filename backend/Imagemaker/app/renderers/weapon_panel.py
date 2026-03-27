@@ -1,7 +1,7 @@
 from PIL import Image
 from app.utils.draw import draw_rect
 from app.utils.image import draw_image
-from app.utils.text import draw_text
+from app.utils.text import draw_text, get_text_size
 
 
 def draw_weapon_panel(
@@ -13,7 +13,6 @@ def draw_weapon_panel(
     draw_image(base, weapon.get("weapon_image_path"),layout["weapon_img"])
     draw_rect(base, layout["weapon_img"], (0, 0, 0, 0), (255, 255, 255))
 
-
     draw_text(base, weapon.get("name"), layout["weapon_name_text"], weapon.get("lang"), 30, is_bold=True)
 
     draw_image(base, weapon.get("stat_icon_paths")[0],layout["weapon_icon"][0])
@@ -21,3 +20,17 @@ def draw_weapon_panel(
 
     draw_text(base, weapon.get("stat_values")[0], layout["weapon_texts"][0], "num", 36, is_bold=True, anchor="rm")
     draw_text(base, weapon.get("stat_values")[1], layout["weapon_texts"][1], "num", 36, is_bold=True, anchor="rm")
+    
+    w_constell = weapon.get("constell", 1)
+    constell_text = "✦" * w_constell
+    left_constell_text = "✦" * (5 - w_constell)
+    #constell_text = "✦"
+    #constell_text = "✦✦"
+    #constell_text = "✦✦✦"
+    #constell_text = "✦✦✦✦"
+    #constell_text = "✦✦✦✦✦"
+    w, h = get_text_size("symbol", "✦✦✦✦✦", 30, False)
+    start_x = 785 - int(w / 2)
+    constell_w, constell_h = get_text_size("symbol", constell_text, 30, False)
+    draw_text(base, constell_text, (start_x, 182), "symbol", 30)
+    draw_text(base, left_constell_text, (start_x + constell_w, 182), "symbol", 30, (100,100,100))

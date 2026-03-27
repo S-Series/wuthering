@@ -223,6 +223,20 @@
     background: linear-gradient(30deg, #0b0b44, #333366);
 }
 
+.main-item-slot.weapon .weapon-constell-select {
+    position: absolute;
+    left: calc(-10% - 1px);
+    bottom: -10%;
+    width: calc(50% - 3px);
+    height: auto;
+    aspect-ratio: 4 / 1;
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.5);
+    border: 1px solid #fff;
+}
+
 .main-item-slot.weapon .weapon-info-img img {
     width: 100%;
     height: 100%;

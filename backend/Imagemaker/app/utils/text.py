@@ -12,6 +12,8 @@ JP_FONT_BOLD_PATH = "./fonts/NotoSansJP-Bold.ttf"
 ZH_FONT_BOLD_PATH = "./fonts/NotoSansTC-Bold.ttf"
 NUM_FONT_BOLD_PATH = "./fonts/WantedSans-Bold.ttf"
 
+SYMBOL_FONT_PATH = "./fonts/Symbola.ttf"
+
 FONT_MAP = {
     "kr": KR_FONT_PATH,
     "kr_bold": KR_FONT_BOLD_PATH,
@@ -23,7 +25,19 @@ FONT_MAP = {
     "zh_bold": ZH_FONT_BOLD_PATH,
     "num": NUM_FONT_PATH,
     "num_bold": NUM_FONT_BOLD_PATH,
+
+    "symbol": SYMBOL_FONT_PATH,
 }
+
+
+def get_text_size(lang:str, text:str, size:int, is_bold:bool):
+    font_code = f"{lang}{"_bold" if is_bold else ""}"
+    font = ImageFont.truetype(FONT_MAP[font_code] or FONT_MAP["kr"], size)
+    bbox = font.getbbox(text)
+    width = bbox[2] - bbox[0]
+    height = bbox[3] - bbox[1]
+    return width, height
+
 
 def load_font(lang, font_size: int, is_bold: bool):
     try:

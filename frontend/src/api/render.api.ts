@@ -241,7 +241,8 @@ export function createPayloadData(
 }
 
 export async function requestRenderCard(payload: RenderCardPayload) {
-  const response = await fetch(`${renderEndPoint}/api/render/card`, {
+  const response = await fetch(`http://localhost:8080/render/card`, {
+  // const response = await fetch(`${renderEndPoint}/api/render/card`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -5,7 +5,6 @@ from app.renderers.profile_card import render_profile_card
 def prepare_render_data(payload: dict) -> bytes:
     base = payload.get("base", {})
     lang = str(base.get("lang"))
-    print(lang)
 
     #region CharacterData Format ============================
     character = payload.get("character", {})
@@ -21,6 +20,15 @@ def prepare_render_data(payload: dict) -> bytes:
     character["overlay_image_url"] = (
         f"{ASSET_DIR}/ui/CharacterC{c_constell}.png"
     )
+
+    character["constell_icon_urls"] = [
+        f"{ASSET_BASE_URL}/character/{c_id}/C1.png?v={IMAGE_VERSION}",
+        f"{ASSET_BASE_URL}/character/{c_id}/C2.png?v={IMAGE_VERSION}",
+        f"{ASSET_BASE_URL}/character/{c_id}/C3.png?v={IMAGE_VERSION}",
+        f"{ASSET_BASE_URL}/character/{c_id}/C4.png?v={IMAGE_VERSION}",
+        f"{ASSET_BASE_URL}/character/{c_id}/C5.png?v={IMAGE_VERSION}",
+        f"{ASSET_BASE_URL}/character/{c_id}/C6.png?v={IMAGE_VERSION}",
+    ]
     
     #data icon
     ico_id1 = character.get("elementType") or "default"
@@ -116,7 +124,6 @@ def prepare_render_data(payload: dict) -> bytes:
 
     score = namecard.get("score") or 0.0
     namecard["score_text"] = f"Tv. {score:.1f}pt"
-    print(namecard["score_text"])
     
     #? {c_id} is in character region
     namecard["image_path"] = f"{ASSET_BASE_URL}/character/{c_id}/art.png?v={IMAGE_VERSION}"
