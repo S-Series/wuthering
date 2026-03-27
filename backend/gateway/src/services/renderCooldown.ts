@@ -9,7 +9,7 @@ export type RenderAccessResult =
     };
 
 const RENDER_LOCK_MS = 60_000;
-const RENDER_COOLDOWN_MS = 0 * 60 * 1000;
+const RENDER_COOLDOWN_MS = 5 * 60 * 1000;
 
 const renderLocks = new Map<string, number>();
 const renderCooldowns = new Map<string, number>();
