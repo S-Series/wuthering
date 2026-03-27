@@ -66,6 +66,8 @@ export type RenderCardPayload = {
   }[];
 };
 
+const renderEndPoint = import.meta.env.VITE_GATEWAY_URL;
+
 const formatStatValue = (statId: StatId, value: number) => {
   const needPercent = ["pct", "bns", "crit"].some((item) =>
     statId.toLowerCase().includes(item)
@@ -239,7 +241,7 @@ export function createPayloadData(
 }
 
 export async function requestRenderCard(payload: RenderCardPayload) {
-  const response = await fetch("http://localhost:8080/render/card", {
+  const response = await fetch(`${renderEndPoint}/api/render/card`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
