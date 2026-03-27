@@ -147,7 +147,7 @@ export default function OcrPlayground() {
   return (
     <div className="ocr-comp-body">
       <div className="ocr-slot ocr">
-        <div className="container">
+        <div className="container" style={{opacity: 0.3, pointerEvents: "none", cursor: "not-allowed"}}>
           <div className="inner-slot top">
             <span className="en-font">{localeText.status}: {status}</span>
 
@@ -179,6 +179,7 @@ export default function OcrPlayground() {
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "20%" }}>
+              {/*
               {isBoaring ? (
                 <span className={`${lang}-font`}
                   style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)"}}>
@@ -197,6 +198,27 @@ export default function OcrPlayground() {
                   {localeText.request}
                 </button>
               )}
+                */}
+              <span className={`${lang}-font`}
+                style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)" }}>
+                {(() => {
+                  switch (lang) {
+                    case "kr":
+                      return "현재 OCR 서버 호스팅에 장애가 있습니다\n호스팅이 복구되는 대로 다시 연결하겠습니다";
+                    case "en":
+                      return "The OCR server hosting is currently experiencing an issue.\nWe will reconnect it as soon as the hosting is restored.";
+                    case "jp":
+                      return "現在、OCRサーバーのホスティングに障害が発生しています。\nホスティングが復旧し次第、再度接続いたします。";
+                    case "zh":
+                      return "当前 OCR 服务器托管出现故障。\n托管恢复后我们会立即重新连接。";
+                    default:
+                      return "";
+                  }
+                })()}
+              </span>
+                <button className="ocr-button" disabled>
+                  {localeText.request}
+                </button>
             </div>
           </div>
 
@@ -217,7 +239,7 @@ export default function OcrPlayground() {
           </div>
         </div>
 
-        <div className="container">
+        <div className="container" style={{opacity: 0.3, pointerEvents: "none", cursor: "not-allowed"}}>
           <div className="inner-slot result">
             <span className="en-font">{localeText.result}</span>
             <div className="file-slot">

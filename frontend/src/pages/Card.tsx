@@ -685,8 +685,8 @@ export default function Card() {
           </div>
         </div>
 
-        <div className="card-section-wrapper">
           {/* == Weapon ============ */}
+        <div className="card-section-wrapper">
           <button className={`${lang}-font ${cardSection === 1 ? "active" : ""}`}
             onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>{localeText.wMenu}</button>
 
@@ -721,8 +721,8 @@ export default function Card() {
           </div>
         </div>
 
-        <div className="card-section-wrapper">
           {/* == Echos ============ */}
+        <div className="card-section-wrapper">
           <button className={`${lang}-font ${cardSection === 2 ? "active" : ""}`}
             onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>{localeText.eMenu}</button>
 
@@ -744,7 +744,7 @@ export default function Card() {
 
           <div className={`card-slot echo ${cardSection === 2 ? "active" : ""}`}>
             <div className="echo-slot" ref={echoSlotRef}>
-              <button onClick={() => openOverlay(<OcrPlayground />)}>
+              <button onClick={() => openOverlay(<OcrPlayground />, {title: locale(lang).card.oMenu})}>
                 {locale(lang).card.oMenu}
               </button>
             </div>
