@@ -180,7 +180,7 @@ async function main() {
 
   app.get("/health/render", async (req, reply) => {
     try {
-      const res = await fetch(new URL("/health", RENDER_UPSTREAM).toString(), {
+      const res = await fetch(new URL("/test", RENDER_UPSTREAM).toString(), {
         method: "GET",
       });
 
