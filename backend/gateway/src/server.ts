@@ -125,7 +125,11 @@ async function main() {
     credentials: true,
   });
 
-  app.get("/health", async () => ({ ok: true, upstream: OCR_UPSTREAM }));
+  app.get("/health", async () => ({ ok: true, upstream: "ocr server is ready" }));
+
+  app.get("/health/ocr", async () => ({ ok: true, upstream: OCR_UPSTREAM }));
+
+  app.get("/health/render", async () => ({ ok: true, upstream: RENDER_UPSTREAM }));
 
   app.post("/api/ocr", async (req, reply) => {
     //#region Part
