@@ -3,97 +3,29 @@ import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import pLimit from "p-limit";
-import "dotenv/config";
 
-const YOUTUBE_PLAYLISTS = {
-  kr: {
-    officialTrailer: "PLAGF9ih-Y53e0M90IIYhfRKMKSRng6ozg",
-    characterTrailer: "PLAGF9ih-Y53cN-fYA-utvml3AvPtTdJFi",
-    characterIntro: "PLAGF9ih-Y53f2Pa4hy833eLYC_IwWrBxU",
-  },
-  en: {
-    officialTrailer: "PLkJ-t-Cn6PgqeqMkD3Xo3V5boAhJE0sX6",
-    characterTrailer: "PLkJ-t-Cn6PgrUDbYKmw0zLIPPqKgV2Bs4",
-    characterIntro: "PLkJ-t-Cn6PgqQgpevPiarIlXlV7uZ19TM",
-  },
-  jp: {
-    officialTrailer: "PLeKyAnyrBcFi84TS1ZwDAZRUqh1Y6Q3xn",
-    characterTrailer: "PLeKyAnyrBcFgW4ng9syP1TB4SWqW_kiiG",
-    characterIntro: "PLeKyAnyrBcFjOrx9GlvNyk_f7phwjhLya",
-  },
-  zh: {
-    officialTrailer: "PLeKyAnyrBcFi84TS1ZwDAZRUqh1Y6Q3xn",
-    characterTrailer: "PLeKyAnyrBcFgW4ng9syP1TB4SWqW_kiiG",
-    characterIntro: "PLeKyAnyrBcFjOrx9GlvNyk_f7phwjhLya",
-  },
-} as const;
+import {
+  ALLOWED_MIME,
+  CORS_ORIGINS,
+  MAX_BYTES,
+  OCR_CONCURRENCY,
+  OCR_UPSTREAM,
+  PORT,
+  RENDER_UPSTREAM,
+  YOUTUBE_PLAYLISTS,
+  hasAllowedExt,
+  normalizeLang,
+  normalizeType,
+  validateEnv,
+} from "./config/env.js";
+import { getClientKey } from "./utils/clientKey.js";
+import { registerRenderRoutes } from "./routes/render.js";
 
 async function main() {
+  validateEnv();
+
   const app = Fastify({ logger: true });
-
-  const OCR_CONCURRENCY = Number(process.env.OCR_CONCURRENCY ?? 2);
   const limitOcr = pLimit(OCR_CONCURRENCY);
-
-  const PORT = Number(process.env.PORT ?? 8080);
-  const CORS_ORIGINS = (process.env.CORS_ORIGINS ?? "*")
-    .split(",")
-    .map((s: string) => s.trim())
-    .filter(Boolean);
-
-  const allowedLangs = ["kr", "en", "jp", "zh"] as const;
-  type Lang = (typeof allowedLangs)[number];
-  function normalizeLang(raw: string | undefined): Lang {
-    return (allowedLangs as readonly string[]).includes(raw ?? "")
-      ? (raw as Lang)
-      : "kr";
-  }
-
-  const allowedTypes = [
-    "officialTrailer",
-    "characterTrailer",
-    "characterIntro",
-  ] as const;
-  type YtType = (typeof allowedTypes)[number];
-  function normalizeType(raw: unknown): YtType {
-    const v = typeof raw === "string" ? raw : "";
-    return (allowedTypes as readonly string[]).includes(v)
-      ? (v as YtType)
-      : "officialTrailer";
-  }
-
-  //@ ==================================================
-
-  const OCR_UPSTREAM = {
-    kr: (process.env.OCR_UPSTREAM_KR ?? "").trim(),
-    en: (process.env.OCR_UPSTREAM_EN ?? "").trim(),
-    jp: (process.env.OCR_UPSTREAM_JP ?? "").trim(),
-    zh: (process.env.OCR_UPSTREAM_ZH ?? "").trim(),
-  } as const;
-
-  const RENDER_UPSTREAM = (process.env.RENDER_UPSTREAM ?? "").trim();
-
-  if (!OCR_UPSTREAM.kr) {
-    throw new Error("OCR_UPSTREAM_KR is missing in .env");
-  }
-
-  if (!RENDER_UPSTREAM) {
-    throw new Error("RENDER_UPSTREAM is missing in .env");
-  }
-
-  //@ ==================================================
-
-  const MAX_BYTES = 15 * 1024 * 1024; // 15mb
-  const ALLOWED_MIME = new Set(["image/png", "image/jpeg", "image/webp"]);
-
-  function hasAllowedExt(name?: string | null) {
-    const n = (name ?? "").toLowerCase();
-    return (
-      n.endsWith(".png") ||
-      n.endsWith(".jpg") ||
-      n.endsWith(".jpeg") ||
-      n.endsWith(".webp")
-    );
-  }
 
   await app.register(multipart, {
     limits: {
@@ -104,16 +36,9 @@ async function main() {
 
   await app.register(rateLimit, {
     global: true,
-
-    max: 30, // 1분에 30회
+    max: 30,
     timeWindow: "1 minute",
-
-    keyGenerator: (req) => {
-      const xfwd = req.headers["x-forwarded-for"];
-      if (typeof xfwd === "string" && xfwd.length > 0)
-        return xfwd.split(",")[0].trim();
-      return req.ip;
-    },
+    keyGenerator: (req) => getClientKey(req),
   });
 
   await app.register(cors, {
@@ -127,7 +52,7 @@ async function main() {
 
   app.get("/health", async () => ({ ok: true, upstream: "ocr server is ready" }));
 
-  app.get("/health/ocr", async (req, reply) => {
+  app.get("/health/ocr", async (_req, reply) => {
     const results = await Promise.all(
       Object.entries(OCR_UPSTREAM).map(async ([lang, baseUrl]) => {
         if (!baseUrl) {
@@ -178,11 +103,12 @@ async function main() {
     });
   });
 
-  app.get("/health/render", async (req, reply) => {
+  app.get("/health/render", async (_req, reply) => {
     try {
-      const res = await fetch(new URL("/render/test", RENDER_UPSTREAM).toString(), {
-        method: "GET",
-      });
+      const res = await fetch(
+        new URL("/render/test", RENDER_UPSTREAM).toString(),
+        { method: "GET" }
+      );
 
       return {
         ok: res.ok,
@@ -200,34 +126,30 @@ async function main() {
   });
 
   app.post("/api/ocr", async (req, reply) => {
-    //#region Part
     const part = await req.file();
     if (!part) return reply.code(400).send({ error: "file missing" });
+
     if (!part.mimetype || !ALLOWED_MIME.has(part.mimetype)) {
       return reply
         .code(415)
         .send({ error: "unsupported file type", mimetype: part.mimetype });
     }
+
     if (!hasAllowedExt(part.filename)) {
       return reply
         .code(415)
         .send({ error: "unsupported file extension", filename: part.filename });
     }
-    //#endregion
 
-    //#region Buffer
     const buf = await part.toBuffer();
     if (buf.length === 0) {
       return reply.code(400).send({ error: "empty file" });
     }
-    if (buf.length > MAX_BYTES) {
-      return reply
-        .code(413)
-        .send({ error: "file too large", size: buf.length });
-    }
-    //#endregion
 
-    //#region Lang
+    if (buf.length > MAX_BYTES) {
+      return reply.code(413).send({ error: "file too large", size: buf.length });
+    }
+
     const langRaw =
       (part.fields?.lang && "value" in part.fields.lang
         ? String(part.fields.lang.value)
@@ -245,12 +167,10 @@ async function main() {
       })
     );
     form.set("lang", langValue);
-    //#endregion
 
-    //#region UpStream
     const upstreamUrl = new URL(
       "/ocr",
-      OCR_UPSTREAM[langValue] ?? OCR_UPSTREAM["kr"]
+      OCR_UPSTREAM[langValue] ?? OCR_UPSTREAM.kr
     ).toString();
 
     const controller = new AbortController();
@@ -269,6 +189,7 @@ async function main() {
     } catch (e: any) {
       const msg =
         e?.name === "AbortError" ? "upstream timeout" : "upstream fetch failed";
+
       return reply
         .code(504)
         .send({ error: msg, detail: String(e?.message ?? e) });
@@ -278,7 +199,6 @@ async function main() {
 
     const text = await upstreamRes.text();
     const contentType = upstreamRes.headers.get("content-type") ?? "";
-    //#endregion
 
     if (!upstreamRes.ok) {
       return reply.code(502).send({
@@ -294,64 +214,14 @@ async function main() {
           .header("content-type", "application/json; charset=utf-8")
           .send(JSON.parse(text));
       } catch {
-        // JSON 파싱 실패하면 raw 반환
+        // JSON 파싱 실패 시 raw 반환
       }
     }
 
     return reply.send(text);
   });
 
-  app.post("/api/render/card", async (req, reply) => {
-    const body = req.body;
-
-    if (!body || typeof body !== "object") {
-      return reply.code(400).send({ error: "invalid json body" });
-    }
-
-    const upstreamUrl = new URL("/render/card", RENDER_UPSTREAM).toString();
-
-    const controller = new AbortController();
-    const timeoutMs = 60_000;
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    let upstreamRes: Response;
-    try {
-      upstreamRes = await fetch(upstreamUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-    } catch (e: any) {
-      const msg =
-        e?.name === "AbortError" ? "upstream timeout" : "upstream fetch failed";
-      return reply
-        .code(504)
-        .send({ error: msg, detail: String(e?.message ?? e) });
-    } finally {
-      clearTimeout(timeoutId);
-    }
-
-    if (!upstreamRes.ok) {
-      const text = await upstreamRes.text();
-      return reply.code(502).send({
-        error: "render upstream error",
-        upstreamStatus: upstreamRes.status,
-        upstreamBody: text.slice(0, 2000),
-      });
-    }
-
-    const contentType =
-      upstreamRes.headers.get("content-type") ?? "application/octet-stream";
-    const arrayBuffer = await upstreamRes.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    return reply
-      .header("content-type", contentType)
-      .send(buffer);
-  });
+  await registerRenderRoutes(app);
 
   app.get("/api/youtube/latest", async (req, reply) => {
     const q = req.query as { lang?: string; type?: string };
@@ -380,7 +250,7 @@ async function main() {
     try {
       ytRes = await fetch(url.toString());
       text = await ytRes.text();
-    } catch (e: any) {
+    } catch {
       return reply.code(502).send({ error: "youtube fetch failed" });
     }
 
@@ -388,7 +258,7 @@ async function main() {
       return reply.code(502).send({
         error: "youtube api error",
         status: ytRes.status,
-        body: text.slice(0, 400), // 너무 길면 로그만 지저분
+        body: text.slice(0, 400),
         lang,
         type,
       });
@@ -397,7 +267,7 @@ async function main() {
     let data: any;
     try {
       data = JSON.parse(text);
-    } catch (e: any) {
+    } catch {
       return reply.code(502).send({ error: "youtube invalid json" });
     }
 

@@ -41,7 +41,13 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     const found = Object.entries(echoDict[costKey]).find(
       ([echoId]) => echoId === (selectedEchoData?.echoId ?? "")
     );
-    return found ? found[1] : null;
+    if (!found) return null;
+
+    const [echoId, data] = found;
+    return {
+      id: echoId,
+      ...data,
+    };
   }, [selectedCost, selectedEchoData]);
 
   const STAT_DROP_STYLE_OPTION_WIDE = useMemo<StylesConfig<any, false>>(() =>
