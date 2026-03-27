@@ -136,7 +136,7 @@ def prepare_render_data(payload: dict) -> bytes:
         e["lang"] = lang
         echo_id = e.get("id") or "default"
         harmony_id = e.get("harmonyId") or "default"
-        rank = (e.get("rank") or "default").lower()
+        rank = (e.get("rank") or "default").upper()
 
         if "stats" in e:
             stats = [
