@@ -8,35 +8,55 @@ import {
   getRenderStatus,
 } from "../services/renderCooldown.js";
 import { requestRenderUpstream } from "../services/renderUpstream.js";
-import { requireUid } from "../lib/requireAuth.js"
+import { requireUid } from "../lib/requireAuth.js";
 export async function registerRenderRoutes(app: FastifyInstance) {
   app.post("/api/render/card", async (req, reply) => {
+    const body = req.body;
+
+    if (!body || typeof body !== "object") {
+      return reply.code(400).send({ error: "invalid json body" });
+    }
+
     let uid: string;
 
     try {
       uid = await requireUid(req);
     } catch {
-      return reply.status(401).send({
-        message: "Unauthorized",
-      });
+      return reply.code(401).send({ error: "unauthorized" });
     }
 
     const access = canStartRender(uid);
+
     if (!access.ok) {
-      return reply.status(429).send(access);
+      return reply.code(429).send({
+        error:
+          access.reason === "lock"
+            ? "render request already in progress"
+            : "render cooldown active",
+        reason: access.reason,
+        retryAfterSec: access.retryAfterSec,
+      });
     }
 
     acquireRenderLock(uid);
 
     try {
-      // render upstream call
-      // const image = await requestRender(...)
+      const result = await requestRenderUpstream(body);
+
+      if (!result.ok) {
+        return reply.code(result.statusCode).send(result.body);
+      }
 
       startRenderCooldown(uid);
 
-      // return image
+      return reply
+        .header("content-type", result.contentType)
+        .send(result.buffer);
     } catch (error) {
-      throw error;
+      req.log.error(error);
+      return reply.code(500).send({
+        error: "render upstream request failed",
+      });
     } finally {
       releaseRenderLock(uid);
     }
