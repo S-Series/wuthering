@@ -97,7 +97,7 @@ async function main() {
 
     const allOk = results.every((item) => item.ok);
 
-    return reply.code(allOk ? 200 : 502).send({
+    return reply.code(200).send({
       ok: allOk,
       results,
     });
