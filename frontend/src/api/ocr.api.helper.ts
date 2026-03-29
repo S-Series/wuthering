@@ -157,3 +157,41 @@ export function textsToStats(texts: string[][], lang: LangType):{
     ]),
   };
 }
+
+export type OcrHealthItem = {
+  lang: string;
+  ok: boolean;
+  status?: number;
+  upstream: string;
+  error?: string;
+  detail?: string;
+};
+
+export type OcrHealthResponse = {
+  ok: boolean;
+  results: OcrHealthItem[];
+};
+
+export async function checkOcrHealth(): Promise<OcrHealthResponse> {
+  const response = await fetch(`${import.meta.env.VITE_GATEWAY_URL}/health/ocr`);
+
+  const contentType = response.headers.get("content-type") ?? "";
+  const text = await response.text();
+
+  if (!contentType.includes("application/json")) {
+    throw new Error(`Expected JSON but got ${contentType}: ${text.slice(0, 200)}`);
+  }
+
+  const data = JSON.parse(text) as OcrHealthResponse;
+
+  if (!response.ok) {
+    throw new Error(`Health check failed: ${response.status} / ${text}`);
+  }
+
+  return data;
+}
+
+export async function checkOcrHealthByLang(targetLang: string) {
+  const data = await checkOcrHealth();
+  return data.results.find((item) => item.lang === targetLang) ?? null;
+}

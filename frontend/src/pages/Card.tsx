@@ -25,14 +25,15 @@ import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
 
 import { locale } from "@/locales/locale";
 
-import "@/pages/Card.css"
-import "@/pages/Card.contents.main.css"
 import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
 import { createPayloadData, getRenderCardStatus, requestRenderCard } from "@/api/render.api";
 import { useAuthStore } from "@/stores/authStore";
 import Select, { type StylesConfig } from "react-select";
 import { useStyleStore, type SelectOption } from "@/stores/styleStore";
 import { useRenderStore } from "@/stores/renderStore";
+
+import "@/pages/Card.css"
+import "@/pages/Card.contents.main.css"
 
 export default function Card() {
 

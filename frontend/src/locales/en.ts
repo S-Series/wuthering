@@ -43,5 +43,7 @@ export const en = {
     description1: "Click to Start",
     description2: `Click to select an image file\nor\nPaste an image with "Ctrl+V"`,
     description3: `Waking up the server...\nThe first request may take\nabout 20–30 seconds\nThank you for your patience :)`,
+    healthCheck: `Checking OCR server status`,
+    healthFalse: `Failed to connect to the OCR server.\nIf the problem persists, please contact the administrator`,
   },
 } satisfies LocaleSchema;

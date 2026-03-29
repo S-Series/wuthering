@@ -10,6 +10,7 @@
 
 .ocr-comp-body .ocr-slot {
 	display: flex;
+	position: relative;
 	flex-direction: column;
 
 	align-items: center;
@@ -47,6 +48,37 @@
 	width: 50%;
 	height: 100%;
 	align-items: center;
+}
+
+.ocr-comp-body .ocr-slot .container.checking {
+	display: flex;
+	position: absolute;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	
+	gap: 5%;
+	padding: 5% 0;
+	align-items: center;
+	justify-content: center;
+
+	z-index: 100;
+}
+
+.ocr-comp-body .ocr-slot .container.checking > img {
+	width: 50%;
+	height: auto;
+	aspect-ratio: 1/1;
+}
+
+.ocr-comp-body .ocr-slot .container.checking > span {
+	font-size: min(2vw, 2rem);
+}
+
+.ocr-comp-body .ocr-slot .container.disable {
+	opacity: 0.3;
+	pointer-events: none;
+	cursor: not-allowed
 }
 
 .ocr-comp-body .ocr-slot .file-slot {

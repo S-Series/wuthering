@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { requestOcrByUrl } from "@/api/ocr.api";
-import { normalizeOcrTexts, ocrImageBase64ToDataUrl, retouchOcrTexts, textsToStats } from "@/api/ocr.api.helper";
+import { normalizeOcrTexts, ocrImageBase64ToDataUrl, retouchOcrTexts, textsToStats, checkOcrHealthByLang } from "@/api/ocr.api.helper";
 
 import { useAppStore } from "@/stores/appStore";
 
@@ -11,6 +11,7 @@ import { FixedStats, type StatId } from "@/datas/stats";
 import OcrSelect from "@/components/features/Card/OcrSelect";
 import "./OcrSlot.css"
 import OcrSelectDrag from "./OcrDragSelect";
+import { getRandomGif } from "@/lib/randomImg";
 
 
 export default function OcrPlayground() {
@@ -29,10 +30,9 @@ export default function OcrPlayground() {
   } | null>();
   const [preview, setPreview] = useState<string | null>(null);
 
+  const [isHealthy, setHealthy] = useState<boolean | null>(null);
   const [isBoaring, setBoaring] = useState(false);
-
   const [isFocused, setFocused] = useState(false);
-
   const [selectIdx, setSelectIdx] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(0);
 
   const localeText = useMemo(() => locale(lang).ocr, [lang]);
@@ -104,6 +104,20 @@ export default function OcrPlayground() {
   }, []);
 
   useEffect(() => {
+    const run = async () => {
+      try {
+        const health = await checkOcrHealthByLang(lang);
+        setHealthy(health?.ok || false);
+      } catch (e) {
+        console.error(e);
+        setHealthy(false);
+      }
+    };
+
+    run();
+  }, [lang]);
+
+  useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
       if (!isFocused) return;
 
@@ -144,10 +158,19 @@ export default function OcrPlayground() {
     return () => clearTimeout(timer);
   }, [status])
 
+  console.log(isHealthy);
+
   return (
     <div className="ocr-comp-body">
       <div className="ocr-slot ocr">
-        <div className="container" style={{opacity: 0.3, pointerEvents: "none", cursor: "not-allowed"}}>
+        {isHealthy === null ? (
+          <div className="container checking">
+            <img src={getRandomGif() ?? "/default.webp"} />
+            <span>{localeText.healthCheck}</span>
+          </div>) : (null)
+        }
+
+        <div className={`container ${isHealthy ? "" : "disable"}`}>
           <div className="inner-slot top">
             <span className="en-font">{localeText.status}: {status}</span>
 
@@ -179,11 +202,17 @@ export default function OcrPlayground() {
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "20%" }}>
-              {/*
               {isBoaring ? (
                 <span className={`${lang}-font`}
-                  style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)"}}>
+                  style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)" }}>
                   {localeText.description3}
+                </span>
+              ) : (null)}
+
+              {!isHealthy ? (
+                <span className={`${lang}-font`}
+                  style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)" }}>
+                  {localeText.healthFalse}
                 </span>
               ) : (null)}
 
@@ -198,7 +227,7 @@ export default function OcrPlayground() {
                   {localeText.request}
                 </button>
               )}
-                */}
+              {/*
               <span className={`${lang}-font`}
                 style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)" }}>
                 {(() => {
@@ -219,6 +248,7 @@ export default function OcrPlayground() {
                 <button className="ocr-button" disabled>
                   {localeText.request}
                 </button>
+                */}
             </div>
           </div>
 
@@ -239,7 +269,7 @@ export default function OcrPlayground() {
           </div>
         </div>
 
-        <div className="container" style={{opacity: 0.3, pointerEvents: "none", cursor: "not-allowed"}}>
+        <div className={`container ${isHealthy ? "" : "disable"}`}>
           <div className="inner-slot result">
             <span className="en-font">{localeText.result}</span>
             <div className="file-slot">
@@ -248,17 +278,17 @@ export default function OcrPlayground() {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", width: "90%", height: "67.5%", alignItems: "center", marginTop: "2.5%" }}>
-              <OcrSelectDrag datas={{
-                cost: debug?.cost as 4 | 3 | 1 ?? 4,
-                echoId: debug?.echoId ?? null,
-                stats: debug?.echoStats ?? null,
-              }} selectIdx={selectIdx} resetAction={handleResetDebug}/>
+            <OcrSelectDrag datas={{
+              cost: debug?.cost as 4 | 3 | 1 ?? 4,
+              echoId: debug?.echoId ?? null,
+              stats: debug?.echoStats ?? null,
+            }} selectIdx={selectIdx} resetAction={handleResetDebug} />
           </div>
         </div>
       </div>
 
       <div className="ocr-slot echo">
-        <OcrSelect selectIdx={selectIdx} setSelectIdx={setSelectIdx}/>
+        <OcrSelect selectIdx={selectIdx} setSelectIdx={setSelectIdx} />
       </div>
     </div>
   );

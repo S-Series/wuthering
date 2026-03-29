@@ -43,5 +43,7 @@ export const zh = {
     description1: "点击开始",
     description2: `点击选择图片文件\n或\n使用“Ctrl+V”粘贴图片`,
     description3: `正在唤醒服务器...\n首次请求可能需要20~30秒\n感谢您的耐心等待 :)`,
+    healthCheck: `正在检查OCR服务器状态`,
+    healthFalse: `无法连接到OCR服务器。\n如果问题持续存在，请联系管理员`,
   },
-}; //satisfies LocaleSchema;
+} satisfies LocaleSchema;

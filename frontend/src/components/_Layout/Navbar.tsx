@@ -41,8 +41,6 @@ export default function Navbar() {
     ? "/default.webp"
     : user?.imageUrl ?? "/default.webp";
 
-  useEffect(() => {console.log(user)}, [user]);
-
   return (
     <>
       <div id="navbar-body">

@@ -43,5 +43,7 @@ export const jp = {
     description1: "クリックして開始",
     description2: `クリックして画像ファイルを選択\nまたは\n「Ctrl+V」で画像を貼り付け`,
     description3: `サーバーを起動しています...\n最初のリクエストは20〜30秒ほどかかる場合があります\nしばらくお待ちください :)`,
+    healthCheck: `OCRサーバーの状態を確認中です`,
+    healthFalse: `OCRサーバーへの接続に失敗しました。\n問題が続く場合は、管理者にお問い合わせください`,
   },
 } satisfies LocaleSchema;

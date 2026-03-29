@@ -43,5 +43,7 @@ export const kr = {
     description1: "클릭해서 시작",
     description2: `클릭해서 이미지파일을 선택\n혹은\n"Ctrl+V"로 이미지 붙여넣기`,
     description3: `낮잠자는 서버를 깨우고 있습니다...\n첫 요청은 20~30초 정도 걸릴 수 있습니다\n사용자님의 인내에 감사드립니다 :)`,
+    healthCheck: `OCR서버 상태 확인중`,
+    healthFalse: `OCR서버와 연결에 실패했습니다.\n문제가 지속될경우 관리자에게 연락 바랍니다`,
   }
 } satisfies LocaleSchema;
