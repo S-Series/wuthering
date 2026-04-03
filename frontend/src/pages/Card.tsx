@@ -42,7 +42,7 @@ export default function Card() {
   const { baseSelectStyles } = useStyleStore();
   const { openOverlay } = useOverlay();
   const { user, gameProfile } = useAuthStore();
-  const {renderedBlob, setRenderedImage} = useRenderStore();
+  const { renderedBlob, setRenderedImage } = useRenderStore();
 
   const navigate = useNavigate();
   const localeText = locale(lang).card;
@@ -373,31 +373,65 @@ export default function Card() {
               <button disabled={true} className="card-page-button content top">
                 <span>{localeText.help}</span>
               </button>
-              <button className="card-page-button content top"
-                disabled={renderStatus !== "ready" || retryAfterSec > 0} 
+              <button
+                className="card-page-button content top"
+                disabled={renderStatus !== "ready" || retryAfterSec > 0}
                 onClick={handlePreview}
-                onMouseOver={() => console.log(renderStatus)}>
-                <span>{localeText.request} {formatRemain(retryAfterSec)}</span>
+                onMouseOver={() => console.log(renderStatus)}
+              >
+                <span>
+                  {localeText.request} {formatRemain(retryAfterSec)}
+                </span>
               </button>
-              <button className="card-page-button content top"
+              <button
+                className="card-page-button content top"
                 disabled={!renderedImageUrl}
-                onClick={() => openOverlay(
-                  <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", alignItems: "center" }}>
-                    <img src={renderedImageUrl ?? ""} style={{ width: "100%", height: "auto", border: "1px solid #fff", filter: "drop-shadow(0 2px 4px #000)" }} />
-                    <button style={{ marginTop: "2rem", height: "2rem", width: "fit-content",minWidth: "8rem", color: "#fff", fontSize: "min(1vw, 1rem)" }}
-                      onClick={() => {
-                        if (!renderedImageUrl) return;
-                        const a = document.createElement("a");
-                        a.href = renderedImageUrl;
-                        a.download = `${characterId}.png`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                      }}>
-                      {localeText.download}
-                    </button>
-                  </div>
-                ,{title:`${localeText.download}`})}>
+                onClick={() =>
+                  openOverlay(
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        height: "100%",
+                        alignItems: "center",
+                      }}
+                    >
+                      <img
+                        src={renderedImageUrl ?? ""}
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          border: "1px solid #fff",
+                          filter: "drop-shadow(0 2px 4px #000)",
+                        }}
+                      />
+                      <button
+                        style={{
+                          marginTop: "2rem",
+                          height: "2rem",
+                          width: "fit-content",
+                          minWidth: "8rem",
+                          color: "#fff",
+                          fontSize: "min(1vw, 1rem)",
+                        }}
+                        onClick={() => {
+                          if (!renderedImageUrl) return;
+                          const a = document.createElement("a");
+                          a.href = renderedImageUrl;
+                          a.download = `${characterId}.png`;
+                          document.body.appendChild(a);
+                          a.click();
+                          a.remove();
+                        }}
+                      >
+                        {localeText.download}
+                      </button>
+                    </div>,
+                    { title: `${localeText.download}` }
+                  )
+                }
+              >
                 <span>{localeText.download}</span>
               </button>
             </div>
@@ -416,35 +450,51 @@ export default function Card() {
           <div className="card-contents-slot main">
             <div className="main-item-slot character">
               <div className="card-character-slot">
-                <ImagePicker src={characterImage.src}
-                  defaultSrc={
-                    `${BASE_URL}/character/${characterId?.includes("rover")
+                <ImagePicker
+                  src={characterImage.src}
+                  defaultSrc={`${BASE_URL}/character/${
+                    characterId?.includes("rover")
                       ? `rover?v=${imgVer}`
-                      : characterId}/stand.png?v=${imgVer}`
-                  }
-                  onChangeSrc={(src) =>
-                    setImageSrc("characterImage", src)
-                  } />
+                      : characterId
+                  }/stand.png?v=${imgVer}`}
+                  onChangeSrc={(src) => setImageSrc("characterImage", src)}
+                />
 
                 <div className="constell-overlay">
-                  <img className="" src={`/ui/CharacterC${characterData.constell[0]}.png`} />
+                  <img
+                    className=""
+                    src={`/ui/CharacterC${characterData.constell[0]}.png`}
+                  />
                   {UI_BUTTON_POS.map((item, idx) => {
                     return (
-                      <button key={`character-constell-button${idx}`}
-                        className={`constell-button ${characterData.constell[0] > idx ? "active" : ""}`}
-                        style={{ left: `${item.x}%`, top: `${item.y}%`, }}
+                      <button
+                        key={`character-constell-button${idx}`}
+                        className={`constell-button ${
+                          characterData.constell[0] > idx ? "active" : ""
+                        }`}
+                        style={{ left: `${item.x}%`, top: `${item.y}%` }}
                         onClick={() => {
-                          patchCharacterData(patchConstell(
-                            characterData, true,
-                            characterData.constell[0] === idx + 1 ? 0 : idx + 1))
-                        }}>
-                        <img className="constell-image" src={
-                          `${BASE_URL}/character/${characterId?.includes("rover")
-                            ? "rover"
-                            : characterId}/C${idx + 1}.png`
-                        } />
+                          patchCharacterData(
+                            patchConstell(
+                              characterData,
+                              true,
+                              characterData.constell[0] === idx + 1
+                                ? 0
+                                : idx + 1
+                            )
+                          );
+                        }}
+                      >
+                        <img
+                          className="constell-image"
+                          src={`${BASE_URL}/character/${
+                            characterId?.includes("rover")
+                              ? "rover"
+                              : characterId
+                          }/C${idx + 1}.png`}
+                        />
                       </button>
-                    )
+                    );
                   })}
                 </div>
 
@@ -452,32 +502,43 @@ export default function Card() {
                 <span className="account-info player-name en-font">{`Lv.-- Guest Player`}</span>
                 <span className="account-info player-uid en-font">{`UID. - - -  - - -  - - -`}</span>
                 <span className={`character-name ${lang}-font`}>
-                  {selectedCharacterData[lang]?.charAt(0).toUpperCase() + selectedCharacterData[lang]?.slice(1)}
+                  {selectedCharacterData[lang]?.charAt(0).toUpperCase() +
+                    selectedCharacterData[lang]?.slice(1)}
                 </span>
 
-                <img className="character-icon element"
+                <img
+                  className="character-icon element"
                   alt="element icon"
-                  src={`/ico/element/${selectedCharacterData.element}.png`} />
-                <img className="character-icon stat-type"
+                  src={`/ico/element/${selectedCharacterData.element}.png`}
+                />
+                <img
+                  className="character-icon stat-type"
                   alt="stat type icon"
-                  src={`/ico/stats/atk.webp`} />
-                <img className="character-icon attack-type"
+                  src={`/ico/stats/atk.webp`}
+                />
+                <img
+                  className="character-icon attack-type"
                   alt="attack type icon"
-                  src={`/ico/stats/${selectedCharacterData.type}Bns.webp`} />
-                <img className="character-icon weapon-type"
+                  src={`/ico/stats/${selectedCharacterData.type}Bns.webp`}
+                />
+                <img
+                  className="character-icon weapon-type"
                   alt="weapon type icon"
-                  src={`/ico/weapon_type/${selectedCharacterData.weapon}.webp`} />
+                  src={`/ico/weapon_type/${selectedCharacterData.weapon}.webp`}
+                />
               </div>
             </div>
 
             <div className="main-item-slot weapon">
               <div className="weapon-info-img">
-                <img alt="weapon icon" src={
-                  `${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png?v=${imgVer}`}
+                <img
+                  alt="weapon icon"
+                  src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png?v=${imgVer}`}
                   onError={(e) => {
                     e.currentTarget.dataset.fallback = "true";
                     e.currentTarget.src = "/default.webp";
-                  }} />
+                  }}
+                />
               </div>
 
               <div className="weapon-constell-select en-font">
@@ -485,12 +546,17 @@ export default function Card() {
                   isSearchable={false}
                   styles={dropStyle}
                   options={weaponConstellOption}
-                  value={weaponConstellOption.find((item) => item.value === characterData.constell[1].toString())}
+                  value={weaponConstellOption.find(
+                    (item) =>
+                      item.value === characterData.constell[1].toString()
+                  )}
                   menuShouldScrollIntoView={false}
                   menuPortalTarget={document.body}
                   onChange={(opt) => {
                     const value = Number(opt.value);
-                    patchCharacterData(patchConstell(characterData, false, value))
+                    patchCharacterData(
+                      patchConstell(characterData, false, value)
+                    );
                   }}
                 />
               </div>
@@ -500,18 +566,27 @@ export default function Card() {
                   {`${weaponData?.[lang] || "- - - - - - - - - -"}`}
                 </span>
 
-                <img className="weapon-stat-icon main" alt="stat icon"
-                  src={`/ico/stats/atk.webp`} />
-                <span className="weapon-stat num-font main">{`${weaponData?.atk || "- - -"}`}</span>
+                <img
+                  className="weapon-stat-icon main"
+                  alt="stat icon"
+                  src={`/ico/stats/atk.webp`}
+                />
+                <span className="weapon-stat num-font main">{`${
+                  weaponData?.atk || "- - -"
+                }`}</span>
 
-                <img className="weapon-stat-icon sub" alt="stat icon"
+                <img
+                  className="weapon-stat-icon sub"
+                  alt="stat icon"
                   src={`/ico/stats/${weaponData?.statType[0]}.webp`}
                   onError={(e) => {
                     e.currentTarget.dataset.fallback = "true";
                     e.currentTarget.src = "/default.webp";
-                  }} />
+                  }}
+                />
                 <span className="weapon-stat num-font sub">
-                  {`${weaponData?.value[0].toFixed(1) || "- - -"}`}<em>%</em>
+                  {`${weaponData?.value[0].toFixed(1) || "- - -"}`}
+                  <em>%</em>
                 </span>
               </div>
             </div>
@@ -523,9 +598,12 @@ export default function Card() {
                     key={`character-stat-slot-${item}`}
                     statId={item}
                     statValue={FINAL_STATS_MAP?.[item] ?? 0}
-                    plusValue={(FINAL_STATS_MAP?.[item] ?? 0) - (BASE_STATS_MAP?.[item] ?? 0)}
+                    plusValue={
+                      (FINAL_STATS_MAP?.[item] ?? 0) -
+                      (BASE_STATS_MAP?.[item] ?? 0)
+                    }
                   />
-                )
+                );
               })}
 
               <div className="harmony-slot">
@@ -535,7 +613,8 @@ export default function Card() {
                     <div className="container" key={harmonyId}>
                       <img src={`/ico/harmony/${harmonyId}.png`} />
                       <span className={`${lang}-font`}>
-                        {harmony[harmonyId][lang]} <em className="num-font">[{number}]</em>
+                        {harmony[harmonyId][lang]}{" "}
+                        <em className="num-font">[{number}]</em>
                       </span>
                     </div>
                   );
@@ -553,39 +632,49 @@ export default function Card() {
             </div>
 
             <div className="main-item-slot description">
-              <span className="en-font kuro">Unofficial Fan Project: All assets © Kuro Games </span>
+              <span className="en-font kuro">
+                Unofficial Fan Project: All assets © Kuro Games{" "}
+              </span>
               <span className="en-font powered">Powered by. SSeries </span>
               <span className="en-font link">
-                <em><img className="link-image" src="/link.png" />WuWa.dev</em> © 2025
+                <em>
+                  <img className="link-image" src="/link.png" />
+                  WuWa.dev
+                </em>{" "}
+                © 2025
               </span>
             </div>
 
             <div className="main-item-slot namecard">
               <div className="namecard-score">
-                <img alt="rank icon" src={`/ico/rank/${getCharacterRank(scores[1])}.png`} />
+                <img
+                  alt="rank icon"
+                  src={`/ico/rank/${getCharacterRank(scores[1])}.png`}
+                />
                 <span className="en-font">
                   Av. <em className="num-font">{scores[1].toFixed(1)}</em>pt
                 </span>
               </div>
 
               <div className="namecard-image">
-                <ImagePicker src={namecardImage.src}
-                  defaultSrc={
-                    `${BASE_URL}/character/${characterId.includes("rover")
-                      ? "rover"
-                      : characterId}/art.png`
-                  }
-                  onChangeSrc={(src) =>
-                    setImageSrc("namecardImage", src)
-                  } />
+                <ImagePicker
+                  src={namecardImage.src}
+                  defaultSrc={`${BASE_URL}/character/${
+                    characterId.includes("rover") ? "rover" : characterId
+                  }/art.png`}
+                  onChangeSrc={(src) => setImageSrc("namecardImage", src)}
+                />
               </div>
             </div>
 
             <div className="main-item-slot echos">
               {[0, 1, 2, 3, 4].map((idx) => {
-                return <EchoSlot
-                  key={`echos-slot-${idx}`}
-                  index={characterData.echoDataIndex[idx]} />
+                return (
+                  <EchoSlot
+                    key={`echos-slot-${idx}`}
+                    index={characterData.echoDataIndex[idx]}
+                  />
+                );
               })}
             </div>
           </div>
@@ -599,8 +688,10 @@ export default function Card() {
             </div>
 
             <div className="item-slot">
-              <button className="card-page-button content bottom"
-                onClick={() => window.open(SCOREBOARD_URL, "_blank")}>
+              <button
+                className="card-page-button content bottom"
+                onClick={() => window.open(SCOREBOARD_URL, "_blank")}
+              >
                 <span>{localeText.scoreboard}</span>
               </button>
             </div>
@@ -610,91 +701,151 @@ export default function Card() {
 
       <div className="card-section right">
         <div className="card-section-wrapper">
-          <button className={`${lang}-font ${cardSection === 0 ? "active" : ""}`}
-            onClick={() => { setCardSection((p) => { return (p === 0 ? -1 : 0) }) }}>{localeText.cMenu}</button>
+          <button
+            className={`${lang}-font ${cardSection === 0 ? "active" : ""}`}
+            onClick={() => {
+              setCardSection((p) => {
+                return p === 0 ? -1 : 0;
+              });
+            }}
+          >
+            {localeText.cMenu}
+          </button>
 
-          <button className={`card-preview character ${cardSection === 0 ? "" : "active"}`}
-            onClick={() => { setCardSection((p) => { return (p === 0 ? -1 : 0) }) }}>
-
+          <button
+            className={`card-preview character ${
+              cardSection === 0 ? "" : "active"
+            }`}
+            onClick={() => {
+              setCardSection((p) => {
+                return p === 0 ? -1 : 0;
+              });
+            }}
+          >
             {imageLoad.character !== "loaded" && (
-              <img alt="loading"
-                src={`${BASE_URL}/character/${characterId}/ico.webp`} />
+              <img
+                alt="loading"
+                src={`${BASE_URL}/character/${characterId}/ico.webp`}
+              />
             )}
 
-            <img alt="character"
+            <img
+              alt="character"
               src={`${BASE_URL}/character/${selectedCharacterData.en}/ico.webp`}
-              style={{ display: imageLoad.character === "loaded" ? "block" : "none" }}
-              onLoad={() => setImageLoad(v => ({ ...v, character: "loaded" }))}
+              style={{
+                display: imageLoad.character === "loaded" ? "block" : "none",
+              }}
+              onLoad={() =>
+                setImageLoad((v) => ({ ...v, character: "loaded" }))
+              }
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = "/default.webp"
-                setImageLoad(v => ({ ...v, character: "error" }));
+                e.currentTarget.src = "/default.webp";
+                setImageLoad((v) => ({ ...v, character: "error" }));
               }}
             />
 
-            <span className={`${lang}-font`}>{selectedCharacterData[lang]}</span>
+            <span className={`${lang}-font`}>
+              {selectedCharacterData[lang]}
+            </span>
           </button>
 
           <div className={`card-slot ${cardSection === 0 ? "active" : ""}`}>
             <div className="filter-slot">
               {WeaponLists.map((item, idx) => {
                 return (
-                  <button key={`${item}-${idx}`}
-                    className={`filter-item ${weaponFilter[idx] ? "active" : ""}`}
+                  <button
+                    key={`${item}-${idx}`}
+                    className={`filter-item ${
+                      weaponFilter[idx] ? "active" : ""
+                    }`}
                     onClick={() => {
                       setWeaponFilter((prev) =>
-                        prev.map((v, i) => (i === idx ? !v : v)))
-                    }}>
-                    <img alt="filter icon"
-                      src={`${BASE_URL}/ico/weapon_type/${item}.webp`} />
+                        prev.map((v, i) => (i === idx ? !v : v))
+                      );
+                    }}
+                  >
+                    <img
+                      alt="filter icon"
+                      src={`${BASE_URL}/ico/weapon_type/${item}.webp`}
+                    />
                   </button>
-                )
+                );
               })}
             </div>
             <div className="filter-slot">
               {ElementLists.map((item, idx) => {
                 return (
-                  <button key={`${item}-${idx}`}
-                    className={`filter-item ${elementFilter[idx] ? "active" : ""}`}
+                  <button
+                    key={`${item}-${idx}`}
+                    className={`filter-item ${
+                      elementFilter[idx] ? "active" : ""
+                    }`}
                     onClick={() => {
                       setElementFilter((prev) =>
-                        prev.map((v, i) => (i === idx ? !v : v)))
-                    }}>
-                    <img alt="filter icon"
-                      src={`${BASE_URL}/ico/element/${item}.png`} />
+                        prev.map((v, i) => (i === idx ? !v : v))
+                      );
+                    }}
+                  >
+                    <img
+                      alt="filter icon"
+                      src={`${BASE_URL}/ico/element/${item}.png`}
+                    />
                   </button>
-                )
+                );
               })}
             </div>
             {FILTERED_CHARACTER.map((item) => {
               return (
-                <div key={`character-filter-${item}`}
+                <div
+                  key={`character-filter-${item}`}
                   className={`card-item ${item[1].element}
                 ${item[0] === selectedCharacterData.en ? "selected" : ""}`}
                   onClick={() => {
-                    setCharacterId(item[0])
-                    setCardSection(-1)
+                    setCharacterId(item[0]);
+                    setCardSection(-1);
                     navigate(`/card/${item[0]}`);
-                  }}>
-                  <img alt="character icon" src={`${BASE_URL}/character/${item[0].includes("rover")
-                    ? "rover"
-                    : item[0]}/ico.webp`} />
+                  }}
+                >
+                  <img
+                    alt="character icon"
+                    src={`${BASE_URL}/character/${
+                      item[0].includes("rover") ? "rover" : item[0]
+                    }/ico.webp`}
+                  />
                   <span className={`${lang}-font`}>{item[1][lang]}</span>
                 </div>
-              )
+              );
             })}
           </div>
         </div>
 
-          {/* == Weapon ============ */}
+        {/* == Weapon ============ */}
         <div className="card-section-wrapper">
-          <button className={`${lang}-font ${cardSection === 1 ? "active" : ""}`}
-            onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>{localeText.wMenu}</button>
+          <button
+            className={`${lang}-font ${cardSection === 1 ? "active" : ""}`}
+            onClick={() => {
+              setCardSection((p) => {
+                return p === 1 ? -1 : 1;
+              });
+            }}
+          >
+            {localeText.wMenu}
+          </button>
 
-          <button className={`card-preview weapon ${cardSection === 1 ? "" : "active"}`}
-            onClick={() => { setCardSection((p) => { return (p === 1 ? -1 : 1) }) }}>
-
-            <img src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png`} />
+          <button
+            className={`card-preview weapon ${
+              cardSection === 1 ? "" : "active"
+            }`}
+            onClick={() => {
+              setCardSection((p) => {
+                return p === 1 ? -1 : 1;
+              });
+            }}
+          >
+            <img
+              src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png`}
+            />
 
             <span className={`${lang}-font`}>{weaponData?.[lang]}</span>
           </button>
@@ -702,50 +853,84 @@ export default function Card() {
           <div className={`card-slot ${cardSection === 1 ? "active" : ""}`}>
             {FILTERED_WEAPON.map((item, idx) => {
               return (
-                <div key={`weapon-filter-slot-${item}-${idx}`}
-                  className={`card-item weapon ${item.id.includes("00") ? "spectro" : "havoc"} ${item.id === weaponData?.id ? "selected" : ""}`}
+                <div
+                  key={`weapon-filter-slot-${item}-${idx}`}
+                  className={`card-item weapon ${
+                    item.id.includes("00") ? "spectro" : "havoc"
+                  } ${item.id === weaponData?.id ? "selected" : ""}`}
                   onClick={() => {
                     const stat = weaponStat[item.id];
                     if (!stat) return;
 
                     patchCharacterData(setWeaponId(characterData, item.id));
                     setCardSection(-1);
-                  }}>
-                  <img alt="weapon icon" src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${item.imgKey}.png`} />
+                  }}
+                >
+                  <img
+                    alt="weapon icon"
+                    src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${item.imgKey}.png`}
+                  />
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span className={`${lang}-font`}>{item.id.includes("00") ? "★★★★★" : "★★★★"}</span>
+                    <span className={`${lang}-font`}>
+                      {item.id.includes("00") ? "★★★★★" : "★★★★"}
+                    </span>
                     <span className={`${lang}-font`}>{item[lang]}</span>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         </div>
 
-          {/* == Echos ============ */}
+        {/* == Echos ============ */}
         <div className="card-section-wrapper">
-          <button className={`${lang}-font ${cardSection === 2 ? "active" : ""}`}
-            onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>{localeText.eMenu}</button>
-
-          <button className={`card-preview echo ${cardSection === 2 ? "" : "active"}`}
-            onClick={() => { setCardSection((p) => { return (p === 2 ? -1 : 2) }) }}>
-            {
-              [0, 1, 2, 3, 4].map((item) => {
-                return (
-                  <img key={`echo-slot-${item}`}
-                    src={`${BASE_URL}/ico/echos/${characterData.echoData[item].echoId}.webp`}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = "/default.webp"
-                    }} />
-                )
-              })
-            }
+          <button
+            className={`${lang}-font ${cardSection === 2 ? "active" : ""}`}
+            onClick={() => {
+              setCardSection((p) => {
+                return p === 2 ? -1 : 2;
+              });
+            }}
+          >
+            {localeText.eMenu}
           </button>
 
-          <div className={`card-slot echo ${cardSection === 2 ? "active" : ""}`}>
+          <button
+            className={`card-preview echo ${cardSection === 2 ? "" : "active"}`}
+            onClick={() => {
+              setCardSection((p) => {
+                return p === 2 ? -1 : 2;
+              });
+            }}
+          >
+            {[0, 1, 2, 3, 4].map((item) => {
+              return (
+                <img
+                  key={`echo-slot-${item}`}
+                  src={`${BASE_URL}/ico/echos/${characterData.echoData[item].echoId}.webp`}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/default.webp";
+                  }}
+                />
+              );
+            })}
+          </button>
+
+          <div
+            className={`card-slot echo ${cardSection === 2 ? "active" : ""}`}
+          >
             <div className="echo-slot" ref={echoSlotRef}>
-              <button onClick={() => openOverlay(<OcrPlayground />, {title: locale(lang).card.oMenu})}>
+              <button
+                onClick={() =>
+                  openOverlay(<OcrPlayground />, {
+                    title: locale(lang).card.oMenu,
+                    width: "min(80vw, 80rem)",
+                    height: "auto",
+                    ratio: "13 / 9"
+                  })
+                }
+              >
                 {locale(lang).card.oMenu}
               </button>
             </div>
@@ -757,5 +942,5 @@ export default function Card() {
         </div>
       </div>
     </div>
-  )
+  );
 }

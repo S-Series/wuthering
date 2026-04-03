@@ -8,6 +8,12 @@
 	justify-content: space-between;
 }
 
+.ocr-comp-body > .divider {
+	width: 1px;
+	height: 100%;
+	background-color: #fff;
+}
+
 .ocr-comp-body .ocr-slot {
 	display: flex;
 	position: relative;
@@ -21,11 +27,11 @@
 
 .ocr-comp-body .ocr-slot.ocr {
 	flex-direction: row;
-	width: 50%;
+	width: 55%;
 }
 
 .ocr-comp-body .ocr-slot.echo {
-	width: 50%;
+	width: 45%;
 }
 
 
@@ -113,9 +119,15 @@
 	height: 50%;
 	
 	align-items: center;
-
 }
-.ocr-comp-body .ocr-slot .inner-slot.result {
+
+.ocr-comp-body .ocr-slot .inner-slot.result > .file-slot {
+	aspect-ratio: 10 / 9;
+	border: 1px solid #666;
+}
+
+.ocr-comp-body .ocr-slot .inner-slot.result {	
+	margin-top: auto;
 	height: fit-content;
 }
 

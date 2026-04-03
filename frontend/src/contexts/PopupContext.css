@@ -14,7 +14,10 @@
     flex-direction: column;
     width: min(75vw, 70rem);
     min-width: 45rem;
-    max-width: 70rem;
+
+    max-width: 95vw;
+    max-height: 95vh;
+
     aspect-ratio: 120 / 89;
 
     overflow: hidden;

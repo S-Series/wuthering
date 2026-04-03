@@ -20,7 +20,10 @@ import { useAppStore, type LangType } from "@/stores/appStore";
 import { OcrDragItem } from "./OcrDragItem";
 
 import "./OcrDragSelect.override.css"
-import Select from "react-select/base";
+import Select, { type StylesConfig } from "react-select";
+import { useCharacter } from "@/stores/characterDataStore";
+import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase, getStatDropStyleDrag } from "./EchoSelect.helper";
+import { useStyleStore } from "@/stores/styleStore";
 
 export type DragItem = {
   id: number;
@@ -36,6 +39,7 @@ type Props = {
     stats: [StatId, number][] | null;
   };
   selectIdx: number;
+  height: number;
   resetAction: () => void;
 };
 
@@ -64,12 +68,10 @@ function createItems(data: EchoStatOption[] | null, lang: LangType): DragItem[] 
   });
 }
 
-export default function OcrDragSelect({
-  datas,
-  selectIdx,
-  resetAction,
-}: Props) {
+export default function OcrDragSelect({datas,selectIdx,height,resetAction}: Props) {
   const { lang } = useAppStore();
+  const { baseSelectStyles } = useStyleStore();
+  const { characterData } = useCharacter();
 
   const [sourceItems, setSourceItems] = useState<DragItem[]>([]);
   const [itemOrder, setItemOrder] = useState<number[]>(DEFAULT_ORDER);
@@ -112,6 +114,22 @@ export default function OcrDragSelect({
     });
   };
 
+    const STAT_DROP_STYLE_OPTION_WIDE = useMemo<StylesConfig<any, false>>(
+      () => getStatDropStyleDrag(baseSelectStyles, height, true),
+      [baseSelectStyles, height]
+    );
+
+  const DragOptions: [StylesConfig<any, false>, StylesConfig<any, false>] = [
+    (() => getStatDropStyleDrag(baseSelectStyles, height, true))(),
+    (() => getStatDropStyleDrag(baseSelectStyles, height, false))(),
+  ];
+
+    const STAT_DROP_STYLE_LARGE = useMemo<StylesConfig<any, false>>(
+      () => getStatDropStyleLarge(baseSelectStyles, height),
+      [baseSelectStyles, height]
+    );
+  
+
   return (
     <div className="ocr-drag-select">
       <DndContext
@@ -124,9 +142,26 @@ export default function OcrDragSelect({
           strategy={verticalListSortingStrategy}
         >
           <div className="ocr-drag-select__list">
-            <Select/>
-            <Select/>
-            <Select/>
+            <Select styles={STAT_DROP_STYLE_LARGE} />
+            <Select styles={STAT_DROP_STYLE_LARGE} />
+            <Select styles={STAT_DROP_STYLE_LARGE} />
+
+            <div className="divider" />
+
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ width: "70%" }}>
+                <Select
+                  styles={STAT_DROP_STYLE_LARGE}
+                  options={HARMONY_OPTIONS_BASE}
+                />
+              </div>
+              <span className="num-font" style={{ marginLeft: "auto" }}>
+                0.0%
+              </span>
+            </div>
+
+            <div className="divider" />
+
             {displayItems.map((item, displayIndex) => (
               <OcrDragItem
                 key={item.id}
@@ -134,7 +169,7 @@ export default function OcrDragSelect({
                 itemId={item.id}
                 displayIndex={displayIndex}
                 onSelectChange={setSourceItems}
-                styles={[{} as any, {} as any]}
+                styles={DragOptions}
                 options={[[], []]}
               />
             ))}

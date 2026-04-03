@@ -352,8 +352,8 @@ export const getStatDropStyleDrag = (
                 alignItems: "center",
                 minHeight: 0,
                 width: "auto",
-                height: `${slotHeight / 13}px`,
-                aspectRatio: `${isWide ? "3.15 / 1" : "2 / 1"}`,
+                height: `${slotHeight / 12}px`,
+                aspectRatio: `${isWide ? "4 / 1" : "2.25 / 1"}`,
                 overflow: "hidden",
             };
         },

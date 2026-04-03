@@ -93,7 +93,7 @@ export function OcrDragItem({
         <div style={{ width: "2.5%" }} />
 
         <div
-          className="stat-select-wrap"
+          className="stat-select-wrap stat"
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >

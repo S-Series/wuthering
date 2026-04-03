@@ -30,6 +30,8 @@ export default function OcrPlayground() {
   } | null>();
   const [preview, setPreview] = useState<string | null>(null);
 
+  const [refHeight, setRefHeight] = useState(0);
+
   const [isHealthy, setHealthy] = useState<boolean | null>(null);
   const [isBoaring, setBoaring] = useState(false);
   const [isFocused, setFocused] = useState(false);
@@ -86,20 +88,40 @@ export default function OcrPlayground() {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setFocused(false);
     };
-    document.addEventListener("keydown", onKeyDown);
 
     const handleClickOutside = (e: MouseEvent) => {
-      if (!slotRef.current) return;
+      const element = slotRef.current;
+      if (!element) return;
 
-      if (!slotRef.current.contains(e.target as Node)) {
+      if (!element.contains(e.target as Node)) {
         setFocused(false);
       }
     };
+
+    document.addEventListener("keydown", onKeyDown);
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const element = slotRef.current;
+    if (!element) return;
+
+    const updateHeight = () => {
+      setRefHeight(element.getBoundingClientRect().height * 2);
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
     };
   }, []);
 
@@ -158,7 +180,7 @@ export default function OcrPlayground() {
     return () => clearTimeout(timer);
   }, [status])
 
-  console.log(isHealthy);
+
 
   return (
     <div className="ocr-comp-body">
@@ -167,22 +189,25 @@ export default function OcrPlayground() {
           <div className="container checking">
             <img src={getRandomGif() ?? "/default.webp"} />
             <span>{localeText.healthCheck}</span>
-          </div>) : (null)
-        }
+          </div>
+        ) : null}
 
         <div className={`container ${isHealthy ? "" : "disable"}`}>
           <div className="inner-slot top">
-            <span className="en-font">{localeText.status}: {status}</span>
+            <span className="en-font">
+              {localeText.status}: {status}
+            </span>
 
-            <div className={`file-slot ${isFocused ? "focused" : ""}`}
+            <div
+              className={`file-slot ${isFocused ? "focused" : ""}`}
               ref={slotRef}
               tabIndex={0}
               onClick={() => {
-                isFocused
-                  ? fileInputRef.current?.click()
-                  : setFocused(true)
-              }}>
-              <input className="image-input"
+                isFocused ? fileInputRef.current?.click() : setFocused(true);
+              }}
+            >
+              <input
+                className="image-input"
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
@@ -190,31 +215,53 @@ export default function OcrPlayground() {
               />
               {file ? (
                 <img src={URL.createObjectURL(file)} />
+              ) : !isFocused ? (
+                <span style={{ textDecoration: "underline" }}>
+                  {localeText.description1}
+                </span>
               ) : (
-                !isFocused ? (
-                  <span style={{ textDecoration: "underline" }}>{localeText.description1}</span>
-                ) : (
-                  <span className={`${lang}-font`} style={{ whiteSpace: "pre", textAlign: "center" }}>
-                    {localeText.description2}
-                  </span>
-                )
+                <span
+                  className={`${lang}-font`}
+                  style={{ whiteSpace: "pre", textAlign: "center" }}
+                >
+                  {localeText.description2}
+                </span>
               )}
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "20%" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                height: "20%",
+              }}
+            >
               {isBoaring ? (
-                <span className={`${lang}-font`}
-                  style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)" }}>
+                <span
+                  className={`${lang}-font`}
+                  style={{
+                    whiteSpace: "pre",
+                    textAlign: "center",
+                    fontSize: "min(1vw, 1rem)",
+                  }}
+                >
                   {localeText.description3}
                 </span>
-              ) : (null)}
+              ) : null}
 
               {!isHealthy ? (
-                <span className={`${lang}-font`}
-                  style={{ whiteSpace: "pre", textAlign: "center", fontSize: "min(1vw, 1rem)" }}>
+                <span
+                  className={`${lang}-font`}
+                  style={{
+                    whiteSpace: "pre",
+                    textAlign: "center",
+                    fontSize: "min(1vw, 1rem)",
+                  }}
+                >
                   {localeText.healthFalse}
                 </span>
-              ) : (null)}
+              ) : null}
 
               {status === "Requested" ? (
                 <div className="ocr-loading-slot">
@@ -252,43 +299,54 @@ export default function OcrPlayground() {
             </div>
           </div>
 
-          <div className="inner-slot bottom">
-            <span className="en-font">{localeText.result}</span>
-
-            <div className="text-box">
-              {debug ? (<>
-                <span style={{ fontSize: "min(1vw, 0.85rem)" }}>EchoName: {debug?.echoName ?? "undefined"}</span>
-                <span style={{ fontSize: "min(1vw, 0.85rem)" }}>Cost: {debug?.cost ?? "undefined"}</span>
-                {debug.echoStats.map((item, idx) =>
-                  <span key={`stat-text-${idx}`} style={{ fontSize: "min(1vw, 0.85rem)" }}>
-                    {StatsToText(item) ?? "undefined"}
-                  </span>
-                )}
-              </>) : (null)}
-            </div>
-          </div>
-        </div>
-
-        <div className={`container ${isHealthy ? "" : "disable"}`}>
           <div className="inner-slot result">
             <span className="en-font">{localeText.result}</span>
             <div className="file-slot">
               {preview ? <img src={preview} /> : null}
             </div>
           </div>
+        </div>
 
-          <div style={{ display: "flex", flexDirection: "column", width: "90%", height: "67.5%", alignItems: "center", marginTop: "2.5%" }}>
-            <OcrDragSelect datas={{
-              cost: debug?.cost as 4 | 3 | 1 ?? 4,
-              echoId: debug?.echoId ?? null,
-              stats: debug?.echoStats ?? null,
-            }} selectIdx={selectIdx} resetAction={handleResetDebug} />
+        <div className={`container ${isHealthy ? "" : "disable"}`}>
+            <span className="en-font">{localeText.result}</span>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "90%",
+              height: "100%",
+              alignItems: "center",
+              marginTop: "2.5%",
+            }}
+          >
+            <OcrDragSelect
+              datas={{
+                cost: (debug?.cost as 4 | 3 | 1) ?? 4,
+                echoId: debug?.echoId ?? null,
+                stats: debug?.echoStats ?? null,
+              }}
+              selectIdx={selectIdx}
+              height={refHeight}
+              resetAction={handleResetDebug}
+            />
           </div>
         </div>
       </div>
 
+      <div className="divider"/>
+
       <div className="ocr-slot echo">
-        <OcrSelect selectIdx={selectIdx} setSelectIdx={setSelectIdx} />
+        <OcrSelect
+          debugText={[
+            `EchoName: ${debug?.echoName ?? "undefined"}`,
+            `Cost: ${debug?.cost ?? "undefined"}`,
+            ...(debug?.echoStats?.map(
+              (item) => StatsToText(item) ?? "undefined"
+            ) ?? []),
+          ].join("\n")}
+          selectIdx={selectIdx}
+          setSelectIdx={setSelectIdx}
+        />
       </div>
     </div>
   );

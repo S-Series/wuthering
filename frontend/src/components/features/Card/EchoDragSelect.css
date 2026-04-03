@@ -18,7 +18,7 @@
     flex-direction: row;
 
     width: calc(97.5% - 2px);
-    aspect-ratio: 6.5 / 1;
+    aspect-ratio: 6 / 1;
     
     padding-left: 2.5%;
     align-items: center;
