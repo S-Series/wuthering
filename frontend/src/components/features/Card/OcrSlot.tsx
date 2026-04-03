@@ -10,7 +10,7 @@ import { FixedStats, type StatId } from "@/datas/stats";
 
 import OcrSelect from "@/components/features/Card/OcrSelect";
 import "./OcrSlot.css"
-import OcrSelectDrag from "./OcrDragSelect";
+import OcrDragSelect from "./OcrDragSelect";
 import { getRandomGif } from "@/lib/randomImg";
 
 
@@ -278,7 +278,7 @@ export default function OcrPlayground() {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", width: "90%", height: "67.5%", alignItems: "center", marginTop: "2.5%" }}>
-            <OcrSelectDrag datas={{
+            <OcrDragSelect datas={{
               cost: debug?.cost as 4 | 3 | 1 ?? 4,
               echoId: debug?.echoId ?? null,
               stats: debug?.echoStats ?? null,

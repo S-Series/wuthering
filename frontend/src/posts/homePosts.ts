@@ -20,6 +20,28 @@ const SERVICE_NAME: LocaleText = {
 
 export const HOME_POSTS: HomePost[] = [
   {
+    id: 3,
+    pinned: false,
+    type: "notice",
+    date: "2026-04-02 19:09:35",
+    title: {
+      kr: `Ver 0.9 || ${SERVICE_NAME.kr} 업데이트 내역`,
+      en: ``,
+      jp: ``,
+      zh: ``,
+    },
+    data: {
+      kr: `§ 이제 스텟카드 이미지를 생성/다운로드 할 수 있습니다.
+§ 일부 잘못된 옵션들의 수치를 수정하였습니다.
+§ OCR 서버 안정화를 진행하였습니다.
+§ 에코 관리에서, 옵션이 제대로 적용되지 않던 오류를 수정했습니다.
+§ 이제 에코 선택에서 에코명으로 검색할 수 있습니다.`,
+      en: ``,
+      jp: ``,
+      zh: ``,
+    },
+  },
+  {
     id: 2,
     pinned: false,
     type: "notice",

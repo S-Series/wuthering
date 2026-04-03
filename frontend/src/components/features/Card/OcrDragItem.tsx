@@ -1,30 +1,24 @@
-import Select, { type SingleValue, type StylesConfig } from "react-select";
+import Select, { type StylesConfig, type SingleValue } from "react-select";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import type { SelectOpt, SelectOptionStatOriginal } from "./EchoSelect.type";
 import type { StatId } from "@/datas/stats";
 import type React from "react";
-import type { EchoRuntime } from "@/runtime/echo.runtime";
-import { useEffect } from "react";
 import type { DragItem } from "./OcrDragSelect";
 
 type SortableItemProps = {
-  item: {
-    id: number;
-    statId: StatId;
-    statValue: number;
-    statName: string | null;
-  };
-  index: number;
-  styles: [StylesConfig<any,false>, StylesConfig<any,false>];
+  item: DragItem;
+  itemId: number;
+  displayIndex: number;
+  styles: [StylesConfig<any, false>, StylesConfig<any, false>];
   options: [SelectOptionStatOriginal[], SelectOpt[]];
   onSelectChange: React.Dispatch<React.SetStateAction<DragItem[]>>;
 };
 
-//$ =================================================
-export function OcrDragSelectItem({
+export function OcrDragItem({
   item,
-  index,
+  itemId,
+  displayIndex,
   options,
   styles,
   onSelectChange,
@@ -36,30 +30,30 @@ export function OcrDragSelectItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: item.id });
+  } = useSortable({ id: itemId });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  const isSelected = index < 5;
+  const isSelected = displayIndex < 5;
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={[
-        "stat-drag-item",
+        "ocr-drag-item",
         isDragging ? "dragging" : "",
         isSelected ? "selected" : "",
         item.statName === null ? "disable" : "",
       ].join(" ").trim()}
     >
-      <div className="hover-motion">
+      <div className="ocr-drag-item__inner">
         <button
           type="button"
-          className="drag-handle"
+          className="ocr-drag-item__handle"
           {...attributes}
           {...listeners}
         >
@@ -74,24 +68,29 @@ export function OcrDragSelectItem({
           <Select
             styles={styles[0]}
             options={options[0]}
-            onChange={(opt) => {
-              onSelectChange((prev) => {
-                const next = [...prev];
-                next[index] = {
-                  ...prev[index],
-                  statId: opt.value
-                };
-                return next;
-              })
+            onChange={(opt: SingleValue<SelectOptionStatOriginal>) => {
+              if (!opt) return;
+
+              onSelectChange((prev) =>
+                prev.map((v) =>
+                  v.id === itemId
+                    ? {
+                      ...v,
+                      statId: opt.value as StatId,
+                      statName: opt.label ?? null,
+                    }
+                    : v
+                )
+              );
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
             isSearchable={false}
-            value={options[0].find((opt) => { return opt.value === item?.statId })}
+            value={options[0].find((opt) => opt.value === item.statId) ?? null}
           />
         </div>
 
-        <div style={{width: "2.5%"}}/>
+        <div style={{ width: "2.5%" }} />
 
         <div
           className="stat-select-wrap"
@@ -101,21 +100,28 @@ export function OcrDragSelectItem({
           <Select
             styles={styles[1]}
             options={options[1]}
-            onChange={(opt) => {
-              console.log(opt);
-              onSelectChange((prev) => {
-                const next = [...prev];
-                next[index] = {
-                  ...prev[index],
-                  statValue: opt.value
-                };
-                return next;
-              })
+            onChange={(opt: SingleValue<SelectOpt>) => {
+              if (!opt) return;
+
+              onSelectChange((prev) =>
+                prev.map((v) =>
+                  v.id === itemId
+                    ? {
+                      ...v,
+                      statValue: Number(opt.value),
+                    }
+                    : v
+                )
+              );
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
             isSearchable={false}
-            value={options[1].find((opt) => opt.value.toString() === item?.statValue?.toString())}
+            value={
+              options[1].find(
+                (opt) => opt.value.toString() === item.statValue?.toString()
+              ) ?? null
+            }
           />
         </div>
       </div>
