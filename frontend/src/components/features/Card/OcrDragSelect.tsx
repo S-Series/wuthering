@@ -13,7 +13,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 
-import type { EchoId } from "@/datas/echos";
+import { echoDict, type EchoData, type EchoId } from "@/datas/echos";
 import { FixedStats, type StatId } from "@/datas/stats";
 import { useAppStore, type LangType } from "@/stores/appStore";
 
@@ -24,6 +24,8 @@ import Select, { type StylesConfig } from "react-select";
 import { useCharacter } from "@/stores/characterDataStore";
 import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase, getStatDropStyleDrag } from "./EchoSelect.helper";
 import { useStyleStore } from "@/stores/styleStore";
+import type { Cost, SelectOption, SelectOptionStatOriginal, SelectOptionWithImage } from "./EchoSelect.type";
+import { createEmptyEchoRuntime, type EchoRuntime, type EchoStatOption, type EchoStatOptionSub } from "@/runtime/echo.runtime";
 
 export type DragItem = {
   id: number;
@@ -43,10 +45,35 @@ type Props = {
   resetAction: () => void;
 };
 
-type EchoStatOption = {
-  statId: StatId;
-  statValue: number;
+type EchoRuntimeWith7Subs = Omit<EchoRuntime, "subOptions"> & {
+  subOptions: [
+    EchoStatOption,
+    EchoStatOption,
+    EchoStatOption,
+    EchoStatOption,
+    EchoStatOption,
+    EchoStatOption,
+    EchoStatOption
+  ];
 };
+
+const InitTempEcho = () => {
+  const temp = createEmptyEchoRuntime(4)
+  const data:EchoRuntimeWith7Subs = {
+    ...temp,
+    subOptions: [
+      {statId: "dummy", statValue: 0},
+      {statId: "dummy", statValue: 0},
+      {statId: "dummy", statValue: 0},
+      {statId: "dummy", statValue: 0},
+      {statId: "dummy", statValue: 0},
+      {statId: "dummy", statValue: 0},
+      {statId: "dummy", statValue: 0}
+    ]
+  }
+
+  return data;
+}
 
 const DEFAULT_ORDER = [0, 1, 2, 3, 4, 5, 6];
 
@@ -68,13 +95,15 @@ function createItems(data: EchoStatOption[] | null, lang: LangType): DragItem[] 
   });
 }
 
-export default function OcrDragSelect({datas,selectIdx,height,resetAction}: Props) {
+export default function OcrDragSelect({ datas, selectIdx, height, resetAction }: Props) {
   const { lang } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData } = useCharacter();
 
   const [sourceItems, setSourceItems] = useState<DragItem[]>([]);
   const [itemOrder, setItemOrder] = useState<number[]>(DEFAULT_ORDER);
+
+  const [tempEcho, setTempEcho] = useState<EchoRuntimeWith7Subs>(InitTempEcho());
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -89,6 +118,38 @@ export default function OcrDragSelect({datas,selectIdx,height,resetAction}: Prop
         statValue,
       })
     );
+
+    const tempEchoData: EchoRuntimeWith7Subs = {
+      echoId: datas.echoId,
+      setId: null,
+      cost: datas.cost,
+      mainOption: { 
+        statId: datas?.stats?.[0][0] ?? "dummy",
+        statValue: datas?.stats?.[0][1] ?? 0
+      },
+      subOptions: [{
+        statId: datas?.stats?.[2][0] ?? "dummy",
+        statValue: datas?.stats?.[2][1] ?? 0
+      },{
+        statId: datas?.stats?.[3][0] ?? "dummy",
+        statValue: datas?.stats?.[3][1] ?? 0
+      },{
+        statId: datas?.stats?.[4][0] ?? "dummy",
+        statValue: datas?.stats?.[4][1] ?? 0
+      },{
+        statId: datas?.stats?.[5][0] ?? "dummy",
+        statValue: datas?.stats?.[5][1] ?? 0
+      },{
+        statId: datas?.stats?.[6][0] ?? "dummy",
+        statValue: datas?.stats?.[6][1] ?? 0
+      },{
+        statId: datas?.stats?.[7][0] ?? "dummy",
+        statValue: datas?.stats?.[7][1] ?? 0
+      },{
+        statId: datas?.stats?.[8][0] ?? "dummy",
+        statValue: datas?.stats?.[8][1] ?? 0
+      }]
+    }
 
     setSourceItems(createItems(nextStats, lang));
     setItemOrder(DEFAULT_ORDER);
@@ -114,21 +175,84 @@ export default function OcrDragSelect({datas,selectIdx,height,resetAction}: Prop
     });
   };
 
-    const STAT_DROP_STYLE_OPTION_WIDE = useMemo<StylesConfig<any, false>>(
-      () => getStatDropStyleDrag(baseSelectStyles, height, true),
-      [baseSelectStyles, height]
-    );
+  const STAT_DROP_STYLE_OPTION_WIDE = useMemo<StylesConfig<any, false>>(
+    () => getStatDropStyleDrag(baseSelectStyles, height, true),
+    [baseSelectStyles, height]
+  );
 
   const DragOptions: [StylesConfig<any, false>, StylesConfig<any, false>] = [
     (() => getStatDropStyleDrag(baseSelectStyles, height, true))(),
     (() => getStatDropStyleDrag(baseSelectStyles, height, false))(),
   ];
 
-    const STAT_DROP_STYLE_LARGE = useMemo<StylesConfig<any, false>>(
-      () => getStatDropStyleLarge(baseSelectStyles, height),
-      [baseSelectStyles, height]
+  const STAT_DROP_STYLE_LARGE = useMemo<StylesConfig<any, false>>(
+    () => getStatDropStyleLarge(baseSelectStyles, height),
+    [baseSelectStyles, height]
+  );
+
+  const tempEchoData = useMemo(() => {
+    const tempData = Object.entries(echoDict[`Cost${tempEcho?.cost ?? 4}`]).find(
+      ([echoId]) => echoId === (tempEcho?.echoId ?? "")
     );
-  
+    if (!tempData) return null;
+
+    const [echoId, data] = tempData;
+    return {
+      id: echoId,
+      ...data,
+    }
+  }, [tempEcho])
+
+  const COST_DROP_OPTION: SelectOption<Cost>[] = [
+    { value: 4, label: "Cost 4" },
+    { value: 3, label: "Cost 3" },
+    { value: 1, label: "Cost 1" },
+  ]
+
+  const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() =>
+    getStatOptionBase(lang)
+    , [lang])
+
+  const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
+    (opt) => opt.mainValue[0] !== 0
+  )
+  const STAT_OPTION_MAIN_COST3 = STAT_OPTION_BASE.filter(
+    (opt) => opt.mainValue[1] !== 0
+  )
+  const STAT_OPTION_MAIN_COST1 = STAT_OPTION_BASE.filter(
+    (opt) => opt.mainValue[2] !== 0
+  )
+  const STAT_OPTION_SUB = STAT_OPTION_BASE.filter(
+    (opt) => opt.subValue.length !== 0
+  )
+
+  const HARMONY_DROP_OPTION = useMemo<SelectOptionWithImage[]>(() => {
+    const types = tempEchoData?.type ?? [];
+    if (types.length === 0) return HARMONY_OPTIONS_BASE.map((opt) => ({
+      ...opt,
+      label: opt[lang],
+    }));
+
+    return HARMONY_OPTIONS_BASE
+      .filter((opt) => types.includes(opt.value))
+      .map((opt) => ({
+        ...opt,
+        label: opt[lang],
+      }));
+  }, [tempEcho, lang]);
+
+
+
+  const dropStatOptions = []
+
+  const dropValueOptions = useMemo(() => {
+    const statMap = [
+      datas.stats
+    ]
+    return [
+
+    ]
+  }, [datas])
 
   return (
     <div className="ocr-drag-select">
@@ -142,17 +266,68 @@ export default function OcrDragSelect({datas,selectIdx,height,resetAction}: Prop
           strategy={verticalListSortingStrategy}
         >
           <div className="ocr-drag-select__list">
-            <Select styles={STAT_DROP_STYLE_LARGE} />
-            <Select styles={STAT_DROP_STYLE_LARGE} />
-            <Select styles={STAT_DROP_STYLE_LARGE} />
+            <Select options={COST_DROP_OPTION}
+              styles={STAT_DROP_STYLE_LARGE}
+              onChange={(opt) => {
+                if (!opt) return;
+                setTempEcho((p) => {
+                  if (!p) return p;
+                  return { ...p, cost: opt.value };
+                });
+              }}
+              value={COST_DROP_OPTION.find(item => item.value === tempEcho.cost) ?? null}
+              />
+            <Select options={HARMONY_DROP_OPTION}
+              styles={STAT_DROP_STYLE_LARGE}
+              formatOptionLabel={(opt, meta) =>
+                formatOptionWithImage_Smaller(opt, lang, meta)
+              }
+              onChange={(opt) => {
+                if (!opt) return;
+                setTempEcho((p) => {
+                  if (!p) return p;
+                  return { ...p, setId: opt.value };
+                });
+              }}
+              value={HARMONY_DROP_OPTION.find(item => item.value === tempEcho.setId) ?? null}
+              />
+            <Select styles={STAT_DROP_STYLE_LARGE}
+              placeholder={
+                <div style={{ display: "flex", alignItems: "center", gap: "min(0.5vw, 0.5rem)" }}>
+                  <img
+                    style={{
+                      width: "auto",
+                      height: "min(2vw, 2rem)",
+                      aspectRatio: "1/1",
+                    }}
+                    src="/default.webp"
+                  />
+                  <span style={{ whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)" }}>에코명으로 검색</span>
+                </div>
+              }
+              />
 
             <div className="divider" />
 
             <div style={{ display: "flex", alignItems: "center" }}>
               <div style={{ width: "70%" }}>
-                <Select
+                <Select options={(() => {
+                    switch (tempEcho?.cost) {
+                      case 4:
+                        return STAT_OPTION_MAIN_COST4;
+                      case 3:
+                        return STAT_OPTION_MAIN_COST3;
+                      case 1:
+                        return STAT_OPTION_MAIN_COST1;
+                      default:
+                        return [];
+                    }
+                  })()}
                   styles={STAT_DROP_STYLE_LARGE}
-                  options={HARMONY_OPTIONS_BASE}
+
+                  formatOptionLabel={(opt, meta) =>
+                    formatOptionWithImage_Smaller(opt, lang, meta)
+                  }
                 />
               </div>
               <span className="num-font" style={{ marginLeft: "auto" }}>

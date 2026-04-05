@@ -35,7 +35,7 @@ export const characterStat = {
   },
   */
 
-  // == 3.2 ======================================= //
+  // == 3.4 ======================================= //
   /* sigrika: {
     baseHp: 0,
     baseAtk: 0,
@@ -53,6 +53,39 @@ export const characterStat = {
     typeBns: [0, 0.0],
   },
   */
+  // == 3.3 ======================================= //
+  denia: {
+    baseHp: 0,
+    baseAtk: 0,
+    baseDef: 0,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  hiyuki: {
+    baseHp: 0,
+    baseAtk: 0,
+    baseDef: 0,
+
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
   // == 3.2 ======================================= //
   sigrika: {
     baseHp: 10775,

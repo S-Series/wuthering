@@ -1,5 +1,6 @@
 .home-post-card {
     display: flex;
+    position: relative;
     flex-direction: column;
 
     width: 90%;
@@ -10,10 +11,25 @@
     border-radius: 1rem;
     border: 1px solid #ffcc9966;
 
-    background: url("/cardBg.jpg");
+    overflow: hidden;
+    z-index: 1;
+}
+
+.home-post-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/cardBg.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    filter: brightness(0.6);
+    z-index: 0;
+}
+
+.home-post-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .home-post-card h3 {
@@ -31,12 +47,34 @@
     margin: 0;
     padding: 0;
     white-space: pre-line;
-    word-break: keep-all;
+}
+
+.home-post-card .home-post-detail-slot {
+    display: flex;
+    flex-direction: column;
+    line-height: 130%;
+}
+
+.home-post-card .home-post-detail-slot > .subtitle {
+    color: #fff;
+    font-size: min(1.3vw, 1.3rem);
+    margin-top: min(0.7vw, 0.7rem);
+    margin-bottom: min(0.4vw, 0.4rem);
+    font-weight: 700;
+}
+
+.home-post-card .home-post-detail-slot > .subtitle.start {
+    margin-top: 0;
+}
+
+.home-post-card .home-post-detail-slot > p > em {
+    color: #fbb;
 }
 
 .home-post-card time {
     color: #fff;
     text-align: right;
+    margin-top: min(0.6vw, 0.6rem);
     word-break: keep-all;
 }
 

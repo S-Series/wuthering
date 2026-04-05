@@ -5,7 +5,7 @@ import { useOverlay } from "@/contexts/PopupContext";
 
 import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api"
 
-import { HOME_POSTS } from "@/posts/homePosts";
+import { HOME_POSTS } from "@/posts/homePosts.tsx";
 import HomePostCard from "@/components/features/Home/HomePostCard";
 import YoutubeVideoCard from "@/components/features/Home/YoutubeVideoCard";
 

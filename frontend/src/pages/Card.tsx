@@ -36,7 +36,6 @@ import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
 
 export default function Card() {
-
   const { lang, imgVer } = useAppStore();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
@@ -922,12 +921,12 @@ export default function Card() {
           >
             <div className="echo-slot" ref={echoSlotRef}>
               <button
-                onClick={() =>
+                onClick={() => 
                   openOverlay(<OcrPlayground />, {
                     title: locale(lang).card.oMenu,
                     width: "min(80vw, 80rem)",
                     height: "auto",
-                    ratio: "13 / 9"
+                    ratio: "13 / 9 !important"
                   })
                 }
               >

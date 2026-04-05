@@ -63,7 +63,7 @@ export const FixedStats = {
     jp: "防御力",
     zh: "防御",
     ValueMain: [0, 0, 0],
-    ValueSub: [40, 50, 60],
+    ValueSub: [40, 50, 60, 70],
   },
   defPct: {
     id: "defPct",
@@ -71,7 +71,7 @@ export const FixedStats = {
     kr: "방어력%",
     jp: "防御力%",
     zh: "防御%",
-    ValueMain: [41.5, 38.0, 18.0],
+    ValueMain: [41.8, 38.0, 18.0],
     ValueSub: [8.1, 9.0, 10.0, 10.9, 11.8, 12.8, 13.8, 14.7,],
   },
   critRate: {

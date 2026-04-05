@@ -34,7 +34,9 @@ export interface Character {
   version: number;
   isElite: boolean;
   region: //==================================================//
-  | "Spacetrek Collective" // = //@ 스페이스트렉 콜렉티브 (라하이 로이)
+  // | "Scarlet Snow" // = //@ 
+  //========================================================//
+    | "Spacetrek Collective" // = //@ 스페이스트렉 콜렉티브 (라하이 로이)
     | "Statotchi Academy" // == //@ 스타토치 아카데미 (라하이 로이)
     //========================================================//
     | "Fractsidus" // ========= //@ 잔성회
@@ -49,8 +51,36 @@ export interface Character {
 
 export const character: Record<CharacterId, Character> = {
   //$== ver 3.X ===========================//
-  //*== ver 3.1 ===========================//
+  //*== ver 3.6 ===========================//
   /* temp: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.1,
+    isElite: true,
+    region: ,
+  },*/
+
+  //*== ver 3.5 ===========================//
+  /* yangyang_secondary: {
+    en: "",
+    kr: "",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: ,
+    element: ,
+    type: ,
+    version: 3.1,
+    isElite: true,
+    region: ,
+  },
+  suisui: {
     en: "",
     kr: "",
     jp: "",
@@ -106,32 +136,32 @@ export const character: Record<CharacterId, Character> = {
   },*/
 
   //*== ver 3.3 ===========================//
-  /* denia: {
-    en: "",
-    kr: "",
-    jp: "",
-    zh: "",
+  denia: {
+    en: "Denia",
+    kr: "데니아",
+    jp: "stay tune",
+    zh: "达妮娅",
     hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
+    weapon: "rectifier",
+    element: "fusion",
+    type: "skill",
     version: 3.3,
     isElite: true,
-    region: ,
-  },*/
-  /* pheisha: {
-    en: "",
-    kr: "",
-    jp: "",
-    zh: "",
+    region: "Unknown",
+  },
+  hiyuki: {
+    en: "Hiyuki",
+    kr: "히유키",
+    jp: "stay tune",
+    zh: "绯雪",
     hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
+    weapon: "sword",
+    element: "glacio",
+    type: "heavy",
     version: 3.3,
     isElite: true,
-    region: ,
-  },*/
+    region: "Unknown",
+  },
 
   //*== ver 3.2 ===========================//
   sigrika: {

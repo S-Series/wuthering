@@ -1,4 +1,4 @@
-import type { HarmonyId } from "@/datas/echos";
+import type { HarmonyId } from "@/datas/harmonies";
 
 export type SelectOption<T = any> = {
   value: T;
