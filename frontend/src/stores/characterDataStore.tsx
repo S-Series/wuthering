@@ -112,7 +112,6 @@ const normalizeCharacterData = (
 };
 
 export function CharacterProvider({ children }: { children: React.ReactNode }) {
-
   const ALL_IDS = useMemo(() => Object.keys(character) as CharacterId[], []);
   const [ALL_CHARACTERS, setALL_CHARACTERS] = useState<Record<CharacterId, CharacterData>>(() => {
     let saved: Partial<Record<CharacterId, CharacterData>> = {};
@@ -160,7 +159,8 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
       Object.values(harmony).map((item) => [item.id, 0])
     ) as Record<HarmonyId, number>;
 
-    for (const item of echoData) {
+    for (const idx of characterData.echoDataIndex.slice(0, 5)) {
+      const item = echoData[idx];
       if (!item?.setId) continue;
       if (!Object.prototype.hasOwnProperty.call(values, item.setId)) continue;
       values[item.setId] += 1;

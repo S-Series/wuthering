@@ -52,7 +52,7 @@ export default function OcrSelect({ debugText, selectIdx, setSelectIdx }: Props)
         className="ocr-debug-button"
         onClick={() => setShowDebug((v) => !v)}
       >
-        asdf
+        OCR 데이터 확인
       </button>
     </div>
   );

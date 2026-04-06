@@ -4,15 +4,16 @@ import { useSortable } from "@dnd-kit/sortable";
 import type { SelectOpt, SelectOptionStatOriginal } from "./EchoSelect.type";
 import type { StatId } from "@/datas/stats";
 import type React from "react";
-import type { DragItem } from "./OcrDragSelect";
+import type { EchoStatOption } from "@/runtime/echo.runtime";
+import type { EchoRuntimeWith7Subs } from "./OcrDragSelect";
 
 type SortableItemProps = {
-  item: DragItem;
+  item: EchoStatOption;
   itemId: number;
   displayIndex: number;
   styles: [StylesConfig<any, false>, StylesConfig<any, false>];
   options: [SelectOptionStatOriginal[], SelectOpt[]];
-  onSelectChange: React.Dispatch<React.SetStateAction<DragItem[]>>;
+  onSelectChange: React.Dispatch<React.SetStateAction<EchoRuntimeWith7Subs>>;
 };
 
 export function OcrDragItem({
@@ -47,7 +48,7 @@ export function OcrDragItem({
         "ocr-drag-item",
         isDragging ? "dragging" : "",
         isSelected ? "selected" : "",
-        item.statName === null ? "disable" : "",
+        item.statId === null ? "disable" : "",
       ].join(" ").trim()}
     >
       <div className="ocr-drag-item__inner">
@@ -71,17 +72,20 @@ export function OcrDragItem({
             onChange={(opt: SingleValue<SelectOptionStatOriginal>) => {
               if (!opt) return;
 
-              onSelectChange((prev) =>
-                prev.map((v) =>
-                  v.id === itemId
-                    ? {
-                      ...v,
-                      statId: opt.value as StatId,
-                      statName: opt.label ?? null,
-                    }
-                    : v
-                )
-              );
+              onSelectChange((prev) => {
+                if (!prev) return prev;
+
+                const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
+                nextSubOptions[itemId] = {
+                  statId: opt.value,
+                  statValue: 0,
+                };
+
+                return {
+                  ...prev,
+                  subOptions: nextSubOptions,
+                };
+              });
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
@@ -100,19 +104,23 @@ export function OcrDragItem({
           <Select
             styles={styles[1]}
             options={options[1]}
-            onChange={(opt: SingleValue<SelectOpt>) => {
+            onChange={(opt: SingleValue<SelectOptionStatOriginal>) => {
               if (!opt) return;
 
-              onSelectChange((prev) =>
-                prev.map((v) =>
-                  v.id === itemId
-                    ? {
-                      ...v,
-                      statValue: Number(opt.value),
-                    }
-                    : v
-                )
-              );
+              onSelectChange((prev) => {
+                if (!prev) return prev;
+
+                const nextSubOptions = [...prev.subOptions] as typeof prev.subOptions;
+                nextSubOptions[itemId] = {
+                  ...nextSubOptions[itemId],
+                  statValue: opt.value,
+                };
+
+                return {
+                  ...prev,
+                  subOptions: nextSubOptions,
+                };
+              });
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"

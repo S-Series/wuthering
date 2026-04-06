@@ -79,11 +79,15 @@ export default function EchoSlot({index = 0 }: StatSlotProps) {
       StatToColor({ StatId: Echodata.subOptions[4].statId, StatValue: Echodata.subOptions[4].statValue, scoreValue: (scoreMap[Echodata.subOptions[4].statId] ?? 0) })
     ]
 
-    setStatColors((prev) => {
-      const next = [...prev];
-      next[index] = colorMaps;
-      return next;
-    });
+    const dataIndex = characterData.echoDataIndex.indexOf(index)
+
+    if (dataIndex >= 0 && dataIndex < 5) {
+      setStatColors((prev) => {
+        const next = [...prev];
+        next[dataIndex] = colorMaps;
+        return next;
+      });
+    }
 
     return colorMaps;
   }, [index, characterId, characterData])

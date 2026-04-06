@@ -91,10 +91,12 @@
 .ocr-drag-select__apply-button {
     width: 70%;
     height: auto;
-    aspect-ratio: 4 / 1;
+    aspect-ratio: 5 / 1;
     
     margin: 0;
     padding: 0;
+
+    color: #fff;
 }
 
 .ocr-drag-select__apply-button:disabled {
