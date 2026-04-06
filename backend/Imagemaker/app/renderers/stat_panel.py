@@ -122,5 +122,6 @@ def draw_stat_panel(
                 is_bold=is_bold
             )
 
-    draw_text(base, "Cv. 168.0pt", (870, 865), "en", 36, anchor="ma", is_bold=True)
-    draw_text(base, "Tv. 273.9pt", (1130, 865), "en", 36, anchor="ma", is_bold=True)
+    cv, av = stat.get("score")
+    draw_text(base, cv, (870, 865), "en", 36, anchor="ma", is_bold=True)
+    draw_text(base, av, (1130, 865), "en", 36, anchor="ma", is_bold=True)
