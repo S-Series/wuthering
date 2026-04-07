@@ -3,7 +3,8 @@ import { search as fuzzySearch } from "fast-fuzzy";
 import type { OcrApiResponse } from "@/api/ocr.api";
 import { FixedStats, type StatId } from "@/datas/stats";
 import type { LangType } from "@/stores/appStore";
-import { ECHO_CANDIDATES, type EchoId } from "@/datas/echos";
+import { ECHO_CANDIDATES, echoDict, type EchoData, type EchoId } from "@/datas/echos";
+import type { Cost } from "@/components/features/Card/EchoSelect.type";
 
 const RETOUCH_LIST:Record<LangType, [RegExp, string][]> = {
   kr: [
@@ -48,7 +49,7 @@ export function retouchOcrTexts(texts: string[], lang: LangType) {
     }
     s = s.trim();
     return s;
-  })
+  }).filter((item) => !item.includes("+") && !item.includes("25"));
 
   const indexes: number[] = [0];
   for(let i = 0; i < retouched.length; i++) {
@@ -75,12 +76,15 @@ export function textsToStats(texts: string[][], lang: LangType):{
   echoStats: [StatId, number][]
 } {
   const data = texts;
-  const filtered = data.filter((item) => (item.length > 1));
+  const filtered = data.filter((item) => (item.length > 0));
   const merged = filtered.map((item) => {
     const head = item.slice(0,-1).join("");
     const tail = item[item.length - 1];
     return [head, tail];
   })
+  console.log(data);
+  console.log(filtered);
+  console.log(merged);
   const startIdx:number = merged.findIndex((item) => item[0].toLowerCase().includes("cost"))
   if (startIdx === -1)
     return {
@@ -124,16 +128,38 @@ export function textsToStats(texts: string[][], lang: LangType):{
     head.join(""),
     echoCandidates.map((c) => c.text)
   );
-  console.log(bestEcho);
-  console.log(body)
-  console.log(tail)
+  console.log("E: ", bestEcho);
+  console.log("B: ", body)
+  console.log("T: ", tail)
+
+  const tempCost = (/\d/.test(body[0])
+      ? Number(body[0].replace(/\D/g, ""))
+      : Number(body.join("").replace(/\D/g, "")));
+
+  const safeCost: Cost = (() => {
+    switch (tempCost){
+      case 4: return 4;
+      case 3: return 3;
+      case 2: return 1;
+      case 1: return 1;
+      default: {
+        if (bestEcho.length === 0) return 4;
+
+        const echoId = ECHO_CANDIDATES[lang].find(item => item.text === bestEcho[0])?.echoId ?? null
+        if (!echoId) return 4;
+
+        if (Object.entries(echoDict.Cost4).some(([id, _]) => id === echoId)) return 4;
+        if (Object.entries(echoDict.Cost3).some(([id, _]) => id === echoId)) return 3;
+        if (Object.entries(echoDict.Cost1).some(([id, _]) => id === echoId)) return 1;
+        return 4;
+      }
+    }
+  })()
 
   return {
     echoId: bestEcho.length < 1 ? null : echoCandidates.find((c) => c.text === bestEcho[0])?.echoId as EchoId,
     echoName: bestEcho.length < 1 ? null : bestEcho[0],
-    cost: (/\d/.test(body[0])
-      ? Number(body[0].replace(/\D/g, ""))
-      : Number(body.join("").replace(/\D/g, ""))) || 1,
+    cost: safeCost,
     echoStats: tail.map(([statId, valueText]): [StatId, number] => [
       (() => {
         if (valueText.includes("%")) {

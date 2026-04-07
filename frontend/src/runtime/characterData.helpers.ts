@@ -7,6 +7,7 @@ import type { WeaponId } from "@/datas/weapon";
 import type { StatId } from "@/datas/stats";
 import { echoDict, getEchoCostKey, type EchoCostKey, type EchoData, type EchoId } from "@/datas/echos";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
+import { characterScoreSheet } from "@/datas/characterScoreSheet";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;
@@ -373,3 +374,16 @@ export const calcFinalStat = (
 
   return stats;
 };
+
+/*
+export const calcEchoScore: [number, number] = 
+(character: CharacterData, echo: EchoRuntime) => {
+  const cId = character.characterId;
+  if (!cId) return [0, 0]
+
+  const sheet = characterScoreSheet[cId];
+  if (!sheet) return [0, 0];
+
+
+}
+  */

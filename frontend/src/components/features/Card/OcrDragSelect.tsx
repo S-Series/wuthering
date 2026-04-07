@@ -208,6 +208,7 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
   // ==============================================================
 
   const tempEchoData = useMemo(() => {
+    console.log(tempEcho);
     const tempData = Object.entries(echoDict[`Cost${tempEcho?.cost ?? 4}`]).find(
       ([echoId]) => echoId === (tempEcho?.echoId ?? "")
     );
@@ -385,7 +386,7 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
                 />
               </div>
               <span className="num-font" style={{ marginLeft: "auto" }}>
-                {tempEcho.mainOption.statValue ?? 0}.0%
+                {(tempEcho.mainOption.statValue ?? 0).toFixed(1)}%
               </span>
             </div>
 
