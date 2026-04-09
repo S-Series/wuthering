@@ -537,6 +537,9 @@ export const calcFinalScore = (
       av = av - (requirement - 15) * (cSheet.resonanceBns ?? 0);
     }
   }
+
+  cv = Math.round(cv * 10) / 10;
+  av = Math.round(av * 10) / 10;
   
   return [cv, av];
 }
