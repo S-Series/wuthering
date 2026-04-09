@@ -62,9 +62,8 @@ export default function Home() {
         <div className="article-slot">
           <h2 className={`title-text ${lang}-font`}>{localeText.title1}</h2>
           <div className="notice-slot">
-          {sortedPosts.map((post) => (<>
-            <HomePostCard key={post.id} post={post} lang={lang} />
-            </>
+          {sortedPosts.map((post, idx) => (
+            <HomePostCard key={idx} post={post} lang={lang} />
           ))}
           </div>
         </div>

@@ -37,7 +37,7 @@ import "@/pages/Card.contents.main.css"
 
 export default function Card() {
   const { lang, imgVer } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, harmonySet, statColors } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
   const { openOverlay } = useOverlay();
   const { user, gameProfile } = useAuthStore();
@@ -111,21 +111,6 @@ export default function Card() {
       ATTACK_TYPE_STAT_MAP[selectedCharacterData.type] || FixedStats.dummy.id,
     ]
   }, [selectedCharacterData.element, selectedCharacterData.type])
-
-  const scores = useMemo(() => {
-    return [
-      equipmentScore[characterData.echoDataIndex[0]][0] +
-      equipmentScore[characterData.echoDataIndex[1]][0] +
-      equipmentScore[characterData.echoDataIndex[2]][0] +
-      equipmentScore[characterData.echoDataIndex[3]][0] +
-      equipmentScore[characterData.echoDataIndex[4]][0],
-      equipmentScore[characterData.echoDataIndex[0]][1] +
-      equipmentScore[characterData.echoDataIndex[1]][1] +
-      equipmentScore[characterData.echoDataIndex[2]][1] +
-      equipmentScore[characterData.echoDataIndex[3]][1] +
-      equipmentScore[characterData.echoDataIndex[4]][1],
-    ]
-  }, [equipmentScore])
 
   //* == Weapon ================================================//
   const FILTERED_WEAPON = useMemo<Weapon[]>(() => {
@@ -298,7 +283,7 @@ export default function Card() {
     }
 
     const testing = (user && gameProfile && characterFinalStat) ? createPayloadData(
-      lang, user, gameProfile, characterData, characterFinalStat, harmonySet, equipmentScore, statColors
+      lang, user, gameProfile, characterData, characterFinalStat, harmonySet, equipmentScore, finalScore, statColors
     ) : null;
 
     if (!testing) return;
@@ -622,10 +607,10 @@ export default function Card() {
 
               <div className="score-slot">
                 <span className="en-font">
-                  Cv. <em className="num-font">{scores[0].toFixed(1)}</em>pt
+                  Cv. <em className="num-font">{finalScore[0].toFixed(1)}</em>pt
                 </span>
                 <span className="en-font">
-                  Av. <em className="num-font">{scores[1].toFixed(1)}</em>pt
+                  Av. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
               </div>
             </div>
@@ -648,10 +633,10 @@ export default function Card() {
               <div className="namecard-score">
                 <img
                   alt="rank icon"
-                  src={`/ico/rank/${getCharacterRank(scores[1])}.png`}
+                  src={`/ico/rank/${getCharacterRank(finalScore[1])}.png`}
                 />
                 <span className="en-font">
-                  Av. <em className="num-font">{scores[1].toFixed(1)}</em>pt
+                  Av. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
               </div>
 

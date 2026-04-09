@@ -4,8 +4,9 @@ import { FixedStats, type StatId } from "./stats";
 import type { WeaponId } from "./weapon";
 
 type StatWeightMap = Partial<Record<StatId, number>>;
-interface CharacterScore extends StatWeightMap {
+export interface CharacterScore extends StatWeightMap {
   maxResCount: number;
+  isCritInvalid?: boolean;
   scoreComp?: number;
 }
 
@@ -23,6 +24,7 @@ const BaseSheet: Partial<CharacterScore> = {
   [FixedStats.liberationBns.id]: 0,
 
   [FixedStats.resonanceBns.id]: 1,
+  isCritInvalid: false,
 };
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {

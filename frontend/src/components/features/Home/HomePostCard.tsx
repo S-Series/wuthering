@@ -25,7 +25,7 @@ export default function HomePostCard({ post, lang }: HomePostCardProps) {
   return (
     <article className={`home-post-card ${post.pinned ? "pinned" : ""}`}>
       <h3 className={`home-post-title ${lang}-font`}>{post.title[lang]}</h3>
-      <p className={`home-post-body ${lang}-font`}>{post.data[lang]}</p>
+      <div className={`home-post-body ${lang}-font`}>{post.data[lang]}</div>
       <time className="home-post-date">{formatHomePostDate(post.date)}</time>
     </article>
   );

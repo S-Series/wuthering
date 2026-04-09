@@ -85,6 +85,7 @@ export function createPayloadData(
   finalStat: CharacterStat,
   harmonySet: Partial<Record<HarmonyId, number>>,
   equipmentScore: ScoreList,
+  finalScore: [number, number],
   statColors: string[][],
 ): RenderCardPayload {
   const cId: CharacterId = characterData.characterId;
@@ -175,19 +176,12 @@ export function createPayloadData(
         string
       ];
     }),
-    score: characterData.echoDataIndex.slice(0, 5).reduce<[number, number]>(
-      (acc, realIndex) => {
-        acc[0] += equipmentScore[realIndex][0];
-        acc[1] += equipmentScore[realIndex][1];
-        return acc;
-      },
-      [0, 0]
-    ),
+    score: finalScore
   };
 
   const namecard: RenderCardPayload["namecard"] = {
-    score: stats.score[1],
-    rank: getCharacterRank(stats.score[1]),
+    score: finalScore[1],
+    rank: getCharacterRank(finalScore[1]),
   };
 
   const safeStatColors = statColors.map((row) => ["#fff", "#fff", ...row]);

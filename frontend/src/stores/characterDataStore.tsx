@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { character } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
 import { createEmptyCharacterData, type CharacterData, type CharacterStat, type ScoreList } from "@/types/character.type";
-import { calcBaseStat, calcFinalStat } from "@/runtime/characterData.helpers";
+import { calcAllEchoScore, calcBaseStat, calcFinalScore, calcFinalStat } from "@/runtime/characterData.helpers";
 import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
@@ -17,6 +17,7 @@ type ContextType = {
   characterBaseStat: CharacterStat | null;
   characterFinalStat: CharacterStat | null;
   equipmentScore: ScoreList;
+  finalScore: [number, number];
   harmonySet: Partial<Record<HarmonyId, number>>;
   statColors: string[][];
   setStatColors: React.Dispatch<React.SetStateAction<string[][]>>;
@@ -190,11 +191,12 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     return calcBaseStat(characterData);
   }, [characterData]);
 
-  const characterFinalStat = useMemo<CharacterStat | null>(() => {
+  const characterFinalStat = useMemo<CharacterStat>(() => {
     return calcFinalStat(characterData, harmonySet ?? {});
   }, [characterData]);
 
   const [compensation, setCompensation] = useState(0);
+  /*
   const equipmentScore = useMemo<ScoreList>(() => {
     const echoData = characterData.echoData;
     const scoreData = getCharacterScore(
@@ -287,7 +289,16 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
 
     return ret;
   }, [characterId, characterData.echoData, characterData.echoDataIndex])
-
+  */
+  const equipmentScore = useMemo(() => {
+    return calcAllEchoScore(characterData);
+  }, [characterData.characterId, characterData.echoData]);
+  
+  const finalScore = useMemo(() => {
+    const score = calcFinalScore(characterData, characterFinalStat, equipmentScore);
+    saveCharacterScore(characterId, score[1]);
+    return score;
+  }, [characterData.characterId, characterFinalStat, equipmentScore])
 
   const [statColors, setStatColors] = useState([[""]]);
 
@@ -297,17 +308,6 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     if (characterId === "rover_spectro") return;
     localStorage.setItem("selectedCharacterId", characterId);
   }, [characterId])
-
-  useEffect(() => {
-    const finalScore
-      = equipmentScore[characterData.echoDataIndex[0]][1]
-      + equipmentScore[characterData.echoDataIndex[1]][1]
-      + equipmentScore[characterData.echoDataIndex[2]][1]
-      + equipmentScore[characterData.echoDataIndex[3]][1]
-      + equipmentScore[characterData.echoDataIndex[4]][1]
-      + compensation;
-    saveCharacterScore(characterId, finalScore);
-  }, [characterData.echoDataIndex, equipmentScore])
 
   useEffect(() => console.log(statColors), [statColors]);
 
@@ -319,6 +319,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     characterBaseStat,
     characterFinalStat,
     equipmentScore,
+    finalScore,
     harmonySet,
     statColors,
     setStatColors,
