@@ -13,4 +13,20 @@
     background-color: #ff000022;
     white-space: pre;
     color: aliceblue;
+    opacity: 1;
+  animation: fadeOut 1.5s forwards;
+}
+
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
