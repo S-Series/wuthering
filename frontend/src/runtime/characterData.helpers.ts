@@ -556,7 +556,7 @@ export const calcFinalScore = (
   }
 
   console.log("Score Comp.", cSheet.scoreComp ?? 0);
-  av -= cSheet.scoreComp ?? 0;
+  av += cSheet.scoreComp ?? 0;
 
   av = Math.max(av , 0);
 
