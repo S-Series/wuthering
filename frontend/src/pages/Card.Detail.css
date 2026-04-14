@@ -1,0 +1,16 @@
+.card-detail-body {
+    display: flex;
+    width: 100%;
+    height: auto;
+
+    align-items: center;
+    justify-content: space-evenly;
+
+    aspect-ratio: 4 / 1;
+}
+
+.card-detail-body {
+    background-color: #ff000022;
+    white-space: pre;
+    color: aliceblue;
+}

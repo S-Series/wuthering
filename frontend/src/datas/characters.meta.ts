@@ -1,3 +1,4 @@
+import { character } from "./characters";
 import type { CharacterId } from "./characterStats";
 import { harmony, type HarmonyId } from "./harmonies";
 import { FixedStats, type StatId } from "./stats";
@@ -297,7 +298,7 @@ FixedStats.atkPct.id],
     ...baseMeta,
     harmonySets: [harmony.Frosty.id],
     cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
-    resReq: 130,
+    resReq: 110,
     subResReq: 30,
   },
 
@@ -517,3 +518,58 @@ FixedStats.atkPct.id],
     subResReq: 20,
   },
 };
+
+export function getCharacterMeta(
+  characterId: CharacterId,
+  constell: number,
+): CharacterMeta {
+  const base = characterMeta[characterId];
+  if (!base) throw new Error("Character Meta Load Failed: Invalid Character ID")
+
+  const result: CharacterMeta = { ...base };
+
+  switch (characterId){
+    case "iuno": {
+      //유노 1돌+
+      if (constell >= 1) {
+        result.resReq = 110;
+        result.subResReq = 10;
+      }
+      break;
+    }
+    case "encore": {
+      //앙코 2돌+
+      if (constell >= 2) {
+        result.resReq = 110;
+        result.subResReq = 10;
+      }
+      break;
+    }
+    case "zhezhi": {
+      //절지 1돌+
+      if (constell >= 1) {
+        result.resReq = 120;
+        result.subResReq = 20;
+      }
+      break;
+    }
+    case "yinlin": {
+      //음림 2돌+
+      if (constell >= 2) {
+        result.resReq = 110;
+        result.subResReq = 10;
+      }
+      break;
+    }
+    case "calcharo": {
+      //카카루 1돌+
+      if (constell >= 2) {
+        result.resReq = 110;
+        result.subResReq = 10;
+      }
+      break;
+    }
+  }
+
+  return result;
+}

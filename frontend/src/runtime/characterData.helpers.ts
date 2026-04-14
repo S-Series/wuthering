@@ -7,8 +7,9 @@ import type { WeaponId } from "@/datas/weapon";
 import { FixedStats, type StatId } from "@/datas/stats";
 import { echoDict, getEchoCostKey, type EchoCostKey, type EchoData, type EchoId } from "@/datas/echos";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
-import { characterScoreSheet, type CharacterScore } from "@/datas/characterScoreSheet";
-import { characterMeta, type CharacterMeta } from "@/datas/characters.meta";
+import { characterScoreSheet, getCharacterScore, type CharacterScore } from "@/datas/characterScoreSheet";
+import { characterMeta, getCharacterMeta, type CharacterMeta } from "@/datas/characters.meta";
+import type { WeaponData } from "./character.runtime";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;
@@ -489,16 +490,15 @@ export const calcAllEchoScore = (
 export const calcFinalScore = (
   cData: CharacterData,
   cStat: CharacterStat,
+  wId: WeaponId | null,
   sData: ScoreList,
 ): [number, number] => {  
   const fallback: [number, number] = [0, 0];
 
   const cId = cData.characterId;
   if (!cId) return fallback;
-  const cMeta = characterMeta[cId];
+  const cMeta = getCharacterMeta(cId, cData.constell[0]);
   if (!cMeta) return fallback;
-  const cSheet = characterScoreSheet[cId];
-  if (!cSheet) return fallback;
 
   let cv = 0;
   let av = 0;
@@ -513,9 +513,26 @@ export const calcFinalScore = (
     av += target[1];
   }
 
+  const eData: [
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime,
+    EchoRuntime
+  ] = [
+    cData.echoData[indexed[0]],
+    cData.echoData[indexed[1]],
+    cData.echoData[indexed[2]],
+    cData.echoData[indexed[3]],
+    cData.echoData[indexed[4]],
+  ];
+  const cSheet = getCharacterScore(cId, wId, cData.constell[0], eData);
+  if (!cSheet) return fallback;
+
   // 공효가 요구치 보다 부족
   const cRes = cStat.resonanceBns;
   const mRes = cMeta.resReq;
+
   if (cRes < mRes) {
     const requirement = mRes - cRes;
 
@@ -537,6 +554,11 @@ export const calcFinalScore = (
       av = av - (requirement - 15) * (cSheet.resonanceBns ?? 0);
     }
   }
+
+  console.log("Score Comp.", cSheet.scoreComp ?? 0);
+  av -= cSheet.scoreComp ?? 0;
+
+  av = Math.max(av , 0);
 
   cv = Math.round(cv * 10) / 10;
   av = Math.round(av * 10) / 10;

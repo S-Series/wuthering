@@ -5,7 +5,7 @@ import type { WeaponId } from "./weapon";
 
 type StatWeightMap = Partial<Record<StatId, number>>;
 export interface CharacterScore extends StatWeightMap {
-  maxResCount: number;
+  maxResCount: number; //$ Legacy data (UnUse)
   isCritInvalid?: boolean;
   scoreComp?: number;
 }

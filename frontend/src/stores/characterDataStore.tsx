@@ -295,7 +295,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   }, [characterData.characterId, characterData.echoData]);
   
   const finalScore = useMemo(() => {
-    const score = calcFinalScore(characterData, characterFinalStat, equipmentScore);
+    const score = calcFinalScore(characterData, characterFinalStat, characterData.weaponId ?? null, equipmentScore);
     saveCharacterScore(characterId, score[1]);
     return score;
   }, [characterData.characterId, characterFinalStat, equipmentScore])

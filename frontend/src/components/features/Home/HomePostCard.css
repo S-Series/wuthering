@@ -49,6 +49,10 @@
     white-space: pre-line;
 }
 
+.home-post-card p.indent{
+    margin-left: min(0.25vw, 0.25rem)
+}
+
 .home-post-card .home-post-detail-slot {
     display: flex;
     flex-direction: column;

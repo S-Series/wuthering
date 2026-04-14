@@ -10,6 +10,7 @@ import ImagePicker from "@/components/ImagePicker";
 import StatSlot from "@/components/features/Card/StatSlot";
 import EchoSlot from "@/components/features/Card/EchoSlot";
 import OcrPlayground from "@/components/features/Card/OcrSlot";
+import CardDetail from "@/pages/Card.Detail";
 
 import { character, WeaponTypes as WeaponLists, ElementTypes as ElementLists } from "@/datas/characters"
 import { type Character } from "@/datas/characters"
@@ -681,6 +682,8 @@ export default function Card() {
             </div>
           </div>
         </div>
+
+        <CardDetail/>
       </div>
 
       <div className="card-section right">
