@@ -150,7 +150,7 @@
 
     overflow: hidden;
     transform: translateX(50%);
-    filter: drop-shadow(0 0 10px #fff) brightness(1.2);
+    filter: drop-shadow(0 0 2px #000) drop-shadow(0 2px 4px #fff);
     z-index: 11;
 }
 

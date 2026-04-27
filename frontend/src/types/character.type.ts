@@ -15,7 +15,7 @@ export type ScoreList = [
   [number, number]
 ]
 
-export type CharacterRank = "Empty" | "B" | "A" | "S" | "SS" | "SSS";
+export type CharacterRank = "Empty" | "B" | "A" | "S" | "SS" | "SSS" | "T" | "TT";
 
 export type CharacterData = {
   characterId: CharacterId;
@@ -91,6 +91,8 @@ export const createEmptyCharacterData = (id: CharacterId): CharacterData => ({
 });
 
 export const getCharacterRank = (score: number):CharacterRank => {
+    if (score >= 350) return "TT"
+    if (score >= 325) return "T"
     if (score >= 300) return "SSS"
     else if (score >= 250) return "SS"
     else if (score >= 225) return "S"
@@ -100,10 +102,12 @@ export const getCharacterRank = (score: number):CharacterRank => {
 }
 
 export const getEquipmentRank = (score: number):CharacterRank => {
-    if (score >= 65) return "SSS"
-    else if (score >= 60) return "SS"
-    else if (score >= 55) return "S"
-    else if (score >= 50) return "A"
+    if (score >= 70) return "TT"
+    if (score >= 65) return "T"
+    if (score >= 60) return "SSS"
+    else if (score >= 55) return "SS"
+    else if (score >= 50) return "S"
+    else if (score >= 45) return "A"
     else if (score === 0) return "Empty"
     else return "B"
 }

@@ -9,7 +9,6 @@ import { echoDict, getEchoCostKey, type EchoCostKey, type EchoData, type EchoId 
 import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { characterScoreSheet, getCharacterScore, type CharacterScore } from "@/datas/characterScoreSheet";
 import { characterMeta, getCharacterMeta, type CharacterMeta } from "@/datas/characters.meta";
-import type { WeaponData } from "./character.runtime";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;

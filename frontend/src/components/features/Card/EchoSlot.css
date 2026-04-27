@@ -99,7 +99,7 @@
 
 .echo-slot-body .score-container img {
     position: absolute;
-    bottom: 32.5%;
+    bottom: 45%;
     left: 50%;
     height: min(2.15vw, 2.15rem);
     transform: translate(-50%, -50%);

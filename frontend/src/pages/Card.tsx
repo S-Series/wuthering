@@ -683,7 +683,7 @@ export default function Card() {
           </div>
         </div>
 
-        <CardDetail/>
+        <CardDetail cData={characterData}/>
       </div>
 
       <div className="card-section right">
