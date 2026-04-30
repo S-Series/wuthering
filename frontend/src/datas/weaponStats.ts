@@ -53,6 +53,11 @@ export const weaponStat = {
     value: [24.3, 12],
     statType: [FixedStats.critRate.id, FixedStats.typeBns.id],
   },
+  sword010: { //* 서린 불꽃: 히유키 전무
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.critRate.id, FixedStats.atkPct.id],
+  },
   //$ --------------------------------------
   sword101: {
     atk: 462,

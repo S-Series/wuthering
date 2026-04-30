@@ -87,6 +87,14 @@ export const weapon = {
       zh: "永远的启明星",
       imgKey: "ico009",
     },
+    sword010:{ //* 히유키
+			id: "sword010",
+      en: "Frostburn",
+      kr: "서린 불꽃",
+      jp: "灼霜",
+      zh: "灼霜",
+      imgKey: "ico010",
+    },
     //$ 4-Starts
     sword101:{
 			id: "sword101",

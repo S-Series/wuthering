@@ -78,10 +78,10 @@ FixedStats.atkPct.id],
   },
   hiyuki: {
     ...baseMeta,
-    //harmonySets: [harmony.Snowfall.id],
+    harmonySets: [harmony.Snowfall.id],
     cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
-    resReq: 130,
-    subResReq: 30,
+    resReq: 125,
+    subResReq: 25,
   },
 
   //*== ver 3.2 ===========================//

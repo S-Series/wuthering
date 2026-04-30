@@ -46,6 +46,49 @@ export const harmony = {
   */
 
   //#region Ver3.0 Echos
+  Memories: {
+    id: "Memories",
+    en: "Reel of Spliced Memories",
+    kr: "마음을 엮은 꿈의 그림자",
+    jp: "モンタージュ・シルエット",
+    zh: "剪心辑梦之影",
+    option: [
+      {
+        count: 2,
+        options: [
+          { statId: FixedStats.atkPct.id, value: 10.0 },
+        ],
+      },
+      {
+        count: 5,
+        options: [],
+      },
+    ],
+    colorCode: "#",
+  },
+  Snowfall: {
+    id: "Snowfall",
+    en: "Wishes of Quiet Snowfall",
+    kr: "소리 없이 내려앉은 기도의 눈",
+    jp: "静寂祈念の雪",
+    zh: "雪落无声之愿",
+    option: [
+      {
+        count: 2,
+        options: [
+          { statId: FixedStats.glacioBns.id, value: 10.0 },
+        ],
+      },
+      {
+        count: 5,
+        options: [
+          { statId: FixedStats.glacioBns.id, value: 10.0 },
+          { statId: FixedStats.critRate.id, value: 25.0 },
+        ],
+      },
+    ],
+    colorCode: "#",
+  },
   Star: {
     id: "Star",
     en: "Trailblazing Star",

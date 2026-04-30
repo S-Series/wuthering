@@ -34,6 +34,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
   },
   hiyuki: {
     ...BaseSheet,
+    [FixedStats.atkPct.id]: 1.5,
+    [FixedStats.skillBns.id]: 0.2,
+    [FixedStats.liberationBns.id]: 1.3,
     maxResCount: 0,
   },
   sigrika: {

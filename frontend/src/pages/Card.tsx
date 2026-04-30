@@ -843,7 +843,7 @@ export default function Card() {
                 <div
                   key={`weapon-filter-slot-${item}-${idx}`}
                   className={`card-item weapon ${
-                    item.id.includes("00") ? "spectro" : "havoc"
+                    Number(item.id.match(/\d+$/)) < 100 ? "spectro" : "havoc"
                   } ${item.id === weaponData?.id ? "selected" : ""}`}
                   onClick={() => {
                     const stat = weaponStat[item.id];
