@@ -59,12 +59,31 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
   */
 
   Cost4: {
+    Z05: {
+      en: "Reminiscence: Denia",
+      kr: "공명의 메아리 · 데니아",
+      jp: "響き渡る共鳴・ダーニャ",
+      zh: "共鸣回响·达妮娅",
+      type: [harmony.Foam.id],
+      getStats: (_) => [],
+    },
+    Z06: {
+      en: "Reminiscence: Threnodian - Voidborne Construct",
+      kr: "공명의 메아리 · 명식 · 허무의 신",
+      jp: "響き渡る共鳴・鳴式・虚構神機",
+      zh: "共鸣回响·鸣式·虚造神型",
+      type: [harmony.Snowfall.id],
+      getStats: (_) => [
+        { statId: FixedStats.glacioBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
+      ],
+    },
     W89: {
       en: "Nameless Explorer",
       kr: "이름없는 탐색자",
       jp: "名もない探索者",
       zh: "無銘探索者",
-      type: [harmony.Sound.id],
+      type: [harmony.Sound.id, harmony.Memories.id],
       getStats: (_) => [{ statId: FixedStats.aeroBns.id, value: 12.0 }],
     },
     Z04: {
@@ -74,9 +93,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "辛吉勒姆",
       type: [harmony.Star.id],
       getStats: (id) => {
-        if (id === "aemeath") return [
-          { statId: FixedStats.liberationBns.id, value: 25.0 },
-        ]
+        if (id === "aemeath")
+          return [{ statId: FixedStats.liberationBns.id, value: 25.0 }];
         return [];
       },
     },
@@ -115,8 +133,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "朔雷之鳞",
       type: [harmony.Thunder.id],
       getStats: (_) => [
-        {statId: FixedStats.heavyBns.id, value: 12.0},
-        {statId: FixedStats.electroBns.id, value: 12.0},
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
+        { statId: FixedStats.electroBns.id, value: 12.0 },
       ],
     },
     H80N: {
@@ -126,8 +144,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "梦魇·无冠者",
       type: [harmony.Eclipse.id],
       getStats: (_) => [
-        {statId: FixedStats.basicBns.id, value: 12.0},
-        {statId: FixedStats.havocBns.id, value: 12.0},
+        { statId: FixedStats.basicBns.id, value: 12.0 },
+        { statId: FixedStats.havocBns.id, value: 12.0 },
       ],
     },
     H80: {
@@ -137,8 +155,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "无冠者",
       type: [harmony.Eclipse.id],
       getStats: (_) => [
-        {statId: FixedStats.skillBns.id, value: 12.0},
-        {statId: FixedStats.havocBns.id, value: 12.0},
+        { statId: FixedStats.skillBns.id, value: 12.0 },
+        { statId: FixedStats.havocBns.id, value: 12.0 },
       ],
     },
     H71N: {
@@ -148,8 +166,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "梦魇·飞廉之猩",
       type: [harmony.Gale.id],
       getStats: (_) => [
-        {statId: FixedStats.heavyBns.id, value: 12.0},
-        {statId: FixedStats.aeroBns.id, value: 12.0},
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
+        { statId: FixedStats.aeroBns.id, value: 12.0 },
       ],
     },
     H71: {
@@ -159,8 +177,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "飞廉之猩",
       type: [harmony.Gale.id],
       getStats: (_) => [
-        {statId: FixedStats.heavyBns.id, value: 12.0},
-        {statId: FixedStats.aeroBns.id, value: 12.0},
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
+        { statId: FixedStats.aeroBns.id, value: 12.0 },
       ],
     },
     N74N: {
@@ -169,9 +187,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       jp: "ナイトメア・輝き蛍の軍勢",
       zh: "梦魇·辉萤军势",
       type: [harmony.Frost.id, harmony.Empyrean.id],
-      getStats: (_) => [
-        {statId: FixedStats.glacioBns.id, value: 12.0},
-      ],
+      getStats: (_) => [{ statId: FixedStats.glacioBns.id, value: 12.0 }],
     },
     N74: {
       en: "Lampylumen Myriad",
@@ -187,7 +203,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       jp: "ナイトメア・哀切の凶鳥",
       zh: "梦魇·哀声鸷",
       type: [harmony.Radiance.id],
-      getStats: (_) => [{statId: FixedStats.spectroBns.id, value: 12.0},],
+      getStats: (_) => [{ statId: FixedStats.spectroBns.id, value: 12.0 }],
     },
     H73: {
       en: "Mourning Aix",
@@ -196,8 +212,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "哀声鸷",
       type: [harmony.Light.id],
       getStats: (_) => [
-        {statId: FixedStats.spectroBns.id, value: 12.0},
-        {statId: FixedStats.liberationBns.id, value: 12.0},
+        { statId: FixedStats.spectroBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
       ],
     },
     R56: {
@@ -206,9 +222,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       jp: "機械アボミネーション",
       zh: "聚械机偶",
       type: [harmony.Tunes.id],
-      getStats: (_) => [
-        {statId: FixedStats.atkPct.id, value: 12.0},
-      ],
+      getStats: (_) => [{ statId: FixedStats.atkPct.id, value: 12.0 }],
     },
     H72N: {
       en: "Nightmare: Impermanence Heron",
@@ -217,8 +231,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "无常凶鹭",
       type: [harmony.Veil.id],
       getStats: (_) => [
-        {statId: FixedStats.heavyBns.id, value: 12.0},
-        {statId: FixedStats.havocBns.id, value: 12.0},
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
+        { statId: FixedStats.havocBns.id, value: 12.0 },
       ],
     },
     H72: {
@@ -243,9 +257,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       jp: "角",
       zh: "角",
       type: [harmony.Light.id],
-      getStats: (_) => [
-        {statId: FixedStats.skillBns.id, value: 16.0},
-      ],
+      getStats: (_) => [{ statId: FixedStats.skillBns.id, value: 16.0 }],
     },
     X78: {
       en: "Fallacy of No Return",
@@ -254,8 +266,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "无归的谬误",
       type: [harmony.Rejuvent.id],
       getStats: (_) => [
-        {statId: FixedStats.atkPct.id, value: 10.0},
-        {statId: FixedStats.resonanceBns.id, value: 10.0},
+        { statId: FixedStats.atkPct.id, value: 10.0 },
+        { statId: FixedStats.resonanceBns.id, value: 10.0 },
       ],
     },
     W83: {
@@ -265,8 +277,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "罗蕾莱",
       type: [harmony.Veil.id],
       getStats: (_) => [
-        {statId: FixedStats.havocBns.id, value: 12.0},
-        {statId: FixedStats.basicBns.id, value: 12.0},
+        { statId: FixedStats.havocBns.id, value: 12.0 },
+        { statId: FixedStats.basicBns.id, value: 12.0 },
       ],
     },
     W84: {
@@ -276,8 +288,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "异构武装",
       type: [harmony.Frosty.id],
       getStats: (_) => [
-        {statId: FixedStats.skillBns.id, value: 12.0},
-        {statId: FixedStats.glacioBns.id, value: 12.0},
+        { statId: FixedStats.skillBns.id, value: 12.0 },
+        { statId: FixedStats.glacioBns.id, value: 12.0 },
       ],
     },
     H82: {
@@ -287,8 +299,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "叹息古龙",
       type: [harmony.Courage.id],
       getStats: (_) => [
-        {statId: FixedStats.fusionBns.id, value: 12.0},
-        {statId: FixedStats.basicBns.id, value: 12.0},
+        { statId: FixedStats.fusionBns.id, value: 12.0 },
+        { statId: FixedStats.basicBns.id, value: 12.0 },
       ],
     },
     W93: {
@@ -306,8 +318,9 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "共鸣回响·芙露德莉斯",
       type: [harmony.Welkin.id, harmony.Pilgrimage.id],
       getStats: (id) => {
-        if (id === "cartethyia") return [{statId: FixedStats.aeroBns.id, value: 20.0}]
-        return [{statId: FixedStats.aeroBns.id, value: 10.0},]
+        if (id === "cartethyia")
+          return [{ statId: FixedStats.aeroBns.id, value: 20.0 }];
+        return [{ statId: FixedStats.aeroBns.id, value: 10.0 }];
       },
     },
     W85: {
@@ -317,8 +330,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "梦魇·凯尔匹",
       type: [harmony.Welkin.id, harmony.Pilgrimage.id],
       getStats: (_) => [
-        {statId: FixedStats.aeroBns.id, value: 12.0},
-        {statId: FixedStats.glacioBns.id, value: 12.0},
+        { statId: FixedStats.aeroBns.id, value: 12.0 },
+        { statId: FixedStats.glacioBns.id, value: 12.0 },
       ],
     },
     W86: {
@@ -328,8 +341,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "荣耀狮像",
       type: [harmony.Clawprint.id],
       getStats: (_) => [
-        {statId: FixedStats.fusionBns.id, value: 12.0},
-        {statId: FixedStats.liberationBns.id, value: 12.0},
+        { statId: FixedStats.fusionBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
       ],
     },
     W76N: {
@@ -339,8 +352,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "梦魇·云闪之鳞",
       type: [harmony.Thunder.id],
       getStats: (_) => [
-        {statId: FixedStats.electroBns.id, value: 12.0},
-        {statId: FixedStats.liberationBns.id, value: 12.0},
+        { statId: FixedStats.electroBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
       ],
     },
     H91: {
@@ -358,8 +371,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "梦魇·燎照之骑",
       type: [harmony.Rift.id],
       getStats: (_) => [
-        {statId: FixedStats.fusionBns.id, value: 12.0},
-        {statId: FixedStats.skillBns.id, value: 12.0},
+        { statId: FixedStats.fusionBns.id, value: 12.0 },
+        { statId: FixedStats.skillBns.id, value: 12.0 },
       ],
     },
     W77: {
@@ -369,8 +382,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "燎照之骑",
       type: [harmony.Rift.id],
       getStats: (_) => [
-        {statId: FixedStats.fusionBns.id, value: 12.0},
-        {statId: FixedStats.basicBns.id, value: 12.0},
+        { statId: FixedStats.fusionBns.id, value: 12.0 },
+        { statId: FixedStats.basicBns.id, value: 12.0 },
       ],
     },
     //$ Update After Phrolobia
@@ -380,9 +393,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       jp: "ナイトメア・ヘカテー",
       zh: "梦魇·赫卡忒",
       type: [harmony.Dream.id],
-      getStats: (_) => [
-        {statId: FixedStats.havocBns.id, value: 12.0},
-      ],
+      getStats: (_) => [{ statId: FixedStats.havocBns.id, value: 12.0 }],
     },
     X79: {
       en: "Reminiscence: Fenrico",
@@ -391,8 +402,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "共鸣回响·芬莱克",
       type: [harmony.Dream.id, harmony.Law.id],
       getStats: (_) => [
-        {statId: FixedStats.aeroBns.id, value: 12.0},
-        {statId: FixedStats.heavyBns.id, value: 12.0},
+        { statId: FixedStats.aeroBns.id, value: 12.0 },
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
       ],
     },
     W87: {
@@ -402,8 +413,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "伪作的神王",
       type: [harmony.Crown.id],
       getStats: (_) => [
-        {statId: FixedStats.electroBns.id, value: 12.0},
-        {statId: FixedStats.heavyBns.id, value: 12.0},
+        { statId: FixedStats.electroBns.id, value: 12.0 },
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
       ],
     },
     W88: {
@@ -413,8 +424,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "海之女",
       type: [harmony.Crown.id],
       getStats: (_) => [
-        {statId: FixedStats.aeroBns.id, value: 12.0},
-        {statId: FixedStats.liberationBns.id, value: 12.0},
+        { statId: FixedStats.aeroBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
       ],
     },
     Z03: {
@@ -424,8 +435,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "共鸣回响·鸣式·利维亚坦",
       type: [harmony.Shadow.id, harmony.Fate.id],
       getStats: (_) => [
-        {statId: FixedStats.havocBns.id, value: 12.0},
-        {statId: FixedStats.liberationBns.id, value: 12.0}
+        { statId: FixedStats.havocBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
       ],
     },
     /*
@@ -444,6 +455,14 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
     */
   },
   Cost3: {
+    H57: {
+      en: "Voidwing Moth",
+      kr: "보이드모스",
+      jp: "ファントムモス",
+      zh: "迷胧幻蛾",
+      type: [harmony.Memories.id],
+      getStats: (_) => [],
+    },
     R67: {
       en: "Kronablight",
       kr: "크로나블라이트",
@@ -465,7 +484,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "글로모스",
       jp: "グローモス",
       zh: "格洛獁圖",
-      type: [harmony.Star.id],
+      type: [harmony.Star.id, harmony.Snowfall.id],
       getStats: (_) => [],
     },
     W74: {
@@ -473,7 +492,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "바람의 기생갑",
       jp: "風纏いの寄生甲",
       zh: "风鳞蜃甲",
-      type: [harmony.Revelation.id],
+      type: [harmony.Revelation.id, harmony.Snowfall.id],
       getStats: (_) => [],
     },
     W73: {
@@ -481,7 +500,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "서리의 기생갑",
       jp: "霜纏いの寄生甲",
       zh: "霜鳞蜃甲",
-      type: [harmony.Halo.id],
+      type: [harmony.Halo.id, harmony.Snowfall.id],
       getStats: (_) => [],
     },
     R64: {
@@ -513,7 +532,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "아이언후프",
       jp: "アイアン・フーフ",
       zh: "重工铁蹄",
-      type: [harmony.Leap.id],
+      type: [harmony.Leap.id, harmony.Snowfall.id, harmony.Memories.id],
       getStats: (_) => [],
     },
     R60: {
@@ -521,7 +540,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "마이닝 메카 레인디어",
       jp: "マイニング・メカレインディア",
       zh: "矿岩机麋",
-      type: [harmony.Leap.id],
+      type: [harmony.Leap.id, harmony.Memories.id],
       getStats: (_) => [],
     },
     R59: {
@@ -529,7 +548,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "플로라 메카 레인디어",
       jp: "フローラ・メカレインディア",
       zh: "莳植机麋",
-      type: [harmony.Revelation.id],
+      type: [harmony.Revelation.id, harmony.Memories.id],
       getStats: (_) => [],
     },
     R58: {
@@ -705,8 +724,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "荣光节使",
       type: [harmony.Radiance.id, harmony.Welkin.id, harmony.Pilgrimage.id],
       getStats: (_) => [
-        {statId: FixedStats.spectroBns.id, value: 12.0},
-        {statId: FixedStats.heavyBns.id, value: 12.0},
+        { statId: FixedStats.spectroBns.id, value: 12.0 },
+        { statId: FixedStats.heavyBns.id, value: 12.0 },
       ],
     },
     W72: {
@@ -724,8 +743,8 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "角鳄",
       type: [harmony.Pilgrimage.id, harmony.Clawprint.id, harmony.Shadow.id],
       getStats: (_) => [
-        {statId: FixedStats.aeroBns.id, value: 12.0},
-        {statId: FixedStats.liberationBns.id, value: 12.0},
+        { statId: FixedStats.aeroBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
       ],
     },
     H56: {
@@ -734,9 +753,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       jp: "コロサウルス",
       zh: "蝕脊龍",
       type: [harmony.Clawprint.id, harmony.Shadow.id],
-      getStats: (_) => [
-        {statId: FixedStats.fusionBns.id, value: 12.0},
-      ],
+      getStats: (_) => [{ statId: FixedStats.fusionBns.id, value: 12.0 }],
     },
     H42N: {
       en: "Nightmare: Violet-Feathered Heron",
@@ -865,7 +882,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "아이스글린트 댄서",
       jp: "アイスグリントダンサー",
       zh: "冰盈舞者",
-      type: [harmony.Star.id],
+      type: [harmony.Star.id, harmony.Snowfall.id, harmony.Memories.id],
       getStats: (_) => [],
     },
     W39: {
@@ -873,7 +890,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "쉐도우 스태퍼",
       jp: "シャドウステッパー",
       zh: "影爍者",
-      type: [harmony.Star.id, harmony.Foam.id],
+      type: [harmony.Star.id, harmony.Foam.id, harmony.Snowfall.id],
       getStats: (_) => [],
     },
     W37: {
@@ -902,7 +919,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "바위 호박벌",
       jp: "サイクツクマバチ",
       zh: "矿岩熊蜂",
-      type: [harmony.Halo.id, harmony.Revelation.id, harmony.Sound.id],
+      type: [harmony.Halo.id, harmony.Revelation.id, harmony.Sound.id, harmony.Memories.id],
       getStats: (_) => [],
     },
     R10: {
@@ -910,7 +927,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "파종 호박벌",
       jp: "カフンクマバチ",
       zh: "莳植熊蜂",
-      type: [harmony.Leap.id, harmony.Revelation.id, harmony.Sound.id],
+      type: [harmony.Leap.id, harmony.Revelation.id, harmony.Sound.id, harmony.Memories.id],
       getStats: (_) => [],
     },
     W36: {
@@ -918,7 +935,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "전율하는 전사",
       jp: "戦慄の戦士",
       zh: "颤栗战士",
-      type: [harmony.Halo.id, harmony.Foam.id],
+      type: [harmony.Halo.id, harmony.Foam.id, harmony.Snowfall.id],
       getStats: (_) => [],
     },
     H22N: {
