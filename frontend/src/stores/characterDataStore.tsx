@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { character } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
 import { createEmptyCharacterData, type CharacterData, type CharacterStat, type ScoreList } from "@/types/character.type";
-import { calcAllEchoScore, calcBaseStat, calcFinalScore, calcFinalStat } from "@/runtime/characterData.helpers";
+import { calcAllEchoScore, calcBaseStat, calcFinalScore, calcFinalStat, setEchoDataIndexes } from "@/runtime/characterData.helpers";
 import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
@@ -192,7 +192,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   }, [characterData]);
 
   const characterFinalStat = useMemo<CharacterStat>(() => {
-    return calcFinalStat(characterData, harmonySet ?? {});
+    return calcFinalStat(characterData, characterData.echoDataIndex, harmonySet ?? {});
   }, [characterData]);
 
   const [compensation, setCompensation] = useState(0);

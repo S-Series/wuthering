@@ -79,6 +79,7 @@ FixedStats.atkPct.id],
   hiyuki: {
     ...baseMeta,
     harmonySets: [harmony.Snowfall.id],
+    cost4MainStats: [FixedStats.critRate.id, FixedStats.critDmg.id, FixedStats.atkPct.id],
     cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
     resReq: 125,
     subResReq: 25,

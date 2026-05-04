@@ -168,6 +168,7 @@ export const calcBaseStat = (data: CharacterData) => {
 
 export const calcFinalStat = (
   data: CharacterData,
+  echoIdx: number[],
   harmonySet: Partial<Record<HarmonyId, number>>
 ) => {
   const id : CharacterId = data.characterId;
@@ -236,9 +237,10 @@ export const calcFinalStat = (
 
   equipmentStats[W_baseStat.statType[0]] += W_baseStat.value[0];
   equipmentStats[W_baseStat.statType[1]] += W_baseStat.value[1];
+  
   // Should i remove magic number 5?
   for (let i = 0; i < 5; i++) {
-    const loopData = characterEchoData[i];
+    const loopData = characterEchoData[echoIdx[i]];
 
     if (loopData.cost === 4) equipmentStats.atk += 150;
     if (loopData.cost === 3) equipmentStats.atk += 100;
