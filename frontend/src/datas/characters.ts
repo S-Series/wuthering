@@ -711,7 +711,7 @@ export const character: Record<CharacterId, Character> = {
   //# 4★
   sanhua: {
     en: "sanhua",
-    kr: "",
+    kr: "산화",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -724,7 +724,7 @@ export const character: Record<CharacterId, Character> = {
   },
   baizhi: {
     en: "baizhi",
-    kr: "",
+    kr: "설지",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -737,7 +737,7 @@ export const character: Record<CharacterId, Character> = {
   },
   chixia: {
     en: "chixia",
-    kr: "치사",
+    kr: "치샤",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -750,7 +750,7 @@ export const character: Record<CharacterId, Character> = {
   },
   mortefi: {
     en: "mortefi",
-    kr: "",
+    kr: "모르테피",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -763,7 +763,7 @@ export const character: Record<CharacterId, Character> = {
   },
   yuanwu: {
     en: "yuanwu",
-    kr: "",
+    kr: "연무",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -776,7 +776,7 @@ export const character: Record<CharacterId, Character> = {
   },
   yangyang: {
     en: "yangyang",
-    kr: "",
+    kr: "양양",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -789,7 +789,7 @@ export const character: Record<CharacterId, Character> = {
   },
   aalto: {
     en: "aalto",
-    kr: "",
+    kr: "알토",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -802,7 +802,7 @@ export const character: Record<CharacterId, Character> = {
   },
   taoqi: {
     en: "taoqi",
-    kr: "",
+    kr: "도기",
     jp: "",
     zh: "",
     hasSkin: false,
@@ -815,7 +815,7 @@ export const character: Record<CharacterId, Character> = {
   },
   danjin: {
     en: "danjin",
-    kr: "",
+    kr: "단근",
     jp: "",
     zh: "",
     hasSkin: false,

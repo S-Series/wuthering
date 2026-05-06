@@ -1,8 +1,13 @@
+import "dotenv/config";
+
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import pLimit from "p-limit";
+
+import { getClientKey } from "./utils/clientKey.js";
+import { registerRenderRoutes } from "./routes/render.js";
 
 import {
   ALLOWED_MIME,
@@ -18,8 +23,13 @@ import {
   normalizeType,
   validateEnv,
 } from "./config/env.js";
-import { getClientKey } from "./utils/clientKey.js";
-import { registerRenderRoutes } from "./routes/render.js";
+
+import {
+  cacheStore,
+  createOcrCacheKey,
+  createYoutubeLatestCacheKey,
+  type YoutubeLatestCacheValue,
+} from "./services/cacheStore.js";
 
 async function main() {
   validateEnv();
@@ -50,7 +60,10 @@ async function main() {
     credentials: true,
   });
 
-  app.get("/health", async () => ({ ok: true, upstream: "ocr server is ready" }));
+  app.get("/health", async () => ({
+    ok: true,
+    upstream: "gateway server is ready",
+  }));
 
   app.get("/health/ocr", async (_req, reply) => {
     const results = await Promise.all(
@@ -127,7 +140,10 @@ async function main() {
 
   app.post("/api/ocr", async (req, reply) => {
     const part = await req.file();
-    if (!part) return reply.code(400).send({ error: "file missing" });
+
+    if (!part) {
+      return reply.code(400).send({ error: "file missing" });
+    }
 
     if (!part.mimetype || !ALLOWED_MIME.has(part.mimetype)) {
       return reply
@@ -142,6 +158,7 @@ async function main() {
     }
 
     const buf = await part.toBuffer();
+
     if (buf.length === 0) {
       return reply.code(400).send({ error: "empty file" });
     }
@@ -154,18 +171,50 @@ async function main() {
       (part.fields?.lang && "value" in part.fields.lang
         ? String(part.fields.lang.value)
         : undefined) ?? "unknown";
+
     const langValue = normalizeLang(langRaw);
 
     console.log("OCR lang:", langValue);
     console.log("OCR file:", part.filename, part.mimetype, buf.length);
 
+    const ocrCacheKey = createOcrCacheKey({
+      lang: langValue,
+      mimetype: part.mimetype,
+      buffer: buf,
+    });
+
+    const cachedOcr = cacheStore.ocr.get(ocrCacheKey);
+
+    if (cachedOcr !== undefined) {
+      if (cachedOcr.contentType.includes("application/json")) {
+        try {
+          return reply
+            .header("content-type", "application/json; charset=utf-8")
+            .header("x-cache", "HIT")
+            .send(JSON.parse(cachedOcr.body));
+        } catch {
+          return reply
+            .header("content-type", cachedOcr.contentType)
+            .header("x-cache", "HIT")
+            .send(cachedOcr.body);
+        }
+      }
+
+      return reply
+        .header("content-type", cachedOcr.contentType)
+        .header("x-cache", "HIT")
+        .send(cachedOcr.body);
+    }
+
     const form = new FormData();
+
     form.set(
       "file",
       new File([new Uint8Array(buf)], part.filename ?? "upload.png", {
         type: part.mimetype ?? "application/octet-stream",
       })
     );
+
     form.set("lang", langValue);
 
     const upstreamUrl = new URL(
@@ -178,6 +227,7 @@ async function main() {
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     let upstreamRes: Response;
+
     try {
       upstreamRes = await limitOcr(() =>
         fetch(upstreamUrl, {
@@ -208,17 +258,28 @@ async function main() {
       });
     }
 
+    const safeContentType = contentType || "text/plain; charset=utf-8";
+
+    cacheStore.ocr.set(ocrCacheKey, {
+      contentType: safeContentType,
+      body: text,
+    });
+
     if (contentType.includes("application/json")) {
       try {
         return reply
           .header("content-type", "application/json; charset=utf-8")
+          .header("x-cache", "MISS")
           .send(JSON.parse(text));
       } catch {
         // JSON 파싱 실패 시 raw 반환
       }
     }
 
-    return reply.send(text);
+    return reply
+      .header("content-type", safeContentType)
+      .header("x-cache", "MISS")
+      .send(text);
   });
 
   await registerRenderRoutes(app);
@@ -229,17 +290,27 @@ async function main() {
     const lang = normalizeLang(q.lang);
     const type = normalizeType(q.type);
 
+    const cacheKey = createYoutubeLatestCacheKey({ lang, type });
+    const cachedYoutube = cacheStore.youtubeLatest.get(cacheKey);
+
+    if (cachedYoutube !== undefined) {
+      return reply.header("x-cache", "HIT").send(cachedYoutube);
+    }
+
     const apiKey = process.env.YOUTUBE_API_KEY;
+
     if (!apiKey) {
       return reply.code(500).send({ error: "YOUTUBE_API_KEY missing" });
     }
 
     const playlistId = YOUTUBE_PLAYLISTS[lang][type];
+
     if (!playlistId) {
       return reply.code(500).send({ error: "playlistId missing", lang, type });
     }
 
     const url = new URL("https://www.googleapis.com/youtube/v3/playlistItems");
+
     url.searchParams.set("part", "snippet");
     url.searchParams.set("playlistId", playlistId);
     url.searchParams.set("maxResults", "1");
@@ -247,6 +318,7 @@ async function main() {
 
     let ytRes: Response;
     let text = "";
+
     try {
       ytRes = await fetch(url.toString());
       text = await ytRes.text();
@@ -265,6 +337,7 @@ async function main() {
     }
 
     let data: any;
+
     try {
       data = JSON.parse(text);
     } catch {
@@ -272,11 +345,14 @@ async function main() {
     }
 
     const item = data?.items?.[0]?.snippet;
+
     if (!item) {
-      return reply.send(null);
+      cacheStore.youtubeLatest.set(cacheKey, null);
+
+      return reply.header("x-cache", "MISS").send(null);
     }
 
-    return reply.send({
+    const latest: YoutubeLatestCacheValue = {
       videoId: item.resourceId?.videoId ?? "",
       title: item.title ?? "",
       thumbnail:
@@ -285,7 +361,11 @@ async function main() {
         item.thumbnails?.default?.url ??
         "",
       publishedAt: item.publishedAt ?? "",
-    });
+    };
+
+    cacheStore.youtubeLatest.set(cacheKey, latest);
+
+    return reply.header("x-cache", "MISS").send(latest);
   });
 
   await app.listen({ port: PORT, host: "0.0.0.0" });

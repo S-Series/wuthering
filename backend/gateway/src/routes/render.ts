@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import { getClientKey } from "../utils/clientKey.js";
 import {
   acquireRenderLock,
   canStartRender,
@@ -9,6 +8,16 @@ import {
 } from "../services/renderCooldown.js";
 import { requestRenderUpstream } from "../services/renderUpstream.js";
 import { requireUid } from "../lib/requireAuth.js";
+import {
+  cacheStore,
+  createRenderCardCacheKey,
+} from "../services/cacheStore.js";
+
+const inFlightRenderRequests = new Map<
+  string,
+  Promise<Awaited<ReturnType<typeof requestRenderUpstream>>>
+>();
+
 export async function registerRenderRoutes(app: FastifyInstance) {
   app.post("/api/render/card", async (req, reply) => {
     const body = req.body;
@@ -23,6 +32,40 @@ export async function registerRenderRoutes(app: FastifyInstance) {
       uid = await requireUid(req);
     } catch {
       return reply.code(401).send({ error: "unauthorized" });
+    }
+
+    const cacheKey = createRenderCardCacheKey({
+      uid,
+      body,
+    });
+
+    const cached = cacheStore.renderCard.get(cacheKey);
+
+    if (cached !== undefined) {
+      return reply
+        .header("content-type", cached.contentType)
+        .header("x-cache", "HIT")
+        .send(Buffer.from(cached.buffer));
+    }
+
+    const inFlightRequest = inFlightRenderRequests.get(cacheKey);
+
+    if (inFlightRequest) {
+      const result = await inFlightRequest;
+
+      if (!result.ok) {
+        return reply.code(result.statusCode).send(result.body);
+      }
+
+      cacheStore.renderCard.set(cacheKey, {
+        contentType: result.contentType,
+        buffer: Buffer.from(result.buffer),
+      });
+
+      return reply
+        .header("content-type", result.contentType)
+        .header("x-cache", "INFLIGHT")
+        .send(Buffer.from(result.buffer));
     }
 
     const access = canStartRender(uid);
@@ -40,8 +83,11 @@ export async function registerRenderRoutes(app: FastifyInstance) {
 
     acquireRenderLock(uid);
 
+    const upstreamRequest = requestRenderUpstream(body);
+    inFlightRenderRequests.set(cacheKey, upstreamRequest);
+
     try {
-      const result = await requestRenderUpstream(body);
+      const result = await upstreamRequest;
 
       if (!result.ok) {
         return reply.code(result.statusCode).send(result.body);
@@ -49,16 +95,27 @@ export async function registerRenderRoutes(app: FastifyInstance) {
 
       startRenderCooldown(uid);
 
+      cacheStore.renderCard.set(cacheKey, {
+        contentType: result.contentType,
+        buffer: Buffer.from(result.buffer),
+      });
+
       return reply
         .header("content-type", result.contentType)
+        .header("x-cache", "MISS")
         .send(result.buffer);
     } catch (error) {
       req.log.error(error);
+
       return reply.code(500).send({
         error: "render upstream request failed",
       });
     } finally {
       releaseRenderLock(uid);
+
+      if (inFlightRenderRequests.get(cacheKey) === upstreamRequest) {
+        inFlightRenderRequests.delete(cacheKey);
+      }
     }
   });
 
@@ -67,7 +124,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
       const uid = await requireUid(req);
       const status = getRenderStatus(uid);
       return reply.send(status);
-    } catch (error) {
+    } catch {
       return reply.status(401).send({
         message: "Unauthorized",
       });

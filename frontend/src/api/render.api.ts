@@ -285,3 +285,31 @@ export async function getRenderCardStatus() {
     retryAfterSec: number;
   }>;
 }
+
+//! Only for Debug
+export async function requestRenderCardDirect(
+  payload: RenderCardPayload
+) {
+  const response = await fetch("http://localhost:8080/render/card", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  console.log("[direct render] status:", response.status);
+  console.log(
+    "[direct render] content-type:",
+    response.headers.get("content-type")
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(
+      `Direct render request failed: ${response.status} ${errorText}`
+    );
+  }
+
+  return response.blob();
+}

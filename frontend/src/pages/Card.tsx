@@ -27,7 +27,7 @@ import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
 
 import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
-import { createPayloadData, getRenderCardStatus, requestRenderCard } from "@/api/render.api";
+import { createPayloadData, getRenderCardStatus, requestRenderCard, requestRenderCardDirect } from "@/api/render.api";
 import { useAuthStore } from "@/stores/authStore";
 import Select, { type StylesConfig } from "react-select";
 import { useStyleStore, type SelectOption } from "@/stores/styleStore";
@@ -290,6 +290,8 @@ export default function Card() {
     if (!testing) return;
 
     try {
+      //! Debug code 
+      /// const blob = await requestRenderCardDirect(testing);
       const blob = await requestRenderCard(testing);
       setRenderedImage(blob);
       alert("Complete!")
