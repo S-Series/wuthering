@@ -1,167 +1,460 @@
-.home-page-slot {
+.home-slot {
     width: 90% !important;
-    flex-direction: row !important;
-
-    align-items: flex-start !important;
-}
-
-.page-body {
-    display: flex;
-    flex-direction: column;
-
-    gap: min(2.4vw, 2.4rem);
-}
-
-.page-body.small {
-    width: 37.5%;
-}
-
-.page-body.large {
-    width: 60%;
-}
-
-.article-slot {
-    display: flex;
-    flex-direction: column;
-
+    max-width: 1320px !important;
     gap: 1rem;
-
-    width: 100%;
-    height: fit-content;
-    align-items: flex-start;
-
-    font-size: min(1.2vw, 1.2rem);
+    align-items: stretch !important;
+    color: #17191d;
+    font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif;
+    box-sizing: border-box;
+    overflow: visible;
 }
 
-.page-body .title-text {
-    color: #fff;
+.home-slot button {
+    font: inherit;
+}
+
+.banner-slot {
+    display: grid;
+    place-items: center;
+    min-height: 64px;
+    overflow: hidden;
+    border-radius: 8px;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.86), rgba(11, 15, 24, 0.3), rgba(0, 0, 0, 0.86)),
+        url("/bg.jpg") center 42% / cover;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.banner-slot h1 {
     margin: 0;
-    width: 100%;
-    text-align: center;
-    font-size: min(2.4vw, 2.4rem);
-    font-weight: 700;
-    filter: drop-shadow(0 2px 4px #000);
+    color: #fff;
+    font-size: min(2.1vw, 2.1rem);
+    font-weight: 900;
+    letter-spacing: 0;
+    text-shadow: 0 3px 10px rgba(0, 0, 0, 0.85);
 }
 
-.page-body .article-slot .notice-slot {
+.summary-slot {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+    min-width: 0;
+}
+
+.summary-item {
     display: flex;
     flex-direction: column;
+    min-height: 164px;
+    padding: 1rem;
+    border: 1px solid rgba(225, 228, 235, 0.95);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+    box-sizing: border-box;
+}
+
+.summary-item h2,
+.display-slot h2 {
+    margin: 0 0 0.85rem;
+    font-size: 1.18rem;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.notice-slot ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.notice-slot li {
+    display: block;
+    border-bottom: 1px solid #eceff4;
+    color: #2b3340;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.notice-item {
+    display: flex;
     width: 100%;
+    min-height: 1.65rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.notice-item:hover {
+    color: #075fae;
+}
+
+.notice-item span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notice-item time {
+    flex: 0 0 auto;
+    color: #8a909b;
+    font-size: 0.72rem;
+}
+
+.notice-slot > button {
+    height: 1.9rem;
+    margin-top: auto;
+    border: 0;
+    border-radius: 5px;
+    background: #111;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.notice-detail-slot,
+.notice-list-detail-slot {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 1rem;
+    color: #fff;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
+}
+
+.notice-detail-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
     gap: 1rem;
 }
 
-.article-slot .article-item {
+.notice-detail-head h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: 0;
+}
+
+.notice-detail-head time {
+    flex: 0 0 auto;
+    color: #d8e6ff;
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.notice-detail-body {
     display: flex;
-    position: relative;
     flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+    color: #eef4ff;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.55;
+    white-space: pre-line;
+}
 
-    width: calc(32% - 1rem - 2px);
-    aspect-ratio: 9 / 10;
-    
-    gap: 0.5rem;
-    padding: 0.5rem;
+.notice-detail-body p {
+    margin: 0;
+}
 
-    align-items: center;
-
+.notice-detail-body .subtitle {
+    display: block;
+    margin-top: 0.4rem;
     color: #fff;
-    border-radius: 1rem;
-    border: 1px solid #ffcc9966;
-    font-size: min(1vw, 1rem);
-    text-align: center;
-    word-break: keep-all;
-
-    background: url("/cardBg.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-
-    transition: transform 0.2s ease-out;
+    font-size: 1rem;
+    font-weight: 900;
 }
 
-.article-slot .article-item::before {
-    content: "";
-    position: absolute;
+.notice-detail-body .subtitle.start {
+    margin-top: 0;
+}
+
+.notice-detail-body .indent {
+    padding-left: 1rem;
+}
+
+.notice-detail-body em {
+    color: #ffdddd;
+    font-style: normal;
+}
+
+.notice-list-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid rgba(226, 235, 255, 0.42);
+    border-radius: 8px;
+    background: rgba(7, 13, 24, 0.42);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.22);
+}
+
+.video-slot {
+    min-width: 0;
+}
+
+.video-main-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #111;
+    text-align: left;
+}
+
+.video-main-item img {
     width: 100%;
-    height: calc(100%);
-    border-radius: 1rem;
-    background: url("/ui/card_bg.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    transform: translateY(-0.5rem);
-    mix-blend-mode: color-dodge;
-    opacity: 0.25;
-    z-index: 1;
-    pointer-events: none;
-    transition: all 0.2s ease-out;
-}
-
-.article-slot .article-item:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-}
-
-.article-slot .article-item:hover::before {
-    opacity: 0.5;
-}
-
-.article-slot .article-item img {
-    width: 100%;
-    height: auto;
     aspect-ratio: 16 / 9;
-    border-radius: 0.5rem;
-    border: 1px solid #ffffff66;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-radius: 6px;
     object-fit: cover;
-    z-index: 2;
 }
 
-.article-slot .article-item .article-title {
-    color: #fff;
-    height: 10%;
-    font-size: min(1.5vw, 1.5rem);
-    font-weight: 500;
+.video-main-item span {
+    overflow: hidden;
+    color: #18202c;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    font-weight: 900;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.article-slot .article-item span {
-    z-index: 2;
-    pointer-events: none;
-}
-
-.article-slot .article-item .click {
-    color: #fff;
-    text-decoration: underline;
-}
-
-.article-slot .article-item .article {
+.video-button-slot {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 85%;
+    gap: 0.4rem;
+    margin-top: 5%;
+}
+
+.video-button-slot button {
+    flex: 1;
+    min-width: 0;
+    aspect-ratio: 4 / 1;
+    padding: 0 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.74);
+    border-radius: 5px;
+    color: #fff;
+    background-color: rgba(9, 12, 18, 0.74);
+    background-position: center;
+    background-size: cover;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+    font-size: 0.7rem;
+    font-weight: 900;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: keep-all;
+}
+
+.info-slot {
+    background: rgba(255, 255, 255, 0.88);
+    display: flex;
     justify-content: space-between;
 }
 
-@media (max-width: 720px) {
-    .home-page-slot {
-        flex-direction: column !important;
-        align-items: center !important;
-    }
-    .page-body.large {
-        width: 90%;
-    }
-    .page-body.small {
-        width: 90%;
-        min-width: 320px;
+.game-info-slot {
+    display: flex;
+    flex-direction: column;
+    height: 87.5%;
+    min-height: 0;
+    justify-content: space-between;
+    place-items: center;
+    color: #7b838f;
+    text-align: center;
+}
+
+.game-info-slot > .inner-slot {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 22.5%;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 7px;
+
+    gap: 10%;
+    align-items: flex-end;
+    justify-content: center;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.game-info-slot > .inner-slot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            rgba(0, 0, 0, 0.45) 0%,
+            rgba(0, 0, 0, 0.45) 33%,
+            rgba(0, 0, 0, 0.90) 66%);
+    pointer-events: none;
+}
+
+.game-info-slot > .inner-slot.tower {
+    background-image: url("/ui/tower.webp");
+}
+
+.game-info-slot > .inner-slot.wastes {
+    background-image: url("/ui/wastes.webp");
+}
+
+.game-info-slot > .inner-slot.gateway {
+    background-image: url("/ui/gateway.webp");
+}
+
+.game-info-slot > .inner-slot.matrix {
+    background-image: url("/ui/matrix.webp");
+}
+
+.game-info-slot > .inner-slot > span {
+    color: #fff;
+    margin-right: 5%;
+    z-index: 1;
+    font-size: min(0.75vw, 0.75rem);
+}
+
+.game-info-slot > .inner-slot > span > em {
+    margin-left: min(0.35vw, 0.35rem);
+    font-size: min(1vw, 1rem);
+    text-decoration: underline;
+}
+
+.game-info-slot > .inner-slot > span.title {
+    color: #fff;
+    font-size: min(1.5vw, 1.5rem);
+    font-weight: 700;
+    filter: drop-shadow(0 2px 4px #ffffff44);
+}
+
+.display-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.display-slot h2 {
+    margin-bottom: 0;
+    color: #fff;
+    text-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.display-list-slot {
+    display: flex;
+    width: 100%;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+@media (max-width: 1180px) {
+    .summary-slot {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .page-body .article-slot .notice-slot {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 30vh;
-        max-height: 20rem;
-        flex-wrap: wrap; 
-        overflow: scroll;
+    .notice-slot {
+        grid-column: 1 / -1;
+    }
 
-        justify-content: center;
+    .display-list-slot {
+        gap: 1rem;
+    }
+
+    .video-main-item img {
+        aspect-ratio: 21 / 9;
+    }
+
+    .game-info-slot > .inner-slot {
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+
+    .game-info-slot > .inner-slot > span {
+        font-size: min(1vw, 1rem);
+    }
+
+    .game-info-slot > .inner-slot > span > em {
+        font-size: min(1.25vw, 1.25rem);
+    }
+
+    .game-info-slot > .inner-slot > span.title {
+        text-align: start;
+        margin-left: 5%;
+        font-size: min(1.5vw, 1.5rem);
+    }
+}
+
+@media (max-width: 848px) {
+    .display-list-slot .character-slot {
+        width: 120px;
+        min-width: 120px;
+        height: 160px;
+        min-height: 160px;
+        border-top-left-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+    }
+
+    .display-list-slot .character-slot .character-image-slot {
+        border-top-left-radius: 1rem;
+        border-bottom-right-radius: 1rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .home-slot {
+        width: 94% !important;
+    }
+
+    .banner-slot h1 {
+        font-size: 1.5rem;
+    }
+
+    .summary-slot {
+        grid-template-columns: 1fr;
+    }
+
+    .notice-slot {
+        grid-column: auto;
+    }
+
+    .video-main-item img {
+        aspect-ratio: 30 / 9;
+    }
+
+    .game-info-slot > .inner-slot {
+        min-height: 3rem;
+        margin-top: 0.5rem;
+    }
+
+    .game-info-slot > .inner-slot > span {
+        font-size: 0.8rem;
+    }
+
+    .game-info-slot > .inner-slot > span > em {
+        font-size: 1rem;
+    }
+
+    .game-info-slot > .inner-slot > span.title {
+        text-align: start;
+        margin-left: 5%;
+        font-size: 1rem;
     }
 }

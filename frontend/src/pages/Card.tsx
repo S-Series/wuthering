@@ -28,6 +28,7 @@ import { locale } from "@/locales/locale";
 
 import EchoDragSelect from "@/components/features/Card/EchoDragSelect";
 import { createPayloadData, getRenderCardStatus, requestRenderCard, requestRenderCardDirect } from "@/api/render.api";
+import { logClientEvent } from "@/api/logger";
 import { useAuthStore } from "@/stores/authStore";
 import Select, { type StylesConfig } from "react-select";
 import { useStyleStore, type SelectOption } from "@/stores/styleStore";
@@ -403,13 +404,43 @@ export default function Card() {
                           fontSize: "min(1vw, 1rem)",
                         }}
                         onClick={() => {
-                          if (!renderedImageUrl) return;
-                          const a = document.createElement("a");
-                          a.href = renderedImageUrl;
-                          a.download = `${characterId}.png`;
-                          document.body.appendChild(a);
-                          a.click();
-                          a.remove();
+                          try {
+                            if (!renderedImageUrl) {
+                              void logClientEvent({
+                                feature: "download",
+                                eventName: "image_download",
+                                result: "fail",
+                                message: "rendered image is missing",
+                                meta: { characterId },
+                              });
+                              return;
+                            }
+
+                            const a = document.createElement("a");
+                            a.href = renderedImageUrl;
+                            a.download = `${characterId}.png`;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+
+                            void logClientEvent({
+                              feature: "download",
+                              eventName: "image_download",
+                              result: "success",
+                              meta: { characterId },
+                            });
+                          } catch (error) {
+                            void logClientEvent({
+                              feature: "download",
+                              eventName: "image_download",
+                              result: "fail",
+                              message:
+                                error instanceof Error
+                                  ? error.message
+                                  : "download failed",
+                              meta: { characterId },
+                            });
+                          }
                         }}
                       >
                         {localeText.download}

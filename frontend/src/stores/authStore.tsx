@@ -11,6 +11,7 @@ import {
   signup,
 } from "@/firebase/auth";
 import { getGameProfile, saveGameProfile, saveUserNickname } from "@/firebase/user";
+import { logClientEvent } from "@/api/logger";
 
 import { type UserProfile, type GameProfile } from "@/firebase/firebase"
 
@@ -69,27 +70,117 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   signupAction: async (email, password, nickname) => {
-    const user = await signup(email, password, nickname);
-    const gameProfile = await getGameProfile(user.uid)
-    set({ user, gameProfile });
+    const startedAt = Date.now();
+
+    try {
+      const user = await signup(email, password, nickname);
+      const gameProfile = await getGameProfile(user.uid)
+      set({ user, gameProfile });
+
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_signup",
+        result: "success",
+        durationMs: Date.now() - startedAt,
+        meta: { method: "email" },
+      });
+    } catch (error) {
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_signup",
+        result: "fail",
+        durationMs: Date.now() - startedAt,
+        message: error instanceof Error ? error.message : "signup failed",
+        meta: { method: "email" },
+      });
+
+      throw error;
+    }
   },
 
   loginAction: async (email, password) => {
-    const user = await login(email, password);
-    const gameProfile = await getGameProfile(user.uid);
+    const startedAt = Date.now();
 
-    set({ user, gameProfile });
+    try {
+      const user = await login(email, password);
+      const gameProfile = await getGameProfile(user.uid);
+
+      set({ user, gameProfile });
+
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_login",
+        result: "success",
+        durationMs: Date.now() - startedAt,
+        meta: { method: "email" },
+      });
+    } catch (error) {
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_login",
+        result: "fail",
+        durationMs: Date.now() - startedAt,
+        message: error instanceof Error ? error.message : "login failed",
+        meta: { method: "email" },
+      });
+
+      throw error;
+    }
   },
 
   loginWithGoogleAction: async () => {
-    const user = await loginWithGoogle();
-    const gameProfile = await getGameProfile(user.uid);
-    set({ user, gameProfile });
+    const startedAt = Date.now();
+
+    try {
+      const user = await loginWithGoogle();
+      const gameProfile = await getGameProfile(user.uid);
+      set({ user, gameProfile });
+
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_login",
+        result: "success",
+        durationMs: Date.now() - startedAt,
+        meta: { method: "google" },
+      });
+    } catch (error) {
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_login",
+        result: "fail",
+        durationMs: Date.now() - startedAt,
+        message: error instanceof Error ? error.message : "google login failed",
+        meta: { method: "google" },
+      });
+
+      throw error;
+    }
   },
 
   logoutAction: async () => {
-    await logout();
-    set({ user: null, gameProfile: null });
+    const startedAt = Date.now();
+
+    try {
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_logout",
+        result: "success",
+        durationMs: Date.now() - startedAt,
+      });
+
+      await logout();
+      set({ user: null, gameProfile: null });
+    } catch (error) {
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_logout",
+        result: "fail",
+        durationMs: Date.now() - startedAt,
+        message: error instanceof Error ? error.message : "logout failed",
+      });
+
+      throw error;
+    }
   },
 
   saveUserNicknameAction: async (nickname: string) => {

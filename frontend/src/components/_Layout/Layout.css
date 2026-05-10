@@ -1,13 +1,23 @@
 #main-container {
     display: flex;
     flex-direction: column;
-    width: 100vw;
+    width: calc(100vw - 4.4rem);
     height: fit-content;
     min-height: 100vh;
+    margin-left: 4.4rem;
     padding-top: 100px;
-    padding-bottom: 120px;
+    padding-bottom: 32px;
 
     box-sizing: border-box;
+    overflow-x: hidden;
+    transition: width 0.25s ease-out, margin-left 0.25s ease-out;
+}
+
+footer {
+  width: calc(100vw - 4.4rem);
+  margin-left: 4.4rem;
+  box-sizing: border-box;
+  transition: width 0.25s ease-out, margin-left 0.25s ease-out;
 }
 
 body {
@@ -72,6 +82,13 @@ body.page-profile {
 }
 @media (max-width: 780px) {
   #main-container {
+    width: 100vw;
+    margin-left: 0;
     padding-top: 80px;
+  }
+
+  footer {
+    width: 100vw;
+    margin-left: 0;
   }
 }

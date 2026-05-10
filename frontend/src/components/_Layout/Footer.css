@@ -1,14 +1,17 @@
 #footer-body {
     display: flex;
-    position: fixed;
-    bottom: 0;
-    width: calc(100vw - 0.6rem);
-    padding: 0 0.3rem;
-    height: 60px;
+    position: static;
+    width: 100%;
+    min-height: 64px;
+    padding: 0.6rem 1rem;
     justify-content: space-between;
+    align-items: center;
     
-    border-top: 1px #000 solid;
-    background: linear-gradient(0deg, #ccc, #aaa 40%, #aaa 60%, #ccc);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    background:
+        linear-gradient(180deg, rgba(12, 16, 24, 0.84), rgba(8, 10, 16, 0.96)),
+        url("/bg.jpg") center bottom / cover;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.28);
 
     transition: height 0.2s ease-out;
 
@@ -24,11 +27,12 @@
     gap: 1rem;
     margin: 0 1rem;
 
-    color: #000;
+    color: #fff;
     align-items: center;
     white-space: pre;
-    line-height: 1rem;
-    font-size: 0.7rem;
+    line-height: 1.15rem;
+    font-size: 0.72rem;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55));
 }
 
 #footer-body a {
@@ -39,10 +43,17 @@
 }
 
 #footer-body .footer-icon {
-    height: 35px;
+    height: 38px;
     aspect-ratio: 1/1;
     object-fit: contain;
     border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease-out;
+}
+
+#footer-body a:hover .footer-icon {
+    transform: translateY(-2px);
 }
 
 @media (max-width: 560px) {

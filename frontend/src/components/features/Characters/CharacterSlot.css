@@ -141,15 +141,16 @@
 
 .character-slot .rank-icon {
     position: absolute;
-    width: auto;
-    height: 3.25rem;
+    width: 40%;
+    height: auto;
+
     bottom: 2rem;
     right: 50%;
     align-items: center;
     justify-content: center;
 
     overflow: hidden;
-    transform: translateX(50%);
+    transform: translate(50%, 15%);
     filter: drop-shadow(0 0 2px #000) drop-shadow(0 2px 4px #fff);
     z-index: 11;
 }

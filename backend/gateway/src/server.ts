@@ -8,6 +8,10 @@ import pLimit from "p-limit";
 
 import { getClientKey } from "./utils/clientKey.js";
 import { registerRenderRoutes } from "./routes/render.js";
+import { registerClientEventRoutes } from "./routes/clientEvent.js";
+import { getClientIp } from "./lib/getClientIp.js";
+import { getOptionalUid } from "./lib/getOptionalUid.js";
+import { logEvent } from "./lib/logEvent.js";
 
 import {
   ALLOWED_MIME,
@@ -139,19 +143,56 @@ async function main() {
   });
 
   app.post("/api/ocr", async (req, reply) => {
+    const startedAt = Date.now();
+    const uid = await getOptionalUid(req);
     const part = await req.file();
 
     if (!part) {
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "fail",
+        statusCode: 400,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        message: "file missing",
+      });
       return reply.code(400).send({ error: "file missing" });
     }
 
     if (!part.mimetype || !ALLOWED_MIME.has(part.mimetype)) {
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "fail",
+        statusCode: 415,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        message: "unsupported file type",
+        meta: { mimetype: part.mimetype ?? null },
+      });
       return reply
         .code(415)
         .send({ error: "unsupported file type", mimetype: part.mimetype });
     }
 
     if (!hasAllowedExt(part.filename)) {
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "fail",
+        statusCode: 415,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        message: "unsupported file extension",
+        meta: { filename: part.filename ?? null },
+      });
       return reply
         .code(415)
         .send({ error: "unsupported file extension", filename: part.filename });
@@ -160,10 +201,34 @@ async function main() {
     const buf = await part.toBuffer();
 
     if (buf.length === 0) {
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "fail",
+        statusCode: 400,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        message: "empty file",
+        meta: { mimetype: part.mimetype, size: buf.length },
+      });
       return reply.code(400).send({ error: "empty file" });
     }
 
     if (buf.length > MAX_BYTES) {
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "fail",
+        statusCode: 413,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        message: "file too large",
+        meta: { mimetype: part.mimetype, size: buf.length },
+      });
       return reply.code(413).send({ error: "file too large", size: buf.length });
     }
 
@@ -174,8 +239,10 @@ async function main() {
 
     const langValue = normalizeLang(langRaw);
 
-    console.log("OCR lang:", langValue);
-    console.log("OCR file:", part.filename, part.mimetype, buf.length);
+    req.log.info(
+      { lang: langValue, filename: part.filename, mimetype: part.mimetype, size: buf.length },
+      "ocr request"
+    );
 
     const ocrCacheKey = createOcrCacheKey({
       lang: langValue,
@@ -186,6 +253,23 @@ async function main() {
     const cachedOcr = cacheStore.ocr.get(ocrCacheKey);
 
     if (cachedOcr !== undefined) {
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "success",
+        statusCode: 200,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        meta: {
+          cache: "HIT",
+          lang: langValue,
+          mimetype: part.mimetype,
+          size: buf.length,
+        },
+      });
+
       if (cachedOcr.contentType.includes("application/json")) {
         try {
           return reply
@@ -240,6 +324,24 @@ async function main() {
       const msg =
         e?.name === "AbortError" ? "upstream timeout" : "upstream fetch failed";
 
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "fail",
+        statusCode: 504,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        message: msg,
+        meta: {
+          cache: "MISS",
+          lang: langValue,
+          mimetype: part.mimetype,
+          size: buf.length,
+        },
+      });
+
       return reply
         .code(504)
         .send({ error: msg, detail: String(e?.message ?? e) });
@@ -251,6 +353,25 @@ async function main() {
     const contentType = upstreamRes.headers.get("content-type") ?? "";
 
     if (!upstreamRes.ok) {
+      await logEvent({
+        service: "gateway",
+        feature: "ocr",
+        eventName: "ocr_request",
+        result: "fail",
+        statusCode: 502,
+        durationMs: Date.now() - startedAt,
+        userId: uid,
+        ip: getClientIp(req),
+        message: "upstream error",
+        meta: {
+          cache: "MISS",
+          lang: langValue,
+          mimetype: part.mimetype,
+          size: buf.length,
+          upstreamStatus: upstreamRes.status,
+        },
+      });
+
       return reply.code(502).send({
         error: "upstream error",
         upstreamStatus: upstreamRes.status,
@@ -263,6 +384,23 @@ async function main() {
     cacheStore.ocr.set(ocrCacheKey, {
       contentType: safeContentType,
       body: text,
+    });
+
+    await logEvent({
+      service: "gateway",
+      feature: "ocr",
+      eventName: "ocr_request",
+      result: "success",
+      statusCode: 200,
+      durationMs: Date.now() - startedAt,
+      userId: uid,
+      ip: getClientIp(req),
+      meta: {
+        cache: "MISS",
+        lang: langValue,
+        mimetype: part.mimetype,
+        size: buf.length,
+      },
     });
 
     if (contentType.includes("application/json")) {
@@ -283,6 +421,7 @@ async function main() {
   });
 
   await registerRenderRoutes(app);
+  await registerClientEventRoutes(app);
 
   app.get("/api/youtube/latest", async (req, reply) => {
     const q = req.query as { lang?: string; type?: string };

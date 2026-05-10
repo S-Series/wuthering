@@ -71,6 +71,14 @@
   scrollbar-width: none;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 ::-webkit-scrollbar {
   width: 0;
   height: 0;

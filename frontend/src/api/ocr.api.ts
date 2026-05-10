@@ -1,3 +1,5 @@
+import { auth } from "@/firebase/firebase";
+
 export type OcrApiResponse = {
   success?: boolean;
   texts?: string[];
@@ -24,8 +26,12 @@ export async function requestOcrByUrl(
     formData.append("file", file);
     formData.append("lang", lang);
 
+    const user = auth.currentUser;
+    const idToken = user ? await user.getIdToken() : null;
+
     const res = await fetch(endpointUrl, {
       method: "POST",
+      headers: idToken ? { Authorization: `Bearer ${idToken}` } : undefined,
       body: formData,
       signal,
     });

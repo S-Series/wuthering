@@ -390,9 +390,9 @@
 
 .main-item-slot.namecard .namecard-score img {
     position: absolute;
-    width: 110%;
+    width: 100%;
     height: auto;
-    top: 39%;
+    top: 42.5%;
     left: 50%;
     transform: translate(-50%, -50%);
 }

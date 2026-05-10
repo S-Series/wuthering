@@ -1,26 +1,128 @@
-import { useState, useEffect } from "react"
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
-import { useAppStore } from "@/stores/appStore";
+import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api";
 import { useOverlay } from "@/contexts/PopupContext";
+import CharacterSlot from "@/components/features/Characters/CharacterSlot";
+import { character } from "@/datas/characters";
+import { HOME_POSTS, type HomePost } from "@/posts/homePosts.tsx";
+import { loadSummaryStore } from "@/summaryData/storage";
+import { useAppStore, type LangType } from "@/stores/appStore";
+import { getCharacterRank } from "@/types/character.type";
 
-import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api"
-
-import { HOME_POSTS } from "@/posts/homePosts.tsx";
-import HomePostCard from "@/components/features/Home/HomePostCard";
 import YoutubeVideoCard from "@/components/features/Home/YoutubeVideoCard";
 
-import "@/pages/_Page.css"
-import "@/pages/Home.css"
-import { locale } from "@/locales/locale";
+import "@/pages/_Page.css";
+import "@/pages/Home.css";
 
+const DISPLAY_LIMIT_MEDIUM_BREAKPOINT = 1071;
+const DISPLAY_LIMIT_SMALL_BREAKPOINT = 572;
 
-/* ================================================ */
+function compactDate(dateString: string) {
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+}
+
+function textFromNode(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textFromNode).join("");
+  if (node && typeof node === "object" && "props" in node) {
+    return textFromNode((node as { props?: { children?: ReactNode } }).props?.children);
+  }
+
+  return "";
+}
+
+function NoticeDetailSlot({ post, lang }: { post: HomePost; lang: LangType }) {
+  return (
+    <article className="notice-detail-slot">
+      <div className="notice-detail-head">
+        <h3>{post.title[lang]}</h3>
+        <time>{compactDate(post.date)}</time>
+      </div>
+      <div className="notice-detail-body">{post.data[lang]}</div>
+    </article>
+  );
+}
+
+function NoticeListSlot({ posts, lang }: { posts: HomePost[]; lang: LangType }) {
+  return (
+    <div className="notice-list-detail-slot">
+      {posts.map((post) => (
+        <article className="notice-list-detail-item" key={post.id}>
+          <div className="notice-detail-head">
+            <h3>{post.title[lang]}</h3>
+            <time>{compactDate(post.date)}</time>
+          </div>
+          <div className="notice-detail-body">{post.data[lang]}</div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function VideoSlot({
+  trailer,
+  combat,
+  intro,
+}: {
+  trailer: YoutubeLatestVideo | null;
+  combat: YoutubeLatestVideo | null;
+  intro: YoutubeLatestVideo | null;
+}) {
+  const { openOverlay } = useOverlay();
+  const mainVideo = trailer ?? combat ?? intro;
+  const subVideos = [
+    { title: "캐릭터 트레일러", video: combat },
+    { title: "공명자 전투모션", video: intro },
+  ];
+
+  return (
+    <article className="summary-item video-slot">
+      <h2>공식 영상</h2>
+      <button
+        className="video-main-item"
+        type="button"
+        onClick={() => {
+          if (mainVideo) openOverlay(<YoutubeVideoCard video={mainVideo} />, { title: mainVideo.title });
+        }}
+      >
+        <span>{mainVideo?.title ?? "공식 영상을 불러오는 중입니다."}</span>
+        <img src={mainVideo?.thumbnail ?? "/gifs/02.gif"} alt="" />
+      </button>
+
+      <div className="video-button-slot">
+        {subVideos.map((item) => (
+          <button
+            key={item.title}
+            style={{
+              backgroundImage: item.video?.thumbnail
+                ? `linear-gradient(rgba(9, 12, 18, 0.58), rgba(9, 12, 18, 0.58)), url(${item.video.thumbnail})`
+                : undefined,
+            }}
+            type="button"
+            onClick={() => {
+              if (item.video) openOverlay(<YoutubeVideoCard video={item.video} />, { title: item.video.title });
+            }}
+          >
+            {item.title}
+          </button>
+        ))}
+      </div>
+    </article>
+  );
+}
 
 export default function Home() {
   const { lang } = useAppStore();
   const { openOverlay } = useOverlay();
-
-  const localeText = locale(lang).home;
+  const summaryStore = useMemo(() => loadSummaryStore(), []);
+  const [displayLimit, setDisplayLimit] = useState(() => {
+    if (typeof window === "undefined") return 5;
+    if (window.innerWidth <= DISPLAY_LIMIT_SMALL_BREAKPOINT) return 3;
+    return window.innerWidth < DISPLAY_LIMIT_MEDIUM_BREAKPOINT ? 4 : 5;
+  });
 
   const [trailer, setTrailer] = useState<YoutubeLatestVideo | null>(null);
   const [intro, setIntro] = useState<YoutubeLatestVideo | null>(null);
@@ -30,7 +132,6 @@ export default function Home() {
     const controller = new AbortController();
 
     (async () => {
-      // lang 바뀌면 로딩 상태로 리셋
       setTrailer(null);
       setIntro(null);
       setCombat(null);
@@ -51,74 +152,131 @@ export default function Home() {
     return () => controller.abort();
   }, [lang]);
 
-  const sortedPosts = [...HOME_POSTS].sort((a, b) => {
-    if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
+  useEffect(() => {
+    const updateDisplayLimit = () => {
+      if (window.innerWidth <= DISPLAY_LIMIT_SMALL_BREAKPOINT) {
+        setDisplayLimit(3);
+        return;
+      }
+
+      setDisplayLimit(window.innerWidth < DISPLAY_LIMIT_MEDIUM_BREAKPOINT ? 4 : 5);
+    };
+
+    updateDisplayLimit();
+    window.addEventListener("resize", updateDisplayLimit);
+
+    return () => window.removeEventListener("resize", updateDisplayLimit);
+  }, []);
+
+  const sortedPosts = useMemo(() => {
+    return [...HOME_POSTS].sort((a, b) => {
+      if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  }, []);
+
+  const latestPosts = sortedPosts.slice(0, 4);
+
+  const topCharacters = useMemo(() => {
+    return Object.entries(character)
+      .map(([id, item]) => {
+        const score = summaryStore.data[id]?.score ?? 0;
+
+        return [
+          id,
+          {
+            ...item,
+            score,
+            rank: getCharacterRank(score),
+          },
+        ] as const;
+      })
+      //.filter(([, item]) => item.score > 0)
+      .sort(([, a], [, b]) => b.score - a.score)
+      .slice(0, displayLimit);
+  }, [displayLimit, summaryStore]);
 
   return (
-    <div id="page-slot" className="home-page-slot">
-      <div className="page-body small">
-        <div className="article-slot">
-          <h2 className={`title-text ${lang}-font`}>{localeText.title1}</h2>
-          <div className="notice-slot">
-          {sortedPosts.map((post, idx) => (
-            <HomePostCard key={idx} post={post} lang={lang} />
+    <div id="page-slot" className="home-slot">
+      <section className="banner-slot">
+        <h1>띵조 DEV</h1>
+      </section>
+
+      <section className="summary-slot">
+        <article className="summary-item notice-slot">
+          <h2>최신 공지사항</h2>
+          <ul>
+            {latestPosts.map((post) => (
+              <li key={post.id}>
+                <button
+                  className="notice-item"
+                  type="button"
+                  onClick={() =>
+                    openOverlay(<NoticeDetailSlot post={post} lang={lang} />, {
+                      title: textFromNode(post.title[lang]),
+                      width: "min(90vw, 54rem)",
+                      height: "min(82vh, 42rem)",
+                    })
+                  }
+                >
+                  <span>[공지] {textFromNode(post.title[lang])}</span>
+                  <time>{compactDate(post.date)}</time>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() =>
+              openOverlay(<NoticeListSlot posts={sortedPosts} lang={lang} />, {
+                title: "공지사항",
+                width: "min(90vw, 58rem)",
+                height: "min(86vh, 46rem)",
+              })
+            }
+          >
+            공지 더 보기
+          </button>
+        </article>
+
+        <VideoSlot trailer={trailer} combat={combat} intro={intro} />
+
+        <article className="summary-item info-slot">
+          <h2>인게임 정보</h2>
+          <div className="game-info-slot">
+            <div className="inner-slot tower">
+              <span className={`${lang}-font title`}>역경의 탑</span>
+              <span className={`${lang}-font`}>초기화: <em>{" 000 : 00 : 00"}</em></span>
+            </div>
+            <div className="inner-slot wastes">
+              <span className={`${lang}-font title`}>죽음의 노래와 바닷속 폐허</span>
+              <span className={`${lang}-font`}>초기화: <em>{" 000 : 00 : 00"}</em></span>
+            </div>
+            <div className="inner-slot gateway">
+              <span className={`${lang}-font title`}>수많은 문의 환상</span>
+              <span className={`${lang}-font`}>초기화: <em>{" 000 : 00 : 00"}</em></span>
+            </div>
+            <div className="inner-slot matrix">
+              <span className={`${lang}-font title`}>종말 매트릭스</span>
+              <span className={`${lang}-font`}>초기화: <em>{" 000 : 00 : 00"}</em></span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section className="display-slot">
+        <h2>특별 진열대</h2>
+        <div className="display-list-slot">
+          {topCharacters.map(([id, item]) => (
+            <CharacterSlot
+              key={id}
+              id={id}
+              isGrid={true}
+              prop={item}
+            />
           ))}
-          </div>
         </div>
-      </div>
-
-      <div className="page-body large">
-        <div className="article-slot">
-          <h2 className={`title-text ${lang}-font`}>{localeText.title2}</h2>
-
-          <div style={{ display: "flex", width: "100%", height: "auto", justifyContent: "space-between" }}>
-            <div className="article-item trailer">
-              <span className={`article-title ${lang}-font`}>{localeText.video1}</span>
-              {trailer ? (
-                <div className="article" onClick={() => openOverlay(
-                  <YoutubeVideoCard video={trailer} />, { title: `${trailer.title}` }
-                )}>
-                  <img src={trailer.thumbnail} alt={trailer.title} />
-                  <span className={`${lang}-font`}>{trailer.title}</span>
-                  <span className={`${lang}-font click`}>{localeText.click}</span>
-                </div>
-              ) : (<p className={`${lang}-font click`}>loading...</p>)}
-            </div>
-
-            <div className="article-item combat">
-              <span className={`article-title ${lang}-font`}>{localeText.video2}</span>
-              {combat ? (
-                <div className="article" onClick={() => openOverlay(
-                  <YoutubeVideoCard video={combat} />, { title: `${combat.title}` }
-                )}>
-                  <img src={combat.thumbnail} alt={combat.title} />
-                  <span className={`${lang}-font`}>{combat.title}</span>
-                  <span className={`${lang}-font click`}>{localeText.click}</span>
-                </div>
-              ) : (<p>loading...</p>)}
-            </div>
-
-            <div className="article-item intro">
-              <span className={`article-title ${lang}-font`}>{localeText.video3}</span>
-              {intro ? (
-                <div className="article" onClick={() => openOverlay(
-                  <YoutubeVideoCard video={intro} />, { title: `${intro.title}` }
-                )}>
-                  <img src={intro.thumbnail} alt={intro.title} />
-                  <span className={`${lang}-font`}>{intro.title}</span>
-                  <span className={`${lang}-font click`}>{localeText.click}</span>
-                </div>
-              ) : (<p>loading...</p>)}
-            </div>
-          </div>
-        </div>
-
-        <div className="article-slot">
-          <h2 className={`title-text ${lang}-font`}>{localeText.title3}</h2>
-        </div>
-      </div>
+      </section>
     </div>
-  )
+  );
 }

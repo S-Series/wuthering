@@ -2,23 +2,25 @@ import { getAuth } from "firebase/auth";
 
 type ClientEventName =
   | "page_view"
-  | "card_download_clicked"
-  | "card_preview_opened"
-  | "profile_save_clicked"
-  | "profile_load_clicked"
-  | "membership_page_viewed"
-  | "youtube_iframe_clicked";
+  | "auth_login"
+  | "auth_logout"
+  | "auth_signup"
+  | "image_download";
+
+type LogResult = "success" | "fail";
 
 type LogClientEventInput = {
   feature: string;
   eventName: ClientEventName;
+  result?: LogResult;
   message?: string;
+  statusCode?: number;
+  durationMs?: number;
   meta?: Record<string, unknown>;
 };
 
 export async function logClientEvent(input: LogClientEventInput) {
-  //const gatewayUrl = import.meta.env.VITE_GATEWAY_URL;
-  const gatewayUrl = "http://localhost:8080"
+  const gatewayUrl = import.meta.env.VITE_GATEWAY_URL;
 
   if (!gatewayUrl) {
     console.warn("VITE_GATEWAY_URL is missing");
@@ -39,7 +41,10 @@ export async function logClientEvent(input: LogClientEventInput) {
       body: JSON.stringify({
         feature: input.feature,
         eventName: input.eventName,
+        result: input.result ?? "success",
         message: input.message ?? null,
+        statusCode: input.statusCode ?? null,
+        durationMs: input.durationMs ?? null,
         meta: input.meta ?? {},
       }),
       keepalive: true,

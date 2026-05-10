@@ -41,10 +41,66 @@ export default function Navbar() {
     ? "/default.webp"
     : user?.imageUrl ?? "/default.webp";
 
+  useEffect(() => {
+    document.body.classList.toggle("navbar-sidebar-active", isActive);
+
+    return () => {
+      document.body.classList.remove("navbar-sidebar-active");
+    };
+  }, [isActive]);
+
+  const langSelectStyles = {
+    control: (base: any) => ({
+      ...base,
+      width: "max(min(11.5vw, 11.5rem), 7.5rem)",
+      backgroundColor: "transparent",
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+      color: "#fff",
+    }),
+    option: (base: any) => ({
+      ...base,
+      backgroundColor: "#eee",
+    }),
+    dropdownIndicator: (base: any) => ({
+      ...base,
+      padding: "0 min(1vw, 1rem)"
+    })
+  };
+
+  const sidebarLangSelectStyles = {
+    ...langSelectStyles,
+    control: (base: any) => ({
+      ...base,
+      width: "100%",
+      minHeight: "2.25rem",
+      borderColor: "rgba(255, 255, 255, 0.16)",
+      borderRadius: "0.45rem",
+      backgroundColor: "rgba(255, 255, 255, 0.08)",
+      boxShadow: "none",
+    }),
+    menu: (base: any) => ({
+      ...base,
+      zIndex: 1010,
+    }),
+  };
+
   return (
     <>
       <div id="navbar-body">
         <div className="item-slot">
+          <button
+            className="sidebar-toggle-btn"
+            type="button"
+            aria-label="sidebar menu"
+            aria-expanded={isActive}
+            onClick={() => setIsActive((prev) => !prev)}
+          >
+            <img className="navbar-icon"
+              alt=""
+              src="/menu.svg" />
+          </button>
           <a href="/" className="title">
             <img className="navbar-icon title"
               alt="title"
@@ -52,27 +108,10 @@ export default function Navbar() {
             <p className={`${lang}-font title`}>{localeText.title}</p>
           </a>
         </div>
+
         <div className="item-slot">
           <Select className="lang-select"
-            styles={{
-              control: (base) => ({
-                ...base,
-                width:"max(min(11.5vw, 11.5rem), 7.5rem)",
-                backgroundColor: "transparent",
-              }),
-              singleValue: (base) => ({
-                ...base,
-                color: "#fff",
-              }),
-              option: (base) => ({
-                ...base,
-                backgroundColor: "#eee",
-              }),
-              dropdownIndicator: (base) => ({
-                ...base,
-                padding: "0 min(1vw, 1rem)"
-              })
-            }}
+            styles={langSelectStyles}
             value={LANG_OPTION.find((item) => item.value === lang)}
             options={LANG_OPTION}
             onChange={(opt) => {
@@ -80,49 +119,94 @@ export default function Navbar() {
             }} />
           <a href="/characters">
             <img className="navbar-icon"
-              alt="title"
+              alt="characters"
               src="/default.webp" />
             <p className={`${lang}-font`}>{localeText.characters}</p>
           </a>
           <a href="/card">
             <img className="navbar-icon"
-              alt="title"
+              alt="generator"
               src="/default.webp" />
             <p className={`${lang}-font`}>{localeText.generator}</p>
           </a>
           <a href="/profile">
             <img className="navbar-icon"
-              alt="title"
+              alt="profile"
               src={profileImage} />
             <p className={`${lang}-font`}>{profileName}</p>
           </a>
-          <button onClick={() => setIsActive((prev) => !prev)}>
-            <img className="navbar-icon"
-              alt="title"
-              src="/menu.svg" />
-          </button>
         </div>
       </div>
 
       <div id="navbar-sidebar" className={`${isActive ? "active" : "idle"}`}>
-        <a href="/profile">
+        <div className="sidebar-head-slot">
+          <span>MENU</span>
+          <button
+            className="sidebar-close-btn"
+            type="button"
+            aria-label="close sidebar"
+            onClick={() => setIsActive(false)}
+          />
+        </div>
+
+        <a href="/" className="sidebar-title-slot" onClick={() => setIsActive(false)}>
           <img className="navbar-icon"
+            alt="title"
+            src="/default.webp" />
+          <p className={`${lang}-font`}>{localeText.title}</p>
+        </a>
+
+        <div className="sidebar-select-slot">
+          <Select className="lang-select"
+            styles={sidebarLangSelectStyles}
+            value={LANG_OPTION.find((item) => item.value === lang)}
+            options={LANG_OPTION}
+            onChange={(opt) => {
+              if (opt) setLang(opt.value);
+            }} />
+        </div>
+
+        <nav className="sidebar-link-slot">
+          <a href="/characters" onClick={() => setIsActive(false)}>
+            <img className="navbar-icon"
+              alt="characters"
+              src="/default.webp" />
+            <p className={`${lang}-font`}>{localeText.characters}</p>
+          </a>
+          <a href="/card" onClick={() => setIsActive(false)}>
+            <img className="navbar-icon"
+              alt="generator"
+              src="/default.webp" />
+            <p className={`${lang}-font`}>{localeText.generator}</p>
+          </a>
+        </nav>
+
+        <div className="sidebar-bottom-slot">
+          <a href="/profile" className="sidebar-profile-slot" onClick={() => setIsActive(false)}>
+            <img className="navbar-icon"
               alt="profile"
               src={profileImage} />
             <p className={`${lang}-font`}>{profileName}</p>
-        </a>
-        <a href="/characters">
-          <img className="navbar-icon"
-            alt="characters"
-            src="/default.webp" />
-          <p className={`${lang}-font`}>캐릭터 목록</p>
-        </a>
-        <a href="/card">
-          <img className="navbar-icon"
-            alt="generator"
-            src="/default.webp" />
-          <p className={`${lang}-font`}>스펙카드 생성기</p>
-        </a>
+          </a>
+
+          <div className="sidebar-social-slot">
+            <a href="https://ko-fi.com/sseries" target="_blank" rel="noreferrer">
+              <img className="navbar-icon"
+                alt="Ko-fi"
+                src="/kofi.png" />
+            </a>
+            <a href="https://github.com/S-Series" target="_blank" rel="noreferrer">
+              <img className="navbar-icon"
+                alt="GitHub"
+                src="/github.png" />
+            </a>
+            <a href="https://sseries.dev" target="_blank" rel="noreferrer">
+              <img className="navbar-icon"
+                alt="SSeries"
+                src="/sseries.png" />
+            </a>
+          </div>
+        </div>
       </div>
     </>
   )

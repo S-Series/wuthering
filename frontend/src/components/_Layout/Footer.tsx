@@ -18,7 +18,7 @@ export default function Footer() {
                         alt="title"
                         src="/github.png" />
                 </a>
-                <a target="blank" href="https://github.com/S-Series">
+                <a target="blank" href="https://sseries.dev">
                     <img className="footer-icon"
                         alt="title"
                         src="/sseries.png" />

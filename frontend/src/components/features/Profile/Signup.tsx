@@ -43,12 +43,12 @@ export default function Signup({ setAction }: Props) {
     form.agree &&
     isPasswordMatched;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isValid) return;
 
-    console.log("signup submit", form);
+    await signupAction(form.email, form.password, form.nickname);
   };
 
   return (
@@ -152,10 +152,7 @@ export default function Signup({ setAction }: Props) {
             </span>
           </label>
 
-          <button className="profile-submit" type="submit" disabled={!isValid}
-            onClick={() => {
-              signupAction(form.email, form.password, form.nickname)
-            }}>
+          <button className="profile-submit" type="submit" disabled={!isValid}>
             회원가입
           </button>
 
