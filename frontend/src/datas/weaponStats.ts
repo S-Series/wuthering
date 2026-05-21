@@ -389,6 +389,11 @@ export const weaponStat = {
     value: [38.8, 12],
     statType: [FixedStats.resonanceBns.id, FixedStats.atkPct.id],
   },
+  rectifier009: { //* 위조된 작은별 (데니아)
+    atk: 500,
+    value: [36.0, 12],
+    statType: [FixedStats.critRate.id, FixedStats.atkPct.id],
+  },
   //$ -----------------------------------------------
   rectifier101: {
     atk: 337,

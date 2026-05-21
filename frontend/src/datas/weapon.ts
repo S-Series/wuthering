@@ -616,6 +616,14 @@ export const weapon = {
       zh: "玻色星仪",
       imgKey: "ico008",
     },
+    rectifier009:{//* 데니아
+			id: "rectifier009",
+      en: "Forged Dwarf Star",
+      kr: "위조된 작은별",
+      jp: "偽物の矮星",
+      zh: "赝作的矮星",
+      imgKey: "ico009",
+    },
     //$ 4-Starts
     rectifier101:{
 			id: "rectifier101",
