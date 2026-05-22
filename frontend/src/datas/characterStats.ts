@@ -55,16 +55,16 @@ export const characterStat = {
   */
   // == 3.3 ======================================= //
   denia: {
-    baseHp: 0,
-    baseAtk: 0,
-    baseDef: 0,
+    baseHp: 11025,
+    baseAtk: 425,
+    baseDef: 1148,
 
     CritRate: 5.0,
-    CritDmg: 150.0,
+    CritDmg: 166.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
 
-    atkPct: 0.0,
+    atkPct: 12.0,
     hpPct: 0.0,
     defPct: 0.0,
 

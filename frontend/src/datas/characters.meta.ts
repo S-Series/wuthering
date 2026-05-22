@@ -1,4 +1,3 @@
-import { character } from "./characters";
 import type { CharacterId } from "./characterStats";
 import { harmony, type HarmonyId } from "./harmonies";
 import { FixedStats, type StatId } from "./stats";
@@ -12,9 +11,13 @@ export type CharacterMeta = {
   subResReq: number;
   isNeedCrit: boolean;
 };
+
 type CharacterMetaBase = Omit<
   CharacterMeta,
-  "resReq" | "subResReq" | "cost3MainStats" | "cost1MainStats"
+  | "resReq" 
+  | "subResReq" 
+  | "cost3MainStats" 
+  | "cost1MainStats"
 >;
 
 const baseMeta: CharacterMetaBase = {
@@ -71,7 +74,7 @@ FixedStats.atkPct.id],
   //*== ver 3.3 ===========================//
   denia: {
     ...baseMeta,
-    harmonySets: [harmony.Foam.id /*harmony.Memories.id*/],
+    harmonySets: [harmony.Foam.id, harmony.Memories.id],
     cost3MainStats: [FixedStats.fusionBns.id, FixedStats.atkPct.id],
     resReq: 130,
     subResReq: 30,
@@ -79,7 +82,11 @@ FixedStats.atkPct.id],
   hiyuki: {
     ...baseMeta,
     harmonySets: [harmony.Snowfall.id],
-    cost4MainStats: [FixedStats.critRate.id, FixedStats.critDmg.id, FixedStats.atkPct.id],
+    cost4MainStats: [
+      FixedStats.critRate.id,
+      FixedStats.critDmg.id,
+      FixedStats.atkPct.id,
+    ],
     cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
     resReq: 125,
     subResReq: 25,
@@ -347,7 +354,7 @@ FixedStats.atkPct.id],
     subResReq: 20,
   },
   zhezhi: {
-    //절지
+    //?��?
     ...baseMeta,
     harmonySets: [harmony.Empyrean.id, harmony.Frost.id, harmony.Clouds.id],
     cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
@@ -396,7 +403,7 @@ FixedStats.atkPct.id],
   },
 
   //$== ver open ===========================//
-  //# 5★
+  //# 5??
   rover_spectro: {
     ...baseMeta,
     harmonySets: [harmony.Radiance.id],
@@ -441,7 +448,7 @@ FixedStats.atkPct.id],
     resReq: 120,
     subResReq: 20,
   },
-  //# 4★
+  //# 4??
   sanhua: {
     ...baseMeta,
     harmonySets: [harmony.Clouds.id],
@@ -457,7 +464,7 @@ FixedStats.atkPct.id],
     subResReq: 60,
   },
   chixia: {
-    // 주근깨
+    // 주근�?
     ...baseMeta,
     harmonySets: [harmony.Rift.id],
     cost3MainStats: [FixedStats.fusionBns.id, FixedStats.atkPct.id],
@@ -530,8 +537,16 @@ export function getCharacterMeta(
   const result: CharacterMeta = { ...base };
 
   switch (characterId){
+    case "lynae": {
+      // 린네 6돌
+      if (constell >= 1) {
+        result.resReq = 110;
+        result.subResReq = 10;
+      }
+      break;
+    }
     case "iuno": {
-      //유노 1돌+
+      // 유노 1돌
       if (constell >= 1) {
         result.resReq = 110;
         result.subResReq = 10;
@@ -539,7 +554,7 @@ export function getCharacterMeta(
       break;
     }
     case "encore": {
-      //앙코 2돌+
+      // 앙코 2돌
       if (constell >= 2) {
         result.resReq = 110;
         result.subResReq = 10;
@@ -547,7 +562,7 @@ export function getCharacterMeta(
       break;
     }
     case "zhezhi": {
-      //절지 1돌+
+      // 절지 1돌
       if (constell >= 1) {
         result.resReq = 120;
         result.subResReq = 20;
@@ -555,7 +570,7 @@ export function getCharacterMeta(
       break;
     }
     case "yinlin": {
-      //음림 2돌+
+      // 음림 2돌
       if (constell >= 2) {
         result.resReq = 110;
         result.subResReq = 10;
@@ -563,7 +578,7 @@ export function getCharacterMeta(
       break;
     }
     case "calcharo": {
-      //카카루 1돌+
+      // 카카루 1돌
       if (constell >= 2) {
         result.resReq = 110;
         result.subResReq = 10;
@@ -574,3 +589,4 @@ export function getCharacterMeta(
 
   return result;
 }
+
