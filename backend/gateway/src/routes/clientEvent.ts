@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { getClientIp } from "../lib/getClientIp.js";
 import { getOptionalUid } from "../lib/getOptionalUid.js";
-import { logEvent } from "../lib/logEvent.js";
+import { safeLogEvent } from "../lib/logEvent.js";
 
 type ClientEventBody = {
   feature?: unknown;
@@ -76,7 +76,7 @@ export async function registerClientEventRoutes(app: FastifyInstance) {
 
     const uid = await getOptionalUid(req);
 
-    await logEvent({
+    safeLogEvent({
       service: "frontend",
       feature: normalizeString(body.feature, "unknown"),
       eventName,

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
+import { useOverlay } from "@/contexts/PopupContext";
+import AccountRecovery from "@/components/features/Profile/AccountRecovery";
 
 type Props = {
   setAction: React.Dispatch<React.SetStateAction<boolean>>;
@@ -7,9 +9,11 @@ type Props = {
 
 export default function Login({ setAction }: Props) {
   const { loginAction, loginWithGoogleAction } = useAuthStore();
+  const { openOverlay } = useOverlay();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const isValid = email.trim() !== "" && password.trim() !== "";
 
@@ -65,15 +69,47 @@ export default function Login({ setAction }: Props) {
 
           <div className="profile-field">
             <label htmlFor="login-password">비밀번호</label>
-            <input
-              id="login-password"
-              name="password"
-              type="password"
-              placeholder="비밀번호 입력"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-            />
+            <div className="profile-password-field">
+              <input
+                id="login-password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="비밀번호 입력"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className="profile-password-toggle"
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? "숨김" : "보기"}
+              </button>
+            </div>
+          </div>
+
+          <div className="profile-find-row">
+            <button
+              type="button"
+              onClick={() => openOverlay(
+                <AccountRecovery defaultMode="id" defaultEmail={email} />,
+                { title: "아이디 찾기", width: "min(92vw, 420px)" }
+              )}
+            >
+              아이디 찾기
+            </button>
+            <span />
+            <button
+              type="button"
+              onClick={() => openOverlay(
+                <AccountRecovery defaultMode="password" defaultEmail={email} />,
+                { title: "비밀번호 찾기", width: "min(92vw, 420px)" }
+              )}
+            >
+              비밀번호 찾기
+            </button>
           </div>
 
           <button

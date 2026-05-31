@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 // ===============================================
 
 export type LangType = "kr" | "en" | "jp" | "zh";
+export type LocaleText = Record<LangType, string>;
 
 export interface AppStore {
     imgVer: number;

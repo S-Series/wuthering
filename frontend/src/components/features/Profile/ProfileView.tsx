@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import { useOverlay } from "@/contexts/PopupContext";
+import CharacterSlot from "@/components/features/Characters/CharacterSlot";
+import { character } from "@/datas/characters";
+import { loadSummaryStore } from "@/summaryData/storage";
+import { getCharacterRank } from "@/types/character.type";
 
 import GameProfileEdit from "@/components/features/Profile/ProfileEdit";
 
@@ -11,6 +15,7 @@ export default function ProfileView() {
 
   const { user, gameProfile, logoutAction } = useAuthStore();
   const { openOverlay } = useOverlay();
+  const summaryStore = useMemo(() => loadSummaryStore(), []);
 
   const userImageUrl = useMemo(() => {
     return [
@@ -20,6 +25,24 @@ export default function ProfileView() {
       `./stand.png`
     ]
   }, [user?.imageUrl, gameProfile?.characterId])
+
+  const topCharacters = useMemo(() => {
+    return Object.entries(character)
+      .map(([id, item]) => {
+        const score = summaryStore.data[id]?.score ?? 0;
+
+        return [
+          id,
+          {
+            ...item,
+            score,
+            rank: getCharacterRank(score),
+          },
+        ] as const;
+      })
+      .sort(([, a], [, b]) => b.score - a.score)
+      .slice(0, 3);
+  }, [summaryStore]);
 
   return (
     <div className="profile-info-field">
@@ -50,7 +73,17 @@ export default function ProfileView() {
         </div>
 
         <div className="game-info">
-
+          <h2>대표 캐릭터</h2>
+          <div className="profile-display-list">
+            {topCharacters.map(([id, item]) => (
+              <CharacterSlot
+                key={id}
+                id={id}
+                isGrid={true}
+                prop={item}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

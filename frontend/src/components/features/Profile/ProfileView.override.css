@@ -151,11 +151,48 @@
 
 .profile-info-field .container .game-info {
     display: flex;
+    flex-direction: column;
     width: 95%;
     height: 65%;
-    gap: 1%;
-    align-items: center;
+    gap: min(0.7vw, 0.55rem);
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow: visible;
 }
-.profile-info-field .container .game-info .profile-button {
-    
+
+.profile-info-field .container .game-info h2 {
+    margin: 0;
+    color: #fff;
+    font-size: min(1.45vw, 1.1rem);
+    font-weight: 800;
+    text-shadow: 0 0 6px #000, 0 2px 4px #000;
+}
+
+.profile-info-field .container .game-info .profile-display-list {
+    display: flex;
+    width: 100%;
+    height: calc(100% - min(2.2vw, 1.8rem));
+    gap: min(2vw, 1.5rem);
+    align-items: center;
+    justify-content: flex-start;
+    overflow: visible;
+}
+
+.profile-info-field .container .game-info .profile-display-list .character-slot {
+    width: auto;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: 3 / 4;
+    flex: 0 0 auto;
+}
+
+.profile-info-field .container .game-info .profile-display-list .character-slot .character-info-slot .name {
+    font-size: min(1.4vw, 1.1rem);
+}
+
+@media (max-width: 780px) {
+    .profile-info-field .container .game-info .profile-display-list {
+        gap: 0.75rem;
+    }
 }

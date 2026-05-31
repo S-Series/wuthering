@@ -13,8 +13,8 @@
     
     overflow: hidden;
     /*
-    */
     display: none;
+    */
 }
 
 .card-detail-body {
@@ -310,4 +310,15 @@
 .card-detail-body .content-area .stat-area {
     width: 25%;
     background-color: #00ff0022;
+}
+
+.card-detail-body .content-area .stat-area .stat-info {
+    width: calc(100% -2px);
+    height: 65%;
+    border: 1px solid #ccc;
+}
+
+.card-detail-body .content-area .stat-area .stat-info.extra {
+    height: 20%;
+    margin-top: auto;
 }

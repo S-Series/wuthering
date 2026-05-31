@@ -9,7 +9,7 @@ import {
 import { requestRenderUpstream } from "../services/renderUpstream.js";
 import { requireUid } from "../lib/requireAuth.js";
 import { getClientIp } from "../lib/getClientIp.js";
-import { logEvent } from "../lib/logEvent.js";
+import { safeLogEvent } from "../lib/logEvent.js";
 import {
   cacheStore,
   createRenderCardCacheKey,
@@ -26,7 +26,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
     const body = req.body;
 
     if (!body || typeof body !== "object") {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "render",
         eventName: "render_request",
@@ -44,7 +44,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
     try {
       uid = await requireUid(req);
     } catch {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "render",
         eventName: "render_request",
@@ -65,7 +65,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
     const cached = cacheStore.renderCard.get(cacheKey);
 
     if (cached !== undefined) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "render",
         eventName: "render_request",
@@ -89,7 +89,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
       const result = await inFlightRequest;
 
       if (!result.ok) {
-        await logEvent({
+        safeLogEvent({
           service: "gateway",
           feature: "render",
           eventName: "render_request",
@@ -110,7 +110,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         buffer: Buffer.from(result.buffer),
       });
 
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "render",
         eventName: "render_request",
@@ -131,7 +131,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
     const access = canStartRender(uid);
 
     if (!access.ok) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "render",
         eventName: "render_request",
@@ -169,7 +169,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
       const result = await upstreamRequest;
 
       if (!result.ok) {
-        await logEvent({
+        safeLogEvent({
           service: "gateway",
           feature: "render",
           eventName: "render_request",
@@ -192,7 +192,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         buffer: Buffer.from(result.buffer),
       });
 
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "render",
         eventName: "render_request",
@@ -211,7 +211,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
     } catch (error) {
       req.log.error(error);
 
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "render",
         eventName: "render_request",

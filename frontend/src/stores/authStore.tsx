@@ -8,6 +8,7 @@ import {
   loginWithGoogle,
   logout,
   normalizeUserProfile,
+  resetPassword,
   signup,
 } from "@/firebase/auth";
 import { getGameProfile, saveGameProfile, saveUserNickname } from "@/firebase/user";
@@ -24,6 +25,7 @@ type AuthState = {
   signupAction: (email: string, password: string, nickname: string) => Promise<void>;
   loginAction: (email: string, password: string) => Promise<void>;
   loginWithGoogleAction: () => Promise<void>;
+  resetPasswordAction: (email: string) => Promise<void>;
   logoutAction: () => Promise<void>;
   saveUserNicknameAction: (nickname: string) => Promise<void>;
   saveGameProfileAction: (next: GameProfile) => Promise<void>;
@@ -151,6 +153,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         durationMs: Date.now() - startedAt,
         message: error instanceof Error ? error.message : "google login failed",
         meta: { method: "google" },
+      });
+
+      throw error;
+    }
+  },
+
+  resetPasswordAction: async (email) => {
+    const startedAt = Date.now();
+
+    try {
+      await resetPassword(email);
+
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_password_reset",
+        result: "success",
+        durationMs: Date.now() - startedAt,
+        meta: { method: "email" },
+      });
+    } catch (error) {
+      await logClientEvent({
+        feature: "auth",
+        eventName: "auth_password_reset",
+        result: "fail",
+        durationMs: Date.now() - startedAt,
+        message: error instanceof Error ? error.message : "password reset failed",
+        meta: { method: "email" },
       });
 
       throw error;

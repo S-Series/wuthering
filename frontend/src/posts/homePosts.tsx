@@ -1,17 +1,17 @@
 import type { LangType } from "@/stores/appStore";
 
-export type LocaleText = Record<LangType, React.ReactNode>;
+export type LocaleReactNode = Record<LangType, React.ReactNode>;
 
 export type HomePost = {
   id: number;
   pinned?: boolean;
   type: "update" | "notice" | "event";
   date: string;
-  title: LocaleText;
-  data: LocaleText;
+  title: LocaleReactNode;
+  data: LocaleReactNode;
 };
 
-const SERVICE_NAME: LocaleText = {
+const SERVICE_NAME: LocaleReactNode = {
   kr: "띵데브",
   en: "WuWa DEV",
   jp: "",

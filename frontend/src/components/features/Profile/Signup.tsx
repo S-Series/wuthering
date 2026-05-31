@@ -10,6 +10,9 @@ type Props = {
 }
 
 export default function Signup({ setAction }: Props) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -104,26 +107,46 @@ export default function Signup({ setAction }: Props) {
 
           <div className="profile-field">
             <label htmlFor="password">비밀번호</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="비밀번호 입력"
-              value={form.password}
-              onChange={onChangeInput}
-            />
+            <div className="profile-password-field">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="비밀번호 입력"
+                value={form.password}
+                onChange={onChangeInput}
+              />
+              <button
+                type="button"
+                className="profile-password-toggle"
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? "숨김" : "보기"}
+              </button>
+            </div>
           </div>
 
           <div className="profile-field">
             <label htmlFor="passwordConfirm">비밀번호 확인</label>
-            <input
-              id="passwordConfirm"
-              name="passwordConfirm"
-              type="password"
-              placeholder="비밀번호 다시 입력"
-              value={form.passwordConfirm}
-              onChange={onChangeInput}
-            />
+            <div className="profile-password-field">
+              <input
+                id="passwordConfirm"
+                name="passwordConfirm"
+                type={showPasswordConfirm ? "text" : "password"}
+                placeholder="비밀번호 다시 입력"
+                value={form.passwordConfirm}
+                onChange={onChangeInput}
+              />
+              <button
+                type="button"
+                className="profile-password-toggle"
+                aria-label={showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
+                onClick={() => setShowPasswordConfirm((prev) => !prev)}
+              >
+                {showPasswordConfirm ? "숨김" : "보기"}
+              </button>
+            </div>
             {form.passwordConfirm.length > 0 ? (
               <p
                 className={[

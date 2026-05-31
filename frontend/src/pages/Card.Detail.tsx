@@ -206,9 +206,18 @@ export default function CardDetail(data : Props) {
         </div>
 
         <div className="inner-slot stat-area">
+          <span className={`${lang}-font`}>§목표 스텟</span>
 
+          <div className="stat-info">
+
+          </div>
+
+          <div className="stat-info extra">
+
+          </div>
         </div>
       </div>
+
     </div>
   )
 }

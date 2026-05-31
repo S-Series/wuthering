@@ -36,6 +36,7 @@ import { useRenderStore } from "@/stores/renderStore";
 
 import "@/pages/Card.css"
 import "@/pages/Card.contents.main.css"
+import CardCharacterSection from "./Card.Character";
 
 export default function Card() {
   const { lang, imgVer } = useAppStore();
@@ -468,14 +469,13 @@ export default function Card() {
           <div className="card-contents-slot main">
             <div className="main-item-slot character">
               <div className="card-character-slot">
-                <ImagePicker
-                  src={characterImage.src}
-                  defaultSrc={`${BASE_URL}/character/${
+                <img className="character-img"
+                  src={`${BASE_URL}/character/${
                     characterId?.includes("rover")
                       ? `rover?v=${imgVer}`
                       : characterId
                   }/stand.png?v=${imgVer}`}
-                  onChangeSrc={(src) => setImageSrc("characterImage", src)}
+                  onClick={() => {openOverlay(<CardCharacterSection/>,)}}
                 />
 
                 <div className="constell-overlay">

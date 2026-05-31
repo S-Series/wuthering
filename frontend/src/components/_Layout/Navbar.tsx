@@ -101,6 +101,7 @@ export default function Navbar() {
               alt=""
               src="/menu.svg" />
           </button>
+          
           <a href="/" className="title">
             <img className="navbar-icon title"
               alt="title"

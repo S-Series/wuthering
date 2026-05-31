@@ -82,6 +82,19 @@
     overflow: hidden;
 }
 
+.main-item-slot.character .card-character-slot .character-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+}
+
+.main-item-slot.character .card-character-slot .character-img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 4px #ff0);
+}
+
 .main-item-slot.character .card-character-slot .constell-overlay {
     position: absolute;
     top: 0;

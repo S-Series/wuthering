@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   getAdditionalUserInfo,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
@@ -86,6 +87,10 @@ export async function loginWithGoogle(): Promise<UserProfile> {
 
 export async function logout(): Promise<void> {
   await signOut(auth);
+}
+
+export async function resetPassword(email: string): Promise<void> {
+  await sendPasswordResetEmail(auth, email);
 }
 
 export function normalizeUserProfile(raw: unknown): UserProfile {

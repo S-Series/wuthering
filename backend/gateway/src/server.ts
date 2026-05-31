@@ -11,7 +11,7 @@ import { registerRenderRoutes } from "./routes/render.js";
 import { registerClientEventRoutes } from "./routes/clientEvent.js";
 import { getClientIp } from "./lib/getClientIp.js";
 import { getOptionalUid } from "./lib/getOptionalUid.js";
-import { logEvent } from "./lib/logEvent.js";
+import { safeLogEvent } from "./lib/logEvent.js";
 
 import {
   ALLOWED_MIME,
@@ -148,7 +148,7 @@ async function main() {
     const part = await req.file();
 
     if (!part) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -163,7 +163,7 @@ async function main() {
     }
 
     if (!part.mimetype || !ALLOWED_MIME.has(part.mimetype)) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -181,7 +181,7 @@ async function main() {
     }
 
     if (!hasAllowedExt(part.filename)) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -201,7 +201,7 @@ async function main() {
     const buf = await part.toBuffer();
 
     if (buf.length === 0) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -217,7 +217,7 @@ async function main() {
     }
 
     if (buf.length > MAX_BYTES) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -253,7 +253,7 @@ async function main() {
     const cachedOcr = cacheStore.ocr.get(ocrCacheKey);
 
     if (cachedOcr !== undefined) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -324,7 +324,7 @@ async function main() {
       const msg =
         e?.name === "AbortError" ? "upstream timeout" : "upstream fetch failed";
 
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -353,7 +353,7 @@ async function main() {
     const contentType = upstreamRes.headers.get("content-type") ?? "";
 
     if (!upstreamRes.ok) {
-      await logEvent({
+      safeLogEvent({
         service: "gateway",
         feature: "ocr",
         eventName: "ocr_request",
@@ -386,7 +386,7 @@ async function main() {
       body: text,
     });
 
-    await logEvent({
+    safeLogEvent({
       service: "gateway",
       feature: "ocr",
       eventName: "ocr_request",
@@ -410,7 +410,7 @@ async function main() {
           .header("x-cache", "MISS")
           .send(JSON.parse(text));
       } catch {
-        // JSON 파싱 실패 시 raw 반환
+        // JSON ?�싱 ?�패 ??raw 반환
       }
     }
 

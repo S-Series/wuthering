@@ -16,6 +16,10 @@ type LogEventInput = {
   meta?: Record<string, unknown>;
 };
 
+type LogErrorReporter = {
+  warn: (...args: unknown[]) => void;
+};
+
 const LOG_SECRET = process.env.LOG_SECRET ?? "dev-log-secret";
 
 function hashIp(ip: string | null | undefined) {
@@ -50,4 +54,15 @@ export async function logEvent(input: LogEventInput) {
   }
 
   return data;
+}
+
+export function safeLogEvent(input: LogEventInput, reporter?: LogErrorReporter) {
+  void logEvent(input).catch((error: unknown) => {
+    if (reporter) {
+      reporter.warn({ error, eventName: input.eventName }, "log write failed");
+      return;
+    }
+
+    console.warn("[logEvent failed]", error);
+  });
 }
