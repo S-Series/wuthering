@@ -1,5 +1,7 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { updateProfile } from "firebase/auth";
 import { db} from "./firebase";
+import { auth } from "./firebase";
 import { characterStat, type CharacterId } from "@/datas/characterStats";
 import { type GameProfile } from "@/firebase/firebase"
 
@@ -53,11 +55,12 @@ export async function getGameProfile(uid: string): Promise<GameProfile> {
 }
 
 export async function saveUserNickname(uid: string, nickname: string) {
-  await setDoc(
-    doc(db, "users", uid),
-    { nickname: nickname.trim() },
-    { merge: true }
-  );
+  if (auth.currentUser?.uid !== uid) {
+    throw new Error("Current Firebase user does not match requested uid");
+  }
+
+  await updateProfile(auth.currentUser, { displayName: nickname.trim() });
+  await auth.currentUser.reload();
 }
 
 export async function saveGameProfile(

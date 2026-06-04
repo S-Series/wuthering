@@ -6,6 +6,7 @@ import type { CharacterId } from "@/datas/characterStats";
 
 export type UserProfile = {
   uid: string;
+  supabaseUid: string | null;
   email: string | null;
   nickname: string;
   imageUrl: string | null;

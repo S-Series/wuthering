@@ -10,6 +10,7 @@ import { requestRenderUpstream } from "../services/renderUpstream.js";
 import { requireUid } from "../lib/requireAuth.js";
 import { getClientIp } from "../lib/getClientIp.js";
 import { safeLogEvent } from "../lib/logEvent.js";
+import { getOptionalSupabaseUserId } from "../services/supabaseUsers.js";
 import {
   cacheStore,
   createRenderCardCacheKey,
@@ -57,6 +58,8 @@ export async function registerRenderRoutes(app: FastifyInstance) {
       return reply.code(401).send({ error: "unauthorized" });
     }
 
+    const supabaseUserId = await getOptionalSupabaseUserId(req);
+
     const cacheKey = createRenderCardCacheKey({
       uid,
       body,
@@ -72,7 +75,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         result: "success",
         statusCode: 200,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         meta: { cache: "HIT" },
       });
@@ -96,7 +99,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
           result: "fail",
           statusCode: result.statusCode,
           durationMs: Date.now() - startedAt,
-          userId: uid,
+          userId: supabaseUserId,
           ip: getClientIp(req),
           message: "in-flight upstream error",
           meta: { cache: "INFLIGHT" },
@@ -117,7 +120,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         result: "success",
         statusCode: 200,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         meta: { cache: "INFLIGHT" },
       });
@@ -138,7 +141,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         result: "fail",
         statusCode: 429,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message:
           access.reason === "lock"
@@ -176,7 +179,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
           result: "fail",
           statusCode: result.statusCode,
           durationMs: Date.now() - startedAt,
-          userId: uid,
+          userId: supabaseUserId,
           ip: getClientIp(req),
           message: "upstream error",
           meta: { cache: "MISS" },
@@ -199,7 +202,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         result: "success",
         statusCode: 200,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         meta: { cache: "MISS" },
       });
@@ -218,7 +221,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         result: "fail",
         statusCode: 500,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: "render upstream request failed",
       });

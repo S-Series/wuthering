@@ -20,7 +20,8 @@ type LogErrorReporter = {
   warn: (...args: unknown[]) => void;
 };
 
-const LOG_SECRET = process.env.LOG_SECRET ?? "dev-log-secret";
+const LOG_SECRET =
+  process.env.LOG_SECRET ?? process.env.SUPABASE_LOG_SECRET ?? "dev-log-secret";
 
 function hashIp(ip: string | null | undefined) {
   if (!ip) return null;

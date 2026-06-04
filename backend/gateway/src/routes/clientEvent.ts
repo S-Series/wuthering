@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { getClientIp } from "../lib/getClientIp.js";
-import { getOptionalUid } from "../lib/getOptionalUid.js";
 import { safeLogEvent } from "../lib/logEvent.js";
+import { getOptionalSupabaseUserId } from "../services/supabaseUsers.js";
 
 type ClientEventBody = {
   feature?: unknown;
@@ -18,6 +18,7 @@ const allowedClientEvents = new Set([
   "auth_login",
   "auth_logout",
   "auth_signup",
+  "auth_password_reset",
   "image_download",
 ]);
 
@@ -74,7 +75,7 @@ export async function registerClientEventRoutes(app: FastifyInstance) {
       return reply.code(400).send({ error: "unsupported event name" });
     }
 
-    const uid = await getOptionalUid(req);
+    const supabaseUserId = await getOptionalSupabaseUserId(req);
 
     safeLogEvent({
       service: "frontend",
@@ -84,7 +85,7 @@ export async function registerClientEventRoutes(app: FastifyInstance) {
       message: normalizeNullableString(body.message),
       statusCode: normalizeNullableNumber(body.statusCode),
       durationMs: normalizeNullableNumber(body.durationMs),
-      userId: uid,
+      userId: supabaseUserId,
       ip: getClientIp(req),
       meta: normalizeMeta(body.meta),
     });

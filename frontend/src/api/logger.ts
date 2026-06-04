@@ -5,6 +5,7 @@ type ClientEventName =
   | "auth_login"
   | "auth_logout"
   | "auth_signup"
+  | "auth_password_reset"
   | "image_download";
 
 type LogResult = "success" | "fail";

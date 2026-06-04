@@ -1,4 +1,4 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 
 import Fastify from "fastify";
 import cors from "@fastify/cors";
@@ -9,9 +9,10 @@ import pLimit from "p-limit";
 import { getClientKey } from "./utils/clientKey.js";
 import { registerRenderRoutes } from "./routes/render.js";
 import { registerClientEventRoutes } from "./routes/clientEvent.js";
+import { registerUserRoutes } from "./routes/users.js";
 import { getClientIp } from "./lib/getClientIp.js";
-import { getOptionalUid } from "./lib/getOptionalUid.js";
 import { safeLogEvent } from "./lib/logEvent.js";
+import { getOptionalSupabaseUserId } from "./services/supabaseUsers.js";
 
 import {
   ALLOWED_MIME,
@@ -144,7 +145,7 @@ async function main() {
 
   app.post("/api/ocr", async (req, reply) => {
     const startedAt = Date.now();
-    const uid = await getOptionalUid(req);
+    const supabaseUserId = await getOptionalSupabaseUserId(req);
     const part = await req.file();
 
     if (!part) {
@@ -155,7 +156,7 @@ async function main() {
         result: "fail",
         statusCode: 400,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: "file missing",
       });
@@ -170,7 +171,7 @@ async function main() {
         result: "fail",
         statusCode: 415,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: "unsupported file type",
         meta: { mimetype: part.mimetype ?? null },
@@ -188,7 +189,7 @@ async function main() {
         result: "fail",
         statusCode: 415,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: "unsupported file extension",
         meta: { filename: part.filename ?? null },
@@ -208,7 +209,7 @@ async function main() {
         result: "fail",
         statusCode: 400,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: "empty file",
         meta: { mimetype: part.mimetype, size: buf.length },
@@ -224,7 +225,7 @@ async function main() {
         result: "fail",
         statusCode: 413,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: "file too large",
         meta: { mimetype: part.mimetype, size: buf.length },
@@ -260,7 +261,7 @@ async function main() {
         result: "success",
         statusCode: 200,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         meta: {
           cache: "HIT",
@@ -331,7 +332,7 @@ async function main() {
         result: "fail",
         statusCode: 504,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: msg,
         meta: {
@@ -360,7 +361,7 @@ async function main() {
         result: "fail",
         statusCode: 502,
         durationMs: Date.now() - startedAt,
-        userId: uid,
+        userId: supabaseUserId,
         ip: getClientIp(req),
         message: "upstream error",
         meta: {
@@ -393,7 +394,7 @@ async function main() {
       result: "success",
       statusCode: 200,
       durationMs: Date.now() - startedAt,
-      userId: uid,
+      userId: supabaseUserId,
       ip: getClientIp(req),
       meta: {
         cache: "MISS",
@@ -410,7 +411,7 @@ async function main() {
           .header("x-cache", "MISS")
           .send(JSON.parse(text));
       } catch {
-        // JSON ?�싱 ?�패 ??raw 반환
+        // JSON ?뚯떛 ?ㅽ뙣 ??raw 諛섑솚
       }
     }
 
@@ -422,6 +423,7 @@ async function main() {
 
   await registerRenderRoutes(app);
   await registerClientEventRoutes(app);
+  await registerUserRoutes(app);
 
   app.get("/api/youtube/latest", async (req, reply) => {
     const q = req.query as { lang?: string; type?: string };
@@ -514,3 +516,4 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+

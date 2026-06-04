@@ -1,18 +1,17 @@
 import { create } from "zustand";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "@/firebase/firebase";
+import { auth } from "@/firebase/firebase";
 
 import {
   login,
   loginWithGoogle,
   logout,
-  normalizeUserProfile,
   resetPassword,
   signup,
 } from "@/firebase/auth";
 import { getGameProfile, saveGameProfile, saveUserNickname } from "@/firebase/user";
 import { logClientEvent } from "@/api/logger";
+import { syncGatewayUser } from "@/api/user.api";
 
 import { type UserProfile, type GameProfile } from "@/firebase/firebase"
 
@@ -45,21 +44,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      const userSnap = await getDoc(doc(db, "users", firebaseUser.uid));
+      try {
+        const user = await syncGatewayUser(firebaseUser);
+        const gameProfile = await getGameProfile(firebaseUser.uid);
 
-      if (!userSnap.exists()) {
+        set({
+          user,
+          gameProfile,
+          isLoading: false,
+        });
+      } catch (error) {
+        console.error(error);
         set({ user: null, gameProfile: null, isLoading: false });
-        return;
       }
-
-      const user : UserProfile = normalizeUserProfile(userSnap.data());
-      const gameProfile = await getGameProfile(firebaseUser.uid);
-
-      set({
-        user: user,
-        gameProfile: gameProfile,
-        isLoading: false,
-      });
     });
   },
 
