@@ -9,6 +9,9 @@ import { loadSummaryStore } from "@/summaryData/storage";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { getCharacterRank } from "@/types/character.type";
 
+import { periodicContents, type PeriodicContent } from "@/datas/periodic";
+import { useSeasonRemainingTime } from "@/hooks/useSeasonRemainingTime";
+
 import YoutubeVideoCard from "@/components/features/Home/YoutubeVideoCard";
 
 import "@/pages/_Page.css";
@@ -16,6 +19,25 @@ import "@/pages/Home.css";
 
 const DISPLAY_LIMIT_MEDIUM_BREAKPOINT = 1071;
 const DISPLAY_LIMIT_SMALL_BREAKPOINT = 572;
+
+function GameInfoSlot({
+  content,
+  lang,
+}: {
+  content: PeriodicContent;
+  lang: LangType;
+}) {
+  const remainingTime = useSeasonRemainingTime(content.seasons);
+
+  return (
+    <div className={`inner-slot ${content.className ?? content.id}`}>
+      <span className={`${lang}-font title`}>{content.name[lang]}</span>
+      <span className={`${lang}-font`}>
+        초기화: <em>{remainingTime?.text ?? "시즌 대기 중"}</em>
+      </span>
+    </div>
+  );
+}
 
 function compactDate(dateString: string) {
   const date = new Date(dateString);
@@ -243,6 +265,7 @@ export default function Home() {
 
         <article className="summary-item info-slot">
           <h2>인게임 정보</h2>
+          {/*
           <div className="game-info-slot">
             <div className="inner-slot tower">
               <span className={`${lang}-font title`}>역경의 탑</span>
@@ -260,6 +283,17 @@ export default function Home() {
               <span className={`${lang}-font title`}>종말 매트릭스</span>
               <span className={`${lang}-font`}>초기화: <em>{" 000 : 00 : 00"}</em></span>
             </div>
+          </div>
+           */}
+
+          <div className="game-info-slot">
+            {periodicContents.map((content) => (
+              <GameInfoSlot
+                key={content.id}
+                content={content}
+                lang={lang}
+              />
+            ))}
           </div>
         </article>
       </section>
