@@ -8,13 +8,13 @@ export const wastesSeasons: SeasonInfo[] = [
   },
   {
     season: 18,
-    startDate: "2026-06-07",
+    startDate: "2026-06-08",
     endDate: "2026-07-05",
   },
   {
     season: 17,
     startDate: "2026-05-10",
-    endDate: "2026-06-07",
+    endDate: "2026-06-08",
   }
 ];
 

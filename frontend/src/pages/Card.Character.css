@@ -1,7 +1,301 @@
-.card-character {
-    display: flex;
-    width: 100%;
-    height: 100%;
+.card-character-select {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  gap: 1rem;
+}
 
-    border: 1px solid #fff;
+.card-character-select__panel {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 0;
+  width: 67.5%;
+
+  overflow: hidden;
+  border: 1px solid #8f8f8f;
+  background: #101216e6;
+}
+
+.card-character-select__panel.weapon {
+  width: 30%;
+}
+
+.card-character-select__header {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0 0.9rem;
+  color: #fff;
+  border-bottom: 1px solid #666;
+  background: #08090cbf;
+}
+
+.card-character-select__header > span {
+  font-size: 0.95rem;
+}
+
+.card-character-select__header > strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #ffd764;
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-character-select__header > img {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+}
+
+.card-character-select__filters {
+  display: flex;
+
+  padding: 1% 0;
+  width: 100%;
+  border-bottom: 1px solid #494949;
+  justify-content: space-between;
+}
+
+.card-character-select__filter-row {
+  display: flex;
+  width: 45%;
+
+  align-items: center;
+  justify-content: space-around;
+}
+
+.card-character-select__filter-row.element {
+  width: 55%;
+}
+
+.card-character-select__filter-row button {
+  width: auto;
+  height: 80%;
+  max-height: 3rem;
+  aspect-ratio: 1/1;
+  place-items: center;
+  padding: 0.2rem;
+  cursor: pointer;
+  border: 1px solid #555;
+  background: #1b1e25;
+}
+
+.card-character-select__filter-row button:hover {
+  border-color: #fff;
+}
+
+.card-character-select__filter-row button.active {
+  border-color: #ffd764;
+  background: #55461f;
+  box-shadow: inset 0 0 0 1px #ffd76466;
+}
+
+.card-character-select__filter-row img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0.55);
+}
+
+.card-character-select__filter-row button.active img {
+  filter: brightness(1);
+}
+
+.card-character-select__character-list,
+.card-character-select__weapon-list {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-color: #777 #17191e;
+}
+
+.card-character-select__character-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: space-evenly;
+  gap: 0.5rem 0.2rem;
+  padding: 0.5rem 1%;
+}
+
+.card-character-select__character {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 6rem;
+  flex: 0 0 auto;
+  aspect-ratio: 3 / 4;
+
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem;
+  padding: 0.35rem;
+
+  cursor: pointer;
+  color: #fff;
+  border: 1px solid #666;
+  background: #252832;
+  overflow: hidden;
+}
+
+.card-character-select__character::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: "";
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.card-character-select__character.aero::after {
+  background: #41a33a;
+}
+
+.card-character-select__character.fusion::after {
+  background: #e65353;
+}
+
+.card-character-select__character.electro::after {
+  background: #7839b8;
+}
+
+.card-character-select__character.glacio::after {
+  background: #4ba8c9;
+}
+
+.card-character-select__character.spectro::after {
+  background: #d1b82f;
+}
+
+.card-character-select__character.havoc::after {
+  background: #9f456f;
+}
+
+.card-character-select__character:hover {
+  border-color: #fff;
+}
+
+.card-character-select__character.selected,
+.card-character-select__weapon.selected {
+  border-color: #ffd764;
+  box-shadow: inset 0 0 0 1px #ffd764, 0 0 0.5rem #ffd76466;
+}
+
+.card-character-select__character img {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 5.5rem);
+  min-height: 0;
+  flex: 1;
+  object-fit: cover;
+  background: #090a0d99;
+}
+
+.card-character-select__character span {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  overflow: hidden;
+  font-size: 0.72rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-character-select__weapon-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.55rem;
+  padding: 0.75rem;
+}
+
+.card-character-select__weapon {
+  display: flex;
+  width: 100%;
+  min-height: 5rem;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+  cursor: pointer;
+  color: #fff;
+  text-align: left;
+  border: 1px solid #d2af4a;
+  background: #22252c;
+  transition: background 0.2s ease-out;
+}
+
+.card-character-select__weapon:hover {
+  border-color: #d3bf4c;
+  background: #ffd76466;
+}
+
+.card-character-select__weapon.rarity-4 {
+  border-color: #7951a8;
+}
+
+.card-character-select__weapon.rarity-4:hover {
+  border-color: #c58cff;
+  background: #352a43;
+}
+
+.card-character-select__weapon.recommended:not(.selected) {
+  border-color: #d2af4a;
+}
+
+.card-character-select__weapon > img {
+  height: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: #0d0f13;
+}
+
+.card-character-select__weapon-info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.card-character-select__weapon-info small {
+  color: #ffd764;
+  font-size: 0.65rem;
+}
+
+.card-character-select__weapon.rarity-4
+  .card-character-select__weapon-info
+  small {
+  color: #c58cff;
+}
+
+.card-character-select__weapon-info strong {
+  overflow: hidden;
+  font-size: 0.88rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-character-select__weapon-info > span {
+  color: #bfc2ca;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 1024px) {
+  .card-character-select__filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+}
+
+@media (max-width: 780px) {
+  .card-character-select {
+    min-width: 42rem;
+  }
 }

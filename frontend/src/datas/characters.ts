@@ -1,4 +1,4 @@
-import type { CharacterId } from "./characterStats";
+﻿import type { CharacterId } from "./characterStats";
 
 export const WeaponTypes = [
   "sword",
@@ -23,6 +23,7 @@ const AttackTypes = ["basic", "heavy", "skill", "liberation", "heal"] as const;
 export type AttackType = (typeof AttackTypes)[number];
 
 export interface Character {
+  id: CharacterId;
   en: string;
   kr: string;
   jp: string;
@@ -137,6 +138,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 3.3 ===========================//
   denia: {
+    id: "denia",
     en: "Denia",
     kr: "데니아",
     jp: "stay tune",
@@ -150,6 +152,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Unknown",
   },
   hiyuki: {
+    id: "hiyuki",
     en: "Hiyuki",
     kr: "히유키",
     jp: "緋雪",
@@ -165,6 +168,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 3.2 ===========================//
   sigrika: {
+    id: "sigrika",
     en: "Sigrika",
     kr: "시그리카",
     jp: "",
@@ -180,6 +184,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 3.1 ===========================//
   luuk_herssen: {
+    id: "luuk_herssen",
     en: "Luuk Herssen",
     kr: "루크 헤르센",
     jp: "エイメス",
@@ -193,6 +198,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Statotchi Academy",
   },
   aemeath: {
+    id: "aemeath",
     en: "Aemeath",
     kr: "에이메스",
     jp: "エイメス",
@@ -208,6 +214,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 3.0 ===========================//
   mornye: {
+    id: "mornye",
     en: "mornye",
     kr: "모니에",
     jp: "モーニエ",
@@ -221,6 +228,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Spacetrek Collective",
   },
   lynae: {
+    id: "lynae",
     en: "lynae",
     kr: "린네",
     jp: "リンネー",
@@ -237,6 +245,7 @@ export const character: Record<CharacterId, Character> = {
   //$== ver 2.X ===========================//
   //*== ver 2.8 ===========================//
   chisa: {
+    id: "chisa",
     en: "chisa",
     kr: "치사",
     jp: "千咲",
@@ -250,6 +259,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Statotchi Academy",
   },
   buling: {
+    id: "buling",
     en: "buling",
     kr: "복링",
     jp: "卜霊",
@@ -265,6 +275,7 @@ export const character: Record<CharacterId, Character> = {
   
   //*== ver 2.7 ===========================//
   qiuyuan: {
+    id: "qiuyuan",
     en: "qiuyuan",
     kr: "구원",
     jp: "仇遠",
@@ -278,6 +289,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   galbrena: {
+    id: "galbrena",
     en: "galbrena",
     kr: "갈브레나",
     jp: "ガルブレーナ",
@@ -293,6 +305,7 @@ export const character: Record<CharacterId, Character> = {
   
   //*== ver 2.6 ===========================//
   iuno: {
+    id: "iuno",
     en: "iuno",
     kr: "유노",
     jp: "ユーノ",
@@ -306,6 +319,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Seven Hills",
   },
   augusta: {
+    id: "augusta",
     en: "augusta",
     kr: "아우구스타",
     jp: "オーガスタ",
@@ -321,6 +335,7 @@ export const character: Record<CharacterId, Character> = {
   
   //*== ver 2.5 ===========================//
   phrolova: {
+    id: "phrolova",
     en: "phrolova",
     kr: "플로로",
     jp: "フローヴァ",
@@ -336,6 +351,7 @@ export const character: Record<CharacterId, Character> = {
   
   //*== ver 2.4 ===========================//
   lupa: {
+    id: "lupa",
     en: "lupa",
     kr: "루파",
     jp: "ルパ",
@@ -349,6 +365,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Ragunna",
   },
   cartethyia: {
+    id: "cartethyia",
     en: "cartethyia",
     kr: "카르티시아",
     jp: "カルテジア",
@@ -364,6 +381,7 @@ export const character: Record<CharacterId, Character> = {
   
   //*== ver 2.3 ===========================//
   chiaccona: {
+    id: "chiaccona",
     en: "chiaccona",
     kr: "샤콘",
     jp: "シャコンヌ",
@@ -377,6 +395,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Ragunna",
   },
   zani: {
+    id: "zani",
     en: "zani",
     kr: "젠니",
     jp: "ザンニー",
@@ -392,6 +411,7 @@ export const character: Record<CharacterId, Character> = {
   
   //*== ver 2.2 ===========================//
   cantarella: {
+    id: "cantarella",
     en: "cantarella",
     kr: "칸타렐라",
     jp: "カンタレラ",
@@ -405,6 +425,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Ragunna",
   },
   rover_aero: {
+    id: "rover_aero",
     en: "rover : Aero",
     kr: "방랑자 (기류)",
     jp: "漂泊者",
@@ -420,6 +441,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 2.1 ===========================//
   brant: {
+    id: "brant",
     en: "brant",
     kr: "브랜트",
     jp: "ブラント",
@@ -433,6 +455,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Ragunna",
   },
   phoebe: {
+    id: "phoebe",
     en: "phoebe",
     kr: "페비",
     jp: "フィービー",
@@ -448,6 +471,7 @@ export const character: Record<CharacterId, Character> = {
   
   //*== ver 2.0 ===========================//
   roccia: {
+    id: "roccia",
     en: "roccia",
     kr: "로코코",
     jp: "ロココ",
@@ -461,6 +485,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Ragunna",
   },
   carlotta: {
+    id: "carlotta",
     en: "carlotta",
     kr: "카를로타",
     jp: "カルロッタ",
@@ -477,6 +502,7 @@ export const character: Record<CharacterId, Character> = {
   //$== ver 1.X ===========================//
   //*== ver 1.4 ===========================//
   lumi: {
+    id: "lumi",
     en: "lumi",
     kr: "루미",
     jp: "灯灯",
@@ -490,6 +516,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   camellya: {
+    id: "camellya",
     en: "camellya",
     kr: "카멜리아",
     jp: "ツバキ",
@@ -505,6 +532,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 1.3 ===========================//
   youhu: {
+    id: "youhu",
     en: "youhu",
     kr: "유호",
     jp: "釉瑚",
@@ -518,6 +546,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   shorekeeper: {
+    id: "shorekeeper",
     en: "shorekeeper",
     kr: "파수인",
     jp: "ショアキーパー",
@@ -533,6 +562,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 1.2 ===========================//
   xiangliyao: {
+    id: "xiangliyao",
     en: "xiangliyao",
     kr: "상리요",
     jp: "相里要",
@@ -546,6 +576,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   zhezhi: {
+    id: "zhezhi",
     en: "zhezhi",
     kr: "절지",
     jp: "折枝",
@@ -561,6 +592,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 1.1 ===========================//
   changli: {
+    id: "changli",
     en: "changli",
     kr: "장리",
     jp: "長離",
@@ -574,6 +606,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   jinhsi: {
+    id: "jinhsi",
     en: "jinhsi",
     kr: "금희",
     jp: "今汐",
@@ -589,6 +622,7 @@ export const character: Record<CharacterId, Character> = {
 
   //*== ver 1.0 ===========================//
   yinlin: {
+    id: "yinlin",
     en: "yinlin",
     kr: "음림",
     jp: "吟霖",
@@ -602,6 +636,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   jiyan: {
+    id: "jiyan",
     en: "jiyan",
     kr: "기염",
     jp: "忌炎",
@@ -615,6 +650,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   rover_havoc: {
+    id: "rover_havoc",
     en: "rover : Havoc",
     kr: "방랑자 (인멸)",
     jp: "漂泊者",
@@ -631,6 +667,7 @@ export const character: Record<CharacterId, Character> = {
   //$== ver open ===========================//
   //# 5★
   rover_spectro: {
+    id: "rover_spectro",
     en: "rover : Spectro",
     kr: "방랑자 (회절)",
     jp: "漂泊者",
@@ -644,6 +681,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Unknown",
   },
   verina: {
+    id: "verina",
     en: "verina",
     kr: "벨리나",
     jp: "ヴェリーナ",
@@ -657,6 +695,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   calcharo: {
+    id: "calcharo",
     en: "calcharo",
     kr: "카카루",
     jp: "カカロ",
@@ -670,6 +709,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Unknown",
   },
   encore: {
+    id: "encore",
     en: "encore",
     kr: "앙코",
     jp: "アンコ",
@@ -683,6 +723,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Unknown",
   },
   jianxin: {
+    id: "jianxin",
     en: "jianxin",
     kr: "감심",
     jp: "鑑心",
@@ -696,6 +737,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Unknown",
   },
   lingyang: {
+    id: "lingyang",
     en: "lingyang",
     kr: "능양",
     jp: "凌陽",
@@ -710,6 +752,7 @@ export const character: Record<CharacterId, Character> = {
   },
   //# 4★
   sanhua: {
+    id: "sanhua",
     en: "sanhua",
     kr: "산화",
     jp: "",
@@ -723,6 +766,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   baizhi: {
+    id: "baizhi",
     en: "baizhi",
     kr: "설지",
     jp: "",
@@ -736,6 +780,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   chixia: {
+    id: "chixia",
     en: "chixia",
     kr: "치샤",
     jp: "",
@@ -749,6 +794,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   mortefi: {
+    id: "mortefi",
     en: "mortefi",
     kr: "모르테피",
     jp: "",
@@ -762,6 +808,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   yuanwu: {
+    id: "yuanwu",
     en: "yuanwu",
     kr: "연무",
     jp: "",
@@ -775,6 +822,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   yangyang: {
+    id: "yangyang",
     en: "yangyang",
     kr: "양양",
     jp: "",
@@ -788,6 +836,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   aalto: {
+    id: "aalto",
     en: "aalto",
     kr: "알토",
     jp: "",
@@ -801,6 +850,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Black Shores",
   },
   taoqi: {
+    id: "taoqi",
     en: "taoqi",
     kr: "도기",
     jp: "",
@@ -814,6 +864,7 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
   danjin: {
+    id: "danjin",
     en: "danjin",
     kr: "단근",
     jp: "",
@@ -827,3 +878,6 @@ export const character: Record<CharacterId, Character> = {
     region: "Huanglong",
   },
 };
+
+export const characterList = Object.values(character);
+export const characterIds = characterList.map((item) => item.id);

@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useAppStore } from "@/stores/appStore";
 import { useStyleStore } from "@/stores/styleStore";
 
-import { character } from "@/datas/characters";
+import { characterList } from "@/datas/characters";
 
 import type { GameServer } from "@/firebase/user";
 import type { CharacterId } from "@/datas/characterStats";
@@ -72,8 +72,8 @@ export default function GameProfileEdit() {
     { value: "Sea", label: "Sea" },
   ] as const;
 
-  const characterOptions = Object.entries(character).map(([id, data]) => ({
-    value: id,
+  const characterOptions = characterList.map((data) => ({
+    value: data.id,
     label: data[lang],
   }));
 

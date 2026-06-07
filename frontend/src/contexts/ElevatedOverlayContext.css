@@ -1,50 +1,34 @@
-.overlay-backdrop {
+.elevated-overlay-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 10001;
     display: grid;
     place-items: center;
     padding: 1rem;
     box-sizing: border-box;
-    background: rgba(3, 4, 7, 0.78);
+    background: rgba(3, 4, 7, 0.82);
     backdrop-filter: blur(3px);
-
-    animation: fadeIn 0.15s ease-out;
+    animation: elevatedOverlayFadeIn 0.15s ease-out;
 }
 
-.overlay-panel {
+.elevated-overlay-panel {
     display: flex;
     flex-direction: column;
-    width: min(75vw, 70rem);
-    min-width: min(45rem, calc(100vw - 2rem));
-
+    width: min(62vw, 56rem);
+    min-width: min(24rem, calc(100vw - 2rem));
     max-width: calc(100vw - 2rem);
     max-height: calc(100dvh - 2rem);
-
-    aspect-ratio: 120 / 89;
-
     overflow: hidden;
-    border-radius: 0;
     border: 1px solid #8f8f8f;
-    box-shadow: 0 14px 38px #000000d9;
+    border-radius: 0;
+    box-shadow: 0 14px 40px #000000dd;
     background: #101216f5;
     color: #f4f7ff;
     font-size: 1rem;
-    
-    animation: scaleIn 0.15s ease-out;
+    animation: elevatedOverlayScaleIn 0.15s ease-out;
 }
 
-.overlay-panel .overlay-header-text {
-    min-width: 0;
-    overflow: hidden;
-    color: #ffd764;
-    font-size: 1.05rem;
-    font-weight: 900;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.overlay-header {
+.elevated-overlay-header {
     display: flex;
     width: 100%;
     min-height: 3.25rem;
@@ -58,7 +42,17 @@
     gap: 0.75rem;
 }
 
-.overlay-body {
+.elevated-overlay-header-text {
+    min-width: 0;
+    overflow: hidden;
+    color: #ffd764;
+    font-size: 1.05rem;
+    font-weight: 900;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.elevated-overlay-body {
     display: flex;
     width: 100%;
     min-width: 0;
@@ -70,26 +64,23 @@
     scrollbar-color: #777 #17191e;
 }
 
-.overlay-close-btn {
-    display: flex;
+.elevated-overlay-close-btn {
     position: relative;
+    display: flex;
     width: 2.25rem;
     height: 2.25rem;
     flex: 0 0 2.25rem;
-
     align-items: center;
     justify-content: center;
-
     border: 1px solid #555;
     border-radius: 0;
     background: #1b1e25;
     cursor: pointer;
-
     transition: border-color 0.2s ease-out, background 0.2s ease-out;
 }
 
-.overlay-close-btn::before,
-.overlay-close-btn::after {
+.elevated-overlay-close-btn::before,
+.elevated-overlay-close-btn::after {
     content: "";
     position: absolute;
     width: 55%;
@@ -97,72 +88,72 @@
     background: #f4f7ff;
 }
 
-.overlay-close-btn::before {
+.elevated-overlay-close-btn::before {
     transform: rotate(45deg);
 }
 
-.overlay-close-btn::after {
+.elevated-overlay-close-btn::after {
     transform: rotate(-45deg);
 }
 
-.overlay-close-btn:hover,
-.overlay-close-btn:focus-visible {
+.elevated-overlay-close-btn:hover,
+.elevated-overlay-close-btn:focus-visible {
     outline: none;
     border-color: #ffd764;
     background: #55461f;
 }
 
-@keyframes fadeIn {
+@keyframes elevatedOverlayFadeIn {
     from {
-        opacity: 0
+        opacity: 0;
     }
 
     to {
-        opacity: 1
+        opacity: 1;
     }
 }
 
-@keyframes scaleIn {
+@keyframes elevatedOverlayScaleIn {
     from {
         transform: scale(0.96);
-        opacity: 0
+        opacity: 0;
     }
 
     to {
         transform: scale(1);
-        opacity: 1
+        opacity: 1;
     }
 }
 
 @media (max-width: 1024px) {
-    .overlay-panel {
-        width: min(92vw, 70rem);
+    .elevated-overlay-panel {
+        width: min(90vw, 56rem);
         min-width: 0;
-        aspect-ratio: auto;
     }
 }
 
 @media (max-width: 560px) {
-    .overlay-backdrop {
+    .elevated-overlay-backdrop {
         padding: 0.5rem;
     }
 
-    .overlay-panel {
+    .elevated-overlay-panel {
         width: calc(100vw - 1rem);
         max-width: calc(100vw - 1rem);
         max-height: calc(100dvh - 1rem);
+        aspect-ratio: auto;
     }
 
-    .overlay-header {
+    .elevated-overlay-header {
         min-height: 3rem;
         padding-left: 0.75rem;
     }
 
-    .overlay-panel .overlay-header-text {
+    .elevated-overlay-header-text {
         font-size: 0.92rem;
     }
 
-    .overlay-body {
+    .elevated-overlay-body {
         padding: 0.65rem;
     }
 }

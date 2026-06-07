@@ -12,8 +12,9 @@ import { echoDict, type EchoData } from "@/datas/echos";
 import type { EchoSelectProps, SelectOption, SelectOriginalOption, SelectOptionWithImage, SelectOptionStatOriginal, Cost, SelectOpt } from "./EchoSelect.type";
 import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase } from "./EchoSelect.helper";
 
-import type { EchoRuntime } from "@/runtime/echo.runtime";
-import { setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
+import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime";
+import { patchEchoAt, setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
+import { locale } from "@/locales/locale";
 
 import "./EchoSelect.css"
 
@@ -24,6 +25,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData, patchCharacterData } = useCharacter();
+  const localeText = locale(lang).card;
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [slotHeight, setSlotHeight] = useState(16);
@@ -157,6 +159,18 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   //* =========================================================    
   return (
     <div className="echo-select-wrapper" ref={wrapRef}>
+      <button
+        type="button"
+        className={`${lang}-font echo-select-reset-button`}
+        onClick={() =>
+          patchCharacterData(
+            patchEchoAt(characterData, index, createEmptyEchoRuntime(4)),
+          )
+        }
+      >
+        {localeText.resetEchoData}
+      </button>
+
       <div className="drop-slot large">
         <Select
           options={COST_DROP_OPTION}
@@ -206,7 +220,9 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                 }}
                 src="/default.webp"
               />
-              <span style={{whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)"}}>에코명으로 검색</span>
+              <span style={{whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)"}}>
+                {localeText.echoSearch}
+              </span>
             </div>
           }
           styles={STAT_DROP_STYLE_LARGE}

@@ -35,7 +35,7 @@ export default function Navbar() {
     ? ""
     : user
       ? user.nickname
-      : "로그인";
+      : localeText.login;
 
   const profileImage = isLoading
     ? "/default.webp"
@@ -53,20 +53,50 @@ export default function Navbar() {
     control: (base: any) => ({
       ...base,
       width: "max(min(11.5vw, 11.5rem), 7.5rem)",
-      backgroundColor: "transparent",
+      minHeight: "2.5rem",
+      borderColor: "#555",
+      borderRadius: 0,
+      backgroundColor: "#1b1e25",
+      boxShadow: "none",
+      cursor: "pointer",
+      ":hover": {
+        borderColor: "#ffd764",
+      },
     }),
     singleValue: (base: any) => ({
       ...base,
       color: "#fff",
     }),
-    option: (base: any) => ({
+    menu: (base: any) => ({
       ...base,
-      backgroundColor: "#eee",
+      overflow: "hidden",
+      border: "1px solid #666",
+      borderRadius: 0,
+      backgroundColor: "#101216",
+      zIndex: 1010,
+    }),
+    menuList: (base: any) => ({
+      ...base,
+      padding: 0,
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      color: "#fff",
+      backgroundColor: state.isSelected
+        ? "#55461f"
+        : state.isFocused
+          ? "#2d313a"
+          : "#101216",
+      cursor: "pointer",
     }),
     dropdownIndicator: (base: any) => ({
       ...base,
+      color: "#bfc2ca",
       padding: "0 min(1vw, 1rem)"
-    })
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
   };
 
   const sidebarLangSelectStyles = {
@@ -75,9 +105,9 @@ export default function Navbar() {
       ...base,
       width: "100%",
       minHeight: "2.25rem",
-      borderColor: "rgba(255, 255, 255, 0.16)",
-      borderRadius: "0.45rem",
-      backgroundColor: "rgba(255, 255, 255, 0.08)",
+      borderColor: "#555",
+      borderRadius: 0,
+      backgroundColor: "#1b1e25",
       boxShadow: "none",
     }),
     menu: (base: any) => ({
@@ -141,7 +171,7 @@ export default function Navbar() {
 
       <div id="navbar-sidebar" className={`${isActive ? "active" : "idle"}`}>
         <div className="sidebar-head-slot">
-          <span>MENU</span>
+          <span>{localeText.menu}</span>
           <button
             className="sidebar-close-btn"
             type="button"
@@ -168,13 +198,19 @@ export default function Navbar() {
         </div>
 
         <nav className="sidebar-link-slot">
-          <a href="/characters" onClick={() => setIsActive(false)}>
+          <a
+            href="/characters"
+            onClick={() => setIsActive(false)}
+          >
             <img className="navbar-icon"
               alt="characters"
               src="/default.webp" />
             <p className={`${lang}-font`}>{localeText.characters}</p>
           </a>
-          <a href="/card" onClick={() => setIsActive(false)}>
+          <a
+            href="/card"
+            onClick={() => setIsActive(false)}
+          >
             <img className="navbar-icon"
               alt="generator"
               src="/default.webp" />
@@ -183,7 +219,11 @@ export default function Navbar() {
         </nav>
 
         <div className="sidebar-bottom-slot">
-          <a href="/profile" className="sidebar-profile-slot" onClick={() => setIsActive(false)}>
+          <a
+            href="/profile"
+            className="sidebar-profile-slot"
+            onClick={() => setIsActive(false)}
+          >
             <img className="navbar-icon"
               alt="profile"
               src={profileImage} />

@@ -3,11 +3,12 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api";
 import { useOverlay } from "@/contexts/PopupContext";
 import CharacterSlot from "@/components/features/Characters/CharacterSlot";
-import { character } from "@/datas/characters";
+import { characterList } from "@/datas/characters";
 import { HOME_POSTS, type HomePost } from "@/posts/homePosts.tsx";
 import { loadSummaryStore } from "@/summaryData/storage";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { getCharacterRank } from "@/types/character.type";
+import { locale } from "@/locales/locale";
 
 import { periodicContents, type PeriodicContent } from "@/datas/periodic";
 import { useSeasonRemainingTime } from "@/hooks/useSeasonRemainingTime";
@@ -23,9 +24,13 @@ const DISPLAY_LIMIT_SMALL_BREAKPOINT = 572;
 function GameInfoSlot({
   content,
   lang,
+  resetLabel,
+  waitingLabel,
 }: {
   content: PeriodicContent;
   lang: LangType;
+  resetLabel: string;
+  waitingLabel: string;
 }) {
   const remainingTime = useSeasonRemainingTime(content.seasons);
 
@@ -33,7 +38,7 @@ function GameInfoSlot({
     <div className={`inner-slot ${content.className ?? content.id}`}>
       <span className={`${lang}-font title`}>{content.name[lang]}</span>
       <span className={`${lang}-font`}>
-        초기화: <em>{remainingTime?.text ?? "시즌 대기 중"}</em>
+        {resetLabel}: <em>{remainingTime?.text ?? waitingLabel}</em>
       </span>
     </div>
   );
@@ -88,21 +93,24 @@ function VideoSlot({
   trailer,
   combat,
   intro,
+  lang,
 }: {
   trailer: YoutubeLatestVideo | null;
   combat: YoutubeLatestVideo | null;
   intro: YoutubeLatestVideo | null;
+  lang: LangType;
 }) {
   const { openOverlay } = useOverlay();
+  const localeText = locale(lang).home;
   const mainVideo = trailer ?? combat ?? intro;
   const subVideos = [
-    { title: "캐릭터 트레일러", video: combat },
-    { title: "공명자 전투모션", video: intro },
+    { title: localeText.video2, video: combat },
+    { title: localeText.video3, video: intro },
   ];
 
   return (
     <article className="summary-item video-slot">
-      <h2>공식 영상</h2>
+      <h2>{localeText.officialVideos}</h2>
       <button
         className="video-main-item"
         type="button"
@@ -110,7 +118,7 @@ function VideoSlot({
           if (mainVideo) openOverlay(<YoutubeVideoCard video={mainVideo} />, { title: mainVideo.title });
         }}
       >
-        <span>{mainVideo?.title ?? "공식 영상을 불러오는 중입니다."}</span>
+        <span>{mainVideo?.title ?? localeText.loadingVideos}</span>
         <img src={mainVideo?.thumbnail ?? "/gifs/02.gif"} alt="" />
       </button>
 
@@ -138,6 +146,7 @@ function VideoSlot({
 
 export default function Home() {
   const { lang } = useAppStore();
+  const localeText = locale(lang);
   const { openOverlay } = useOverlay();
   const summaryStore = useMemo(() => loadSummaryStore(), []);
   const [displayLimit, setDisplayLimit] = useState(() => {
@@ -200,33 +209,30 @@ export default function Home() {
   const latestPosts = sortedPosts.slice(0, 4);
 
   const topCharacters = useMemo(() => {
-    return Object.entries(character)
-      .map(([id, item]) => {
-        const score = summaryStore.data[id]?.score ?? 0;
+    return characterList
+      .map((item) => {
+        const score = summaryStore.data[item.id]?.score ?? 0;
 
-        return [
-          id,
-          {
-            ...item,
-            score,
-            rank: getCharacterRank(score),
-          },
-        ] as const;
+        return {
+          ...item,
+          score,
+          rank: getCharacterRank(score),
+        };
       })
-      //.filter(([, item]) => item.score > 0)
-      .sort(([, a], [, b]) => b.score - a.score)
+      //.filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
       .slice(0, displayLimit);
   }, [displayLimit, summaryStore]);
 
   return (
     <div id="page-slot" className="home-slot">
       <section className="banner-slot">
-        <h1>띵조 DEV</h1>
+        <h1>{localeText.navbar.title}</h1>
       </section>
 
       <section className="summary-slot">
         <article className="summary-item notice-slot">
-          <h2>최신 공지사항</h2>
+          <h2>{localeText.home.latestNotices}</h2>
           <ul>
             {latestPosts.map((post) => (
               <li key={post.id}>
@@ -241,7 +247,7 @@ export default function Home() {
                     })
                   }
                 >
-                  <span>[공지] {textFromNode(post.title[lang])}</span>
+                  <span>[{localeText.home.noticePrefix}] {textFromNode(post.title[lang])}</span>
                   <time>{compactDate(post.date)}</time>
                 </button>
               </li>
@@ -251,20 +257,25 @@ export default function Home() {
             type="button"
             onClick={() =>
               openOverlay(<NoticeListSlot posts={sortedPosts} lang={lang} />, {
-                title: "공지사항",
+                title: localeText.home.title1,
                 width: "min(90vw, 58rem)",
                 height: "min(86vh, 46rem)",
               })
             }
           >
-            공지 더 보기
+            {localeText.home.moreNotices}
           </button>
         </article>
 
-        <VideoSlot trailer={trailer} combat={combat} intro={intro} />
+        <VideoSlot
+          trailer={trailer}
+          combat={combat}
+          intro={intro}
+          lang={lang}
+        />
 
         <article className="summary-item info-slot">
-          <h2>인게임 정보</h2>
+          <h2>{localeText.home.inGameInfo}</h2>
           {/*
           <div className="game-info-slot">
             <div className="inner-slot tower">
@@ -292,6 +303,8 @@ export default function Home() {
                 key={content.id}
                 content={content}
                 lang={lang}
+                resetLabel={localeText.home.reset}
+                waitingLabel={localeText.home.seasonWaiting}
               />
             ))}
           </div>
@@ -299,12 +312,11 @@ export default function Home() {
       </section>
 
       <section className="display-slot">
-        <h2>특별 진열대</h2>
+        <h2>{localeText.home.showcase}</h2>
         <div className="display-list-slot">
-          {topCharacters.map(([id, item]) => (
+          {topCharacters.map((item) => (
             <CharacterSlot
-              key={id}
-              id={id}
+              key={item.id}
               isGrid={true}
               prop={item}
             />

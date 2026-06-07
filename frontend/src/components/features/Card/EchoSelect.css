@@ -8,6 +8,27 @@
     justify-content: space-between;
 }
 
+.echo-select-reset-button {
+    width: 100%;
+    min-height: 2.5rem;
+    padding: 2% 3%;
+    color: #f4f7ff;
+    font-size: min(1.1vw, 0.85rem);
+    font-weight: 600;
+    border: 1px solid #666;
+    border-radius: 0;
+    background: #1b1e25;
+    cursor: pointer;
+}
+
+.echo-select-reset-button:hover,
+.echo-select-reset-button:focus-visible {
+    outline: none;
+    color: #ffd764;
+    border-color: #ffd764;
+    background: #55461f;
+}
+
 .echo-select-wrapper .divider {
     width: 90%;
     min-height: 1px;

@@ -3,6 +3,8 @@
 	flex-direction: row;
 	width: 100%;
 	height: 100%;
+	min-width: 0;
+	min-height: 0;
 
 	align-items: flex-start;
 	justify-content: space-between;
@@ -18,6 +20,8 @@
 	display: flex;
 	position: relative;
 	flex-direction: column;
+	min-width: 0;
+	min-height: 0;
 
 	align-items: center;
 
@@ -31,7 +35,59 @@
 }
 
 .ocr-comp-body .ocr-slot.echo {
-	width: 45%;
+	display: flex;
+	width: 100%;
+	height: 100%;
+}
+
+.ocr-comp-body.echo-data-manager {
+	min-height: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.ocr-comp-body.echo-data-manager .ocr-slot.echo {
+	height: 100%;
+	justify-content: center;
+}
+
+.ocr-data-editor {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 3/4;
+}
+
+.ocr-data-editor > div {
+	min-width: 0;
+	min-height: 0;
+}
+
+.ocr-image-input-panel {
+	min-height: 0;
+}
+
+.ocr-request-slot {
+	display: flex;
+	width: 100%;
+	height: 20%;
+	flex-direction: column;
+}
+
+.ocr-message {
+	white-space: pre;
+	text-align: center;
+	font-size: min(1vw, 1rem) !important;
+}
+
+.ocr-result-data {
+	display: flex;
+	width: 90%;
+	min-height: 0;
+	height: 100%;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 2.5%;
 }
 
 
@@ -52,6 +108,8 @@
 	display: flex;
 	flex-direction: column;
 	width: 50%;
+	min-width: 0;
+	min-height: 0;
 	height: 100%;
 	align-items: center;
 }
@@ -227,5 +285,50 @@
 
 	100% {
 		transform: translateX(300%);
+	}
+}
+
+@media (max-width: 780px) {
+	.ocr-comp-body.echo-data-manager .ocr-slot.echo {
+		gap: 1.5%;
+	}
+}
+
+@media (max-width: 560px) {
+	.ocr-comp-body.ocr-image-input-panel {
+		height: auto;
+		min-height: 62rem;
+	}
+
+	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr {
+		height: auto;
+		flex-direction: column;
+		gap: 2%;
+	}
+
+	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr > .container {
+		width: 100%;
+		height: auto;
+		flex: none;
+	}
+
+	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr > .container:first-of-type {
+		min-height: 30rem;
+	}
+
+	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr > .container:last-of-type {
+		min-height: 32rem;
+	}
+
+	.ocr-comp-body.ocr-image-input-panel .ocr-slot .inner-slot.top {
+		min-height: 18rem;
+	}
+
+	.ocr-comp-body.ocr-image-input-panel .ocr-slot .inner-slot.result {
+		min-height: 10rem;
+	}
+
+	.ocr-comp-body.ocr-image-input-panel .ocr-slot .file-slot {
+		max-width: 24rem;
 	}
 }

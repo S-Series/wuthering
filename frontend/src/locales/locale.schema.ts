@@ -9,6 +9,7 @@ export type LocaleSchema = {
     characters: string;
     generator: string;
     login: string;
+    menu: string;
   };
   home: {
     title1: string;
@@ -18,6 +19,24 @@ export type LocaleSchema = {
     video2: string;
     video3: string;
     click: string;
+    latestNotices: string;
+    noticePrefix: string;
+    moreNotices: string;
+    officialVideos: string;
+    loadingVideos: string;
+    inGameInfo: string;
+    reset: string;
+    seasonWaiting: string;
+    showcase: string;
+  };
+  characters: {
+    search: string;
+    sortScore: string;
+    sortRelease: string;
+    configured: string;
+    filterWeapon: string;
+    filterElement: string;
+    noResults: string;
   };
   card: {
     help: string;
@@ -30,8 +49,41 @@ export type LocaleSchema = {
     scoreboard: string;
     cMenu: string;
     wMenu: string;
+    characterWeaponData: string;
     eMenu: string;
     oMenu: string;
+    imageInput: string;
+    resetEchoData: string;
+    echoSearch: string;
+    applyData: string;
+  };
+  cardDetail: {
+    sections: {
+      party: string;
+      skill: string;
+      weapon: string;
+      echo: string;
+      main: string;
+      sub: string;
+      target: string;
+    };
+    skills: {
+      basic: string;
+      skill: string;
+      liberation: string;
+      forte: string;
+      outro: string;
+    };
+    subStats: {
+      priority: string;
+      secondary: string;
+    };
+    parties: {
+      temporary: string;
+      harmonyBreak: string;
+      fusionAnomaly: string;
+      budgetAlternatives: string;
+    };
   };
   ocr: {
     status: string;
@@ -43,5 +95,10 @@ export type LocaleSchema = {
     description3: string,
     healthCheck: string,
     healthFalse: string,
+    echoList: string;
+    echoData: string;
+    inspectData: string;
   }
 };
+
+export type CardDetailPartyKey = keyof LocaleSchema["cardDetail"]["parties"];

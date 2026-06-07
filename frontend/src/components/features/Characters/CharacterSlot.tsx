@@ -5,15 +5,15 @@ import type { CharacterRank } from "@/types/character.type";
 import "./CharacterSlot.css"
 
 interface CharaterSlotProps {
-  id: string;
   prop: Character & { score: number; rank: CharacterRank };
   isGrid: boolean;
 }
 
-export default function CharacterSlot({ id, isGrid, prop }: CharaterSlotProps) {
+export default function CharacterSlot({ isGrid, prop }: CharaterSlotProps) {
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { lang } = useAppStore();
+  const id = prop.id;
 
   return (
     isGrid ? (

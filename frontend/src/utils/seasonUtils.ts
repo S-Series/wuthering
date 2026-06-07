@@ -27,7 +27,7 @@ export const getRemainingTime = (
   endDate: string,
   now: Date = new Date()
 ): RemainingTime => {
-  const endTime = new Date(`${endDate}T00:00:00`).getTime();
+  const endTime = new Date(`${endDate}T00:00:00`).getTime() + 4 * 60 * 60 * 1000;
   const totalMs = Math.max(endTime - now.getTime(), 0);
 
   const totalSeconds = Math.floor(totalMs / 1000);

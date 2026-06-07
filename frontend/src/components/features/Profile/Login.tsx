@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
-import { useOverlay } from "@/contexts/PopupContext";
+import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
 import AccountRecovery from "@/components/features/Profile/AccountRecovery";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 
 export default function Login({ setAction }: Props) {
   const { loginAction, loginWithGoogleAction } = useAuthStore();
-  const { openOverlay } = useOverlay();
+  const { openElevatedOverlay } = useElevatedOverlay();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,12 +48,13 @@ export default function Login({ setAction }: Props) {
       </section>
 
       <section className="profile-panel">
-        <form className="profile-card" onSubmit={onSubmit}>
+        <form className="profile-card profile-login-card" onSubmit={onSubmit}>
           <div className="profile-card-header">
             <h2>로그인</h2>
             <p>이메일 또는 Google 계정으로 로그인할 수 있습니다.</p>
           </div>
 
+          <div className="profile-card-body">
           <div className="profile-field">
             <label htmlFor="login-email">이메일</label>
             <input
@@ -93,7 +94,7 @@ export default function Login({ setAction }: Props) {
           <div className="profile-find-row">
             <button
               type="button"
-              onClick={() => openOverlay(
+              onClick={() => openElevatedOverlay(
                 <AccountRecovery defaultMode="id" defaultEmail={email} />,
                 { title: "아이디 찾기", width: "min(92vw, 420px)" }
               )}
@@ -103,7 +104,7 @@ export default function Login({ setAction }: Props) {
             <span />
             <button
               type="button"
-              onClick={() => openOverlay(
+              onClick={() => openElevatedOverlay(
                 <AccountRecovery defaultMode="password" defaultEmail={email} />,
                 { title: "비밀번호 찾기", width: "min(92vw, 420px)" }
               )}
@@ -141,6 +142,7 @@ export default function Login({ setAction }: Props) {
             >
               회원가입
             </button>
+          </div>
           </div>
         </form>
       </section>

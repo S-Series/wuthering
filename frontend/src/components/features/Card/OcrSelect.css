@@ -1,7 +1,23 @@
+.ocr-select-layout {
+    display: flex;
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .ocr-select-body {
     display: flex;
     width: 100%;
-    height: 70%;
+    height: 100%;
+    gap: 5%;
+    align-items: stretch;
+    object-fit: contain;
+    overflow: hidden;
     justify-content: space-evenly;
 }
 
@@ -10,8 +26,7 @@
     flex-direction: column;
 
     width: 45%;
-    min-width: 5rem;
-    height: 100%;
+    aspect-ratio: 2/5;
 
     align-items: center;
     gap: 3.5%;
@@ -26,14 +41,53 @@
 .ocr-select-body .select-item-slot .item-slot-container {
     display: flex;
     width: 100%;
+    min-width: 0;
+    min-height: 0;
     height: 100%;
+}
+
+.ocr-select-body .select-item-slot:last-child .item-slot-container {
+    height: auto;
+    min-height: 0;
+    flex: 1;
+}
+
+.ocr-select-actions {
+    display: flex;
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+.ocr-select-actions button {
+    width: 100%;
+    min-width: 0;
+    min-height: min(7vw, 2.5rem);
+    padding: 2% 3%;
+    overflow: hidden;
+    color: #f4f7ff;
+    font-size: min(1.1vw, 0.85rem);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: 1px solid #666;
+    border-radius: 0;
+    background: #1b1e25;
+    cursor: pointer;
+}
+
+.ocr-select-actions button:hover,
+.ocr-select-actions button:focus-visible {
+    outline: none;
+    color: #ffd764;
+    border-color: #ffd764;
+    background: #55461f;
 }
 
 .ocr-select-body .select-item-slot .echo-item {
     display: flex;
 
     width: 95%;
-    height: 8%;
+    height: 100%;
 
     align-items: center;
     justify-content: flex-start;
@@ -41,7 +95,7 @@
 
     border: 1px solid #000;
     background-color: #ffffff44;
-    font-size: 0.75rem;
+    font-size: min(1vw, 0.75rem);
 }
 
 .ocr-select-body .select-item-slot .echo-item.selected {
@@ -69,48 +123,76 @@
     font-size: min(1vw, 0.85rem);
 }
 
-.ocr-debug-slot {
-    display: flex;
-    position: relative;
-    width: 0;
-    height: calc(27.5% - 2px);
-    max-height: 0%;
+@media (max-width: 780px) {
+    .ocr-select-body {
+        gap: 3%;
+    }
 
-    margin: 0 auto;
-    margin-top: auto;
+    .ocr-select-body .select-item-slot {
+        width: 48.5%;
+    }
 
-    border: 1px solid transparent;
-    background-color: transparent;
-
-    overflow: hidden;
-
-    transition: all 0.3s ease-out;
+    .ocr-select-actions button {
+        font-size: min(2vw, 0.8rem);
+    }
 }
 
-.ocr-debug-slot.active {
-    width: calc(95% - 2px);
-    max-height: 30%;
-    border: 1px solid #fff;
-    background-color: #00000044;
-}
+@media (max-width: 560px) {
+    .ocr-data-editor,
+    .ocr-data-editor > div {
+        height: auto !important;
+        overflow: visible;
+    }
 
-.ocr-debug-slot > p {
-    white-space: pre;
-    margin: 5%;
-    color: #ccc;
-    font-size: min(1vw, 0.85rem);
-}
+    .ocr-select-body {
+        height: auto;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 2%;
+        overflow-x: hidden;
+        overflow-y: visible;
+    }
 
-.ocr-debug-button {
-    position: absolute;
-    width: 40%;
-    height: auto;
-    padding: 0;
-    aspect-ratio: 5 / 1;
+    .ocr-select-body .select-item-slot {
+        width: 49%;
+        min-width: 0;
+        max-width: 49%;
+        height: 100%;
+        flex: 1 1 0;
+        aspect-ratio: auto;
+        gap: 1.5%;
+        box-sizing: border-box;
+    }
 
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    .ocr-select-body .select-item-slot .item-slot-container,
+    .ocr-select-body .select-item-slot .echo-drag-select,
+    .ocr-select-body .select-item-slot .echo-select-wrapper {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
 
-    color: #fff;
+    .ocr-select-body .select-item-slot:first-child {
+        min-height: min(115vw, 32rem);
+    }
+
+    .ocr-select-body .select-item-slot:last-child {
+        min-height: min(122vw, 34rem);
+    }
+
+    .ocr-select-body .select-item-slot .item-slot-title {
+        height: auto;
+        min-height: min(5vw, 1.5rem);
+    }
+
+    .ocr-select-actions {
+        display: flex;
+    }
+
+    .ocr-select-actions button {
+        width: 100%;
+        min-height: min(11vw, 2.75rem);
+        font-size: min(3vw, 0.9rem);
+    }
 }

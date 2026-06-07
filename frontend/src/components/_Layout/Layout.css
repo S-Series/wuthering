@@ -32,11 +32,12 @@ body {
   background-position: center;
   background-attachment: fixed;
   
-  background-color: #ccc;
+  color: #f4f7ff;
+  background-color: #101216;
 }
 
 body.page-home {
-  background-image: url("/bg.png");
+  background-image: url("/cardBg.jpg");
 }
 
 body.page-characters {
@@ -78,7 +79,7 @@ body.page-card::before {
 }
 
 body.page-profile {
-  background-image: url("/bg.png");
+  background-image: url("/cardBg.jpg");
 }
 @media (max-width: 780px) {
   #main-container {

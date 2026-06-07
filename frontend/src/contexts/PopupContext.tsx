@@ -3,6 +3,10 @@ import { createPortal } from "react-dom";
 
 import "./PopupContext.css";
 import { useAppStore } from "@/stores/appStore";
+import {
+  lockDocumentScroll,
+  unlockDocumentScroll,
+} from "./documentScrollLock";
 
 type OverlayOptions = {
   title?: string;
@@ -61,11 +65,10 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!state.open) return;
 
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    lockDocumentScroll();
 
     return () => {
-      document.body.style.overflow = prevOverflow;
+      unlockDocumentScroll();
     };
   }, [state.open, state.options.closeOnEsc, closeOverlay]);
 
@@ -102,6 +105,8 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
 
                   {state.options.showCloseButton && (
                     <button
+                      type="button"
+                      aria-label="close"
                       onClick={closeOverlay}
                       className="overlay-close-btn"
                     />

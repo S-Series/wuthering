@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
-import { useOverlay } from "@/contexts/PopupContext";
+import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
 
 import Terms from "@/components/features/Profile/Terms";
 import Privacy from "@/components/features/Profile/Privacy";
@@ -31,7 +31,7 @@ export default function Signup({ setAction }: Props) {
   };
 
   const { signupAction } = useAuthStore();
-  const { openOverlay } = useOverlay();
+  const { openElevatedOverlay } = useElevatedOverlay();
 
   const isPasswordMatched =
     form.password.length > 0 &&
@@ -81,6 +81,7 @@ export default function Signup({ setAction }: Props) {
             <p>이메일과 비밀번호로 계정을 생성합니다.</p>
           </div>
 
+          <div className="profile-card-body">
           <div className="profile-field">
             <label htmlFor="email">이메일</label>
             <input
@@ -169,9 +170,9 @@ export default function Signup({ setAction }: Props) {
               onChange={onChangeInput}
             />
             <span>
-              <em onClick={() => { openOverlay(<Terms/>) }}>이용약관</em>
+              <em onClick={() => { openElevatedOverlay(<Terms/>) }}>이용약관</em>
               &nbsp;및&nbsp;
-              <em onClick={() => { openOverlay(<Privacy/>) }}>개인정보 처리</em>에 동의합니다.
+              <em onClick={() => { openElevatedOverlay(<Privacy/>) }}>개인정보 처리</em>에 동의합니다.
             </span>
           </label>
 
@@ -185,6 +186,7 @@ export default function Signup({ setAction }: Props) {
               onClick={() => {setAction(false)}}>
               로그인
             </button>
+          </div>
           </div>
         </form>
       </section>

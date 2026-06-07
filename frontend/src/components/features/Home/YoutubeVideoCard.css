@@ -16,8 +16,8 @@
   background: none;
   cursor: pointer;
   overflow: hidden;
-  border-radius: 1rem;
-  border: 1px solid #000;
+  border-radius: 0;
+  border: 1px solid #666;
 }
 
 .youtube-thumb,
@@ -27,7 +27,7 @@
   display: block;
   object-fit: cover;
   border: 0;
-  border-radius: 1rem;
+  border-radius: 0;
 }
 
 .youtube-play {
@@ -60,14 +60,15 @@
   width: auto;
   height: 70%;
   aspect-ratio: 3.5 / 1;
-  color: #000;
+  color: #fff;
   font-size: min(1.5vw, 1.5rem);
-  background-color: #ffffff66;
-  border: 1px solid #ffcc9966;
+  background-color: #1b1e25;
+  border: 1px solid #555;
   transition: all 0.2s ease-out;
 }
 
 .youtube-panel-control > button:hover {
   color: #fff;
-  background-color: #00000066;
+  border-color: #ffd764;
+  background-color: #55461f;
 }

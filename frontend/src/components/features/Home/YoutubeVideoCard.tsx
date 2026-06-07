@@ -4,6 +4,7 @@ import type { YoutubeLatestVideo } from "@/api/youtube.api";
 
 import "./YoutubeVideoCard.css"
 import { useOverlay } from "@/contexts/PopupContext";
+import { locale } from "@/locales/locale";
 
 
 type Props = {
@@ -14,15 +15,7 @@ export default function YoutubeVideoCard({ video }: Props) {
   const { lang } = useAppStore();
   const {closeOverlay} = useOverlay();
   const [isPlaying, setIsPlaying] = useState(false);
-
-  const smallLocale = () => {
-    switch(lang) {
-      case "kr": return "닫기";
-      case "en": return "Close";
-      case "jp": return "";
-      case "zh": return "";
-    }
-  }
+  const localeText = locale(lang);
 
   return (
     <div className="youtube-card">
@@ -49,7 +42,9 @@ export default function YoutubeVideoCard({ video }: Props) {
         />
       )}
       <div className="youtube-panel-control">
-        <button onClick={closeOverlay} className={`${lang}-font`}>{smallLocale()}</button>
+        <button onClick={closeOverlay} className={`${lang}-font`}>
+          {localeText.common.close}
+        </button>
       </div>
     </div>
   );

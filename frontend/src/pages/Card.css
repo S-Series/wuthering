@@ -99,54 +99,12 @@
     overflow-y: auto;
 }
 
-#card-page-slot .card-section.right .card-slot.echo.active {
-    height: min(40vw, 35rem);
-    gap: 0;
-    padding: 0;
-}
-
-#card-page-slot .card-section.right .card-slot.echo .echo-slot {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 12.5%;
-}
-
-#card-page-slot .card-section.right .card-slot.echo .echo-slot button {
-    width: 90%;
-    height: 70%;
-}
-
-#card-page-slot .card-section.right .card-slot.echo .echo-slot .dropdown {
-    display: flex;
-    height: 16px;
-    align-items: center;
-    justify-content: space-between;
-}
-
-#card-page-slot .card-section.right .card-slot.echo .echo-slot .stats {
-    display: flex;
-    flex-direction: column;
-    height: 1rem;
-    justify-content: space-between;
-}
-
 #card-page-slot .card-section.right .filter-slot {
     display: flex;
     width: 100%;
     height: fit-content;
     align-items: center;
     justify-content: space-evenly;
-}
-
-#card-page-slot .card-section.right .drag-slot {
-    display: flex;
-    width: 90%;
-    height: 87.5%;
-    align-items: center;
-    justify-content: center;
 }
 
 #card-page-slot .card-section.right .filter-item {
@@ -184,20 +142,11 @@
     background-color: #00000066;
 }
 
-#card-page-slot .card-section.right .card-preview.echo.active {
-    height: min(4vw, 4.44rem);
-}
-
 #card-page-slot .card-section.right .card-preview img {
     width: 100%;
     filter: brightness(0.5);
 } 
     
-#card-page-slot .card-section.right .card-preview.echo img {
-    width: 20%;
-    filter: brightness(1.0);
-}
-
 #card-page-slot .card-section.right .card-preview span {
     position: absolute;
     top: auto;
@@ -569,7 +518,7 @@
     }
 
     #card-page-slot .card-section.right .card-section-wrapper {
-        width: 32%;
+        width: 49%;
         align-items: center;
     }
 
@@ -606,10 +555,6 @@
 
     #card-page-slot .card-section.right .card-slot.active {
         transform: none !important;
-    }
-
-    #card-page-slot .card-section.right .card-slot.echo {
-        gap: 0;
     }
 
     #card-page-slot .card-section.right .card-item.weapon > div > span {

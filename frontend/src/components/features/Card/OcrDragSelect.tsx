@@ -27,6 +27,7 @@ import { useStyleStore } from "@/stores/styleStore";
 import type { Cost, SelectOpt, SelectOption, SelectOptionStatOriginal, SelectOptionWithImage, SelectOriginalOption } from "./EchoSelect.type";
 import { createEmptyEchoRuntime, type EchoRuntime, type EchoStatOption, type EchoStatOptionSub } from "@/runtime/echo.runtime";
 import { patchEchoAt } from "@/runtime/characterData.helpers";
+import { locale } from "@/locales/locale";
 
 export type DragItem = {
   id: number;
@@ -101,6 +102,7 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
   const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData, patchCharacterData } = useCharacter();
+  const localeText = locale(lang).card;
 
   const [sourceItems, setSourceItems] = useState<DragItem[]>([]);
   const [itemOrder, setItemOrder] = useState<number[]>(DEFAULT_ORDER);
@@ -340,7 +342,9 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
                     }}
                     src="/default.webp"
                   />
-                  <span style={{ whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)" }}>에코명으로 검색</span>
+                  <span style={{ whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)" }}>
+                    {localeText.echoSearch}
+                  </span>
                 </div>
               }
               isClearable={true}
@@ -416,7 +420,7 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
           setTempEcho(InitTempEcho());
         }}
       >
-        데이터 적용
+        {localeText.applyData}
       </button>
     </div>
   );
