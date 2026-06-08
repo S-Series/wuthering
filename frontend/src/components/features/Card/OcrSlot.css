@@ -49,13 +49,18 @@
 .ocr-comp-body.echo-data-manager .ocr-slot.echo {
 	height: 100%;
 	justify-content: center;
+	overflow: hidden;
 }
 
 .ocr-data-editor {
 	display: flex;
-	width: 100%;
+	width: auto;
+	max-width: 100%;
 	height: 100%;
+	max-height: 100%;
 	aspect-ratio: 3/4;
+	margin: auto;
+	overflow: hidden;
 }
 
 .ocr-data-editor > div {
@@ -64,7 +69,15 @@
 }
 
 .ocr-image-input-panel {
+	position: relative;
+	width: auto;
+	max-width: 100%;
+	height: 100%;
+	max-height: 100%;
+	aspect-ratio: 4 / 3;
 	min-height: 0;
+	margin: auto;
+	overflow: hidden;
 }
 
 .ocr-request-slot {
@@ -82,12 +95,19 @@
 
 .ocr-result-data {
 	display: flex;
-	width: 90%;
+	width: 100%;
 	min-height: 0;
 	height: 100%;
 	flex-direction: column;
 	align-items: center;
-	margin-top: 2.5%;
+}
+
+.ocr-image-input-content {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	min-width: 0;
+	min-height: 0;
 }
 
 
@@ -114,7 +134,8 @@
 	align-items: center;
 }
 
-.ocr-comp-body .ocr-slot .container.checking {
+.ocr-comp-body .ocr-slot .container.checking,
+.ocr-image-input-panel > .container.checking {
 	display: flex;
 	position: absolute;
 	flex-direction: column;
@@ -129,13 +150,15 @@
 	z-index: 100;
 }
 
-.ocr-comp-body .ocr-slot .container.checking > img {
+.ocr-comp-body .ocr-slot .container.checking > img,
+.ocr-image-input-panel > .container.checking > img {
 	width: 50%;
 	height: auto;
 	aspect-ratio: 1/1;
 }
 
-.ocr-comp-body .ocr-slot .container.checking > span {
+.ocr-comp-body .ocr-slot .container.checking > span,
+.ocr-image-input-panel > .container.checking > span {
 	font-size: min(2vw, 2rem);
 }
 
@@ -145,11 +168,65 @@
 	cursor: not-allowed
 }
 
-.ocr-comp-body .ocr-slot .file-slot {
+.ocr-image-input-content.disable {
+	opacity: 0.3;
+	pointer-events: none;
+	cursor: not-allowed;
+}
+
+.ocr-image-input-top,
+.ocr-image-input-bottom {
+	display: flex;
+	width: 100%;
+	min-width: 0;
+	min-height: 0;
+	gap: min(1.4vw, 1rem);
+}
+
+.ocr-image-input-top {
+	flex: 0 0 34%;
+	align-items: stretch;
+}
+
+.ocr-image-input-bottom {
+	flex: 1 1 auto;
+	flex-direction: column;
+	align-items: center;
+	overflow: hidden;
+}
+
+.ocr-image-card {
+	display: flex;
+	min-width: 0;
+	min-height: 0;
+	flex-direction: column;
+	align-items: center;
+}
+
+.ocr-image-card > span,
+.ocr-image-input-bottom > span {
+	color: #eee;
+	filter: drop-shadow(0px 2px 4px #000);
+	font-weight: 500;
+	font-size: min(1.2vw, 1.2rem);
+}
+
+.ocr-drag-select__base-fields > .ocr-image-card {
+	flex: 0 1 34%;
+	max-height: 34%;
+}
+
+.ocr-drag-select__sub-fields > .ocr-image-card {
+	flex: 0 0 34%;
+	max-height: 34%;
+}
+
+.ocr-comp-body .ocr-slot .file-slot,
+.ocr-image-card > .file-slot {
 	display: flex;
 	width: calc(95% - 2px);
-	height: auto;
-	aspect-ratio: 20 / 14;
+	height: 100%;
+	min-height: 0;
 	
 	align-items: center;
 	justify-content: center;
@@ -164,9 +241,11 @@
 	overflow: hidden;
 }
 
-.ocr-comp-body .ocr-slot .file-slot > img {
+.ocr-comp-body .ocr-slot .file-slot > img,
+.ocr-image-card > .file-slot > img {
 	width: 100%;
 	height: 100%;
+	object-fit: contain;
 }
 
 .ocr-comp-body .ocr-slot .inner-slot {
@@ -179,22 +258,24 @@
 	align-items: center;
 }
 
-.ocr-comp-body .ocr-slot .inner-slot.result > .file-slot {
-	aspect-ratio: 10 / 9;
+.ocr-image-card--preview > .file-slot {
 	border: 1px solid #666;
 }
 
-.ocr-comp-body .ocr-slot .inner-slot.result {	
-	margin-top: auto;
-	height: fit-content;
+.ocr-image-card--input > .file-slot,
+.ocr-image-card--preview > .file-slot {
+	flex: 1 1 auto;
+	margin: min(0.7vw, 0.5rem) 0;
 }
 
-.ocr-comp-body .ocr-slot .file-slot.focused {
+.ocr-comp-body .ocr-slot .file-slot.focused,
+.ocr-image-card > .file-slot.focused {
 	background: #ffcccc44;
 	border: 1px dashed #000;
 }
 
-.ocr-comp-body .ocr-slot .file-slot .image-input {
+.ocr-comp-body .ocr-slot .file-slot .image-input,
+.ocr-image-card > .file-slot .image-input {
 	display: none;
 }
 
@@ -215,7 +296,8 @@
 	background-color: #00000066;
 }
 
-.ocr-comp-body .ocr-slot .ocr-button {
+.ocr-comp-body .ocr-slot .ocr-button,
+.ocr-image-card .ocr-button {
 	aspect-ratio: 4 / 1;
 	margin: 2.5% auto;
 	color: #000;
@@ -224,22 +306,26 @@
 	transition: all 0.2s ease-out;
 	cursor: pointer;
 }
-.ocr-comp-body .ocr-slot .ocr-button:disabled {
+.ocr-comp-body .ocr-slot .ocr-button:disabled,
+.ocr-image-card .ocr-button:disabled {
 	opacity: 0.5;
 	cursor:not-allowed;
 }
 
-.ocr-comp-body .ocr-slot .ocr-button:hover {
+.ocr-comp-body .ocr-slot .ocr-button:hover,
+.ocr-image-card .ocr-button:hover {
 	color: #fff;
 	background-color: #222;
 }
 
-.ocr-comp-body .ocr-slot .ocr-button:disabled:hover {
+.ocr-comp-body .ocr-slot .ocr-button:disabled:hover,
+.ocr-image-card .ocr-button:disabled:hover {
 	color: #000;
 	background-color: #666;
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot {
+.ocr-comp-body .ocr-slot .ocr-loading-slot,
+.ocr-image-card .ocr-loading-slot {
 	display: flex;
 	width: 80%;
 
@@ -249,12 +335,14 @@
 	justify-content: space-around;
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot span {
+.ocr-comp-body .ocr-slot .ocr-loading-slot span,
+.ocr-image-card .ocr-loading-slot span {
 	white-space: nowrap;
 	font-size: min(1vw, 1rem);
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot .ocr-loading {
+.ocr-comp-body .ocr-slot .ocr-loading-slot .ocr-loading,
+.ocr-image-card .ocr-loading-slot .ocr-loading {
 	width: 50%;
 	aspect-ratio: 40 / 1;
 	background: rgba(255, 255, 255, 0.1);
@@ -264,7 +352,8 @@
 
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot .ocr-loading::before {
+.ocr-comp-body .ocr-slot .ocr-loading-slot .ocr-loading::before,
+.ocr-image-card .ocr-loading-slot .ocr-loading::before {
 	content: "";
 	display: block;
 	height: 200%;
@@ -296,36 +385,24 @@
 
 @media (max-width: 560px) {
 	.ocr-comp-body.ocr-image-input-panel {
-		height: auto;
-		min-height: 62rem;
-	}
-
-	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr {
-		height: auto;
-		flex-direction: column;
-		gap: 2%;
-	}
-
-	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr > .container {
 		width: 100%;
 		height: auto;
+		min-height: 62rem;
+		aspect-ratio: auto;
+	}
+
+	.ocr-image-input-content .ocr-drag-select__list,
+	.ocr-drag-select__list {
+		flex-direction: column;
+	}
+
+	.ocr-image-input-top {
 		flex: none;
+		min-height: 34rem;
 	}
 
-	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr > .container:first-of-type {
-		min-height: 30rem;
-	}
-
-	.ocr-comp-body.ocr-image-input-panel .ocr-slot.ocr > .container:last-of-type {
-		min-height: 32rem;
-	}
-
-	.ocr-comp-body.ocr-image-input-panel .ocr-slot .inner-slot.top {
-		min-height: 18rem;
-	}
-
-	.ocr-comp-body.ocr-image-input-panel .ocr-slot .inner-slot.result {
-		min-height: 10rem;
+	.ocr-image-input-bottom {
+		min-height: 34rem;
 	}
 
 	.ocr-comp-body.ocr-image-input-panel .ocr-slot .file-slot {

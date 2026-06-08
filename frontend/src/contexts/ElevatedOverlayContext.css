@@ -28,6 +28,15 @@
     animation: elevatedOverlayScaleIn 0.15s ease-out;
 }
 
+.elevated-overlay-panel:has(.ocr-image-input-panel) {
+    width: min(92vw, 64rem, calc((100dvh - 2rem) * 4 / 3));
+    aspect-ratio: 4 / 3;
+}
+
+.elevated-overlay-panel:has(.ocr-image-input-panel) .elevated-overlay-body {
+    overflow: hidden;
+}
+
 .elevated-overlay-header {
     display: flex;
     width: 100%;

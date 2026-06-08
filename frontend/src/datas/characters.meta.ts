@@ -46,30 +46,27 @@ FixedStats.atkPct.id],
   },*/
 
   //*== ver 3.4 ===========================//
-  /* lucilla: {
+  lucilla: {
     ...baseMeta,
-    harmonySets: [harmony..id],
-    cost3MainStats: [
-FixedStats..id, 
-FixedStats.atkPct.id],
-    
-  },*/
-  /* rebecca: {
+    harmonySets: [harmony.Clouds.id],
+    cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
+    resReq: 125,
+    subResReq: 25,
+  },
+  rebecca: {
     ...baseMeta,
-    harmonySets: [harmony..id],
-    cost3MainStats: [
-FixedStats..id, 
-FixedStats.atkPct.id],
-    
-  },*/
-  /* lucy: {
+    harmonySets: [harmony.Adam.id],
+    cost3MainStats: [FixedStats.electroBns.id, FixedStats.atkPct.id],
+    resReq: 125,
+    subResReq: 25,
+  },
+  lucy: {
     ...baseMeta,
-    harmonySets: [harmony..id],
-    cost3MainStats: [
-FixedStats..id, 
-FixedStats.atkPct.id],
-    
-  },*/
+    harmonySets: [harmony.Adam.id],
+    cost3MainStats: [FixedStats.spectroBns.id, FixedStats.atkPct.id],
+    resReq: 125,
+    subResReq: 25,
+  },
 
   //*== ver 3.3 ===========================//
   denia: {

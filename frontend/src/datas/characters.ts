@@ -37,6 +37,8 @@ export interface Character {
   region: //==================================================//
   // | "Scarlet Snow" // = //@ 
   //========================================================//
+  | "Spacetrek Collective" // = //@ 스페이스트렉 콜렉티브 (라하이 로이)
+  //========================================================//
     | "Spacetrek Collective" // = //@ 스페이스트렉 콜렉티브 (라하이 로이)
     | "Statotchi Academy" // == //@ 스타토치 아카데미 (라하이 로이)
     //========================================================//
@@ -96,45 +98,48 @@ export const character: Record<CharacterId, Character> = {
   },*/
   
   //*== ver 3.4 ===========================//
-  /* lucilla: {
-    en: "",
-    kr: "",
-    jp: "",
-    zh: "",
+  lucilla: {
+    id: "lucilla",
+    en: "Lucilla",
+    kr: "루실라",
+    jp: "ルシラー",
+    zh: "洛瑟菈",
     hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
-    version: 3.3,
+    weapon: "rectifier",
+    element: "glacio",
+    type: "basic",
+    version: 3.4,
     isElite: true,
-    region: ,
-  },*/
-  /* rebecca: {
-    en: "",
-    kr: "",
-    jp: "",
-    zh: "",
+    region: "Statotchi Academy",
+  },
+  rebecca: {
+    id: "rebecca",
+    en: "Rebecca",
+    kr: "레베카",
+    jp: "レベッカ",
+    zh: "丽贝卡",
     hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
-    version: 3.3,
+    weapon: "pistol",
+    element: "electro",
+    type: "basic",
+    version: 3.4,
     isElite: true,
-    region: ,
-  },*/
-  /* lucy: {
-    en: "",
-    kr: "",
-    jp: "",
-    zh: "",
+    region: "Unknown",
+  },
+  lucy: {
+    id: "lucy",
+    en: "Lucy",
+    kr: "루시",
+    jp: "ルーシー",
+    zh: "露西",
     hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
-    version: 3.3,
+    weapon: "pistol",
+    element: "spectro",
+    type: "heavy",
+    version: 3.4,
     isElite: true,
-    region: ,
-  },*/
+    region: "Unknown",
+  },
 
   //*== ver 3.3 ===========================//
   denia: {

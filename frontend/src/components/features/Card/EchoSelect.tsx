@@ -15,28 +15,38 @@ import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleO
 import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime";
 import { patchEchoAt, setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
+import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
 
 import "./EchoSelect.css"
 
 //#endregion ====================================
+
+type DropStyleOption =
+  | SelectOption<Cost>
+  | SelectOptionWithImage
+  | SelectOptionWithImage<string>
+  | SelectOptionStatOriginal
+  | SelectOpt;
 
 export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData, patchCharacterData } = useCharacter();
+  const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
   const localeText = locale(lang).card;
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [slotHeight, setSlotHeight] = useState(16);
+  const echoData = characterData.echoData[index];
 
   const selectedCost = useMemo<Cost>(() => {
-    return characterData.echoData[index]?.cost || 4
-  }, [index, characterData.echoData[index]]);
+    return echoData?.cost || 4
+  }, [echoData]);
 
   const selectedEchoData = useMemo<EchoRuntime | null>(() => {
-    return characterData.echoData[index]
-  }, [index, characterData]);
+    return echoData
+  }, [echoData]);
 
   const selectedEchoDictionaryData = useMemo<EchoData | null>(() => {
     const costKey = `Cost${selectedCost}` as const;
@@ -52,11 +62,11 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     };
   }, [selectedCost, selectedEchoData]);
 
-  const STAT_DROP_STYLE_OPTION_WIDE = useMemo<StylesConfig<any, false>>(() =>
+  const STAT_DROP_STYLE_OPTION_WIDE = useMemo<StylesConfig<DropStyleOption, false>>(() =>
     getStatDropStyleOptionWide(baseSelectStyles, slotHeight)
     , [baseSelectStyles, slotHeight])
 
-  const STAT_DROP_STYLE_LARGE = useMemo<StylesConfig<any, false>>(() =>
+  const STAT_DROP_STYLE_LARGE = useMemo<StylesConfig<DropStyleOption, false>>(() =>
     getStatDropStyleLarge(baseSelectStyles, slotHeight)
     , [baseSelectStyles, slotHeight])
 
@@ -65,7 +75,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const ECHO_ID_OPTION_BASE: SelectOriginalOption[] =
     useMemo<SelectOriginalOption[]>(() =>
       getEchoOptionBase(lang, selectedCost, BASE_URL)
-      , [lang, selectedCost]);
+      , [lang, selectedCost, BASE_URL]);
 
   const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() =>
     getStatOptionBase(lang, characterData.characterId)
@@ -97,14 +107,14 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     return ECHO_ID_OPTION_BASE
       .filter((item) => {
         if (!item.harmonies) return true;
-        if (!characterData.echoData[index].setId) return true;
-        return item.harmonies.includes(characterData.echoData[index].setId)
+        if (!echoData.setId) return true;
+        return item.harmonies.includes(echoData.setId)
       }).map((opt) => ({
         value: opt.value,
         label: opt[lang],
         path: opt.path + `?v=${imgVer}`,
       }));
-  }, [ECHO_ID_OPTION_BASE, lang, characterData.echoData[index], index]);
+  }, [ECHO_ID_OPTION_BASE, lang, echoData.setId, imgVer]);
 
   const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[0] !== 0
@@ -156,21 +166,47 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
     return () => ro.disconnect();
   }, []); //resize observer
 
+  const resetEchoData = () => {
+    patchCharacterData(
+      patchEchoAt(characterData, index, createEmptyEchoRuntime(4)),
+    );
+  };
+
+  const openResetConfirm = () => {
+    openElevatedOverlay(
+      <div className={`echo-reset-confirm ${lang}-font`}>
+        <p>{localeText.resetEchoDataMessage}</p>
+        <div className="echo-reset-confirm__actions">
+          <button
+            type="button"
+            className="cancel"
+            onClick={closeElevatedOverlay}
+          >
+            {localeText.resetEchoDataCancel}
+          </button>
+          <button
+            type="button"
+            className="confirm"
+            onClick={() => {
+              resetEchoData();
+              closeElevatedOverlay();
+            }}
+          >
+            {localeText.resetEchoDataConfirm}
+          </button>
+        </div>
+      </div>,
+      {
+        title: localeText.resetEchoDataTitle,
+        width: "min(92vw, 28rem)",
+        ratio: null,
+      },
+    );
+  };
+
   //* =========================================================    
   return (
     <div className="echo-select-wrapper" ref={wrapRef}>
-      <button
-        type="button"
-        className={`${lang}-font echo-select-reset-button`}
-        onClick={() =>
-          patchCharacterData(
-            patchEchoAt(characterData, index, createEmptyEchoRuntime(4)),
-          )
-        }
-      >
-        {localeText.resetEchoData}
-      </button>
-
       <div className="drop-slot large">
         <Select
           options={COST_DROP_OPTION}
@@ -178,7 +214,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
           styles={STAT_DROP_STYLE_LARGE}
           value={COST_DROP_OPTION.find((e) => e.value === selectedCost) ?? null}
           onChange={(opt) => {
-            patchCharacterData(setEchoCost(characterData, index, opt.value));
+            patchCharacterData(setEchoCost(characterData, index, opt?.value));
           }}
         />
       </div>
@@ -378,6 +414,14 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
           </div>
         );
       })}
+
+      <button
+        type="button"
+        className={`${lang}-font echo-select-reset-button`}
+        onClick={openResetConfirm}
+      >
+        {localeText.resetEchoData}
+      </button>
     </div>
   );
 } 

@@ -46,6 +46,23 @@ export const harmony = {
   */
 
   //#region Ver3.0 Echos
+  Adam: {
+    id: "Adam",
+    en: "Shadow of Shattered Dreams",
+    kr: "꿈을 깨뜨리는 망령의 악몽",
+    jp: "ナイトメア・スペクター",
+    zh: "碎梦亡鬼之魇",
+    option: [
+      {
+        count: 1,
+        options: [
+          { statId: FixedStats.basicBns.id, value: 35.0 },
+          { statId: FixedStats.heavyBns.id, value: 35.0 },
+        ],
+      },
+    ],
+    colorCode: "#",
+  },
   Memories: {
     id: "Memories",
     en: "Reel of Spliced Memories",

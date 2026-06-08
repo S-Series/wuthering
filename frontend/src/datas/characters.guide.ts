@@ -32,6 +32,47 @@ export type characterGuide = {
 };
 
 export const characterGuideData: Record<CharacterId, characterGuide> = {
+  lucilla: {
+    guideMainEcho: "Z05",
+    guideWeapons: [],
+    guideParties: [
+      {
+        nameKey: "temporary",
+        characters: [],
+      },
+    ],
+    guideSkillOrder: ["forte", "skill", "liberation", "outro", "basic"],
+  },
+  lucy: {
+    guideMainEcho: "Z05",
+    guideWeapons: [
+      weapon.pistol.pistol007.id,
+      weapon.pistol.pistol005.id,
+      weapon.pistol.pistol001.id,
+    ],
+    guideParties: [
+      {
+        nameKey: "temporary",
+        characters: [],
+      },
+    ],
+    guideSkillOrder: ["forte", "skill", "liberation", "outro", "basic"],
+  },
+  rebecca: {
+    guideMainEcho: "Z05",
+    guideWeapons: [
+      weapon.pistol.pistol008.id,
+      weapon.pistol.pistol005.id,
+      weapon.pistol.pistol001.id,
+    ],
+    guideParties: [
+      {
+        nameKey: "temporary",
+        characters: [],
+      },
+    ],
+    guideSkillOrder: ["forte", "skill", "liberation", "outro", "basic"],
+  },
   denia: {
     guideMainEcho: "Z05",
     guideWeapons: [],

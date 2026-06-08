@@ -305,6 +305,16 @@ export const weaponStat = {
     value: [24.3, 12],
     statType: [FixedStats.critRate.id, FixedStats.atkPct.id],
   },
+  pistol007: { //* 스펙트럴 트리거: 루시전무
+    atk: 587,
+    value: [48.6, 12],
+    statType: [FixedStats.critDmg.id, FixedStats.atkPct.id],
+  },
+  pistol008: { //* 스컬 크러셔: 레베카전무
+    atk: 500,
+    value: [72.0, 12],
+    statType: [FixedStats.critDmg.id, FixedStats.atkPct.id],
+  },
   //$ -------------------------------------------
   pistol101: {
     atk: 337,

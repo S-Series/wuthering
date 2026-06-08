@@ -28,9 +28,9 @@ export default function OcrPlayground() {
       />,
       {
         title: localeText.card.imageInput,
-        width: "min(92vw, 54rem)",
-        height: "min(88vh, 48rem)",
-        ratio: null,
+        width: "min(92vw, 64rem, calc((100dvh - 2rem) * 4 / 3))",
+        height: null,
+        ratio: "4 / 3",
       },
     );
   };

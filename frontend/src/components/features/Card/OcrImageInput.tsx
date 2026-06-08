@@ -123,7 +123,7 @@ export default function OcrImageInput({
     if (!element) return;
 
     const updateHeight = () => {
-      setRefHeight(element.getBoundingClientRect().height * 2);
+      setRefHeight(element.getBoundingClientRect().height * 3);
     };
     updateHeight();
 
@@ -187,102 +187,97 @@ export default function OcrImageInput({
 
   return (
     <div className="ocr-comp-body ocr-image-input-panel">
-      <div className="ocr-slot ocr">
-        {isHealthy === null && (
-          <div className="container checking">
-            <img src={getRandomGif() ?? "/default.webp"} alt="" />
-            <span>{localeText.healthCheck}</span>
-          </div>
-        )}
-
-        <div className={`container ${isHealthy ? "" : "disable"}`}>
-          <div className="inner-slot top">
-            <span className="en-font">
-              {localeText.status}: {status}
-            </span>
-
-            <div
-              className={`file-slot ${isFocused ? "focused" : ""}`}
-              ref={slotRef}
-              tabIndex={0}
-              onClick={() => {
-                if (isFocused) fileInputRef.current?.click();
-                else setFocused(true);
-              }}
-            >
-              <input
-                className="image-input"
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={(event) =>
-                  setFile(event.target.files?.[0] ?? null)
-                }
-              />
-              {file ? (
-                <img src={URL.createObjectURL(file)} alt="" />
-              ) : !isFocused ? (
-                <span style={{ textDecoration: "underline" }}>
-                  {localeText.description1}
-                </span>
-              ) : (
-                <span
-                  className={`${lang}-font`}
-                  style={{ whiteSpace: "pre", textAlign: "center" }}
-                >
-                  {localeText.description2}
-                </span>
-              )}
-            </div>
-
-            <div className="ocr-request-slot">
-              {isBoaring && (
-                <span className={`${lang}-font ocr-message`}>
-                  {localeText.description3}
-                </span>
-              )}
-              {!isHealthy && (
-                <span className={`${lang}-font ocr-message`}>
-                  {localeText.healthFalse}
-                </span>
-              )}
-
-              {status === "Requested" ? (
-                <div className="ocr-loading-slot">
-                  <div className="ocr-loading" />
-                  <span className="en-font">{localeText.loading}</span>
-                </div>
-              ) : (
-                <button className="ocr-button" onClick={run} disabled={!file}>
-                  {localeText.request}
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="inner-slot result">
-            <span className="en-font">{localeText.result}</span>
-            <div className="file-slot">
-              {preview && <img src={preview} alt="" />}
-            </div>
-          </div>
+      {isHealthy === null && (
+        <div className="container checking">
+          <img src={getRandomGif() ?? "/default.webp"} alt="" />
+          <span>{localeText.healthCheck}</span>
         </div>
+      )}
 
-        <div className={`container ${isHealthy ? "" : "disable"}`}>
-          <span className="en-font">{localeText.result}</span>
-          <div className="ocr-result-data">
-            <OcrDragSelect
-              datas={{
-                cost: (debug?.cost as 4 | 3 | 1) ?? 4,
-                echoId: debug?.echoId ?? null,
-                stats: debug?.echoStats ?? null,
-              }}
-              selectIdx={selectIdx}
-              height={refHeight}
-              resetAction={handleResetDebug}
-            />
-          </div>
-        </div>
+      <div className={`ocr-image-input-content ${isHealthy ? "" : "disable"}`}>
+        <OcrDragSelect
+          datas={{
+            cost: (debug?.cost as 4 | 3 | 1) ?? 4,
+            echoId: debug?.echoId ?? null,
+            stats: debug?.echoStats ?? null,
+          }}
+          selectIdx={selectIdx}
+          height={refHeight}
+          resetAction={handleResetDebug}
+          inputSlot={
+            <section className="ocr-image-card ocr-image-card--input">
+              <span className="en-font">
+                {localeText.status}: {status}
+              </span>
+
+              <div
+                className={`file-slot ${isFocused ? "focused" : ""}`}
+                ref={slotRef}
+                tabIndex={0}
+                onClick={() => {
+                  if (isFocused) fileInputRef.current?.click();
+                  else setFocused(true);
+                }}
+              >
+                <input
+                  className="image-input"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) =>
+                    setFile(event.target.files?.[0] ?? null)
+                  }
+                />
+                {file ? (
+                  <img src={URL.createObjectURL(file)} alt="" />
+                ) : !isFocused ? (
+                  <span style={{ textDecoration: "underline" }}>
+                    {localeText.description1}
+                  </span>
+                ) : (
+                  <span
+                    className={`${lang}-font`}
+                    style={{ whiteSpace: "pre", textAlign: "center" }}
+                  >
+                    {localeText.description2}
+                  </span>
+                )}
+              </div>
+
+              <div className="ocr-request-slot">
+                {isBoaring && (
+                  <span className={`${lang}-font ocr-message`}>
+                    {localeText.description3}
+                  </span>
+                )}
+                {!isHealthy && (
+                  <span className={`${lang}-font ocr-message`}>
+                    {localeText.healthFalse}
+                  </span>
+                )}
+
+                {status === "Requested" ? (
+                  <div className="ocr-loading-slot">
+                    <div className="ocr-loading" />
+                    <span className="en-font">{localeText.loading}</span>
+                  </div>
+                ) : (
+                  <button className="ocr-button" onClick={run} disabled={!file}>
+                    {localeText.request}
+                  </button>
+                )}
+              </div>
+            </section>
+          }
+          resultSlot={
+            <section className="ocr-image-card ocr-image-card--preview">
+              <span className="en-font">{localeText.result}</span>
+              <div className="file-slot">
+                {preview && <img src={preview} alt="" />}
+              </div>
+            </section>
+          }
+        />
       </div>
     </div>
   );

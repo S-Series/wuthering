@@ -54,6 +54,10 @@ export type LocaleSchema = {
     oMenu: string;
     imageInput: string;
     resetEchoData: string;
+    resetEchoDataTitle: string;
+    resetEchoDataMessage: string;
+    resetEchoDataConfirm: string;
+    resetEchoDataCancel: string;
     echoSearch: string;
     applyData: string;
   };

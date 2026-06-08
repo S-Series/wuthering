@@ -34,6 +34,15 @@
     animation: scaleIn 0.15s ease-out;
 }
 
+.overlay-panel:has(.ocr-data-editor) {
+    width: min(92vw, 70rem, calc((100dvh - 2rem) * 120 / 89));
+    aspect-ratio: 120 / 89;
+}
+
+.overlay-panel:has(.ocr-data-editor) .overlay-body {
+    overflow: hidden;
+}
+
 .overlay-panel .overlay-header-text {
     min-width: 0;
     overflow: hidden;

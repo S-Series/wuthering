@@ -484,6 +484,22 @@ export const weapon = {
       zh: "溢彩荧辉",
       imgKey: "ico006",
     },
+    pistol007:{//* 루시
+			id: "pistol007",
+      en: "Spectral Trigger",
+      kr: "스펙트럴 트리거",
+      jp: "スペクトラル・トリガー",
+      zh: "蜃影",
+      imgKey: "ico007",
+    },
+    pistol008:{//* 레베카
+			id: "pistol008",
+      en: "Skull Thrasher",
+      kr: "스컬 스래셔",
+      jp: "スカル・ポッパー",
+      zh: "碎骨",
+      imgKey: "ico008",
+    },
     //$ 4-Starts
     pistol101:{
 			id: "pistol101",

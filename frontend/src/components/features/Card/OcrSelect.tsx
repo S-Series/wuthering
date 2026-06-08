@@ -39,8 +39,11 @@ export default function OcrSelect({
           </div>
 
           <div className="ocr-select-actions">
-            <button type="button" onClick={onImageInput}>
-              {localeText.card.imageInput}
+            <button type="button" 
+              onClick={onImageInput}
+              disabled={true}
+              style={{opacity:"0.25"}}>
+              {localeText.card.imageInput} (점검중)
             </button>
           </div>
         </div>

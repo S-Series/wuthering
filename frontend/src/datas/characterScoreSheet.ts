@@ -28,6 +28,30 @@ const BaseSheet: Partial<CharacterScore> = {
 };
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
+    lucilla: {
+    ...BaseSheet,
+    [FixedStats.atkPct.id]: 1.0,
+    [FixedStats.skillBns.id]: 0.5,
+    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.resonanceBns.id]: 1.2,
+    maxResCount: 0,
+  },
+    lucy: {
+    ...BaseSheet,
+    [FixedStats.atkPct.id]: 1.0,
+    [FixedStats.skillBns.id]: 0.5,
+    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.resonanceBns.id]: 1.2,
+    maxResCount: 0,
+  },
+    rebecca: {
+    ...BaseSheet,
+    [FixedStats.atkPct.id]: 1.0,
+    [FixedStats.skillBns.id]: 0.5,
+    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.resonanceBns.id]: 1.2,
+    maxResCount: 0,
+  },
   denia: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.0,

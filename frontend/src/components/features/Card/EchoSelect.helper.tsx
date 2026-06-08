@@ -326,7 +326,7 @@ export const getStatDropStyleLarge = (
 
 export const getStatDropStyleDrag = (
     baseSelectStyles: StylesConfig<any, false>,
-    slotHeight: number, isWide: boolean): StylesConfig<any, false> => ({
+    slotHeight: number): StylesConfig<any, false> => ({
         ...baseSelectStyles,
         menu: (base, state) => {
             const common = baseSelectStyles.menu
@@ -351,9 +351,9 @@ export const getStatDropStyleDrag = (
                 display: "flex",
                 alignItems: "center",
                 minHeight: 0,
-                width: "auto",
+                width: "100%",
+                maxWidth: "100%",
                 height: `${slotHeight / 12}px`,
-                aspectRatio: `${isWide ? "4 / 1" : "2.25 / 1"}`,
                 overflow: "hidden",
             };
         },
@@ -364,6 +364,8 @@ export const getStatDropStyleDrag = (
 
             return {
                 ...common,
+                width: "100%",
+                maxWidth: "100%",
                 minHeight: 0,
             };
         },

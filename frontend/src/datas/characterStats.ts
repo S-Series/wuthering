@@ -36,7 +36,7 @@ export const characterStat = {
   */
 
   // == 3.4 ======================================= //
-  /* sigrika: {
+  lucilla: {
     baseHp: 0,
     baseAtk: 0,
     baseDef: 0,
@@ -52,7 +52,38 @@ export const characterStat = {
 
     typeBns: [0, 0.0],
   },
-  */
+  rebecca: {
+    baseHp: 11600,
+    baseAtk: 400,
+    baseDef: 1173,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  lucy: {
+    baseHp: 11025,
+    baseAtk: 425,
+    baseDef: 1149,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
   // == 3.3 ======================================= //
   denia: {
     baseHp: 11025,

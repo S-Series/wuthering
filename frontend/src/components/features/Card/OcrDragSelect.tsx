@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   DndContext,
   closestCenter,
@@ -13,7 +13,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 
-import { echoDict, type EchoData, type EchoId } from "@/datas/echos";
+import { echoDict, type EchoId } from "@/datas/echos";
 import { FixedStats, type StatId } from "@/datas/stats";
 import { useAppStore, type LangType } from "@/stores/appStore";
 
@@ -22,10 +22,10 @@ import { OcrDragItem } from "./OcrDragItem";
 import "./OcrDragSelect.override.css"
 import Select, { type StylesConfig } from "react-select";
 import { useCharacter } from "@/stores/characterDataStore";
-import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase, getStatDropStyleDrag } from "./EchoSelect.helper";
+import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase, getStatDropStyleDrag } from "./EchoSelect.helper";
 import { useStyleStore } from "@/stores/styleStore";
-import type { Cost, SelectOpt, SelectOption, SelectOptionStatOriginal, SelectOptionWithImage, SelectOriginalOption } from "./EchoSelect.type";
-import { createEmptyEchoRuntime, type EchoRuntime, type EchoStatOption, type EchoStatOptionSub } from "@/runtime/echo.runtime";
+import type { Cost, SelectOpt, SelectOption, SelectOptionStatOriginal, SelectOptionWithImage } from "./EchoSelect.type";
+import { createEmptyEchoRuntime, type EchoRuntime, type EchoStatOption } from "@/runtime/echo.runtime";
 import { patchEchoAt } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
 
@@ -45,6 +45,8 @@ type Props = {
   selectIdx: number;
   height: number;
   resetAction: () => void;
+  inputSlot?: ReactNode;
+  resultSlot?: ReactNode;
 };
 
 export type EchoRuntimeWith7Subs = Omit<EchoRuntime, "subOptions"> & {
@@ -97,8 +99,16 @@ function createItems(data: EchoStatOption[] | null, lang: LangType): DragItem[] 
   });
 }
 
-export default function OcrDragSelect({ datas, selectIdx, height, resetAction }: Props) {
+export default function OcrDragSelect({
+  datas,
+  selectIdx,
+  height,
+  resetAction,
+  inputSlot,
+  resultSlot,
+}: Props) {
   const baseUrl = import.meta.env.VITE_IMAGE_BASE;
+  const { cost, echoId, stats } = datas;
   const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData, patchCharacterData } = useCharacter();
@@ -116,54 +126,52 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
   );
 
   useEffect(() => {
-    const nextStats: EchoStatOption[] = (datas?.stats ?? []).map(
+    const nextStats: EchoStatOption[] = (stats ?? []).map(
       ([statId, statValue]) => ({
         statId,
         statValue,
       })
     );
 
-    console.log(datas)
-
     const tempEchoData: EchoRuntimeWith7Subs = {
-      echoId: datas.echoId,
+      echoId,
       setId: null,
-      cost: datas.cost,
+      cost,
       mainOption: { 
-        statId: datas?.stats?.[0]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[0]?.[1] ?? 0
+        statId: stats?.[0]?.[0] ?? "dummy",
+        statValue: stats?.[0]?.[1] ?? 0
       },
       subOptions: [{
-        statId: datas?.stats?.[2]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[2]?.[1] ?? 0
+        statId: stats?.[2]?.[0] ?? "dummy",
+        statValue: stats?.[2]?.[1] ?? 0
       },{
-        statId: datas?.stats?.[3]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[3]?.[1] ?? 0
+        statId: stats?.[3]?.[0] ?? "dummy",
+        statValue: stats?.[3]?.[1] ?? 0
       },{
-        statId: datas?.stats?.[4]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[4]?.[1] ?? 0
+        statId: stats?.[4]?.[0] ?? "dummy",
+        statValue: stats?.[4]?.[1] ?? 0
       },{
-        statId: datas?.stats?.[5]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[5]?.[1] ?? 0
+        statId: stats?.[5]?.[0] ?? "dummy",
+        statValue: stats?.[5]?.[1] ?? 0
       },{
-        statId: datas?.stats?.[6]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[6]?.[1] ?? 0
+        statId: stats?.[6]?.[0] ?? "dummy",
+        statValue: stats?.[6]?.[1] ?? 0
       },{
-        statId: datas?.stats?.[7]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[7]?.[1] ?? 0
+        statId: stats?.[7]?.[0] ?? "dummy",
+        statValue: stats?.[7]?.[1] ?? 0
       },{
-        statId: datas?.stats?.[8]?.[0] ?? "dummy",
-        statValue: datas?.stats?.[8]?.[1] ?? 0
+        statId: stats?.[8]?.[0] ?? "dummy",
+        statValue: stats?.[8]?.[1] ?? 0
       }]
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTempEcho(tempEchoData);
     setSourceItems(createItems(nextStats, lang));
     setItemOrder(DEFAULT_ORDER);
-  }, [datas.echoId, datas.cost, datas.stats, lang]);
+  }, [echoId, cost, stats, lang]);
 
   const displayItems = useMemo(() => {
-    console.log(toEchoRuntime(tempEcho, itemOrder));
     return itemOrder
       .map((itemId) => sourceItems.find((item) => item.id === itemId))
       .filter((item): item is DragItem => item != null);
@@ -198,19 +206,18 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
     };
   }
 
-  const DragOptions: [StylesConfig<any, false>, StylesConfig<any, false>] = [
-    (() => getStatDropStyleDrag(baseSelectStyles, height, true))(),
-    (() => getStatDropStyleDrag(baseSelectStyles, height, false))(),
-  ];
+  const DragOptions = [
+    (() => getStatDropStyleDrag(baseSelectStyles, height))(),
+    (() => getStatDropStyleDrag(baseSelectStyles, height))(),
+  ] as [StylesConfig<SelectOptionStatOriginal | SelectOpt, false>, StylesConfig<SelectOptionStatOriginal | SelectOpt, false>];
 
-  const STAT_DROP_STYLE_LARGE = useMemo<StylesConfig<any, false>>(
+  const STAT_DROP_STYLE_LARGE = useMemo(
     () => getStatDropStyleLarge(baseSelectStyles, height),
     [baseSelectStyles, height]
   );
   // ==============================================================
 
   const tempEchoData = useMemo(() => {
-    console.log(tempEcho);
     const tempData = Object.entries(echoDict[`Cost${tempEcho?.cost ?? 4}`]).find(
       ([echoId]) => echoId === (tempEcho?.echoId ?? "")
     );
@@ -221,7 +228,7 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
       id: echoId,
       ...data,
     }
-  }, [tempEcho])
+  }, [tempEcho.cost, tempEcho.echoId])
 
   const COST_DROP_OPTION: SelectOption<Cost>[] = [
     { value: 4, label: "Cost 4" },
@@ -242,7 +249,7 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
         label: opt[lang],
         path: opt.path + `?v=${imgVer}`,
       }));
-  }, [lang, tempEcho])
+  }, [baseUrl, imgVer, lang, tempEcho.cost, tempEcho.setId])
 
   const HARMONY_DROP_OPTION = useMemo<SelectOptionWithImage[]>(() => {
     const types = tempEchoData?.type ?? [];
@@ -257,7 +264,7 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
         ...opt,
         label: opt[lang],
       }));
-  }, [lang, tempEcho]);
+  }, [lang, tempEchoData?.type]);
 
   const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() =>
     getStatOptionBase(lang)
@@ -291,6 +298,18 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
     }) as [SelectOpt[], SelectOpt[], SelectOpt[], SelectOpt[], SelectOpt[], SelectOpt[], SelectOpt[]];
   }, [tempEcho])
 
+  const handleApplyData = () => {
+    const echoData = toEchoRuntime(tempEcho, itemOrder);
+    patchCharacterData(
+      patchEchoAt(
+        characterData,
+        selectIdx as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
+        echoData,
+      ),
+    );
+    setTempEcho(InitTempEcho());
+    resetAction();
+  };
 
   return (
     <div className="ocr-drag-select">
@@ -304,124 +323,125 @@ export default function OcrDragSelect({ datas, selectIdx, height, resetAction }:
           strategy={verticalListSortingStrategy}
         >
           <div className="ocr-drag-select__list">
-            <Select options={COST_DROP_OPTION}
-              styles={STAT_DROP_STYLE_LARGE}
-              onChange={(opt) => {
-                if (!opt) return;
-                setTempEcho((p) => {
-                  if (!p) return p;
-                  return { ...p, cost: opt.value };
-                });
-              }}
-              value={COST_DROP_OPTION.find(item => item.value === tempEcho.cost) ?? null}
+            <div className="ocr-drag-select__base-fields">
+              {inputSlot}
 
-              />
-            <Select options={HARMONY_DROP_OPTION}
-              styles={STAT_DROP_STYLE_LARGE}
-              formatOptionLabel={(opt, meta) =>
-                formatOptionWithImage_Smaller(opt, lang, meta)
-              }
-              onChange={(opt) => {
-                if (!opt) return;
-                setTempEcho((p) => {
-                  if (!p) return p;
-                  return { ...p, setId: opt.value };
-                });
-              }}
-              value={HARMONY_DROP_OPTION.find(item => item.value === tempEcho.setId) ?? null}
-              />
-            <Select options={EchoOption}
-              styles={STAT_DROP_STYLE_LARGE}
-              placeholder={
-                <div style={{ display: "flex", alignItems: "center", gap: "min(0.5vw, 0.5rem)" }}>
-                  <img
-                    style={{
-                      width: "auto",
-                      height: "min(2vw, 2rem)",
-                      aspectRatio: "1/1",
-                    }}
-                    src="/default.webp"
-                  />
-                  <span style={{ whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)" }}>
-                    {localeText.echoSearch}
-                  </span>
-                </div>
-              }
-              isClearable={true}
-              formatOptionLabel={(opt, meta) =>
-                formatOptionWithImage(opt, lang, meta)
-              }
-              onChange={(opt) => {
-                setTempEcho((p) => {
-                  if (!p) return p;
-                  return { ...p, echoId: opt?.value ?? null };
-                });
-              }}
-              value={EchoOption.find(item => item.value === tempEcho.echoId) ?? null}
-              />
+              <Select options={COST_DROP_OPTION}
+                styles={STAT_DROP_STYLE_LARGE}
+                onChange={(opt) => {
+                  if (!opt) return;
+                  setTempEcho((p) => {
+                    if (!p) return p;
+                    return { ...p, cost: opt.value };
+                  });
+                }}
+                value={COST_DROP_OPTION.find(item => item.value === tempEcho.cost) ?? null}
 
-            <div className="divider" />
-
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <div style={{ width: "70%" }}>
-                <Select options={(() => {
-                    switch (tempEcho?.cost) {
-                      case 4:
-                        return STAT_OPTION_MAIN_COST4;
-                      case 3:
-                        return STAT_OPTION_MAIN_COST3;
-                      case 1:
-                        return STAT_OPTION_MAIN_COST1;
-                      default:
-                        return [];
-                    }
-                  })()}
-                  styles={STAT_DROP_STYLE_LARGE}
-                  formatOptionLabel={(opt, meta) =>
-                    formatOptionWithImage_Smaller(opt, lang, meta)
-                  }
-                  onChange={(opt) => {
-                    if (!opt) return;
-                    setTempEcho((p) => {
-                      if (!p) return p;
-                      return { ...p, mainOption:{ statId: opt.value, statValue: 0 } };
-                    });
-                  }}
                 />
+              <Select options={HARMONY_DROP_OPTION}
+                styles={STAT_DROP_STYLE_LARGE}
+                formatOptionLabel={(opt, meta) =>
+                  formatOptionWithImage_Smaller(opt, lang, meta)
+                }
+                onChange={(opt) => {
+                  if (!opt) return;
+                  setTempEcho((p) => {
+                    if (!p) return p;
+                    return { ...p, setId: opt.value };
+                  });
+                }}
+                value={HARMONY_DROP_OPTION.find(item => item.value === tempEcho.setId) ?? null}
+                />
+              <Select options={EchoOption}
+                styles={STAT_DROP_STYLE_LARGE}
+                placeholder={
+                  <div style={{ display: "flex", alignItems: "center", gap: "min(0.5vw, 0.5rem)" }}>
+                    <img
+                      style={{
+                        width: "auto",
+                        height: "min(2vw, 2rem)",
+                        aspectRatio: "1/1",
+                      }}
+                      src="/default.webp"
+                    />
+                    <span style={{ whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)" }}>
+                      {localeText.echoSearch}
+                    </span>
+                  </div>
+                }
+                isClearable={true}
+                formatOptionLabel={(opt, meta) =>
+                  formatOptionWithImage(opt, lang, meta)
+                }
+                onChange={(opt) => {
+                  setTempEcho((p) => {
+                    if (!p) return p;
+                    return { ...p, echoId: opt?.value ?? null };
+                  });
+                }}
+                value={EchoOption.find(item => item.value === tempEcho.echoId) ?? null}
+                />
+
+              <div className="ocr-drag-select__main-stat">
+                <div style={{ width: "70%" }}>
+                  <Select options={(() => {
+                      switch (tempEcho?.cost) {
+                        case 4:
+                          return STAT_OPTION_MAIN_COST4;
+                        case 3:
+                          return STAT_OPTION_MAIN_COST3;
+                        case 1:
+                          return STAT_OPTION_MAIN_COST1;
+                        default:
+                          return [];
+                      }
+                    })()}
+                    styles={STAT_DROP_STYLE_LARGE}
+                    formatOptionLabel={(opt, meta) =>
+                      formatOptionWithImage_Smaller(opt, lang, meta)
+                    }
+                    onChange={(opt) => {
+                      if (!opt) return;
+                      setTempEcho((p) => {
+                        if (!p) return p;
+                        return { ...p, mainOption:{ statId: opt.value, statValue: 0 } };
+                      });
+                    }}
+                  />
+                </div>
+                <span className="num-font" style={{ marginLeft: "auto" }}>
+                  {(tempEcho.mainOption.statValue ?? 0).toFixed(1)}%
+                </span>
               </div>
-              <span className="num-font" style={{ marginLeft: "auto" }}>
-                {(tempEcho.mainOption.statValue ?? 0).toFixed(1)}%
-              </span>
             </div>
 
-            <div className="divider" />
+            <div className="ocr-drag-select__sub-fields">
+              {resultSlot}
 
-            {displayItems.map((item, displayIndex) => (
-              <OcrDragItem
-                key={item.id}
-                item={tempEcho.subOptions[item.id]}
-                itemId={item.id}
-                displayIndex={displayIndex}
-                onSelectChange={setTempEcho}
-                styles={DragOptions}
-                options={[STAT_OPTION_SUB, dropStatOptions[displayIndex]]}
-              />
-            ))}
+              {displayItems.map((item, displayIndex) => (
+                <OcrDragItem
+                  key={item.id}
+                  item={tempEcho.subOptions[item.id]}
+                  itemId={item.id}
+                  displayIndex={displayIndex}
+                  onSelectChange={setTempEcho}
+                  styles={DragOptions}
+                  options={[STAT_OPTION_SUB, dropStatOptions[displayIndex]]}
+                />
+              ))}
+            </div>
+
+            <div className="ocr-drag-select__action-fields">
+              <button className="ocr-drag-select__apply-button"
+                type="button"
+                onClick={handleApplyData}
+              >
+                {localeText.applyData}
+              </button>
+            </div>
           </div>
         </SortableContext>
       </DndContext>
-
-      <button className="ocr-drag-select__apply-button"
-        type="button"
-        onClick={() => {
-          console.log(selectIdx);
-          const echoData = toEchoRuntime(tempEcho, itemOrder);
-          patchCharacterData(patchEchoAt(characterData, selectIdx as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, echoData))
-          setTempEcho(InitTempEcho());
-        }}
-      >
-        {localeText.applyData}
-      </button>
     </div>
   );
 }

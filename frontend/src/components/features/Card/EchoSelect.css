@@ -10,7 +10,7 @@
 
 .echo-select-reset-button {
     width: 100%;
-    min-height: 2.5rem;
+    min-height: min(7vw, 2.5rem);
     padding: 2% 3%;
     color: #f4f7ff;
     font-size: min(1.1vw, 0.85rem);
@@ -27,6 +27,50 @@
     color: #ffd764;
     border-color: #ffd764;
     background: #55461f;
+}
+
+.echo-reset-confirm {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: min(2vw, 1rem);
+    color: #fff;
+}
+
+.echo-reset-confirm p {
+    margin: 0;
+    line-height: 1.5;
+    white-space: normal;
+    word-break: keep-all;
+}
+
+.echo-reset-confirm__actions {
+    display: flex;
+    width: 100%;
+    gap: min(1vw, 0.75rem);
+    justify-content: flex-end;
+}
+
+.echo-reset-confirm__actions button {
+    min-width: 6rem;
+    padding: 0.65rem 1rem;
+    color: #f4f7ff;
+    font-weight: 700;
+    border: 1px solid #666;
+    background: #1b1e25;
+    cursor: pointer;
+}
+
+.echo-reset-confirm__actions button:hover,
+.echo-reset-confirm__actions button:focus-visible {
+    outline: none;
+    color: #ffd764;
+    border-color: #ffd764;
+    background: #55461f;
+}
+
+.echo-reset-confirm__actions button.confirm {
+    border-color: #ffd764;
 }
 
 .echo-select-wrapper .divider {
