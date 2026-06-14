@@ -359,6 +359,11 @@ export const weaponStat = {
   //#endregion
 
   //#region Amplifter
+  rectifier010: { //* 프리즈 프레임 (루실라)
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.critRate.id, FixedStats.atkPct.id],
+  },
   rectifier001: {
     atk: 500,
     value: [53.9, 12.8],

@@ -151,13 +151,13 @@ export default function Navbar() {
           <a href="/characters">
             <img className="navbar-icon"
               alt="characters"
-              src="/default.webp" />
+              src="/ico/character.png" />
             <p className={`${lang}-font`}>{localeText.characters}</p>
           </a>
           <a href="/card">
             <img className="navbar-icon"
               alt="generator"
-              src="/default.webp" />
+              src="/ico/card.png" />
             <p className={`${lang}-font`}>{localeText.generator}</p>
           </a>
           <a href="/profile">
@@ -204,7 +204,7 @@ export default function Navbar() {
           >
             <img className="navbar-icon"
               alt="characters"
-              src="/default.webp" />
+              src="/ico/character.png" />
             <p className={`${lang}-font`}>{localeText.characters}</p>
           </a>
           <a
@@ -213,7 +213,7 @@ export default function Navbar() {
           >
             <img className="navbar-icon"
               alt="generator"
-              src="/default.webp" />
+              src="/ico/card.png" />
             <p className={`${lang}-font`}>{localeText.generator}</p>
           </a>
         </nav>

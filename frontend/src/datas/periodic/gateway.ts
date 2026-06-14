@@ -14,17 +14,17 @@ export const gatewaySeasons: SeasonInfo[] = [
   {
     season: 3,
     startDate: "2026-06-22",
-    endDate: "2026-07-29",
+    endDate: "2026-06-29",
   },
   {
     season: 2,
     startDate: "2026-06-15",
-    endDate: "2026-07-22",
+    endDate: "2026-06-22",
   },
   {
     season: 1,
     startDate: "2026-06-08",
-    endDate: "2026-07-15",
+    endDate: "2026-06-15",
   },
   {
     season: 0,

@@ -37,16 +37,16 @@ export const characterStat = {
 
   // == 3.4 ======================================= //
   lucilla: {
-    baseHp: 0,
-    baseAtk: 0,
-    baseDef: 0,
+    baseHp: 12238,
+    baseAtk: 375,
+    baseDef: 1198,
 
-    CritRate: 5.0,
+    CritRate: 13.0,
     CritDmg: 150.0,
     healBns: 0.0,
     ResonanceBns: 100.0,
 
-    atkPct: 0.0,
+    atkPct: 12.0,
     hpPct: 0.0,
     defPct: 0.0,
 

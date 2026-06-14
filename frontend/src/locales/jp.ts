@@ -54,6 +54,7 @@ export const jp = {
     characterWeaponData: "キャラクター / 武器データ管理",
     eMenu: "エコー選択",
     oMenu: "エコーデータ管理",
+    cloudSync: "クラウド同期",
     imageInput: "画像から入力",
     resetEchoData: "全ドロップダウンをリセット",
     resetEchoDataTitle: "音骸データをリセット",

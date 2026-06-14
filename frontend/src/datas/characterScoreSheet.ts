@@ -28,33 +28,32 @@ const BaseSheet: Partial<CharacterScore> = {
 };
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
-    lucilla: {
+  lucilla: {
     ...BaseSheet,
-    [FixedStats.atkPct.id]: 1.0,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 1.0,
-    [FixedStats.resonanceBns.id]: 1.2,
+    [FixedStats.atkPct.id]: 1.5,
+    [FixedStats.basicBns.id]: 1.4,
+    [FixedStats.skillBns.id]: 0.1,
+    [FixedStats.resonanceBns.id]: 0,
     maxResCount: 0,
   },
-    lucy: {
+  lucy: {
     ...BaseSheet,
-    [FixedStats.atkPct.id]: 1.0,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 1.0,
-    [FixedStats.resonanceBns.id]: 1.2,
+    [FixedStats.atkPct.id]: 1.5,
+    [FixedStats.healBns.id]: 1.5,
+    [FixedStats.resonanceBns.id]: 1,
     maxResCount: 0,
   },
-    rebecca: {
+  rebecca: {
     ...BaseSheet,
-    [FixedStats.atkPct.id]: 1.0,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 1.0,
-    [FixedStats.resonanceBns.id]: 1.2,
+    [FixedStats.atkPct.id]: 1.5,
+    [FixedStats.basicBns.id]: 1.3,
+    [FixedStats.skillBns.id]: 0.2,
+    [FixedStats.resonanceBns.id]: 1,
     maxResCount: 0,
   },
   denia: {
     ...BaseSheet,
-    [FixedStats.atkPct.id]: 1.0,
+    [FixedStats.atkPct.id]: 1.5,
     [FixedStats.skillBns.id]: 0.5,
     [FixedStats.liberationBns.id]: 1.0,
     [FixedStats.resonanceBns.id]: 1.2,
@@ -225,8 +224,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
   },
-  chixia: { //치샤
-    ...BaseSheet, 
+  chixia: {
+    //치샤
+    ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
     [FixedStats.skillBns.id]: 1.0,
@@ -257,8 +257,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
-  jianxin: { //감심
-    ...BaseSheet, 
+  jianxin: {
+    //감심
+    ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
     [FixedStats.heavyBns.id]: 1.0,
@@ -267,8 +268,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
   },
-  jinhsi: { //그뫼엥
-    ...BaseSheet, 
+  jinhsi: {
+    //그뫼엥
+    ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
     [FixedStats.basicBns.id]: 0,
@@ -279,8 +281,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 2,
   },
-  jiyan: { //기염
-    ...BaseSheet, 
+  jiyan: {
+    //기염
+    ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
     [FixedStats.heavyBns.id]: 1.0,
@@ -289,8 +292,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
   },
-  lingyang: { //능ㅋㅋ
-    ...BaseSheet, 
+  lingyang: {
+    //능ㅋㅋ
+    ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
     [FixedStats.basicBns.id]: 1.0,
@@ -419,8 +423,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.resonanceBns.id]: 2.0,
     maxResCount: 5,
   },
-  xiangliyao: { //큐브남
-    ...BaseSheet, 
+  xiangliyao: {
+    //큐브남
+    ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
     [FixedStats.basicBns.id]: 0.1,
@@ -453,10 +458,10 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
   youhu: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
-    
+
     [FixedStats.critRate.id]: 1.0,
     [FixedStats.critDmg.id]: 0.5,
-    
+
     [FixedStats.skillBns.id]: 1.0,
 
     [FixedStats.resonanceBns.id]: 1.5,

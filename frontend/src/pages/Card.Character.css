@@ -286,15 +286,24 @@
   font-size: 0.72rem;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .card-character-select__filters {
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
   }
+
+  .card-character-select__filter-row,
+  .card-character-select__filter-row.element {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 2%;
+    padding-right: 2%;
+    box-sizing: border-box;
+  }
 }
 
-@media (max-width: 780px) {
+@media (max-width: 48.75rem) {
   .card-character-select {
     min-width: 42rem;
   }

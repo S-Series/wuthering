@@ -48,10 +48,10 @@ FixedStats.atkPct.id],
   //*== ver 3.4 ===========================//
   lucilla: {
     ...baseMeta,
-    harmonySets: [harmony.Clouds.id],
+    harmonySets: [harmony.Snowfall.id, harmony.Clouds.id],
     cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
-    resReq: 125,
-    subResReq: 25,
+    resReq: 100,
+    subResReq: 0,
   },
   rebecca: {
     ...baseMeta,

@@ -26,10 +26,12 @@ export default function Login({ setAction }: Props) {
 
   return (
     <div className="profile-page">
+      <p className="profile-info-eyebrow profile-info-eyebrow-top">
+        Welcome Back
+      </p>
+
       <section className="profile-info">
         <div className="profile-info-inner">
-          <p className="profile-info-eyebrow">Welcome Back</p>
-
           <h1 className="profile-info-title">
             {`다시 오신 걸 환영합니다\n`}<em>WuWa DEV</em> 입니다
           </h1>
@@ -38,114 +40,110 @@ export default function Login({ setAction }: Props) {
             로그인하면 저장된 데이터를 불러오고, OCR 및 이미지 생성 기록을
             관리할 수 있습니다.
           </p>
-
-          <ul className="profile-info-list">
-            <li>유저 데이터 불러오기</li>
-            <li>OCR / 이미지 생성 기록 관리</li>
-            <li>멤버십 기능 확장 대비</li>
-          </ul>
         </div>
       </section>
 
       <section className="profile-panel">
+
         <form className="profile-card profile-login-card" onSubmit={onSubmit}>
-          <div className="profile-card-header">
-            <h2>로그인</h2>
-            <p>이메일 또는 Google 계정으로 로그인할 수 있습니다.</p>
-          </div>
-
           <div className="profile-card-body">
-          <div className="profile-field">
-            <label htmlFor="login-email">이메일</label>
-            <input
-              id="login-email"
-              name="email"
-              type="email"
-              placeholder="example@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="profile-field">
-            <label htmlFor="login-password">비밀번호</label>
-            <div className="profile-password-field">
+            <div className="profile-field">
+              <label htmlFor="login-email">이메일</label>
               <input
-                id="login-password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="비밀번호 입력"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
+                id="login-email"
+                name="email"
+                type="email"
+                placeholder="example@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
               />
+            </div>
+
+            <div className="profile-field">
+              <label htmlFor="login-password">비밀번호</label>
+              <div className="profile-password-field">
+                <input
+                  id="login-password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="비밀번호 입력"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className="profile-password-toggle"
+                  aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? "숨김" : "보기"}
+                </button>
+              </div>
+            </div>
+
+            <div className="profile-find-row">
               <button
                 type="button"
-                className="profile-password-toggle"
-                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-                onClick={() => setShowPassword((prev) => !prev)}
+                onClick={() => openElevatedOverlay(
+                  <AccountRecovery defaultMode="id" defaultEmail={email} />,
+                  { title: "아이디 찾기", width: "min(92vw, 420px)" }
+                )}
               >
-                {showPassword ? "숨김" : "보기"}
+                아이디 찾기
+              </button>
+              <span />
+              <button
+                type="button"
+                onClick={() => openElevatedOverlay(
+                  <AccountRecovery defaultMode="password" defaultEmail={email} />,
+                  { title: "비밀번호 찾기", width: "min(92vw, 420px)" }
+                )}
+              >
+                비밀번호 찾기
+              </button>
+            </div>
+
+            <button
+              className="profile-submit"
+              type="submit"
+              disabled={!isValid}
+            >
+              로그인
+            </button>
+
+            <div className="profile-card-footer">
+              <span>또는</span>
+            </div>
+
+            <button
+              type="button"
+              className="profile-submit google"
+              onClick={() => loginWithGoogleAction()}
+            >
+              Google 계정으로 로그인
+            </button>
+
+            <div className="profile-card-footer profile-signup-link">
+              <span>아직 계정이 없나요?</span>
+              <button
+                type="button"
+                className="profile-text-button"
+                onClick={() => setAction(true)}
+              >
+                회원가입
               </button>
             </div>
           </div>
-
-          <div className="profile-find-row">
-            <button
-              type="button"
-              onClick={() => openElevatedOverlay(
-                <AccountRecovery defaultMode="id" defaultEmail={email} />,
-                { title: "아이디 찾기", width: "min(92vw, 420px)" }
-              )}
-            >
-              아이디 찾기
-            </button>
-            <span />
-            <button
-              type="button"
-              onClick={() => openElevatedOverlay(
-                <AccountRecovery defaultMode="password" defaultEmail={email} />,
-                { title: "비밀번호 찾기", width: "min(92vw, 420px)" }
-              )}
-            >
-              비밀번호 찾기
-            </button>
-          </div>
-
-          <button
-            className="profile-submit"
-            type="submit"
-            disabled={!isValid}
-          >
-            로그인
-          </button>
-
-          <div className="profile-card-footer">
-            <span>또는</span>
-          </div>
-
-          <button
-            type="button"
-            className="profile-submit google"
-            onClick={() => loginWithGoogleAction()}
-          >
-            Google 계정으로 로그인
-          </button>
-
-          <div className="profile-card-footer" style={{ marginTop: 18 }}>
-            <span>아직 계정이 없나요?</span>
-            <button
-              type="button"
-              className="profile-text-button"
-              onClick={() => setAction(true)}
-            >
-              회원가입
-            </button>
-          </div>
-          </div>
         </form>
       </section>
+
+      <ul className="profile-info-list profile-info-list-bottom">
+        <li>유저 데이터 불러오기</li>
+        <li>OCR / 이미지 생성 기록 관리</li>
+        <li>멤버십 기능 확장 대비</li>
+      </ul>
     </div>
   );
 }

@@ -98,24 +98,39 @@ export default function CardDetail({ cData }: Props) {
 
             <div className={`party-detail-slot ${lang}-font`}>
               {guide.guideParties.map((party, index) => (
-                <Fragment key={`${cData.characterId}-party-${index}`}>
+                <div
+                  className={`party-detail-item ${
+                    index < guide.guideParties.length - 1 ? "has-divider" : ""
+                  }`}
+                  key={`${cData.characterId}-party-${index}`}
+                >
                   <span>{localeText.parties[party.nameKey]}</span>
                   <div className="character-icon-slot">
                     {party.characters.map((partyCharacterId) => (
-                      <img
+                      <div
+                        className="party-character-image-slot"
                         key={partyCharacterId}
-                        src={`${BASE_URL}/character/${
-                          partyCharacterId.includes("rover")
-                            ? "rover"
-                            : partyCharacterId
-                        }/ico.webp?v=${imgVer}`}
-                      />
+                      >
+                        <img
+                          src={`${BASE_URL}/character/${
+                            partyCharacterId.includes("rover")
+                              ? "rover"
+                              : partyCharacterId
+                          }/ico.webp?v=${imgVer}`}
+                        />
+                      </div>
                     ))}
                   </div>
-                  {index < guide.guideParties.length - 1 && (
-                    <div className="divider" />
-                  )}
-                </Fragment>
+                </div>
+              ))}
+              {Array.from({
+                length: Math.max(0, 3 - guide.guideParties.length),
+              }).map((_, index) => (
+                <div
+                  aria-hidden="true"
+                  className="party-detail-spacer"
+                  key={`${cData.characterId}-party-spacer-${index}`}
+                />
               ))}
             </div>
           </div>
@@ -165,10 +180,12 @@ export default function CardDetail({ cData }: Props) {
           <span className={`${lang}-font`}>{localeText.sections.echo}</span>
 
           <div className="echo-recommend-slot">
-            <img
-              className="echo"
-              src={`${BASE_URL}/ico/echos/${guide.guideMainEcho}.webp?v=${imgVer}`}
-            />
+            <div className="detail-echo-image-slot">
+              <img
+                className="echo"
+                src={`${BASE_URL}/ico/echos/${guide.guideMainEcho}.webp?v=${imgVer}`}
+              />
+            </div>
             <div className="echo-data-field">
               <span className={`${lang}-font`}>
                 {mainEcho?.[lang] ?? guide.guideMainEcho}
@@ -242,6 +259,7 @@ export default function CardDetail({ cData }: Props) {
 
         <div className="inner-slot stat-area">
           <span className={`${lang}-font`}>{localeText.sections.target}</span>
+          {/*
 
           <div className="stat-info">
             <StatSlot
@@ -265,6 +283,7 @@ export default function CardDetail({ cData }: Props) {
               suffix={` +${meta.subResReq}%`}
             />
           </div>
+           */}
         </div>
       </div>
     </div>

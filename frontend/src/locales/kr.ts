@@ -54,6 +54,7 @@ export const kr = {
     characterWeaponData: "캐릭터 / 무기 데이터 관리",
     eMenu: "에코 선택",
     oMenu: "에코 데이터 관리",
+    cloudSync: "클라우드 동기화",
     imageInput: "이미지로 입력하기",
     resetEchoData: "모든 드롭다운 초기화",
     resetEchoDataTitle: "에코 데이터 초기화",

@@ -52,6 +52,7 @@ export type LocaleSchema = {
     characterWeaponData: string;
     eMenu: string;
     oMenu: string;
+    cloudSync: string;
     imageInput: string;
     resetEchoData: string;
     resetEchoDataTitle: string;

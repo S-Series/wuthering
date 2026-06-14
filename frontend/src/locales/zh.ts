@@ -54,6 +54,7 @@ export const zh = {
     characterWeaponData: "角色 / 武器数据管理",
     eMenu: "选择回声",
     oMenu: "回音数据管理",
+    cloudSync: "云端同步",
     imageInput: "从图片输入",
     resetEchoData: "重置所有下拉选项",
     resetEchoDataTitle: "重置声骸数据",

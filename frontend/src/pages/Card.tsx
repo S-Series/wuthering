@@ -369,6 +369,24 @@ export default function Card() {
   //* == return data ================================================//
   return (
     <div id="card-page-slot">
+      <section className="card-management-bar">
+        <button
+          type="button"
+          onClick={openCharacterWeaponManager}
+        >
+          <span>{localeText.characterWeaponData}</span>
+        </button>
+        <button
+          type="button"
+          onClick={openEchoDataManager}
+        >
+          <span>{localeText.oMenu}</span>
+        </button>
+        <button type="button" disabled>
+          <span>{localeText.cloudSync}</span>
+        </button>
+      </section>
+
       <div className="card-section left">
         <div className="card-contents">
           <div className="card-contents-slot header">
@@ -718,23 +736,9 @@ export default function Card() {
                 disabled={true}>
                 <span>{/*localeText.image1*/} 캐릭터 이미지 관리</span>
               </button>
-
-              <button
-                className="card-page-button content bottom"
-                onClick={openCharacterWeaponManager}
-              >
-                <span>{localeText.characterWeaponData}</span>
-              </button>
             </div>
 
             <div className="item-slot">
-              <button
-                className="card-page-button content bottom"
-                onClick={openEchoDataManager}
-              >
-                <span>에코 데이터 관리</span>
-              </button>
-
               <button
                 className="card-page-button content bottom"
                 onClick={() => window.open(SCOREBOARD_URL, "_blank")}

@@ -54,6 +54,7 @@ export const en = {
     characterWeaponData: "Manage Character / Weapon Data",
     eMenu: "Echo Select",
     oMenu: "Manage Echo Data",
+    cloudSync: "Cloud Sync",
     imageInput: "Input from Image",
     resetEchoData: "Reset All Dropdowns",
     resetEchoDataTitle: "Reset Echo Data",

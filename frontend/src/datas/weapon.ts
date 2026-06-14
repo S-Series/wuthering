@@ -640,6 +640,14 @@ export const weapon = {
       zh: "赝作的矮星",
       imgKey: "ico009",
     },
+    rectifier010:{//* 루실라 전무
+			id: "rectifier010",
+      en: "Freeze Frame",
+      kr: "프리즈 프레임",
+      jp: "フリーズフレーム",
+      zh: "存帧",
+      imgKey: "ico010",
+    },
     //$ 4-Starts
     rectifier101:{
 			id: "rectifier101",
