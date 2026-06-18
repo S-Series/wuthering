@@ -1,5 +1,7 @@
 import { auth } from "@/firebase/firebase";
 import type { UserProfile } from "@/firebase/firebase";
+import type { CharacterId } from "@/datas/characterStats";
+import type { CharacterData } from "@/types/character.type";
 import type { CharacterDataSnapshot } from "@/stores/characterDataStorage";
 
 export type CloudSyncResult =
@@ -25,7 +27,8 @@ export function isMembershipUser(user: UserProfile | null) {
 }
 
 export async function uploadCharacterCloudData(
-  data: CharacterDataSnapshot
+  data: CharacterDataSnapshot | CharacterData,
+  characterId?: CharacterId,
 ): Promise<CloudSyncResult> {
   const gatewayUrl = import.meta.env.VITE_GATEWAY_URL;
 
@@ -54,7 +57,7 @@ export async function uploadCharacterCloudData(
       "Content-Type": "application/json",
       Authorization: `Bearer ${idToken}`,
     },
-    body: JSON.stringify({ data }),
+    body: JSON.stringify({ data, characterId }),
   });
 
   if (response.status === 403) {
@@ -89,7 +92,9 @@ export async function uploadCharacterCloudData(
   };
 }
 
-export async function downloadCharacterCloudData(): Promise<CloudDownloadResult> {
+export async function downloadCharacterCloudData(
+  characterId?: CharacterId
+): Promise<CloudDownloadResult> {
   const gatewayUrl = import.meta.env.VITE_GATEWAY_URL;
 
   if (!gatewayUrl) {
@@ -111,7 +116,13 @@ export async function downloadCharacterCloudData(): Promise<CloudDownloadResult>
   }
 
   const idToken = await user.getIdToken();
-  const response = await fetch(`${gatewayUrl}/api/character-data`, {
+  const url = new URL(`${gatewayUrl}/api/character-data`);
+
+  if (characterId) {
+    url.searchParams.set("characterId", characterId);
+  }
+
+  const response = await fetch(url.toString(), {
     method: "GET",
     headers: {
       Authorization: `Bearer ${idToken}`,

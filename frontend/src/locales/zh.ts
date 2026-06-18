@@ -66,6 +66,7 @@ export const zh = {
     cloudSyncLoginRequired: "需要登录。",
     cloudSyncMembershipRequired: "这是会员功能。",
     cloudSyncSuccess: "云端同步已完成。",
+    cloudSyncRequestFailed: "云端请求失败。",
     cloudSyncDescription: "可以将角色配置数据上传到云端，或下载已保存的数据。",
     cloudSyncUpload: "上传",
     cloudSyncUploadDescription: "将当前设备的角色数据保存到云端。",
@@ -83,6 +84,14 @@ export const zh = {
     cloudSyncEchoCount: "声骸",
     cloudSyncScore: "分数",
     cloudSyncNoWeapon: "未选择",
+    cloudSyncUploadConfirmTitle: "云端上传",
+    cloudSyncDownloadConfirmTitle: "云端下载",
+    cloudSyncUploadConfirmMessage: "要将当前本地角色数据保存到云端吗？",
+    cloudSyncDownloadConfirmMessage: "要下载云端数据并替换当前本地角色数据吗？",
+    cloudSyncIrreversibleWarning: "此操作无法撤销。",
+    cloudSyncExecute: "执行",
+    cloudSyncExecuting: "执行中",
+    cloudSyncCancel: "取消",
   },
   cardDetail: {
     sections: {

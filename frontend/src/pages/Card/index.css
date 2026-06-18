@@ -220,6 +220,13 @@
     color: #ffd764;
 }
 
+.cloud-sync-action:disabled {
+    border-color: #555;
+    background: #0d0f13b8;
+    color: #777b85;
+    cursor: not-allowed;
+}
+
 .cloud-sync-action strong {
     font-size: min(3.2vw, 1.05rem);
     font-weight: 900;
@@ -232,6 +239,78 @@
     font-weight: 700;
     line-height: 1.5;
     word-break: keep-all;
+}
+
+.cloud-sync-action:disabled span {
+    color: #777b85;
+}
+
+.cloud-sync-confirm {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: min(3vw, 1rem);
+    color: #f4f7ff;
+    box-sizing: border-box;
+}
+
+.cloud-sync-confirm p {
+    margin: 0;
+    color: #f4f7ff;
+    font-size: min(2.7vw, 0.95rem);
+    font-weight: 800;
+    line-height: 1.55;
+    word-break: keep-all;
+}
+
+.cloud-sync-confirm > strong {
+    color: #ffd764;
+    font-size: min(2.5vw, 0.86rem);
+    font-weight: 900;
+    line-height: 1.35;
+}
+
+.cloud-sync-confirm__actions {
+    display: flex;
+    width: 100%;
+    gap: 4%;
+    justify-content: flex-end;
+}
+
+.cloud-sync-confirm__actions button {
+    display: flex;
+    min-width: min(28vw, 7rem);
+    min-height: min(8vw, 2.4rem);
+    padding: 0 5%;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #666;
+    border-radius: 0;
+    background: #1b1e25;
+    color: #f4f7ff;
+    font-size: min(2.4vw, 0.86rem);
+    font-weight: 900;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.cloud-sync-confirm__actions button.confirm {
+    border-color: #ffd764;
+}
+
+.cloud-sync-confirm__actions button:hover:not(:disabled),
+.cloud-sync-confirm__actions button:focus-visible:not(:disabled) {
+    outline: none;
+    color: #ffd764;
+    border-color: #ffd764;
+    background: #55461f;
+}
+
+.cloud-sync-confirm__actions button:disabled {
+    border-color: #555;
+    background: #0d0f13b8;
+    color: #777b85;
+    cursor: not-allowed;
 }
 
 #card-page-slot .card-section.left {

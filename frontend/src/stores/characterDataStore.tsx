@@ -20,6 +20,7 @@ type ContextType = {
   characterData: CharacterData;
   patchCharacterData: (patch: Partial<CharacterData>) => void;
   replaceCharacterDataSnapshot: (snapshot: CharacterDataSnapshot) => void;
+  replaceCharacterData: (id: CharacterId, data: CharacterData) => void;
   characterBaseStat: CharacterStat | null;
   characterFinalStat: CharacterStat | null;
   equipmentScore: ScoreList;
@@ -143,6 +144,13 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
 
   const replaceCharacterDataSnapshot = (snapshot: CharacterDataSnapshot) => {
     setALL_CHARACTERS(createCharacterDataMap(snapshot));
+  };
+
+  const replaceCharacterData = (id: CharacterId, data: CharacterData) => {
+    setALL_CHARACTERS((prev) => ({
+      ...prev,
+      [id]: normalizeCharacterData(id, data),
+    }));
   };
 
   useEffect(() => {
@@ -318,6 +326,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     characterData,
     patchCharacterData,
     replaceCharacterDataSnapshot,
+    replaceCharacterData,
     characterBaseStat,
     characterFinalStat,
     equipmentScore,

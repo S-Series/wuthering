@@ -66,6 +66,7 @@ export const kr = {
     cloudSyncLoginRequired: "로그인이 필요합니다.",
     cloudSyncMembershipRequired: "멤버십 기능입니다.",
     cloudSyncSuccess: "클라우드 동기화가 완료되었습니다.",
+    cloudSyncRequestFailed: "클라우드 요청에 실패했습니다.",
     cloudSyncDescription: "캐릭터 세팅 데이터를 클라우드에 올리거나, 저장된 데이터를 내려받을 수 있습니다.",
     cloudSyncUpload: "업로드",
     cloudSyncUploadDescription: "현재 기기의 캐릭터 데이터를 클라우드에 저장합니다.",
@@ -83,6 +84,14 @@ export const kr = {
     cloudSyncEchoCount: "에코",
     cloudSyncScore: "점수",
     cloudSyncNoWeapon: "미선택",
+    cloudSyncUploadConfirmTitle: "클라우드 업로드",
+    cloudSyncDownloadConfirmTitle: "클라우드 내려받기",
+    cloudSyncUploadConfirmMessage: "현재 로컬 캐릭터 데이터를 클라우드 데이터로 저장할까요?",
+    cloudSyncDownloadConfirmMessage: "클라우드 데이터를 내려받아 현재 로컬 캐릭터 데이터를 교체할까요?",
+    cloudSyncIrreversibleWarning: "이 작업은 되돌릴 수 없습니다.",
+    cloudSyncExecute: "실행",
+    cloudSyncExecuting: "실행 중",
+    cloudSyncCancel: "취소",
   },
   cardDetail: {
     sections: {

@@ -66,6 +66,7 @@ export const jp = {
     cloudSyncLoginRequired: "ログインが必要です。",
     cloudSyncMembershipRequired: "メンバーシップ機能です。",
     cloudSyncSuccess: "クラウド同期が完了しました。",
+    cloudSyncRequestFailed: "クラウドリクエストに失敗しました。",
     cloudSyncDescription: "キャラクター設定データをクラウドへアップロード、または保存済みデータをダウンロードできます。",
     cloudSyncUpload: "アップロード",
     cloudSyncUploadDescription: "この端末のキャラクターデータをクラウドに保存します。",
@@ -83,6 +84,14 @@ export const jp = {
     cloudSyncEchoCount: "音骸",
     cloudSyncScore: "スコア",
     cloudSyncNoWeapon: "未選択",
+    cloudSyncUploadConfirmTitle: "クラウドアップロード",
+    cloudSyncDownloadConfirmTitle: "クラウドダウンロード",
+    cloudSyncUploadConfirmMessage: "現在のローカルキャラクターデータをクラウドに保存しますか？",
+    cloudSyncDownloadConfirmMessage: "クラウドデータをダウンロードして現在のローカルキャラクターデータを置き換えますか？",
+    cloudSyncIrreversibleWarning: "この操作は元に戻せません。",
+    cloudSyncExecute: "実行",
+    cloudSyncExecuting: "実行中",
+    cloudSyncCancel: "キャンセル",
   },
   cardDetail: {
     sections: {

@@ -66,6 +66,7 @@ export const en = {
     cloudSyncLoginRequired: "Login is required.",
     cloudSyncMembershipRequired: "This is a membership feature.",
     cloudSyncSuccess: "Cloud sync complete.",
+    cloudSyncRequestFailed: "Cloud request failed.",
     cloudSyncDescription: "Upload character setup data to the cloud or download saved data.",
     cloudSyncUpload: "Upload",
     cloudSyncUploadDescription: "Save this device's character data to the cloud.",
@@ -83,6 +84,14 @@ export const en = {
     cloudSyncEchoCount: "Echo",
     cloudSyncScore: "Score",
     cloudSyncNoWeapon: "None",
+    cloudSyncUploadConfirmTitle: "Cloud Upload",
+    cloudSyncDownloadConfirmTitle: "Cloud Download",
+    cloudSyncUploadConfirmMessage: "Save the current local character data to the cloud?",
+    cloudSyncDownloadConfirmMessage: "Download cloud data and replace the current local character data?",
+    cloudSyncIrreversibleWarning: "This action cannot be undone.",
+    cloudSyncExecute: "Run",
+    cloudSyncExecuting: "Running",
+    cloudSyncCancel: "Cancel",
   },
   cardDetail: {
     sections: {

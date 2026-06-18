@@ -12,14 +12,43 @@ import {
 import { getGameProfile, saveGameProfile, saveUserNickname } from "@/firebase/user";
 import { logClientEvent } from "@/api/logger";
 import { syncGatewayUser } from "@/api/user.api";
+import {
+  downloadCharacterCloudData,
+  isMembershipUser,
+} from "@/api/characterCloudSync.api";
+import type { CharacterDataSnapshot } from "@/stores/characterDataStorage";
+import type { CharacterId } from "@/datas/characterStats";
 
 import { type UserProfile, type GameProfile } from "@/firebase/firebase"
+
+export type CloudCharacterDataCache = {
+  status: "idle" | "loading" | "success" | "error";
+  data: CharacterDataSnapshot;
+  updatedAt: string | null;
+  fetchedForUid: string | null;
+};
+
+const EMPTY_CLOUD_CHARACTER_DATA: CloudCharacterDataCache = {
+  status: "idle",
+  data: {},
+  updatedAt: null,
+  fetchedForUid: null,
+};
 
 type AuthState = {
   user: UserProfile | null;
   gameProfile: GameProfile | null;
+  cloudCharacterData: CloudCharacterDataCache;
   isLoading: boolean;
   setUser: (user: UserProfile | null) => void;
+  refreshCloudCharacterData: (options?: {
+    force?: boolean;
+    characterId?: CharacterId;
+  }) => Promise<void>;
+  setCloudCharacterDataSnapshot: (
+    data: CharacterDataSnapshot,
+    updatedAt: string | null,
+  ) => void;
   initAuth: () => void;
   signupAction: (email: string, password: string, nickname: string) => Promise<void>;
   loginAction: (email: string, password: string) => Promise<void>;
@@ -33,14 +62,115 @@ type AuthState = {
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   gameProfile: null,
+  cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA,
   isLoading: true,
 
   setUser: (user) => set({ user }),
 
+  refreshCloudCharacterData: async (options) => {
+    const force = options?.force ?? false;
+    const characterId = options?.characterId;
+    const { user, cloudCharacterData } = get();
+
+    if (!user || !isMembershipUser(user)) {
+      set({ cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA });
+      return;
+    }
+
+    if (
+      !force &&
+      cloudCharacterData.fetchedForUid === user.uid &&
+      (cloudCharacterData.status === "loading" ||
+        cloudCharacterData.status === "success")
+    ) {
+      return;
+    }
+
+    set({
+      cloudCharacterData: {
+        status: "loading",
+        data: cloudCharacterData.fetchedForUid === user.uid
+          ? cloudCharacterData.data
+          : {},
+        updatedAt: cloudCharacterData.fetchedForUid === user.uid
+          ? cloudCharacterData.updatedAt
+          : null,
+        fetchedForUid: user.uid,
+      },
+    });
+
+    try {
+      const result = await downloadCharacterCloudData(characterId);
+
+      if (!result.ok) {
+        set({
+          cloudCharacterData: {
+            status: "error",
+            data: {},
+            updatedAt: null,
+            fetchedForUid: user.uid,
+          },
+        });
+        return;
+      }
+
+      const nextData = (() => {
+        if (!characterId) return result.data;
+
+        const merged = { ...cloudCharacterData.data };
+
+        if (result.data[characterId]) {
+          merged[characterId] = result.data[characterId];
+        } else {
+          delete merged[characterId];
+        }
+
+        return merged;
+      })();
+
+      set({
+        cloudCharacterData: {
+          status: "success",
+          data: nextData,
+          updatedAt: result.updatedAt,
+          fetchedForUid: user.uid,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      set({
+        cloudCharacterData: {
+          status: "error",
+          data: {},
+          updatedAt: null,
+          fetchedForUid: user.uid,
+        },
+      });
+    }
+  },
+
+  setCloudCharacterDataSnapshot: (data, updatedAt) => {
+    const uid = get().user?.uid ?? null;
+
+    set({
+      cloudCharacterData: {
+        status: "success",
+        data,
+        updatedAt,
+        fetchedForUid: uid,
+      },
+    });
+  },
+
   initAuth: () => {
     onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
-        set({ user: null, gameProfile: null, isLoading: false });
+        set({
+          user: null,
+          gameProfile: null,
+          cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA,
+          isLoading: false,
+        });
         return;
       }
 
@@ -53,9 +183,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           gameProfile,
           isLoading: false,
         });
+
+        void get().refreshCloudCharacterData();
       } catch (error) {
         console.error(error);
-        set({ user: null, gameProfile: null, isLoading: false });
+        set({
+          user: null,
+          gameProfile: null,
+          cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA,
+          isLoading: false,
+        });
       }
     });
   },
@@ -75,6 +212,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const user = await signup(email, password, nickname);
       const gameProfile = await getGameProfile(user.uid)
       set({ user, gameProfile });
+      void get().refreshCloudCharacterData();
 
       await logClientEvent({
         feature: "auth",
@@ -105,6 +243,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const gameProfile = await getGameProfile(user.uid);
 
       set({ user, gameProfile });
+      void get().refreshCloudCharacterData();
 
       await logClientEvent({
         feature: "auth",
@@ -134,6 +273,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const user = await loginWithGoogle();
       const gameProfile = await getGameProfile(user.uid);
       set({ user, gameProfile });
+      void get().refreshCloudCharacterData();
 
       await logClientEvent({
         feature: "auth",
@@ -195,7 +335,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       await logout();
-      set({ user: null, gameProfile: null });
+      set({
+        user: null,
+        gameProfile: null,
+        cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA,
+      });
     } catch (error) {
       await logClientEvent({
         feature: "auth",

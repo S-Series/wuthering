@@ -64,6 +64,7 @@ export type LocaleSchema = {
     cloudSyncLoginRequired: string;
     cloudSyncMembershipRequired: string;
     cloudSyncSuccess: string;
+    cloudSyncRequestFailed: string;
     cloudSyncDescription: string;
     cloudSyncUpload: string;
     cloudSyncUploadDescription: string;
@@ -81,6 +82,14 @@ export type LocaleSchema = {
     cloudSyncEchoCount: string;
     cloudSyncScore: string;
     cloudSyncNoWeapon: string;
+    cloudSyncUploadConfirmTitle: string;
+    cloudSyncDownloadConfirmTitle: string;
+    cloudSyncUploadConfirmMessage: string;
+    cloudSyncDownloadConfirmMessage: string;
+    cloudSyncIrreversibleWarning: string;
+    cloudSyncExecute: string;
+    cloudSyncExecuting: string;
+    cloudSyncCancel: string;
   };
   cardDetail: {
     sections: {

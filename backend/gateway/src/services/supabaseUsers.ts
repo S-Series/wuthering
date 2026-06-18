@@ -301,6 +301,7 @@ export async function getOptionalSupabaseUserId(req: FastifyRequest) {
     }
 
     const created = await insertSupabaseUser(decoded);
+    await findSupabaseMembership(created.id);
     return created.id;
   } catch {
     return null;
@@ -312,10 +313,14 @@ export async function getRequiredSupabaseUser(req: FastifyRequest) {
   const existing = await findSupabaseUser(decoded.uid);
 
   if (existing) {
+    await findSupabaseMembership(existing.id);
     return existing as SupabaseMembershipUser;
   }
 
-  return (await insertSupabaseUser(decoded)) as SupabaseMembershipUser;
+  const created = await insertSupabaseUser(decoded);
+  await findSupabaseMembership(created.id);
+
+  return created as SupabaseMembershipUser;
 }
 
 export async function getActiveSupabaseMembership(userId: string) {

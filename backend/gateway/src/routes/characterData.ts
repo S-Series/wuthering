@@ -8,6 +8,11 @@ import { supabaseAdmin } from "../lib/supabaseAdmin.js";
 
 type CharacterDataBody = {
   data?: unknown;
+  characterId?: unknown;
+};
+
+type CharacterDataQuery = {
+  characterId?: string;
 };
 
 const MAX_CHARACTER_DATA_BYTES = 2 * 1024 * 1024;
@@ -35,6 +40,9 @@ export async function registerCharacterDataRoutes(app: FastifyInstance) {
       });
     }
 
+    const query = (req.query ?? {}) as CharacterDataQuery;
+    const characterId = query.characterId?.trim();
+
     const { data, error } = await supabaseAdmin
       .from("character_data")
       .select("data, updated_at")
@@ -46,9 +54,20 @@ export async function registerCharacterDataRoutes(app: FastifyInstance) {
       return reply.code(500).send({ error: "character data load failed" });
     }
 
+    const snapshot = isJsonObject(data?.data) ? data.data : {};
+    const responseData = characterId
+      ? {
+          [characterId]: isJsonObject(snapshot[characterId])
+            ? snapshot[characterId]
+            : undefined,
+        }
+      : snapshot;
+
     return reply.send({
       ok: true,
-      data: isJsonObject(data?.data) ? data.data : {},
+      data: characterId && responseData[characterId] === undefined
+        ? {}
+        : responseData,
       updatedAt: data?.updated_at ?? null,
     });
   });
@@ -77,7 +96,28 @@ export async function registerCharacterDataRoutes(app: FastifyInstance) {
       return reply.code(400).send({ error: "invalid character data" });
     }
 
-    const payload = JSON.stringify(body.data);
+    let nextData = body.data;
+
+    if (typeof body.characterId === "string" && body.characterId.trim()) {
+      const characterId = body.characterId.trim();
+      const { data: current, error: currentError } = await supabaseAdmin
+        .from("character_data")
+        .select("data")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (currentError) {
+        req.log.error(currentError);
+        return reply.code(500).send({ error: "character data load failed" });
+      }
+
+      nextData = {
+        ...(isJsonObject(current?.data) ? current.data : {}),
+        [characterId]: body.data,
+      };
+    }
+
+    const payload = JSON.stringify(nextData);
 
     if (Buffer.byteLength(payload, "utf8") > MAX_CHARACTER_DATA_BYTES) {
       return reply.code(413).send({ error: "character data is too large" });
@@ -89,7 +129,7 @@ export async function registerCharacterDataRoutes(app: FastifyInstance) {
       .upsert(
         {
           user_id: user.id,
-          data: body.data,
+          data: nextData,
           updated_at: now,
         },
         { onConflict: "user_id" }

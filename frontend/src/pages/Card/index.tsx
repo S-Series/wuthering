@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { useImgStore } from "@/stores/imgStore";
 import { useOverlay } from "@/contexts/PopupContext";
+import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
 import { useCharacter } from "@/stores/characterDataStore";
 
 import ImagePicker from "@/components/ImagePicker";
@@ -41,10 +42,10 @@ import {
   uploadCharacterCloudData,
 } from "@/api/characterCloudSync.api";
 import { useAuthStore } from "@/stores/authStore";
+import type { CloudCharacterDataCache } from "@/stores/authStore";
 import Select, { type StylesConfig } from "react-select";
 import { useStyleStore, type SelectOption } from "@/stores/styleStore";
 import { useRenderStore } from "@/stores/renderStore";
-import { readCharacterDataSnapshot } from "@/stores/characterDataStorage";
 
 import "./index.css"
 import "./contents.main.css"
@@ -59,6 +60,8 @@ type CloudSyncDataSummary = {
   score: string;
   updatedAt?: string;
 };
+
+type CloudSyncAction = "upload" | "download";
 
 const CLOUD_SYNC_DATE_LOCALE: Record<LangType, string> = {
   kr: "ko-KR",
@@ -151,6 +154,18 @@ function createFailedSummary(
   };
 }
 
+function createLoadingSummary(
+  localeText: CardLocaleText
+): CloudSyncDataSummary {
+  return {
+    characterName: localeText.cloudSyncDateLoading,
+    weapon: localeText.cloudSyncDateLoading,
+    echo: localeText.cloudSyncDateLoading,
+    score: localeText.cloudSyncDateLoading,
+    updatedAt: localeText.cloudSyncDateLoading,
+  };
+}
+
 function createSummaryFromCharacterData({
   data,
   characterName,
@@ -222,12 +237,74 @@ function CloudSyncDataCard({
   );
 }
 
+function CloudSyncConfirmDialog({
+  message,
+  localeText,
+  onConfirm,
+  onCancel,
+  onComplete,
+  onRunningChange,
+}: {
+  message: string;
+  localeText: CardLocaleText;
+  onConfirm: () => Promise<void>;
+  onCancel: () => void;
+  onComplete: () => void;
+  onRunningChange: (isRunning: boolean) => void;
+}) {
+  const [isRunning, setIsRunning] = useState(false);
+
+  const execute = async () => {
+    setIsRunning(true);
+    onRunningChange(true);
+
+    try {
+      await onConfirm();
+    } finally {
+      onRunningChange(false);
+      setIsRunning(false);
+    }
+
+    onCancel();
+    onComplete();
+  };
+
+  return (
+    <div className="cloud-sync-confirm">
+      <p>{message}</p>
+      <strong>{localeText.cloudSyncIrreversibleWarning}</strong>
+      <div className="cloud-sync-confirm__actions">
+        <button
+          type="button"
+          className="cancel"
+          disabled={isRunning}
+          onClick={onCancel}
+        >
+          {localeText.cloudSyncCancel}
+        </button>
+        <button
+          type="button"
+          className="confirm"
+          disabled={isRunning}
+          onClick={execute}
+        >
+          {isRunning
+            ? localeText.cloudSyncExecuting
+            : localeText.cloudSyncExecute}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function CloudSyncPanel({
   lang,
   localeText,
   characterId,
   characterName,
   currentData,
+  cloudCache,
+  refreshCloudCharacterData,
   onUpload,
   onDownload,
 }: {
@@ -236,66 +313,102 @@ function CloudSyncPanel({
   characterId: CharacterId;
   characterName: string;
   currentData: CloudSyncDataSummary;
-  onUpload: () => void;
-  onDownload: () => void;
+  cloudCache: CloudCharacterDataCache;
+  refreshCloudCharacterData: (options?: {
+    force?: boolean;
+    characterId?: CharacterId;
+  }) => Promise<void>;
+  onUpload: () => Promise<void>;
+  onDownload: () => Promise<void>;
 }) {
-  const [cloudData, setCloudData] = useState<CloudSyncDataSummary>(() => ({
-    characterName: localeText.cloudSyncDateLoading,
-    weapon: localeText.cloudSyncDateLoading,
-    echo: localeText.cloudSyncDateLoading,
-    score: localeText.cloudSyncDateLoading,
-    updatedAt: localeText.cloudSyncDateLoading,
-  }));
+  const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
+  const { closeOverlay } = useOverlay();
+  const [runningAction, setRunningAction] = useState<CloudSyncAction | null>(null);
+  const cloudRetryAttemptedRef = useRef(false);
 
-  useEffect(() => {
-    let isMounted = true;
+  const cloudData = useMemo(() => {
+    if (cloudCache.status === "loading" || cloudCache.status === "idle") {
+      return createLoadingSummary(localeText);
+    }
 
-    downloadCharacterCloudData()
-      .then((result) => {
-        if (!isMounted) return;
+    if (cloudCache.status === "error") {
+      return createFailedSummary(localeText);
+    }
 
-        if (!result.ok) {
-          setCloudData(createFailedSummary(localeText));
-          return;
-        }
+    const formattedDate = cloudCache.updatedAt
+      ? formatCloudSyncDate(cloudCache.updatedAt, lang)
+      : localeText.cloudSyncDataNone;
+    const targetData = cloudCache.data[characterId];
 
-        const formattedDate = result.updatedAt
-          ? formatCloudSyncDate(result.updatedAt, lang)
-          : localeText.cloudSyncDataNone;
+    if (!targetData) {
+      return createDataNoneSummary(characterName, localeText, formattedDate);
+    }
 
-        const targetData = result.data[characterId];
-
-        if (!targetData) {
-          setCloudData(
-            createDataNoneSummary(characterName, localeText, formattedDate)
-          );
-          return;
-        }
-
-        setCloudData(
-          createSummaryFromCharacterData({
-            data: targetData,
-            characterName,
-            lang,
-            localeText,
-            updatedAt: formattedDate,
-          })
-        );
-      })
-      .catch(() => {
-        if (!isMounted) return;
-        setCloudData(createFailedSummary(localeText));
-      });
-
-    return () => {
-      isMounted = false;
-    };
+    return createSummaryFromCharacterData({
+      data: targetData,
+      characterName,
+      lang,
+      localeText,
+      updatedAt: formattedDate,
+    });
   }, [
-    lang,
     characterId,
     characterName,
+    cloudCache,
+    lang,
     localeText,
-    localeText.cloudSyncDateLoadFailed,
+  ]);
+
+  const openCloudSyncConfirm = (action: CloudSyncAction) => {
+    const isUpload = action === "upload";
+
+    openElevatedOverlay(
+      <CloudSyncConfirmDialog
+        message={
+          isUpload
+            ? localeText.cloudSyncUploadConfirmMessage
+            : localeText.cloudSyncDownloadConfirmMessage
+        }
+        localeText={localeText}
+        onConfirm={isUpload ? onUpload : onDownload}
+        onCancel={closeElevatedOverlay}
+        onComplete={closeOverlay}
+        onRunningChange={(isRunning) =>
+          setRunningAction(isRunning ? action : null)
+        }
+      />,
+      {
+        title: isUpload
+          ? localeText.cloudSyncUploadConfirmTitle
+          : localeText.cloudSyncDownloadConfirmTitle,
+        width: "min(92vw, 28rem)",
+        ratio: null,
+        closeOnEsc: false,
+        closeOnBackdrop: false,
+        showCloseButton: false,
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (cloudCache.status === "loading") return;
+    if (cloudRetryAttemptedRef.current) return;
+
+    const hasCloudData =
+      cloudCache.status === "success" &&
+      Boolean(cloudCache.updatedAt) &&
+      Boolean(cloudCache.data[characterId]);
+
+    if (hasCloudData) return;
+
+    cloudRetryAttemptedRef.current = true;
+    void refreshCloudCharacterData({ force: true, characterId });
+  }, [
+    characterId,
+    cloudCache.data,
+    cloudCache.status,
+    cloudCache.updatedAt,
+    refreshCloudCharacterData,
   ]);
 
   return (
@@ -317,7 +430,8 @@ function CloudSyncPanel({
         <button
           type="button"
           className="cloud-sync-action"
-          onClick={onUpload}
+          disabled={runningAction !== null}
+          onClick={() => openCloudSyncConfirm("upload")}
         >
           <strong>{localeText.cloudSyncUpload}</strong>
           <span>{localeText.cloudSyncUploadDescription}</span>
@@ -325,7 +439,8 @@ function CloudSyncPanel({
         <button
           type="button"
           className="cloud-sync-action"
-          onClick={onDownload}
+          disabled={runningAction !== null}
+          onClick={() => openCloudSyncConfirm("download")}
         >
           <strong>{localeText.cloudSyncDownload}</strong>
           <span>{localeText.cloudSyncDownloadDescription}</span>
@@ -345,10 +460,16 @@ export default function Card() {
     setCardGuideAutoOpenHandled,
     saveCardGuideDismissed,
   } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, replaceCharacterDataSnapshot, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, replaceCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
-  const { openOverlay, closeOverlay } = useOverlay();
-  const { user, gameProfile } = useAuthStore();
+  const { openOverlay } = useOverlay();
+  const {
+    user,
+    gameProfile,
+    cloudCharacterData,
+    refreshCloudCharacterData,
+    setCloudCharacterDataSnapshot,
+  } = useAuthStore();
   const { setRenderedImage } = useRenderStore();
 
   const navigate = useNavigate();
@@ -633,7 +754,14 @@ export default function Card() {
       return;
     }
 
-    const result = await uploadCharacterCloudData(readCharacterDataSnapshot());
+    let result;
+
+    try {
+      result = await uploadCharacterCloudData(characterData, characterId);
+    } catch {
+      alert(localeText.cloudSyncRequestFailed);
+      return;
+    }
 
     if (!result.ok) {
       alert(result.message);
@@ -641,7 +769,13 @@ export default function Card() {
     }
 
     alert(localeText.cloudSyncSuccess);
-    closeOverlay();
+    setCloudCharacterDataSnapshot(
+      {
+        ...cloudCharacterData.data,
+        [characterId]: characterData,
+      },
+      result.updatedAt
+    );
   };
 
   const handleCloudDownload = async () => {
@@ -655,21 +789,36 @@ export default function Card() {
       return;
     }
 
-    const result = await downloadCharacterCloudData();
+    let result;
+
+    try {
+      result = await downloadCharacterCloudData(characterId);
+    } catch {
+      alert(localeText.cloudSyncRequestFailed);
+      return;
+    }
 
     if (!result.ok) {
       alert(result.message);
       return;
     }
 
-    if (!result.updatedAt) {
+    const targetData = result.data[characterId];
+
+    if (!result.updatedAt || !targetData) {
       alert(localeText.cloudSyncNoCloudData);
       return;
     }
 
-    replaceCharacterDataSnapshot(result.data);
+    replaceCharacterData(characterId, targetData);
+    setCloudCharacterDataSnapshot(
+      {
+        ...cloudCharacterData.data,
+        [characterId]: targetData,
+      },
+      result.updatedAt
+    );
     alert(localeText.cloudSyncDownloadSuccess);
-    closeOverlay();
   };
 
   const openCloudSyncManager = () => {
@@ -680,6 +829,8 @@ export default function Card() {
         characterId={characterId}
         characterName={cloudSyncCurrentData.characterName}
         currentData={cloudSyncCurrentData}
+        cloudCache={cloudCharacterData}
+        refreshCloudCharacterData={refreshCloudCharacterData}
         onUpload={handleCloudUpload}
         onDownload={handleCloudDownload}
       />,
