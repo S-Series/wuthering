@@ -10,6 +10,7 @@ import { saveCharacterScore } from "@/summaryData/storage";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
 import {
   CHARACTER_DATA_STORAGE_KEY,
+  type CharacterDataSnapshot,
   readCharacterDataSnapshot,
 } from "@/stores/characterDataStorage";
 
@@ -18,6 +19,7 @@ type ContextType = {
   setCharacterId: React.Dispatch<React.SetStateAction<CharacterId>>;
   characterData: CharacterData;
   patchCharacterData: (patch: Partial<CharacterData>) => void;
+  replaceCharacterDataSnapshot: (snapshot: CharacterDataSnapshot) => void;
   characterBaseStat: CharacterStat | null;
   characterFinalStat: CharacterStat | null;
   equipmentScore: ScoreList;
@@ -116,18 +118,18 @@ const normalizeCharacterData = (
 
 export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const ALL_IDS = useMemo(() => characterIds, []);
-  const [ALL_CHARACTERS, setALL_CHARACTERS] = useState<Record<CharacterId, CharacterData>>(() => {
-    const saved = readCharacterDataSnapshot();
-
-    const full = Object.fromEntries(
+  const createCharacterDataMap = (snapshot: CharacterDataSnapshot) => {
+    return Object.fromEntries(
       ALL_IDS.map((id) => [
         id,
-        normalizeCharacterData(id, saved[id]),
+        normalizeCharacterData(id, snapshot[id]),
       ])
     ) as Record<CharacterId, CharacterData>;
+  };
 
-    return full;
-  });
+  const [ALL_CHARACTERS, setALL_CHARACTERS] = useState<Record<CharacterId, CharacterData>>(() =>
+    createCharacterDataMap(readCharacterDataSnapshot())
+  );
 
   const patchCharacterData = (patch: Partial<CharacterData>) => {
     setALL_CHARACTERS((prev) => ({
@@ -137,6 +139,10 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
         ...patch,
       },
     }));
+  };
+
+  const replaceCharacterDataSnapshot = (snapshot: CharacterDataSnapshot) => {
+    setALL_CHARACTERS(createCharacterDataMap(snapshot));
   };
 
   useEffect(() => {
@@ -311,6 +317,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     setCharacterId,
     characterData,
     patchCharacterData,
+    replaceCharacterDataSnapshot,
     characterBaseStat,
     characterFinalStat,
     equipmentScore,

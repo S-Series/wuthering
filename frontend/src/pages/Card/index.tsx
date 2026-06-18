@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import { useAppStore } from "@/stores/appStore";
+import { useAppStore, type LangType } from "@/stores/appStore";
 import { useImgStore } from "@/stores/imgStore";
 import { useOverlay } from "@/contexts/PopupContext";
 import { useCharacter } from "@/stores/characterDataStore";
@@ -22,14 +22,21 @@ import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
 
 import { getCharacterRank } from "@/types/character.type";
+import { type CharacterData } from "@/types/character.type";
 import { type WeaponData } from "@/runtime/character.runtime";
-import { patchConstell } from "@/runtime/characterData.helpers";
+import {
+  calcAllEchoScore,
+  calcFinalScore,
+  calcFinalStat,
+  patchConstell,
+} from "@/runtime/characterData.helpers";
 
 import { locale } from "@/locales/locale";
 
 import { createPayloadData, getRenderCardStatus, requestRenderCard } from "@/api/render.api";
 import { logClientEvent } from "@/api/logger";
 import {
+  downloadCharacterCloudData,
   isMembershipUser,
   uploadCharacterCloudData,
 } from "@/api/characterCloudSync.api";
@@ -43,6 +50,291 @@ import "./index.css"
 import "./contents.main.css"
 import CardCharacterSection from "./Character";
 
+type CardLocaleText = ReturnType<typeof locale>["card"];
+
+type CloudSyncDataSummary = {
+  characterName: string;
+  weapon: string;
+  echo: string;
+  score: string;
+  updatedAt?: string;
+};
+
+const CLOUD_SYNC_DATE_LOCALE: Record<LangType, string> = {
+  kr: "ko-KR",
+  en: "en-US",
+  jp: "ja-JP",
+  zh: "zh-CN",
+};
+
+function formatCloudSyncDate(updatedAt: string, lang: LangType) {
+  const date = new Date(updatedAt);
+
+  if (Number.isNaN(date.getTime())) return updatedAt;
+
+  return new Intl.DateTimeFormat(CLOUD_SYNC_DATE_LOCALE[lang], {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+function countConfiguredEcho(data: CharacterData) {
+  return data.echoData.filter((echo) => {
+    if (echo.echoId || echo.setId) return true;
+    if (echo.mainOption.statId !== "dummy" || echo.mainOption.statValue > 0) {
+      return true;
+    }
+
+    return echo.subOptions.some(
+      (option) => option.statId !== "dummy" || option.statValue > 0
+    );
+  }).length;
+}
+
+function getHarmonySetFromData(data: CharacterData) {
+  const values = Object.fromEntries(
+    Object.values(harmony).map((item) => [item.id, 0])
+  ) as Record<HarmonyId, number>;
+
+  for (const idx of data.echoDataIndex.slice(0, 5)) {
+    const item = data.echoData[idx];
+    if (!item?.setId) continue;
+    if (!Object.prototype.hasOwnProperty.call(values, item.setId)) continue;
+    values[item.setId] += 1;
+  }
+
+  return Object.fromEntries(
+    Object.entries(values)
+      .map(([id, count]) => {
+        const harmonyId = id as HarmonyId;
+        const optionCounts = harmony[harmonyId].option.map((opt) => opt.count);
+        const activeCount = optionCounts
+          .filter((requiredCount) => count >= requiredCount)
+          .sort((a, b) => b - a)[0] ?? 0;
+
+        return [harmonyId, activeCount] as const;
+      })
+      .filter(([, activeCount]) => activeCount > 0)
+  ) as Partial<Record<HarmonyId, number>>;
+}
+
+function getCharacterDataScore(data: CharacterData) {
+  const dataHarmonySet = getHarmonySetFromData(data);
+  const finalStat = calcFinalStat(data, data.echoDataIndex, dataHarmonySet);
+  const scoreList = calcAllEchoScore(data);
+  return calcFinalScore(data, finalStat, data.weaponId ?? null, scoreList)[1];
+}
+
+function createDataNoneSummary(
+  characterName: string,
+  localeText: CardLocaleText,
+  updatedAt?: string
+): CloudSyncDataSummary {
+  return {
+    characterName,
+    weapon: localeText.cloudSyncDataNone,
+    echo: localeText.cloudSyncDataNone,
+    score: localeText.cloudSyncDataNone,
+    updatedAt,
+  };
+}
+
+function createFailedSummary(
+  localeText: CardLocaleText
+): CloudSyncDataSummary {
+  return {
+    characterName: localeText.cloudSyncDateLoadFailed,
+    weapon: localeText.cloudSyncDateLoadFailed,
+    echo: localeText.cloudSyncDateLoadFailed,
+    score: localeText.cloudSyncDateLoadFailed,
+    updatedAt: localeText.cloudSyncDateLoadFailed,
+  };
+}
+
+function createSummaryFromCharacterData({
+  data,
+  characterName,
+  lang,
+  localeText,
+  updatedAt,
+}: {
+  data: CharacterData;
+  characterName: string;
+  lang: LangType;
+  localeText: CardLocaleText;
+  updatedAt?: string;
+}): CloudSyncDataSummary {
+  const weaponName = data.weaponId
+    ? weaponDict[data.weaponId]?.[lang] ?? localeText.cloudSyncNoWeapon
+    : localeText.cloudSyncNoWeapon;
+
+  const score = (() => {
+    try {
+      return `${getCharacterDataScore(data).toFixed(1)}pt`;
+    } catch {
+      return localeText.cloudSyncDataNone;
+    }
+  })();
+
+  return {
+    characterName,
+    weapon: weaponName,
+    echo: `${countConfiguredEcho(data)}/10`,
+    score,
+    updatedAt,
+  };
+}
+
+function CloudSyncDataCard({
+  title,
+  summary,
+  localeText,
+}: {
+  title: string;
+  summary: CloudSyncDataSummary;
+  localeText: CardLocaleText;
+}) {
+  return (
+    <section className="cloud-sync-data-card">
+      <span>{title}</span>
+      <b>{summary.characterName}</b>
+      <div className="cloud-sync-data-rows">
+        <p>
+          <span>{localeText.cloudSyncWeapon}</span>
+          <strong>{summary.weapon}</strong>
+        </p>
+        <p>
+          <span>{localeText.cloudSyncEchoCount}</span>
+          <strong>{summary.echo}</strong>
+        </p>
+        <p>
+          <span>{localeText.cloudSyncScore}</span>
+          <strong>{summary.score}</strong>
+        </p>
+        {summary.updatedAt ? (
+          <p>
+            <span>{localeText.cloudSyncUpdatedAt}</span>
+            <strong>{summary.updatedAt}</strong>
+          </p>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+function CloudSyncPanel({
+  lang,
+  localeText,
+  characterId,
+  characterName,
+  currentData,
+  onUpload,
+  onDownload,
+}: {
+  lang: LangType;
+  localeText: CardLocaleText;
+  characterId: CharacterId;
+  characterName: string;
+  currentData: CloudSyncDataSummary;
+  onUpload: () => void;
+  onDownload: () => void;
+}) {
+  const [cloudData, setCloudData] = useState<CloudSyncDataSummary>(() => ({
+    characterName: localeText.cloudSyncDateLoading,
+    weapon: localeText.cloudSyncDateLoading,
+    echo: localeText.cloudSyncDateLoading,
+    score: localeText.cloudSyncDateLoading,
+    updatedAt: localeText.cloudSyncDateLoading,
+  }));
+
+  useEffect(() => {
+    let isMounted = true;
+
+    downloadCharacterCloudData()
+      .then((result) => {
+        if (!isMounted) return;
+
+        if (!result.ok) {
+          setCloudData(createFailedSummary(localeText));
+          return;
+        }
+
+        const formattedDate = result.updatedAt
+          ? formatCloudSyncDate(result.updatedAt, lang)
+          : localeText.cloudSyncDataNone;
+
+        const targetData = result.data[characterId];
+
+        if (!targetData) {
+          setCloudData(
+            createDataNoneSummary(characterName, localeText, formattedDate)
+          );
+          return;
+        }
+
+        setCloudData(
+          createSummaryFromCharacterData({
+            data: targetData,
+            characterName,
+            lang,
+            localeText,
+            updatedAt: formattedDate,
+          })
+        );
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setCloudData(createFailedSummary(localeText));
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    lang,
+    characterId,
+    characterName,
+    localeText,
+    localeText.cloudSyncDateLoadFailed,
+  ]);
+
+  return (
+    <div className="cloud-sync-panel">
+      <p className="cloud-sync-caption">{localeText.cloudSyncDescription}</p>
+      <div className="cloud-sync-data-grid">
+        <CloudSyncDataCard
+          title={localeText.cloudSyncCurrentData}
+          summary={currentData}
+          localeText={localeText}
+        />
+        <CloudSyncDataCard
+          title={localeText.cloudSyncCloudData}
+          summary={cloudData}
+          localeText={localeText}
+        />
+      </div>
+      <div className="cloud-sync-actions">
+        <button
+          type="button"
+          className="cloud-sync-action"
+          onClick={onUpload}
+        >
+          <strong>{localeText.cloudSyncUpload}</strong>
+          <span>{localeText.cloudSyncUploadDescription}</span>
+        </button>
+        <button
+          type="button"
+          className="cloud-sync-action"
+          onClick={onDownload}
+        >
+          <strong>{localeText.cloudSyncDownload}</strong>
+          <span>{localeText.cloudSyncDownloadDescription}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Card() {
   const {
     lang,
@@ -53,9 +345,9 @@ export default function Card() {
     setCardGuideAutoOpenHandled,
     saveCardGuideDismissed,
   } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, replaceCharacterDataSnapshot, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
-  const { openOverlay } = useOverlay();
+  const { openOverlay, closeOverlay } = useOverlay();
   const { user, gameProfile } = useAuthStore();
   const { setRenderedImage } = useRenderStore();
 
@@ -150,6 +442,29 @@ export default function Card() {
 
     return { ...base, ...stat }
   }, [characterData.weaponId])
+
+  const configuredEchoCount = useMemo(() => {
+    return countConfiguredEcho(characterData);
+  }, [characterData]);
+
+  const cloudSyncCurrentData = useMemo(() => {
+    const characterName = selectedCharacterData[lang] ?? selectedCharacterData.kr;
+    const weaponName = weaponData?.[lang] ?? localeText.cloudSyncNoWeapon;
+
+    return {
+      characterName,
+      weapon: weaponName,
+      echo: `${configuredEchoCount}/10`,
+      score: `${finalScore[1].toFixed(1)}pt`,
+    };
+  }, [
+    configuredEchoCount,
+    finalScore,
+    lang,
+    localeText.cloudSyncNoWeapon,
+    selectedCharacterData,
+    weaponData,
+  ]);
 
   const weaponConstellOption: SelectOption[] = [
     { value: "1", label: "✦" },
@@ -307,7 +622,7 @@ export default function Card() {
     }
   };
 
-  const handleCloudSync = async () => {
+  const handleCloudUpload = async () => {
     if (!user) {
       alert(localeText.cloudSyncLoginRequired);
       return;
@@ -326,6 +641,55 @@ export default function Card() {
     }
 
     alert(localeText.cloudSyncSuccess);
+    closeOverlay();
+  };
+
+  const handleCloudDownload = async () => {
+    if (!user) {
+      alert(localeText.cloudSyncLoginRequired);
+      return;
+    }
+
+    if (!isMembershipUser(user)) {
+      alert(localeText.cloudSyncMembershipRequired);
+      return;
+    }
+
+    const result = await downloadCharacterCloudData();
+
+    if (!result.ok) {
+      alert(result.message);
+      return;
+    }
+
+    if (!result.updatedAt) {
+      alert(localeText.cloudSyncNoCloudData);
+      return;
+    }
+
+    replaceCharacterDataSnapshot(result.data);
+    alert(localeText.cloudSyncDownloadSuccess);
+    closeOverlay();
+  };
+
+  const openCloudSyncManager = () => {
+    openOverlay(
+      <CloudSyncPanel
+        lang={lang}
+        localeText={localeText}
+        characterId={characterId}
+        characterName={cloudSyncCurrentData.characterName}
+        currentData={cloudSyncCurrentData}
+        onUpload={handleCloudUpload}
+        onDownload={handleCloudDownload}
+      />,
+      {
+        title: localeText.cloudSync,
+        width: "min(88vw, 34rem)",
+        height: null,
+        ratio: null,
+      }
+    );
   };
 
   type RenderStatus = "ready" | "lock" | "cooldown";
@@ -423,7 +787,7 @@ export default function Card() {
         >
           <span>{localeText.oMenu}</span>
         </button>
-        <button type="button" onClick={handleCloudSync}>
+        <button type="button" onClick={openCloudSyncManager}>
           <span>{localeText.cloudSync}</span>
         </button>
       </section>

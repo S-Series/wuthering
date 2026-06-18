@@ -17,6 +17,42 @@ function isJsonObject(value: unknown): value is Record<string, unknown> {
 }
 
 export async function registerCharacterDataRoutes(app: FastifyInstance) {
+  app.get("/api/character-data", async (req, reply) => {
+    let user;
+
+    try {
+      user = await getRequiredSupabaseUser(req);
+    } catch {
+      return reply.code(401).send({ error: "unauthorized" });
+    }
+
+    const membership = await getActiveSupabaseMembership(user.id);
+
+    if (!isMembershipUser(user, membership)) {
+      return reply.code(403).send({
+        error: "membership required",
+        reason: "membership-required",
+      });
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("character_data")
+      .select("data, updated_at")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      req.log.error(error);
+      return reply.code(500).send({ error: "character data load failed" });
+    }
+
+    return reply.send({
+      ok: true,
+      data: isJsonObject(data?.data) ? data.data : {},
+      updatedAt: data?.updated_at ?? null,
+    });
+  });
+
   app.put("/api/character-data", async (req, reply) => {
     let user;
 

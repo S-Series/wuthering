@@ -6,6 +6,10 @@ export type CloudSyncResult =
   | { ok: true; updatedAt: string | null }
   | { ok: false; reason: "login-required" | "membership-required" | "request-failed"; message: string };
 
+export type CloudDownloadResult =
+  | { ok: true; data: CharacterDataSnapshot; updatedAt: string | null }
+  | { ok: false; reason: "login-required" | "membership-required" | "request-failed"; message: string };
+
 export function isMembershipUser(user: UserProfile | null) {
   if (!user) return false;
 
@@ -81,6 +85,74 @@ export async function uploadCharacterCloudData(
 
   return {
     ok: true,
+    updatedAt: body.updatedAt ?? null,
+  };
+}
+
+export async function downloadCharacterCloudData(): Promise<CloudDownloadResult> {
+  const gatewayUrl = import.meta.env.VITE_GATEWAY_URL;
+
+  if (!gatewayUrl) {
+    return {
+      ok: false,
+      reason: "request-failed",
+      message: "VITE_GATEWAY_URL is missing",
+    };
+  }
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    return {
+      ok: false,
+      reason: "login-required",
+      message: "로그인이 필요합니다.",
+    };
+  }
+
+  const idToken = await user.getIdToken();
+  const response = await fetch(`${gatewayUrl}/api/character-data`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  if (response.status === 403) {
+    return {
+      ok: false,
+      reason: "membership-required",
+      message: "멤버십 기능입니다.",
+    };
+  }
+
+  if (response.status === 401) {
+    return {
+      ok: false,
+      reason: "login-required",
+      message: "로그인이 필요합니다.",
+    };
+  }
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      reason: "request-failed",
+      message: `클라우드 데이터를 불러오지 못했습니다. (${response.status})`,
+    };
+  }
+
+  const body = (await response.json()) as {
+    data?: unknown;
+    updatedAt?: string | null;
+  };
+
+  return {
+    ok: true,
+    data:
+      body.data && typeof body.data === "object" && !Array.isArray(body.data)
+        ? body.data as CharacterDataSnapshot
+        : {},
     updatedAt: body.updatedAt ?? null,
   };
 }
