@@ -8,6 +8,10 @@ import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
+import {
+  CHARACTER_DATA_STORAGE_KEY,
+  readCharacterDataSnapshot,
+} from "@/stores/characterDataStorage";
 
 type ContextType = {
   characterId: CharacterId;
@@ -24,8 +28,6 @@ type ContextType = {
 };
 
 const CharacterContext = createContext<ContextType | null>(null);
-
-const STORAGE_KEY = "wm-character-data";
 
 const normalizeCharacterData = (
   id: CharacterId,
@@ -115,14 +117,7 @@ const normalizeCharacterData = (
 export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const ALL_IDS = useMemo(() => characterIds, []);
   const [ALL_CHARACTERS, setALL_CHARACTERS] = useState<Record<CharacterId, CharacterData>>(() => {
-    let saved: Partial<Record<CharacterId, CharacterData>> = {};
-
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) saved = JSON.parse(raw);
-    } catch {
-      saved = {};
-    }
+    const saved = readCharacterDataSnapshot();
 
     const full = Object.fromEntries(
       ALL_IDS.map((id) => [
@@ -145,7 +140,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(ALL_CHARACTERS));
+    localStorage.setItem(CHARACTER_DATA_STORAGE_KEY, JSON.stringify(ALL_CHARACTERS));
   }, [ALL_CHARACTERS]);
 
   const [characterId, setCharacterId] = useState<CharacterId>("rover_spectro");

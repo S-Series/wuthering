@@ -30,14 +30,35 @@ type SupabaseUserRow = {
   updated_at: string;
 };
 
+type SupabaseMembershipRow = {
+  user_id: string;
+  membership_level: number;
+  started_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+  nickname: string | null;
+};
+
 export type GatewayUserProfile = {
   uid: string;
   supabaseUid: string;
   email: string | null;
   nickname: string;
   imageUrl: string | null;
+  role: string;
+  status: string;
+  membershipLevel: number;
+  membershipExpiresAt: string | null;
+  membershipNickname: string | null;
+  isMember: boolean;
   createdAt: number;
 };
+
+export type SupabaseMembershipUser = Pick<
+  SupabaseUserRow,
+  "id" | "firebase_uid" | "role" | "status"
+>;
 
 function getBearerToken(req: FastifyRequest) {
   const authHeader = req.headers.authorization;
@@ -61,8 +82,18 @@ function getProvider(decoded: FirebaseToken, input?: SyncUserInput) {
   return normalizeProvider(input?.provider ?? decoded.firebase?.sign_in_provider);
 }
 
+function isActiveMembership(membership: SupabaseMembershipRow | null) {
+  if (!membership) return false;
+  if (membership.membership_level <= 0) return false;
+
+  if (!membership.expires_at) return true;
+
+  return new Date(membership.expires_at).getTime() > Date.now();
+}
+
 function toGatewayUserProfile(
   row: SupabaseUserRow,
+  membership: SupabaseMembershipRow | null,
   input?: SyncUserInput
 ): GatewayUserProfile {
   return {
@@ -74,6 +105,12 @@ function toGatewayUserProfile(
       row.email?.split("@")[0] ||
       "User",
     imageUrl: input?.imageUrl ?? null,
+    role: row.role,
+    status: row.status,
+    membershipLevel: membership?.membership_level ?? 0,
+    membershipExpiresAt: membership?.expires_at ?? null,
+    membershipNickname: membership?.nickname ?? null,
+    isMember: isActiveMembership(membership),
     createdAt: new Date(row.created_at).getTime(),
   };
 }
@@ -91,6 +128,47 @@ async function findSupabaseUser(firebaseUid: string) {
   }
 
   return data as SupabaseUserRow | null;
+}
+
+async function findSupabaseMembership(userId: string) {
+  const { data, error } = await supabaseAdmin
+    .from("memberships")
+    .select("*")
+    .eq("user_id", userId)
+    .gt("membership_level", 0)
+    .order("membership_level", { ascending: false })
+    .order("expires_at", { ascending: false, nullsFirst: true })
+    .limit(10);
+
+  if (error) {
+    throw new Error(`Failed to fetch Supabase membership: ${error.message}`);
+  }
+
+  const memberships = (data ?? []) as SupabaseMembershipRow[];
+
+  return memberships.find((membership) => isActiveMembership(membership)) ?? null;
+}
+
+async function updateMembershipNickname(
+  userId: string,
+  displayName?: string | null
+) {
+  const nickname = displayName?.trim();
+
+  if (!nickname) return;
+
+  const { error } = await supabaseAdmin
+    .from("memberships")
+    .update({
+      nickname: nickname.slice(0, 200),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId)
+    .is("nickname", null);
+
+  if (error) {
+    throw new Error(`Failed to update membership nickname: ${error.message}`);
+  }
 }
 
 async function insertSupabaseUser(decoded: FirebaseToken, input?: SyncUserInput) {
@@ -163,8 +241,10 @@ export async function syncSupabaseUser(
   const row = existing
     ? await updateSupabaseUser(existing, decoded, input)
     : await insertSupabaseUser(decoded, input);
+  await updateMembershipNickname(row.id, input?.displayName);
+  const membership = await findSupabaseMembership(row.id);
 
-  return toGatewayUserProfile(row, input);
+  return toGatewayUserProfile(row, membership, input);
 }
 
 export async function getOptionalSupabaseUserId(req: FastifyRequest) {
@@ -184,4 +264,26 @@ export async function getOptionalSupabaseUserId(req: FastifyRequest) {
   } catch {
     return null;
   }
+}
+
+export async function getRequiredSupabaseUser(req: FastifyRequest) {
+  const decoded = await verifyFirebaseRequest(req);
+  const existing = await findSupabaseUser(decoded.uid);
+
+  if (existing) {
+    return existing as SupabaseMembershipUser;
+  }
+
+  return (await insertSupabaseUser(decoded)) as SupabaseMembershipUser;
+}
+
+export async function getActiveSupabaseMembership(userId: string) {
+  return findSupabaseMembership(userId);
+}
+
+export function isMembershipUser(
+  user: SupabaseMembershipUser,
+  membership: SupabaseMembershipRow | null
+) {
+  return user.status.toLowerCase() === "active" && isActiveMembership(membership);
 }

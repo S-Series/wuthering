@@ -11,7 +11,7 @@ import { locale } from "@/locales/locale";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import type { CharacterData } from "@/types/character.type";
 
-import "./Card.Detail.css";
+import "./Detail.css";
 
 type Props = {
   cData: CharacterData;

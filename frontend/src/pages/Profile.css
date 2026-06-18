@@ -12,6 +12,39 @@
   color: #f4f7ff;
 }
 
+.profile-login-page {
+  width: min(92vw, 38rem);
+  min-height: calc(100dvh - min(16vw, 8rem));
+  justify-content: center;
+  padding: min(3vh, 1.75rem) 0 min(6vh, 3.5rem);
+}
+
+.profile-login-shell {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: min(2vw, 1rem);
+  padding: min(3vw, 1.5rem) min(4vw, 2rem);
+  border: 1px solid rgba(190, 218, 255, 0.34);
+  background:
+    linear-gradient(180deg, rgba(8, 9, 12, 0.74), rgba(9, 18, 38, 0.44)),
+    rgba(5, 12, 30, 0.18);
+  box-shadow: 0 0.375rem 1rem #00000061;
+  box-sizing: border-box;
+}
+
+.profile-login-hero {
+  display: flex;
+  width: min(100%, 34rem);
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: min(2vw, 1rem);
+  border-bottom: 1px solid rgba(190, 218, 255, 0.22);
+  text-align: center;
+  box-sizing: border-box;
+}
+
 .profile-info {
   display: flex;
   width: min(100%, 44rem);
@@ -22,9 +55,9 @@
 }
 
 .profile-login-heading {
-  width: min(100%, 34rem);
-  padding-bottom: min(1.5vw, 0.85rem);
-  border-bottom: 1px solid #555;
+  width: min(100%, 25rem);
+  padding-bottom: min(1.4vw, 0.8rem);
+  border-bottom: 1px solid rgba(190, 218, 255, 0.24);
   text-align: center;
   box-sizing: border-box;
 }
@@ -107,10 +140,10 @@
 }
 
 .profile-info-list-bottom {
-  width: min(100%, 40rem);
-  margin-top: min(1vw, 0.5rem);
-  padding-top: min(2vw, 1.1rem);
-  border-top: 1px solid #494949;
+  width: min(100%, 34rem);
+  margin-top: min(1.4vw, 0.8rem);
+  padding-top: min(1.6vw, 0.9rem);
+  border-top: 1px solid rgba(190, 218, 255, 0.22);
 }
 
 .profile-info-list li {
@@ -118,12 +151,12 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: min(4vw, 2.5rem);
+  min-height: min(3.2vw, 2rem);
   flex: 1;
   padding: 0 3%;
   border-right: 1px solid #555;
   color: #d8dae0;
-  font-size: min(1vw, 0.86rem);
+  font-size: min(0.82vw, 0.74rem);
   font-weight: 800;
   word-break: keep-all;
 }
@@ -140,6 +173,11 @@
   width: min(100%, 30rem);
   min-width: 0;
   height: auto;
+}
+
+.profile-login-panel {
+  width: min(100%, 25rem);
+  gap: min(1.3vw, 0.75rem);
 }
 
 .profile-card {
@@ -187,6 +225,10 @@
   padding: min(2vw, 1.15rem) 0 0;
 }
 
+.profile-login-card .profile-card-body {
+  padding-top: 0;
+}
+
 .profile-field {
   display: flex;
   flex-direction: column;
@@ -196,7 +238,7 @@
 
 .profile-login-card .profile-card-body > * {
   width: 100%;
-  max-width: 26rem;
+  max-width: 25rem;
   align-self: center;
   box-sizing: border-box;
 }
@@ -472,6 +514,20 @@
 @media (max-width: 35rem) {
   .profile-page {
     gap: 0.75rem;
+  }
+
+  .profile-login-page {
+    width: min(94vw, 100%);
+    justify-content: flex-start;
+  }
+
+  .profile-login-shell {
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+
+  .profile-login-heading {
+    width: 100%;
   }
 
   .profile-info,

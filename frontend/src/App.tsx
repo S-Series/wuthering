@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/_Layout/Layout";
 import Home from "@/pages/Home";
-import Card from "@/pages/Card.tsx";
+import Card from "@/pages/Card/index";
 import Characters from "@/pages/Characters";
 import Profile from "./pages/Profile";
 

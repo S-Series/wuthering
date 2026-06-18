@@ -447,6 +447,7 @@
     font-size: min(1.1vw, 1.1rem);
     font-weight: 500;
     text-align: center;
+    text-decoration: none;
     border-radius: 0.25rem;
     background: linear-gradient(0deg, #333366ff, #0b0b44ff, #333366ff);
 
@@ -538,6 +539,151 @@
     height: 100%;
 
     gap: min(0.5vw, 1rem);
+}
+
+.card-detail-guide-target {
+    width: 100%;
+}
+
+.card-guide-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: auto;
+}
+
+.card-guide-spotlight {
+    position: fixed;
+    z-index: 0;
+    border: 2px solid #ffd764;
+    background: rgba(255, 215, 100, 0.08);
+    box-shadow:
+        0 0 0 9999px rgba(0, 0, 0, 0.72),
+        0 0 1.2rem rgba(255, 215, 100, 0.65);
+    pointer-events: none;
+    transition:
+        left 0.18s ease,
+        top 0.18s ease,
+        width 0.18s ease,
+        height 0.18s ease;
+    box-sizing: border-box;
+}
+
+.card-guide-panel {
+    position: fixed;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: min(2vw, 0.8rem);
+    padding: min(3vw, 1.2rem);
+    border: 1px solid rgba(255, 215, 100, 0.8);
+    background:
+        linear-gradient(180deg, rgba(8, 9, 12, 0.96), rgba(14, 24, 48, 0.96)),
+        rgba(5, 12, 30, 0.96);
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.58);
+    color: #f4f7ff;
+    box-sizing: border-box;
+}
+
+.card-guide-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4%;
+}
+
+.card-guide-progress > span {
+    color: #ffd764;
+    font-size: min(1vw, 0.78rem);
+    font-weight: 900;
+}
+
+.card-guide-progress > a {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: rgba(244, 247, 255, 0.72);
+    font-size: min(1vw, 0.78rem);
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.card-guide-progress > a:hover {
+    color: #fff;
+}
+
+.card-guide-panel h2 {
+    margin: 0;
+    color: #fff;
+    font-size: min(1.7vw, 1.15rem);
+    font-weight: 900;
+    line-height: 1.35;
+}
+
+.card-guide-panel p {
+    margin: 0;
+    color: #c7c9cf;
+    font-size: min(1.15vw, 0.86rem);
+    font-weight: 600;
+    line-height: 1.65;
+    word-break: keep-all;
+}
+
+.card-guide-dismiss-option {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: min(2vw, 0.5rem);
+    color: rgba(244, 247, 255, 0.82);
+    font-size: min(1vw, 0.78rem);
+    font-weight: 800;
+    cursor: pointer;
+    user-select: none;
+}
+
+.card-guide-dismiss-option input {
+    width: min(4vw, 1rem);
+    height: min(4vw, 1rem);
+    margin: 0;
+    accent-color: #ffd764;
+    cursor: pointer;
+}
+
+.card-guide-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 3%;
+    margin-top: min(1vw, 0.35rem);
+}
+
+.card-guide-actions > a {
+    display: flex;
+    min-width: min(18vw, 5rem);
+    height: min(7vw, 2.25rem);
+    padding: 0 5%;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #777;
+    border-radius: 0;
+    background: #101216e6;
+    color: #f4f7ff;
+    font-size: min(1vw, 0.82rem);
+    font-weight: 900;
+    text-decoration: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.card-guide-actions > a:hover:not(.disabled) {
+    border-color: #ffd764;
+    color: #ffd764;
+}
+
+.card-guide-actions > a.disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 @media (max-width: 48.75rem) {

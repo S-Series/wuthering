@@ -10,6 +10,7 @@ import { getClientKey } from "./utils/clientKey.js";
 import { registerRenderRoutes } from "./routes/render.js";
 import { registerClientEventRoutes } from "./routes/clientEvent.js";
 import { registerUserRoutes } from "./routes/users.js";
+import { registerCharacterDataRoutes } from "./routes/characterData.js";
 import { getClientIp } from "./lib/getClientIp.js";
 import { safeLogEvent } from "./lib/logEvent.js";
 import { getOptionalSupabaseUserId } from "./services/supabaseUsers.js";
@@ -424,6 +425,7 @@ async function main() {
   await registerRenderRoutes(app);
   await registerClientEventRoutes(app);
   await registerUserRoutes(app);
+  await registerCharacterDataRoutes(app);
 
   app.get("/api/youtube/latest", async (req, reply) => {
     const q = req.query as { lang?: string; type?: string };

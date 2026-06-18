@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import { useAppStore } from "@/stores/appStore";
@@ -10,40 +10,54 @@ import ImagePicker from "@/components/ImagePicker";
 import StatSlot from "@/components/features/Card/StatSlot";
 import EchoSlot from "@/components/features/Card/EchoSlot";
 import OcrPlayground from "@/components/features/Card/OcrSlot";
-import CardDetail from "@/pages/Card.Detail";
+import CardDetail from "./Detail";
+import CardGuideOverlay from "@/components/features/Card/CardGuideOverlay";
 
-import { character, characterList, WeaponTypes as WeaponLists, ElementTypes as ElementLists } from "@/datas/characters"
+import { character } from "@/datas/characters"
 import { type Character } from "@/datas/characters"
 import { type CharacterId } from "@/datas/characterStats";
-import { weapon, weaponDict, type Weapon } from "@/datas/weapon";
+import { weaponDict } from "@/datas/weapon";
 import { weaponStat } from "@/datas/weaponStats";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
 
 import { getCharacterRank } from "@/types/character.type";
 import { type WeaponData } from "@/runtime/character.runtime";
-import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
+import { patchConstell } from "@/runtime/characterData.helpers";
 
 import { locale } from "@/locales/locale";
 
-import { createPayloadData, getRenderCardStatus, requestRenderCard, requestRenderCardDirect } from "@/api/render.api";
+import { createPayloadData, getRenderCardStatus, requestRenderCard } from "@/api/render.api";
 import { logClientEvent } from "@/api/logger";
+import {
+  isMembershipUser,
+  uploadCharacterCloudData,
+} from "@/api/characterCloudSync.api";
 import { useAuthStore } from "@/stores/authStore";
 import Select, { type StylesConfig } from "react-select";
 import { useStyleStore, type SelectOption } from "@/stores/styleStore";
 import { useRenderStore } from "@/stores/renderStore";
+import { readCharacterDataSnapshot } from "@/stores/characterDataStorage";
 
-import "@/pages/Card.css"
-import "@/pages/Card.contents.main.css"
-import CardCharacterSection from "./Card.Character";
+import "./index.css"
+import "./contents.main.css"
+import CardCharacterSection from "./Character";
 
 export default function Card() {
-  const { lang, imgVer } = useAppStore();
+  const {
+    lang,
+    imgVer,
+    isAppStorageReady,
+    cardGuideDismissed,
+    cardGuideAutoOpenHandled,
+    setCardGuideAutoOpenHandled,
+    saveCardGuideDismissed,
+  } = useAppStore();
   const { characterId, setCharacterId, patchCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
   const { openOverlay } = useOverlay();
   const { user, gameProfile } = useAuthStore();
-  const { renderedBlob, setRenderedImage } = useRenderStore();
+  const { setRenderedImage } = useRenderStore();
 
   const navigate = useNavigate();
   const localeText = locale(lang).card;
@@ -81,35 +95,34 @@ export default function Card() {
   const queryCharacterId = searchParams.get("character") ?? "empty";
 
 
-  const [cardSection, setCardSection] = useState(-1);
-  const [weaponFilter, setWeaponFilter] = useState([false, false, false, false, false])
-  const [elementFilter, setElementFilter] = useState([false, false, false, false, false, false])
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
+
+  const openCardGuide = useCallback(() => {
+    setCardGuideAutoOpenHandled(true);
+    setIsGuideOpen(true);
+
+    if (!window.location.hash.startsWith("#card-guide")) {
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${window.location.search}#card-guide`
+      );
+    }
+  }, [setCardGuideAutoOpenHandled]);
+
+  const closeGuide = () => {
+    setIsGuideOpen(false);
+
+    if (window.location.hash.startsWith("#card-guide")) {
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${window.location.search}`
+      );
+    }
+  };
 
   //* == Character ================================================//
-  const FILTERED_CHARACTER = useMemo(() => {
-    let result = characterList;
-
-    const hasElementFilter = elementFilter.some(Boolean);
-    if (hasElementFilter) {
-      result = result.filter((character) => {
-        const idx = ElementLists.indexOf(character.element);
-        if (idx === -1) return false;
-        return elementFilter[idx];
-      });
-    }
-
-    const hasWeaponFilter = weaponFilter.some(Boolean);
-    if (hasWeaponFilter) {
-      result = result.filter((character) => {
-        const idx = WeaponLists.indexOf(character.weapon);
-        if (idx === -1) return false;
-        return weaponFilter[idx];
-      });
-    }
-
-    return result;
-  }, [elementFilter, weaponFilter]);
-
   const selectedCharacterData = useMemo<Character>(() => {
     return character[characterId] ?? character["rover_spectro"];
   }, [characterId])
@@ -128,10 +141,6 @@ export default function Card() {
   }, [selectedCharacterData.element, selectedCharacterData.type])
 
   //* == Weapon ================================================//
-  const FILTERED_WEAPON = useMemo<Weapon[]>(() => {
-    return Object.values(weapon[selectedCharacterData.weapon]);
-  }, [selectedCharacterData]);
-
   const weaponData = useMemo<WeaponData | null>(() => {
     const id = characterData.weaponId;
     if (!id) return null;
@@ -151,30 +160,10 @@ export default function Card() {
   ]
 
   //* == Image ================================================//
-  const characterImage = useImgStore((s) => s.characterImage);
   const namecardImage = useImgStore((s) => s.namecardImage);
 
   const setImageSrc = useImgStore((s) => s.setImageSrc);
   // const resetImage = useUserStore((s) => s.resetImage);
-
-  //* == Image Loading ================================================//
-  type LoadingStatus = "loading" | "loaded" | "error";
-  const [imageLoad, setImageLoad] = useState({
-    character: "loading" as LoadingStatus,
-    characterPreview: "loading" as LoadingStatus,
-    weapon: "loading" as LoadingStatus,
-    weaponPreview: "loading" as LoadingStatus,
-    echoes: Array<LoadingStatus>(5).fill("loading"),
-    echoPreviews: Array<LoadingStatus>(5).fill("loading"),
-  })
-
-  useEffect(() => {
-    setImageLoad(v => ({ ...v, character: "loading", characterPreview: "loading" }))
-  }, [selectedCharacterData]);
-
-  useEffect(() => {
-    setImageLoad(v => ({ ...v, weapon: "loading", weaponPreview: "loading" }))
-  }, [weaponData]);
 
   //* == Init Datas ================================================//
 
@@ -210,7 +199,7 @@ export default function Card() {
     }
 
     setCharacterId("rover_spectro");
-  }, [])
+  }, [navigate, paramCharacterId, queryCharacterId, setCharacterId])
 
   const BASE_STATS_MAP = useMemo<Partial<Record<StatId, number>>>(() => {
     return {
@@ -237,7 +226,7 @@ export default function Card() {
       [FixedStats.liberationBns.id]: characterBaseStat?.liberation || 0,
       [FixedStats.healBns.id]: characterBaseStat?.heal || 0,
     }
-  }, [characterBaseStat]);
+  }, [characterBaseStat, weaponData?.atk]);
 
   const FINAL_STATS_MAP = useMemo<Partial<Record<StatId, number>>>(() => {
     return {
@@ -266,7 +255,7 @@ export default function Card() {
     }
   }, [characterFinalStat]);
 
-  const dropStyle: StylesConfig<any, false> = {
+  const dropStyle: StylesConfig<SelectOption, false> = {
     ...baseSelectStyles,
     menu: (base, state) => {
       const common = baseSelectStyles.menu
@@ -318,6 +307,27 @@ export default function Card() {
     }
   };
 
+  const handleCloudSync = async () => {
+    if (!user) {
+      alert(localeText.cloudSyncLoginRequired);
+      return;
+    }
+
+    if (!isMembershipUser(user)) {
+      alert(localeText.cloudSyncMembershipRequired);
+      return;
+    }
+
+    const result = await uploadCharacterCloudData(readCharacterDataSnapshot());
+
+    if (!result.ok) {
+      alert(result.message);
+      return;
+    }
+
+    alert(localeText.cloudSyncSuccess);
+  };
+
   type RenderStatus = "ready" | "lock" | "cooldown";
   const [renderStatus, setRenderStatus] = useState<RenderStatus>("ready");
   const [retryAfterSec, setRetryAfterSec] = useState(0);
@@ -365,11 +375,42 @@ export default function Card() {
     hydrateRenderedImage();
   }, [hydrateRenderedImage]);
 
+  useEffect(() => {
+    if (
+      !isAppStorageReady ||
+      cardGuideDismissed ||
+      cardGuideAutoOpenHandled
+    ) {
+      return;
+    }
+
+    const openGuideId = window.setTimeout(() => {
+      openCardGuide();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(openGuideId);
+    };
+  }, [
+    cardGuideAutoOpenHandled,
+    cardGuideDismissed,
+    isAppStorageReady,
+    openCardGuide,
+  ]);
+
 
   //* == return data ================================================//
   return (
     <div id="card-page-slot">
-      <section className="card-management-bar">
+      {isGuideOpen && (
+        <CardGuideOverlay
+          dismissed={cardGuideDismissed}
+          onDismissedChange={saveCardGuideDismissed}
+          onClose={closeGuide}
+        />
+      )}
+
+      <section className="card-management-bar" data-card-guide="management">
         <button
           type="button"
           onClick={openCharacterWeaponManager}
@@ -382,7 +423,7 @@ export default function Card() {
         >
           <span>{localeText.oMenu}</span>
         </button>
-        <button type="button" disabled>
+        <button type="button" onClick={handleCloudSync}>
           <span>{localeText.cloudSync}</span>
         </button>
       </section>
@@ -390,8 +431,12 @@ export default function Card() {
       <div className="card-section left">
         <div className="card-contents">
           <div className="card-contents-slot header">
-            <div className="item-slot">
-              <button disabled={true} className="card-page-button content top">
+            <div className="item-slot" data-card-guide="actions">
+              <button
+                type="button"
+                className="card-page-button content top"
+                onClick={openCardGuide}
+              >
                 <span>{localeText.help}</span>
               </button>
               <button
@@ -498,7 +543,7 @@ export default function Card() {
           </div>
 
           {/* == //$ Main Content */}
-          <div className="card-contents-slot main">
+          <div className="card-contents-slot main" data-card-guide="preview">
             <div className="main-item-slot character">
               <div className="card-character-slot">
                 <img className="character-img"
@@ -603,7 +648,7 @@ export default function Card() {
                   menuShouldScrollIntoView={false}
                   menuPortalTarget={document.body}
                   onChange={(opt) => {
-                    const value = Number(opt.value);
+                    const value = Number(opt?.value);
                     patchCharacterData(
                       patchConstell(characterData, false, value)
                     );
@@ -741,6 +786,7 @@ export default function Card() {
             <div className="item-slot">
               <button
                 className="card-page-button content bottom"
+                data-card-guide="scoreboard"
                 onClick={() => window.open(SCOREBOARD_URL, "_blank")}
               >
                 <span>{localeText.scoreboard}</span>
@@ -749,7 +795,9 @@ export default function Card() {
           </div>
         </div>
 
-        <CardDetail cData={characterData}/>
+        <div className="card-detail-guide-target" data-card-guide="detail">
+          <CardDetail cData={characterData}/>
+        </div>
       </div>
     </div>
   );

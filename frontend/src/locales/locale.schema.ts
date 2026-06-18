@@ -61,6 +61,9 @@ export type LocaleSchema = {
     resetEchoDataCancel: string;
     echoSearch: string;
     applyData: string;
+    cloudSyncLoginRequired: string;
+    cloudSyncMembershipRequired: string;
+    cloudSyncSuccess: string;
   };
   cardDetail: {
     sections: {
@@ -87,6 +90,25 @@ export type LocaleSchema = {
       temporary: string;
       harmonyBreak: string;
       fusionAnomaly: string;
+      glacioAnomaly: string;
+      aeroAnomaly: string;
+      spectroAnomaly: string;
+      echoDamageAmp: string;
+      cyberpunk: string;
+      concertoCluster: string;
+      concertoWave: string;
+      linmoEngine: string;
+      basicAttackAmp: string;
+      skillDamageAmp: string;
+      standard: string;
+      secondSlotSupport: string;
+      thirdSlotSupport: string;
+      hypercarryMainDps: string;
+      teamDps: string;
+      teamCore: string;
+      aeroDps: string;
+      quickswap: string;
+      alternative: string;
       budgetAlternatives: string;
     };
   };

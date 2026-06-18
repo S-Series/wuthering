@@ -41,11 +41,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //서리이상효과 파티
+        nameKey: "glacioAnomaly",
         characters: [character.hiyuki.id, character.chisa.id],
       },
       {
-        nameKey: "temporary", //에코피해증폭
+        nameKey: "echoDamageAmp",
         characters: [character.sigrika.id, character.shorekeeper.id],
       },
       {
@@ -64,11 +64,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //사이버펑크 파티
+        nameKey: "cyberpunk",
         characters: [character.rebecca.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //가성비 대체캐릭
+        nameKey: "budgetAlternatives",
         characters: [character.verina.id, character.buling.id],
       },
     ],
@@ -83,11 +83,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //사이버펑크 파티
+        nameKey: "cyberpunk",
         characters: [character.lucy.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //가성비 대체캐릭
+        nameKey: "budgetAlternatives",
         characters: [character.verina.id, character.buling.id],
       },
     ],
@@ -102,15 +102,15 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //불꽃이상효과 파티
+        nameKey: "fusionAnomaly",
         characters: [character.aemeath.id, character.chisa.id],
       },
       {
-        nameKey: "temporary", //조화도 밀집 파티
+        nameKey: "concertoCluster",
         characters: [character.luuk_herssen.id, character.mornye.id],
       },
       {
-        nameKey: "temporary", //가성비 대체 캐릭
+        nameKey: "budgetAlternatives",
         characters: [character.shorekeeper.id, character.verina.id],
       },
     ],
@@ -125,11 +125,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", // 서리 이상효과 파티
+        nameKey: "glacioAnomaly",
         characters: [character.lucilla.id, character.chisa.id],
       },
       {
-        nameKey: "temporary", // 린모엔진
+        nameKey: "linmoEngine",
         characters: [character.lynae.id, character.mornye.id],
       },
       {
@@ -152,11 +152,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", // 에코피해 증폭 파티
+        nameKey: "echoDamageAmp",
         characters: [character.qiuyuan.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", // 에코피해 증폭 파티
+        nameKey: "echoDamageAmp",
         characters: [character.lucilla.id, character.shorekeeper.id],
       },
       {
@@ -175,15 +175,15 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideWeapons: [weapon.gauntlet.gauntlet007.id, weapon.sword.sword001.id],
     guideParties: [
       {
-        nameKey: "temporary", // 린모 엔진 파티
+        nameKey: "linmoEngine",
         characters: [character.lynae.id, character.mornye.id],
       },
       {
-        nameKey: "temporary", // 조화도 밀집 파티
+        nameKey: "concertoCluster",
         characters: [character.denia.id, character.mornye.id],
       },
       {
-        nameKey: "temporary", // 일반공격피해 증폭 파티
+        nameKey: "basicAttackAmp",
         characters: [character.sanhua.id, character.shorekeeper.id],
       },
     ],
@@ -198,11 +198,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //불꽃 이상효과 파티
+        nameKey: "fusionAnomaly",
         characters: [character.denia.id, character.chisa.id],
       },
       {
-        nameKey: "temporary", //조화도 파동 파티
+        nameKey: "concertoWave",
         characters: [character.lynae.id, character.mornye.id],
       },
       {
@@ -224,7 +224,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //3번자리 서포터
+        nameKey: "thirdSlotSupport",
         characters: [character.lynae.id, character.denia.id, character.lupa.id],
       },
     ],
@@ -239,11 +239,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //2번자리 서포터
+        nameKey: "secondSlotSupport",
         characters: [character.mornye.id],
       },
       {
-        nameKey: "temporary", //하이퍼캐리 메인딜러
+        nameKey: "hypercarryMainDps",
         characters: [character.sanhua.id, character.shorekeeper.id],
       },
     ],
@@ -257,15 +257,15 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //불꽃 이상효과 파티
+        nameKey: "fusionAnomaly",
         characters: [character.aemeath.id, character.denia.id],
       },
       {
-        nameKey: "temporary", //서리 이상효과 파티
+        nameKey: "glacioAnomaly",
         characters: [character.hiyuki.id, character.lucilla.id],
       },
       {
-        nameKey: "temporary", //풍식 이상효과 파티
+        nameKey: "aeroAnomaly",
         characters: [character.cartethyia.id, character.chiaccona.id],
       },
     ],
@@ -279,7 +279,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //스킬피해증폭
+        nameKey: "skillDamageAmp",
         characters: [
           character.phrolova.id,
           character.carlotta.id,
@@ -294,15 +294,15 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideWeapons: [weapon.sword.sword007.id, weapon.sword.sword001.id],
     guideParties: [
       {
-        nameKey: "temporary", //에코피해
+        nameKey: "echoDamageAmp",
         characters: [character.sigrika.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //에코피해
+        nameKey: "echoDamageAmp",
         characters: [character.galbrena.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //에코피해
+        nameKey: "echoDamageAmp",
         characters: [character.phrolova.id, character.cantarella.id],
       },
     ],
@@ -340,15 +340,15 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //정석파티
+        nameKey: "standard",
         characters: [character.augusta.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //린모엔진
+        nameKey: "linmoEngine",
         characters: [character.lynae.id, character.mornye.id],
       },
       {
-        nameKey: "temporary", //가성비 대체캐릭
+        nameKey: "budgetAlternatives",
         characters: [character.jianxin.id, character.shorekeeper.id],
       },
     ],
@@ -362,11 +362,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //정석파티
+        nameKey: "standard",
         characters: [character.iuno.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //가성비 대체캐릭
+        nameKey: "budgetAlternatives",
         characters: [character.mortefi.id, character.verina.id],
       },
     ],
@@ -403,7 +403,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //조합 딜러
+        nameKey: "teamDps",
         characters: [
           character.changli.id,
           character.aemeath.id,
@@ -411,7 +411,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         ],
       },
       {
-        nameKey: "temporary", //조합 캐릭터
+        nameKey: "teamCore",
         characters: [
           character.mornye.id,
           character.denia.id,
@@ -449,7 +449,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //풍식 이상효과 파티
+        nameKey: "aeroAnomaly",
         characters: [
           character.cartethyia.id,
           character.chisa.id,
@@ -457,7 +457,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         ],
       },
       {
-        nameKey: "temporary", //기타 기류딜러
+        nameKey: "aeroDps",
         characters: [
           character.iuno.id,
           character.sigrika.id,
@@ -476,7 +476,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "temporary", //광학 이상효과 파티
+        nameKey: "spectroAnomaly",
         characters: [character.phoebe.id, character.rover_spectro.id],
       },
       {
@@ -671,7 +671,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         characters: [character.calcharo.id, character.verina.id],
       },
       {
-        nameKey: "temporary", //퀵스왑 파츠
+        nameKey: "quickswap",
         characters: [character.xiangliyao.id],
       },
     ],
@@ -708,7 +708,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         characters: [character.brant.id, character.lupa.id],
       },
       {
-        nameKey: "temporary", //퀵스왑 파츠
+        nameKey: "quickswap",
         characters: [character.changli.id],
       },
     ],
@@ -750,7 +750,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         characters: [character.jinhsi.id],
       },
       {
-        nameKey: "temporary", //퀵스왑 파츠
+        nameKey: "quickswap",
         characters: [character.yinlin.id],
       },
       {
@@ -777,7 +777,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         characters: [character.yangyang.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //대체캐릭
+        nameKey: "alternative",
         characters: [character.aalto.id, character.verina.id],
       },
     ],
@@ -818,7 +818,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideWeapons: [weapon.rectifier.rectifier102.id],
     guideParties: [
       {
-        nameKey: "temporary", //파수인 대표 대체캐릭터
+        nameKey: "alternative",
         characters: [character.shorekeeper.id],
       },
     ],
@@ -840,7 +840,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         characters: [character.xiangliyao.id, character.shorekeeper.id],
       },
       {
-        nameKey: "temporary", //대체캐릭
+        nameKey: "alternative",
         characters: [character.verina.id],
       },
     ],
@@ -1159,4 +1159,3 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideSkillOrder: ["forte", "skill", "liberation", "basic", "outro"],
   },
 };
-

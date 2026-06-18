@@ -11,12 +11,12 @@ import {
   WeaponTypes,
 } from "@/datas/characters";
 import { characterGuideData } from "@/datas/characters.guide";
-import { weapon } from "@/datas/weapon";
+import { weapon, type WeaponId } from "@/datas/weapon";
 import { weaponStat } from "@/datas/weaponStats";
 import { setWeaponId } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
 
-import "./Card.Character.css";
+import "./Character.css";
 
 const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
 
@@ -55,8 +55,10 @@ export default function CardCharacterSection() {
     });
   }, [elementFilter, weaponFilter]);
 
-  const recommendedWeaponIds =
-    characterGuideData[selectedCharacter.id]?.guideWeapons ?? [];
+  const recommendedWeaponIds = useMemo(
+    () => characterGuideData[selectedCharacter.id]?.guideWeapons ?? [],
+    [selectedCharacter.id]
+  );
 
   const availableWeapons = useMemo(() => {
     const recommendationOrder = new Map(
@@ -178,23 +180,24 @@ export default function CardCharacterSection() {
 
         <div className="card-character-select__weapon-list">
           {availableWeapons.map((item) => {
+            const weaponId = item.id as WeaponId;
             const rarity =
-              Number(item.id.match(/\d+$/)?.[0] ?? 0) < 100 ? 5 : 4;
-            const stats = weaponStat[item.id];
-            const isRecommended = recommendedWeaponIds.includes(item.id);
+              Number(weaponId.match(/\d+$/)?.[0] ?? 0) < 100 ? 5 : 4;
+            const stats = weaponStat[weaponId];
+            const isRecommended = recommendedWeaponIds.includes(weaponId);
 
             return (
               <button
-                key={item.id}
+                key={weaponId}
                 type="button"
                 className={`card-character-select__weapon rarity-${rarity} ${
                   isRecommended ? "recommended" : ""
                 } ${
-                  item.id === characterData.weaponId ? "selected" : ""
+                  weaponId === characterData.weaponId ? "selected" : ""
                 }`}
                 onClick={() => {
                   if (!stats) return;
-                  patchCharacterData(setWeaponId(characterData, item.id));
+                  patchCharacterData(setWeaponId(characterData, weaponId));
                 }}
               >
                 <img

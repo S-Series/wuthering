@@ -10,6 +10,12 @@ export type UserProfile = {
   email: string | null;
   nickname: string;
   imageUrl: string | null;
+  role?: string | null;
+  status?: string | null;
+  membershipLevel?: number;
+  membershipExpiresAt?: string | null;
+  membershipNickname?: string | null;
+  isMember?: boolean;
   createdAt: number;
 };
 

@@ -420,19 +420,28 @@
   }
 
   .card-detail-body .content-area {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 1%;
     padding: 1.4%;
   }
 
+  .card-detail-body .detail-area,
+  .card-detail-body .equipment-area {
+    grid-column: span 3;
+  }
+
+  .card-detail-body .option-area,
+  .card-detail-body .stat-area {
+    grid-column: span 2;
+  }
+
   .card-detail-body .content-area > .inner-slot {
-    min-height: 11rem;
+    min-height: 16.5rem;
     padding: 2%;
   }
 
   .card-detail-body .content-area > .stat-area {
-    grid-column: 1 / -1;
-    min-height: 7rem;
+    min-height: 16.5rem;
   }
 
   .card-detail-body .stat-area .stat-info {
@@ -447,5 +456,51 @@
   .card-detail-body .content-area .inner-slot > span {
     padding-left: 3%;
     font-size: min(1.7vw, 0.64rem);
+  }
+
+  .card-detail-body .echo-recommend-slot {
+    gap: 2%;
+  }
+
+  .card-detail-body .detail-echo-image-slot {
+    width: min(30cqw, 100cqh);
+    height: min(30cqw, 100cqh);
+  }
+
+  .card-detail-body .echo-data-field {
+    gap: 1.5%;
+  }
+
+  .card-detail-body .echo-data-field > span {
+    font-size: min(1.35vw, 0.72rem);
+  }
+
+  .card-detail-body .harmony-slot {
+    min-height: 1.15rem;
+    gap: 2%;
+    padding: 1.5% 2.5%;
+  }
+
+  .card-detail-body .harmony-slot > img {
+    width: min(2.1vw, 0.85rem);
+    height: min(2.1vw, 0.85rem);
+    flex: 0 0 min(2.1vw, 0.85rem);
+  }
+
+  .card-detail-body .harmony-slot > span {
+    font-size: min(1.25vw, 0.62rem);
+  }
+}
+
+@media (max-width: 42rem) {
+  .card-detail-body .content-area {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card-detail-body .detail-area,
+  .card-detail-body .equipment-area,
+  .card-detail-body .option-area,
+  .card-detail-body .stat-area {
+    grid-column: 1 / -1;
   }
 }
