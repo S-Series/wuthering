@@ -130,23 +130,65 @@ async function findSupabaseUser(firebaseUid: string) {
   return data as SupabaseUserRow | null;
 }
 
-async function findSupabaseMembership(userId: string) {
+async function createInitialMembership(
+  userId: string,
+  displayName?: string | null
+) {
+  const now = new Date().toISOString();
+  const nickname = displayName?.trim() || null;
+
+  const { data, error } = await supabaseAdmin
+    .from("memberships")
+    .insert({
+      user_id: userId,
+      membership_level: 0,
+      started_at: null,
+      expires_at: null,
+      nickname: nickname ? nickname.slice(0, 200) : null,
+      created_at: now,
+      updated_at: now,
+    })
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to create Supabase membership: ${error.message}`);
+  }
+
+  return data as SupabaseMembershipRow;
+}
+
+async function findSupabaseMembership(
+  userId: string,
+  displayName?: string | null
+) {
   const { data, error } = await supabaseAdmin
     .from("memberships")
     .select("*")
     .eq("user_id", userId)
-    .gt("membership_level", 0)
-    .order("membership_level", { ascending: false })
-    .order("expires_at", { ascending: false, nullsFirst: true })
-    .limit(10);
+    .limit(1)
+    .maybeSingle();
 
   if (error) {
     throw new Error(`Failed to fetch Supabase membership: ${error.message}`);
   }
 
-  const memberships = (data ?? []) as SupabaseMembershipRow[];
+  if (!data) {
+    return createInitialMembership(userId, displayName);
+  }
 
-  return memberships.find((membership) => isActiveMembership(membership)) ?? null;
+  const membership = data as SupabaseMembershipRow;
+  const nickname = displayName?.trim();
+
+  if (nickname && !membership.nickname) {
+    await updateMembershipNickname(userId, nickname);
+    return {
+      ...membership,
+      nickname: nickname.slice(0, 200),
+    };
+  }
+
+  return membership;
 }
 
 async function updateMembershipNickname(
@@ -241,8 +283,7 @@ export async function syncSupabaseUser(
   const row = existing
     ? await updateSupabaseUser(existing, decoded, input)
     : await insertSupabaseUser(decoded, input);
-  await updateMembershipNickname(row.id, input?.displayName);
-  const membership = await findSupabaseMembership(row.id);
+  const membership = await findSupabaseMembership(row.id, input?.displayName);
 
   return toGatewayUserProfile(row, membership, input);
 }
