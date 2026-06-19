@@ -1,6 +1,6 @@
 ﻿import "dotenv/config";
 
-import Fastify from "fastify";
+import Fastify, { type FastifyBaseLogger } from "fastify";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
@@ -40,9 +40,183 @@ import {
 const OCR_WAKE_TIMEOUT_MS = 180_000;
 const OCR_WAKE_ATTEMPT_TIMEOUT_MS = 20_000;
 const OCR_WAKE_RETRY_DELAY_MS = 10_000;
+const OCR_PING_TIMEOUT_MS = 5_000;
+const OCR_PING_RETRY_INTERVAL_MS = 30_000;
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+type OcrEndpointProbeResult = {
+  ok: boolean;
+  status?: number;
+  upstream: string;
+  contentType?: string;
+  body?: unknown;
+  error?: string;
+  detail?: string;
+};
+
+async function probeOcrEndpoint(
+  baseUrl: string,
+  pathname: "/health" | "/wake",
+  timeoutMs: number
+): Promise<OcrEndpointProbeResult> {
+  const upstreamUrl = new URL(pathname, baseUrl).toString();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const res = await fetch(upstreamUrl, {
+      method: "GET",
+      signal: controller.signal,
+    });
+    const contentType = res.headers.get("content-type") ?? "";
+    const text = await res.text().catch(() => "");
+    const body = (() => {
+      if (!contentType.includes("application/json")) {
+        return { body: text.slice(0, 500) };
+      }
+
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { body: text.slice(0, 500) };
+      }
+    })();
+    const bodyOk =
+      body &&
+      typeof body === "object" &&
+      "ok" in body &&
+      (body as { ok?: unknown }).ok === true;
+
+    return {
+      ok: res.ok && contentType.includes("application/json") && bodyOk,
+      status: res.status,
+      upstream: upstreamUrl,
+      contentType,
+      body,
+    };
+  } catch (e: any) {
+    return {
+      ok: false,
+      upstream: upstreamUrl,
+      error:
+        e?.name === "AbortError"
+          ? `upstream ${pathname} timeout`
+          : `upstream ${pathname} failed`,
+      detail: String(e?.message ?? e),
+    };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function wakeOcrUntilReady(lang: string, baseUrl: string) {
+  const deadline = Date.now() + OCR_WAKE_TIMEOUT_MS;
+  let attempt = 0;
+  let lastResult: OcrEndpointProbeResult | null = null;
+
+  while (Date.now() < deadline) {
+    attempt += 1;
+
+    const remainingMs = deadline - Date.now();
+    const attemptTimeoutMs = Math.max(
+      1,
+      Math.min(OCR_WAKE_ATTEMPT_TIMEOUT_MS, remainingMs)
+    );
+    const result = await probeOcrEndpoint(baseUrl, "/wake", attemptTimeoutMs);
+
+    lastResult = result;
+
+    if (result.ok) {
+      return {
+        ok: true,
+        lang,
+        status: result.status,
+        upstream: result.upstream,
+        attempts: attempt,
+        result: result.body,
+      };
+    }
+
+    const nextDelayMs = Math.min(OCR_WAKE_RETRY_DELAY_MS, deadline - Date.now());
+    if (nextDelayMs > 0) await delay(nextDelayMs);
+  }
+
+  return {
+    ok: false,
+    lang,
+    upstream: new URL("/wake", baseUrl).toString(),
+    attempts: attempt,
+    error: "upstream wake timeout",
+    result: lastResult,
+  };
+}
+
+function startOcrServerWatchers(log: FastifyBaseLogger) {
+  Object.entries(OCR_UPSTREAM).forEach(([lang, baseUrl]) => {
+    if (!baseUrl) return;
+
+    let stopped = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const clearRetryTimer = () => {
+      if (retryTimer === null) return;
+
+      clearTimeout(retryTimer);
+      retryTimer = null;
+    };
+
+    const scheduleRetry = () => {
+      clearRetryTimer();
+      retryTimer = setTimeout(() => {
+        void pingAndWake();
+      }, OCR_PING_RETRY_INTERVAL_MS);
+    };
+
+    const pingAndWake = async () => {
+      if (stopped) return;
+
+      const health = await probeOcrEndpoint(
+        baseUrl,
+        "/health",
+        OCR_PING_TIMEOUT_MS
+      );
+
+      if (stopped) return;
+
+      if (health.ok) {
+        log.info({ lang, upstream: health.upstream }, "ocr pong");
+        return;
+      }
+
+      log.warn({ lang, health }, "ocr ping failed; waking upstream");
+
+      const wake = await wakeOcrUntilReady(lang, baseUrl);
+
+      if (stopped) return;
+
+      if (wake.ok) {
+        log.info({ lang, attempts: wake.attempts }, "ocr wake succeeded");
+        return;
+      }
+
+      log.warn({ lang, wake }, "ocr wake failed; scheduling retry");
+      scheduleRetry();
+    };
+
+    void pingAndWake();
+
+    process.once("SIGTERM", () => {
+      stopped = true;
+      clearRetryTimer();
+    });
+    process.once("SIGINT", () => {
+      stopped = true;
+      clearRetryTimer();
+    });
+  });
 }
 
 async function main() {
@@ -91,34 +265,10 @@ async function main() {
           };
         }
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-        try {
-          const upstreamUrl = new URL("/health", baseUrl).toString();
-
-          const res = await fetch(upstreamUrl, {
-            method: "GET",
-            signal: controller.signal,
-          });
-
-          return {
-            lang,
-            ok: res.ok,
-            status: res.status,
-            upstream: upstreamUrl,
-          };
-        } catch (e) {
-          return {
-            lang,
-            ok: false,
-            upstream: baseUrl,
-            error: "upstream fetch failed",
-            detail: e instanceof Error ? e.message : String(e),
-          };
-        } finally {
-          clearTimeout(timeoutId);
-        }
+        return {
+          lang,
+          ...(await probeOcrEndpoint(baseUrl, "/health", OCR_PING_TIMEOUT_MS)),
+        };
       })
     );
 
@@ -143,89 +293,9 @@ async function main() {
       });
     }
 
-    const upstreamUrl = new URL("/wake", baseUrl).toString();
-    const deadline = Date.now() + OCR_WAKE_TIMEOUT_MS;
-    let attempt = 0;
-    let lastResult: Record<string, unknown> | null = null;
+    const result = await wakeOcrUntilReady(lang, baseUrl);
 
-    while (Date.now() < deadline) {
-      attempt += 1;
-
-      const remainingMs = deadline - Date.now();
-      const attemptTimeoutMs = Math.max(
-        1,
-        Math.min(OCR_WAKE_ATTEMPT_TIMEOUT_MS, remainingMs)
-      );
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), attemptTimeoutMs);
-
-      try {
-        const res = await fetch(upstreamUrl, {
-          method: "GET",
-          signal: controller.signal,
-        });
-        const contentType = res.headers.get("content-type") ?? "";
-        const text = await res.text().catch(() => "");
-        const body = (() => {
-          if (!contentType.includes("application/json")) {
-            return { body: text.slice(0, 500) };
-          }
-
-          try {
-            return JSON.parse(text);
-          } catch {
-            return { body: text.slice(0, 500) };
-          }
-        })();
-
-        lastResult = {
-          ok: res.ok,
-          status: res.status,
-          contentType,
-          body,
-        };
-
-        const bodyOk =
-          body &&
-          typeof body === "object" &&
-          "ok" in body &&
-          (body as { ok?: unknown }).ok === true;
-
-        if (res.ok && contentType.includes("application/json") && bodyOk) {
-          return reply.code(200).send({
-            ok: true,
-            lang,
-            status: res.status,
-            upstream: upstreamUrl,
-            attempts: attempt,
-            result: body,
-          });
-        }
-      } catch (e: any) {
-        lastResult = {
-          ok: false,
-          error:
-            e?.name === "AbortError"
-              ? "upstream wake attempt timeout"
-              : "upstream wake attempt failed",
-          detail: String(e?.message ?? e),
-        };
-      } finally {
-        clearTimeout(timeoutId);
-      }
-
-      const nextDelayMs = Math.min(OCR_WAKE_RETRY_DELAY_MS, deadline - Date.now());
-      if (nextDelayMs > 0) await delay(nextDelayMs);
-    }
-
-    return reply.code(504).send({
-      ok: false,
-      lang,
-      upstream: upstreamUrl,
-      attempts: attempt,
-      error: "upstream wake timeout",
-      result: lastResult,
-    });
+    return reply.code(result.ok ? 200 : 504).send(result);
   });
 
   app.get("/health/render", async (_req, reply) => {
@@ -618,6 +688,7 @@ async function main() {
   });
 
   await app.listen({ port: PORT, host: "0.0.0.0" });
+  startOcrServerWatchers(app.log);
 }
 
 main().catch((err) => {
