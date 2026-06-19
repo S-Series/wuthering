@@ -37,6 +37,14 @@ import {
   type YoutubeLatestCacheValue,
 } from "./services/cacheStore.js";
 
+const OCR_WAKE_TIMEOUT_MS = 180_000;
+const OCR_WAKE_ATTEMPT_TIMEOUT_MS = 20_000;
+const OCR_WAKE_RETRY_DELAY_MS = 10_000;
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function main() {
   validateEnv();
 
@@ -135,51 +143,89 @@ async function main() {
       });
     }
 
-    const controller = new AbortController();
-    const timeoutMs = 180_000;
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
     const upstreamUrl = new URL("/wake", baseUrl).toString();
+    const deadline = Date.now() + OCR_WAKE_TIMEOUT_MS;
+    let attempt = 0;
+    let lastResult: Record<string, unknown> | null = null;
 
-    try {
-      const res = await fetch(upstreamUrl, {
-        method: "GET",
-        signal: controller.signal,
-      });
-      const contentType = res.headers.get("content-type") ?? "";
-      const text = await res.text().catch(() => "");
-      const body = (() => {
-        if (!contentType.includes("application/json")) {
-          return { body: text.slice(0, 500) };
+    while (Date.now() < deadline) {
+      attempt += 1;
+
+      const remainingMs = deadline - Date.now();
+      const attemptTimeoutMs = Math.max(
+        1,
+        Math.min(OCR_WAKE_ATTEMPT_TIMEOUT_MS, remainingMs)
+      );
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), attemptTimeoutMs);
+
+      try {
+        const res = await fetch(upstreamUrl, {
+          method: "GET",
+          signal: controller.signal,
+        });
+        const contentType = res.headers.get("content-type") ?? "";
+        const text = await res.text().catch(() => "");
+        const body = (() => {
+          if (!contentType.includes("application/json")) {
+            return { body: text.slice(0, 500) };
+          }
+
+          try {
+            return JSON.parse(text);
+          } catch {
+            return { body: text.slice(0, 500) };
+          }
+        })();
+
+        lastResult = {
+          ok: res.ok,
+          status: res.status,
+          contentType,
+          body,
+        };
+
+        const bodyOk =
+          body &&
+          typeof body === "object" &&
+          "ok" in body &&
+          (body as { ok?: unknown }).ok === true;
+
+        if (res.ok && contentType.includes("application/json") && bodyOk) {
+          return reply.code(200).send({
+            ok: true,
+            lang,
+            status: res.status,
+            upstream: upstreamUrl,
+            attempts: attempt,
+            result: body,
+          });
         }
+      } catch (e: any) {
+        lastResult = {
+          ok: false,
+          error:
+            e?.name === "AbortError"
+              ? "upstream wake attempt timeout"
+              : "upstream wake attempt failed",
+          detail: String(e?.message ?? e),
+        };
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
-        try {
-          return JSON.parse(text);
-        } catch {
-          return { body: text.slice(0, 500) };
-        }
-      })();
-
-      return reply.code(res.ok ? 200 : 502).send({
-        ok: res.ok,
-        lang,
-        status: res.status,
-        upstream: upstreamUrl,
-        result: body,
-      });
-    } catch (e: any) {
-      const msg =
-        e?.name === "AbortError" ? "upstream wake timeout" : "upstream wake failed";
-
-      return reply.code(504).send({
-        ok: false,
-        lang,
-        upstream: upstreamUrl,
-        error: msg,
-        detail: String(e?.message ?? e),
-      });
-    } finally {
-      clearTimeout(timeoutId);
+      const nextDelayMs = Math.min(OCR_WAKE_RETRY_DELAY_MS, deadline - Date.now());
+      if (nextDelayMs > 0) await delay(nextDelayMs);
     }
+
+    return reply.code(504).send({
+      ok: false,
+      lang,
+      upstream: upstreamUrl,
+      attempts: attempt,
+      error: "upstream wake timeout",
+      result: lastResult,
+    });
   });
 
   app.get("/health/render", async (_req, reply) => {
