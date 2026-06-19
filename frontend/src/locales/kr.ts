@@ -88,6 +88,7 @@ export const kr = {
     cloudSyncDownloadConfirmTitle: "클라우드 내려받기",
     cloudSyncUploadConfirmMessage: "현재 로컬 캐릭터 데이터를 클라우드 데이터로 저장할까요?",
     cloudSyncDownloadConfirmMessage: "클라우드 데이터를 내려받아 현재 로컬 캐릭터 데이터를 교체할까요?",
+    cloudSyncDownloadAllCharacters: "모든 캐릭터 데이터 내려받기",
     cloudSyncIrreversibleWarning: "이 작업은 되돌릴 수 없습니다.",
     cloudSyncExecute: "실행",
     cloudSyncExecuting: "실행 중",
@@ -151,6 +152,7 @@ export const kr = {
     healthCheck: `OCR서버 상태 확인중`,
     healthFalse: `OCR서버와 연결에 실패했습니다.\n문제가 지속될경우 관리자에게 연락 바랍니다`,
     echoList: "에코 목록",
+    echoOrderHelp: "드래그 앤 드롭으로 착용 / 예비슬롯 순서를 변경할 수 있습니다.",
     echoData: "에코 데이터",
     inspectData: "OCR 데이터 확인",
   }

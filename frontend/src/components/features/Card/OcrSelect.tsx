@@ -24,7 +24,10 @@ export default function OcrSelect({
     <div className="ocr-select-layout">
       <div className="ocr-select-body">
         <div className="select-item-slot">
-          <span className="item-slot-title">{localeText.ocr.echoList}</span>
+          <div className="item-slot-heading">
+            <span className="item-slot-title">{localeText.ocr.echoList}</span>
+            <span className="item-slot-help">{localeText.ocr.echoOrderHelp}</span>
+          </div>
 
           <div className="item-slot-container">
             <EchoDragSelect num={selectIdx} onClick={setSelectIdx} />
@@ -40,10 +43,8 @@ export default function OcrSelect({
 
           <div className="ocr-select-actions">
             <button type="button" 
-              onClick={onImageInput}
-              disabled={true}
-              style={{opacity:"0.25"}}>
-              {localeText.card.imageInput} (점검중)
+              onClick={onImageInput}>
+              {localeText.card.imageInput}
             </button>
           </div>
         </div>

@@ -28,6 +28,7 @@ import type { Cost, SelectOpt, SelectOption, SelectOptionStatOriginal, SelectOpt
 import { createEmptyEchoRuntime, type EchoRuntime, type EchoStatOption } from "@/runtime/echo.runtime";
 import { patchEchoAt } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
+import { getEquipmentRank } from "@/types/character.type";
 
 export type DragItem = {
   id: number;
@@ -43,6 +44,7 @@ type Props = {
     stats: [StatId, number][] | null;
   };
   selectIdx: number;
+  onSelectIdx: React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>>;
   height: number;
   resetAction: () => void;
   inputSlot?: ReactNode;
@@ -99,9 +101,119 @@ function createItems(data: EchoStatOption[] | null, lang: LangType): DragItem[] 
   });
 }
 
+const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
+
+function formatStatValue(statId: string, value: number) {
+  if (value === -1) return "- - -";
+
+  const formatted = Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
+  const suffix = PERCENT_STAT_KEYS.some((key) => statId.includes(key)) ? "%" : "";
+
+  return `${formatted}${suffix}`;
+}
+
+function OcrTargetPreview({
+  baseUrl,
+  echoData,
+  score,
+  slotNumber,
+}: {
+  baseUrl: string;
+  echoData: EchoRuntime;
+  score: [number, number];
+  slotNumber: number;
+}) {
+  const costStatId = echoData.cost === 1 ? FixedStats.hp.id : FixedStats.atk.id;
+  const costStatValue = (() => {
+    switch (echoData.cost) {
+      case 4: return 150;
+      case 3: return 100;
+      case 1: return 2280;
+      default: return -1;
+    }
+  })();
+  const rank = getEquipmentRank(score[1] ?? 0);
+
+  return (
+    <div className="ocr-target-preview-card">
+      <div className="ocr-target-preview-card__header">
+        <span>미리보기 · Slot {slotNumber}</span>
+        <img src={`/ico/rank/${rank}.png`} alt="rank" />
+      </div>
+
+      <div className="ocr-target-preview-card__hero">
+        <img
+          className="echo"
+          src={`${baseUrl}/ico/echos/${echoData.echoId}.webp`}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/default.webp";
+          }}
+          alt=""
+        />
+        <img
+          className="harmony"
+          src={`/ico/harmony/${echoData.setId}.png`}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/default.webp";
+          }}
+          alt=""
+        />
+      </div>
+
+      <div className="ocr-target-preview-card__stats main">
+        <PreviewStat statId={echoData.mainOption.statId} value={echoData.mainOption.statValue} />
+        <PreviewStat statId={costStatId} value={costStatValue} muted />
+      </div>
+
+      <div className="ocr-target-preview-card__stats sub">
+        {echoData.subOptions.map((item, index) => (
+          <PreviewStat
+            key={`ocr-target-preview-stat-${index}`}
+            statId={item.statId}
+            value={item.statValue}
+            muted={item.statId === "dummy"}
+          />
+        ))}
+      </div>
+
+      <div className="ocr-target-preview-card__score">
+        <span>Cv. <em className="num-font">{score[0].toFixed(1)}</em>pt</span>
+        <span>Av. <em className="num-font">{score[1].toFixed(1)}</em>pt</span>
+      </div>
+    </div>
+  );
+}
+
+function PreviewStat({
+  statId,
+  value,
+  muted = false,
+}: {
+  statId: string;
+  value: number;
+  muted?: boolean;
+}) {
+  return (
+    <div className={`ocr-target-preview-stat ${muted ? "muted" : ""}`}>
+      <img
+        src={`/ico/stats/${statId}.webp`}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/default.webp";
+        }}
+        alt=""
+      />
+      <span className="num-font">{formatStatValue(statId, value)}</span>
+    </div>
+  );
+}
+
 export default function OcrDragSelect({
   datas,
   selectIdx,
+  onSelectIdx,
   height,
   resetAction,
   inputSlot,
@@ -111,7 +223,7 @@ export default function OcrDragSelect({
   const { cost, echoId, stats } = datas;
   const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
-  const { characterData, patchCharacterData } = useCharacter();
+  const { characterData, equipmentScore, patchCharacterData } = useCharacter();
   const localeText = locale(lang).card;
 
   const [sourceItems, setSourceItems] = useState<DragItem[]>([]);
@@ -323,9 +435,40 @@ export default function OcrDragSelect({
           strategy={verticalListSortingStrategy}
         >
           <div className="ocr-drag-select__list">
-            <div className="ocr-drag-select__base-fields">
-              {inputSlot}
+            <div className="ocr-drag-select__target-fields">
+              <div className="ocr-drag-select__target-buttons">
+                {Array.from({ length: 10 }, (_, idx) => {
+                  const echoIndex = idx as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
+                  return (
+                    <button
+                      key={`ocr-target-slot-${idx}`}
+                      type="button"
+                      className={selectIdx === idx ? "active" : ""}
+                      onClick={() => onSelectIdx(echoIndex)}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="ocr-drag-select__target-preview">
+                <OcrTargetPreview
+                  baseUrl={baseUrl}
+                  echoData={characterData.echoData[selectIdx]}
+                  score={equipmentScore?.[selectIdx] ?? [0, 0]}
+                  slotNumber={selectIdx + 1}
+                />
+              </div>
+            </div>
+
+            <div className="ocr-drag-select__image-fields">
+              {inputSlot}
+              {resultSlot}
+            </div>
+
+            <div className="ocr-drag-select__editor-fields">
               <Select options={COST_DROP_OPTION}
                 styles={STAT_DROP_STYLE_LARGE}
                 onChange={(opt) => {
@@ -413,25 +556,21 @@ export default function OcrDragSelect({
                   {(tempEcho.mainOption.statValue ?? 0).toFixed(1)}%
                 </span>
               </div>
-            </div>
 
-            <div className="ocr-drag-select__sub-fields">
-              {resultSlot}
+              <div className="ocr-drag-select__sub-fields">
+                {displayItems.map((item, displayIndex) => (
+                  <OcrDragItem
+                    key={item.id}
+                    item={tempEcho.subOptions[item.id]}
+                    itemId={item.id}
+                    displayIndex={displayIndex}
+                    onSelectChange={setTempEcho}
+                    styles={DragOptions}
+                    options={[STAT_OPTION_SUB, dropStatOptions[displayIndex]]}
+                  />
+                ))}
+              </div>
 
-              {displayItems.map((item, displayIndex) => (
-                <OcrDragItem
-                  key={item.id}
-                  item={tempEcho.subOptions[item.id]}
-                  itemId={item.id}
-                  displayIndex={displayIndex}
-                  onSelectChange={setTempEcho}
-                  styles={DragOptions}
-                  options={[STAT_OPTION_SUB, dropStatOptions[displayIndex]]}
-                />
-              ))}
-            </div>
-
-            <div className="ocr-drag-select__action-fields">
               <button className="ocr-drag-select__apply-button"
                 type="button"
                 onClick={handleApplyData}

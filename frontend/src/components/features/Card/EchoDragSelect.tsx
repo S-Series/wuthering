@@ -10,7 +10,7 @@ import {
 import {
   SortableContext,
   useSortable,
-  verticalListSortingStrategy,
+  rectSortingStrategy,
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -22,6 +22,7 @@ import { ECHO_CANDIDATES } from "@/datas/echos";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { setEchoDataIndexes } from "@/runtime/characterData.helpers";
 import { getEquipmentRank } from "@/types/character.type";
+import { FixedStats, type StatId } from "@/datas/stats";
 
 type DragItem = {
   id: number;
@@ -65,6 +66,38 @@ function assertEchoIndexTuple(arr: number[]): asserts arr is EchoIndexTuple {
   }
 }
 
+const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
+
+function EchoDragStat({
+  statId,
+  value,
+  muted = false,
+}: {
+  statId: StatId | string;
+  value: number;
+  muted?: boolean;
+}) {
+  const displayValue = value === -1
+    ? "- - -"
+    : `${Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1)}${
+      PERCENT_STAT_KEYS.some((key) => statId.includes(key)) ? "%" : ""
+    }`;
+
+  return (
+    <div className={`echo-drag-stat ${muted ? "muted" : ""}`}>
+      <img
+        alt="stat icon"
+        src={`/ico/stats/${statId}.webp`}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/default.webp";
+        }}
+      />
+      <span className="num-font">{displayValue}</span>
+    </div>
+  );
+}
+
 function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
   const {
     attributes,
@@ -75,7 +108,7 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
     isDragging,
   } = useSortable({ id: item.id });
 
-  const { characterData } = useCharacter();
+  const { characterData, equipmentScore } = useCharacter();
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -84,6 +117,17 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
 
   const isSelected = characterData.echoDataIndex.slice(0, 5).includes(index);
   const isActivated = (item.num === index);
+  const echoData = characterData.echoData[index];
+  const costStatId = echoData?.cost === 1 ? FixedStats.hp.id : FixedStats.atk.id;
+  const costStatValue = (() => {
+    switch (echoData?.cost) {
+      case 4: return 150;
+      case 3: return 100;
+      case 1: return 2280;
+      default: return -1;
+    }
+  })();
+  const score = equipmentScore?.[Math.abs(index)] ?? [0, 0];
 
   return (
     <div
@@ -102,13 +146,49 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
       {...listeners}
     >
       <div className="hover-motion">
-        <img className="echo-img" src={`${baseUrl}/ico/echos/${item.src[0]}`}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = "/default.webp"
-          }} />
-        <span className="echo-drag-label">{item.echoName}</span>
-        <img className="score-img" src={`/ico/rank/${item.src[1]}`} />
+        <div className="echo-drag-image-slot">
+          <img className="echo-img" src={`${baseUrl}/ico/echos/${item.src[0]}`}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp"
+            }} />
+          <img
+            className="harmony-img"
+            src={`/ico/harmony/${echoData?.setId}.png`}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/default.webp";
+            }}
+          />
+        </div>
+
+        <span className="echo-drag-label">{item.echoName ?? "Empty Slot"}</span>
+
+        <div className="echo-drag-stat-list main">
+          <EchoDragStat
+            statId={echoData?.mainOption.statId ?? "dummy"}
+            value={echoData?.mainOption.statValue ?? -1}
+          />
+          <EchoDragStat statId={costStatId} value={costStatValue} muted />
+        </div>
+
+        <div className="echo-drag-stat-list sub">
+          {[0, 1, 2, 3, 4].map((subIdx) => (
+            <EchoDragStat
+              key={`echo-drag-stat-${index}-${subIdx}`}
+              statId={echoData?.subOptions[subIdx]?.statId ?? "dummy"}
+              value={echoData?.subOptions[subIdx]?.statValue ?? -1}
+              muted={echoData?.subOptions[subIdx]?.statId === "dummy"}
+            />
+          ))}
+        </div>
+
+        <div className="echo-drag-score">
+          <img className="score-img" src={`/ico/rank/${item.src[1]}`} />
+          <span className="en-font">
+            Av. <em className="num-font">{score[1].toFixed(1)}</em>pt
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -174,12 +254,16 @@ export default function EchoDragSelect({ num, onClick }: Props) {
       >
         <SortableContext
           items={items.map((item) => item.id)}
-          strategy={verticalListSortingStrategy}
+          strategy={rectSortingStrategy}
         >
-          <div className="echo-drag-list">
-            {items.map((item) => (
-              <SortableItem key={item.id} num={num} baseUrl={BASE_URL} item={item} index={item.id} onClick={onClick} />
-            ))}
+          <div className="echo-drag-board">
+            <span className="echo-drag-row-label equipped">착용</span>
+            <span className="echo-drag-row-label spare">예비슬롯</span>
+            <div className="echo-drag-list">
+              {items.map((item) => (
+                <SortableItem key={item.id} num={num} baseUrl={BASE_URL} item={item} index={item.id} onClick={onClick} />
+              ))}
+            </div>
           </div>
         </SortableContext>
       </DndContext>

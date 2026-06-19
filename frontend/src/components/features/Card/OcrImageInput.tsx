@@ -7,6 +7,7 @@ import {
   ocrImageBase64ToDataUrl,
   retouchOcrTexts,
   textsToStats,
+  wakeOcrByLang,
 } from "@/api/ocr.api.helper";
 import type { EchoId } from "@/datas/echos";
 import { locale } from "@/locales/locale";
@@ -27,12 +28,14 @@ type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 type Props = {
   selectIdx: EchoIndex;
+  onSelectIdx: React.Dispatch<React.SetStateAction<EchoIndex>>;
   initialDebug: OcrDebugData | null | undefined;
   onDebugChange: (debug: OcrDebugData | null) => void;
 };
 
 export default function OcrImageInput({
   selectIdx,
+  onSelectIdx,
   initialDebug,
   onDebugChange,
 }: Props) {
@@ -67,7 +70,7 @@ export default function OcrImageInput({
 
     try {
       const data = await requestOcrByUrl(endpointUrl, file, lang, {
-        timeoutMs: 60_000,
+        timeoutMs: 180_000,
       });
       const texts = normalizeOcrTexts(data);
       const image = ocrImageBase64ToDataUrl(data.image_base64);
@@ -134,17 +137,32 @@ export default function OcrImageInput({
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+
     const checkHealth = async () => {
+      setHealthy(null);
+
       try {
+        await wakeOcrByLang(lang, { timeoutMs: 180_000 });
+        if (cancelled) return;
+
         const health = await checkOcrHealthByLang(lang);
+        if (cancelled) return;
+
         setHealthy(health?.ok || false);
       } catch (error) {
         console.error(error);
+        if (cancelled) return;
+
         setHealthy(false);
       }
     };
 
     void checkHealth();
+
+    return () => {
+      cancelled = true;
+    };
   }, [lang]);
 
   useEffect(() => {
@@ -194,7 +212,7 @@ export default function OcrImageInput({
         </div>
       )}
 
-      <div className={`ocr-image-input-content ${isHealthy ? "" : "disable"}`}>
+      <div className="ocr-image-input-content">
         <OcrDragSelect
           datas={{
             cost: (debug?.cost as 4 | 3 | 1) ?? 4,
@@ -202,6 +220,7 @@ export default function OcrImageInput({
             stats: debug?.echoStats ?? null,
           }}
           selectIdx={selectIdx}
+          onSelectIdx={onSelectIdx}
           height={refHeight}
           resetAction={handleResetDebug}
           inputSlot={

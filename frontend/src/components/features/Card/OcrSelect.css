@@ -5,7 +5,7 @@
     min-width: 0;
     height: 100%;
     min-height: 0;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 4 / 3;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -16,29 +16,62 @@
     display: flex;
     width: 100%;
     height: 100%;
-    gap: 5%;
+    flex-direction: row;
+    gap: 2%;
     align-items: stretch;
     object-fit: contain;
     overflow: hidden;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
 .ocr-select-body .select-item-slot {
     display: flex;
     flex-direction: column;
 
-    width: 45%;
-    height: 100%;
     min-height: 0;
 
     align-items: center;
-    gap: 3.5%;
+    gap: 2%;
+}
+
+.ocr-select-body .select-item-slot:first-child {
+    flex: 1 1 auto;
+    width: 72%;
+    min-width: 0;
+}
+
+.ocr-select-body .select-item-slot:last-child {
+    flex: 0 0 27%;
+    width: 27%;
+    min-width: min(20vw, 14rem);
 }
 
 .ocr-select-body .select-item-slot .item-slot-title {
     width: 100%;
-    height: 5%;
+    height: auto;
+    flex: 0 0 auto;
     text-align: center;
+}
+
+.ocr-select-body .select-item-slot .item-slot-heading {
+    display: flex;
+    width: 100%;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: min(0.5vw, 0.25rem);
+}
+
+.ocr-select-body .select-item-slot .item-slot-help {
+    max-width: 100%;
+    overflow: hidden;
+    color: rgba(244, 247, 255, 0.68);
+    font-size: min(0.9vw, 0.72rem);
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ocr-select-body .select-item-slot .item-slot-container {
@@ -50,7 +83,7 @@
 }
 
 .ocr-select-body .select-item-slot:last-child .item-slot-container {
-    height: auto;
+    height: 100%;
     min-height: 0;
     flex: 1;
 }
@@ -128,11 +161,16 @@
 
 @media (max-width: 780px) {
     .ocr-select-body {
-        gap: 3%;
+        gap: 2.5%;
     }
 
-    .ocr-select-body .select-item-slot {
-        width: 48.5%;
+    .ocr-select-body .select-item-slot:first-child {
+        width: 68%;
+    }
+
+    .ocr-select-body .select-item-slot:last-child {
+        flex-basis: 30%;
+        width: 30%;
     }
 
     .ocr-select-actions button {
@@ -149,7 +187,7 @@
 
     .ocr-select-body {
         height: auto;
-        flex-direction: row;
+        flex-direction: column;
         align-items: stretch;
         gap: 2%;
         overflow-x: hidden;
@@ -157,10 +195,10 @@
     }
 
     .ocr-select-body .select-item-slot {
-        width: 49%;
+        width: 100%;
         min-width: 0;
-        max-width: 49%;
-        height: 100%;
+        max-width: 100%;
+        height: auto;
         flex: 1 1 0;
         aspect-ratio: auto;
         gap: 1.5%;
@@ -177,7 +215,7 @@
     }
 
     .ocr-select-body .select-item-slot:first-child {
-        min-height: min(115vw, 32rem);
+        min-height: min(48vw, 16rem);
     }
 
     .ocr-select-body .select-item-slot:last-child {
@@ -187,6 +225,11 @@
     .ocr-select-body .select-item-slot .item-slot-title {
         height: auto;
         min-height: min(5vw, 1.5rem);
+    }
+
+    .ocr-select-body .select-item-slot .item-slot-help {
+        font-size: min(2.6vw, 0.78rem);
+        white-space: normal;
     }
 
     .ocr-select-actions {

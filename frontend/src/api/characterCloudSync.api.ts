@@ -16,11 +16,9 @@ export function isMembershipUser(user: UserProfile | null) {
   if (!user) return false;
 
   const status = user.status?.toLowerCase() ?? "active";
-  const membershipLevel = user.membershipLevel ?? 0;
   const expiresAt = user.membershipExpiresAt;
 
   if (status !== "active") return false;
-  if (!user.isMember && membershipLevel <= 0) return false;
   if (!expiresAt) return true;
 
   return new Date(expiresAt).getTime() > Date.now();

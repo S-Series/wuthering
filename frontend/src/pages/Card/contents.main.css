@@ -68,31 +68,119 @@
     bottom: 1.5%;
 
     justify-content: space-between;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    outline: 0;
+    cursor: pointer;
+    transition:
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        filter 0.18s ease-out,
+        transform 0.18s ease-out;
+}
+
+.card-contents .card-contents-slot.main .main-item-slot.echos::before {
+    content: "";
+    position: absolute;
+    inset: -1.5%;
+    border: 1px solid rgba(126, 217, 255, 0);
+    background:
+        linear-gradient(120deg, transparent 0%, rgba(126, 217, 255, 0.16) 46%, transparent 58%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-8%);
+    transition:
+        border-color 0.18s ease-out,
+        opacity 0.18s ease-out,
+        transform 0.24s ease-out;
+    z-index: 1;
+}
+
+.card-contents .card-contents-slot.main .main-item-slot.echos:hover,
+.card-contents .card-contents-slot.main .main-item-slot.echos:focus-visible {
+    border-color: rgba(126, 217, 255, 0.8);
+    box-shadow:
+        0 0 0.65rem rgba(61, 177, 255, 0.48),
+        inset 0 0 1.2rem rgba(126, 217, 255, 0.13);
+    filter: brightness(1.08);
+    transform: translateY(-1.2%);
+}
+
+.card-contents .card-contents-slot.main .main-item-slot.echos:hover::before,
+.card-contents .card-contents-slot.main .main-item-slot.echos:focus-visible::before {
+    border-color: rgba(126, 217, 255, 0.62);
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.card-contents .card-contents-slot.main .main-item-slot.echos:active {
+    transform: translateY(0);
+    filter: brightness(1.02);
 }
 
 /* == Character ==================================== */
 
 .main-item-slot.character .card-character-slot {
+    position: relative;
     width: calc(99% - 2px);
     height: calc(88% - 2px);
     border: 1px solid #bbb;
     border-top-left-radius: 1.25vw;
     box-shadow: 0.2vw 0.2vw 0 #000;
+    box-sizing: border-box;
     object-fit: contain;
     overflow: hidden;
+    transition:
+        border-color 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        filter 0.18s ease-out,
+        transform 0.18s ease-out;
+}
+
+.main-item-slot.character .card-character-slot::before {
+    content: "";
+    position: absolute;
+    inset: -1.5%;
+    border: 1px solid rgba(126, 217, 255, 0);
+    background:
+        linear-gradient(120deg, transparent 0%, rgba(126, 217, 255, 0.16) 46%, transparent 58%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-8%);
+    transition:
+        border-color 0.18s ease-out,
+        opacity 0.18s ease-out,
+        transform 0.24s ease-out;
+    z-index: 1;
+}
+
+.main-item-slot.character .card-character-slot:hover,
+.main-item-slot.character .card-character-slot:focus-within {
+    border-color: rgba(126, 217, 255, 0.8);
+    box-shadow:
+        0 0 0.65rem rgba(61, 177, 255, 0.48),
+        inset 0 0 1.2rem rgba(126, 217, 255, 0.13);
+    filter: brightness(1.08);
+    transform: translateY(-1.2%);
+}
+
+.main-item-slot.character .card-character-slot:hover::before,
+.main-item-slot.character .card-character-slot:focus-within::before {
+    border-color: rgba(126, 217, 255, 0.62);
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.main-item-slot.character .card-character-slot:active {
+    transform: translateY(0);
+    filter: brightness(1.02);
 }
 
 .main-item-slot.character .card-character-slot .character-img {
     height: 100%;
     width: 100%;
     object-fit: cover;
-    transition: all 0.2s ease-out;
     cursor: pointer;
-}
-
-.main-item-slot.character .card-character-slot .character-img:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 4px 4px #ff0);
 }
 
 .main-item-slot.character .card-character-slot .constell-overlay {

@@ -207,153 +207,154 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   //* =========================================================    
   return (
     <div className="echo-select-wrapper" ref={wrapRef}>
-      <div className="drop-slot large">
-        <Select
-          options={COST_DROP_OPTION}
-          isSearchable={false}
-          styles={STAT_DROP_STYLE_LARGE}
-          value={COST_DROP_OPTION.find((e) => e.value === selectedCost) ?? null}
-          onChange={(opt) => {
-            patchCharacterData(setEchoCost(characterData, index, opt?.value));
-          }}
-        />
-      </div>
+      <div className="echo-select-base-grid">
+        <div className="drop-slot large">
+          <Select
+            options={COST_DROP_OPTION}
+            isSearchable={false}
+            styles={STAT_DROP_STYLE_LARGE}
+            value={COST_DROP_OPTION.find((e) => e.value === selectedCost) ?? null}
+            onChange={(opt) => {
+              patchCharacterData(setEchoCost(characterData, index, opt?.value));
+            }}
+          />
+        </div>
 
-      <div className="drop-slot large">
-        <Select
-          options={HARMONY_DROP_OPTION}
-          isClearable={true}
-          isSearchable={false}
-          styles={STAT_DROP_STYLE_LARGE}
-          formatOptionLabel={(opt, meta) =>
-            formatOptionWithImage_Smaller(opt, lang, meta)
-          }
-          value={
-            HARMONY_DROP_OPTION.find(
-              (e) => e.value === characterData.echoData[index].setId
-            ) ?? null
-          }
-          onChange={(opt) => {
-            patchCharacterData(
-              setEchoSetId(characterData, index, opt?.value ?? null)
-            );
-          }}
-        />
-      </div>
-
-      <div className="drop-slot large">
-        <Select
-          options={ECHO_ID_DROP_OPTION}
-          isClearable={true}
-          isSearchable={true}
-          placeholder={
-            <div style={{display: "flex", alignItems: "center", gap: "min(0.5vw, 0.5rem)"}}>
-              <img
-                style={{
-                  width: "auto",
-                  height: "min(2vw, 2rem)",
-                  aspectRatio: "1/1",
-                }}
-                src="/default.webp"
-              />
-              <span style={{whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)"}}>
-                {localeText.echoSearch}
-              </span>
-            </div>
-          }
-          styles={STAT_DROP_STYLE_LARGE}
-          formatOptionLabel={(opt, meta) =>
-            formatOptionWithImage(opt, lang, meta)
-          }
-          value={
-            ECHO_ID_OPTION_BASE.find(
-              (e) => e.value === characterData.echoData[index].echoId
-            ) ?? null
-          }
-          onChange={(opt) => {
-            patchCharacterData(
-              setEchoId(
-                characterData,
-                index as 0 | 1 | 2 | 3 | 4,
-                opt?.value ?? null
-              )
-            );
-          }}
-        />
-      </div>
-
-      <div className="divider" />
-
-      <div className="drop-slot">
-        <Select
-          options={(() => {
-            switch (characterData.echoData[index].cost) {
-              case 4:
-                return STAT_OPTION_MAIN_COST4;
-              case 3:
-                return STAT_OPTION_MAIN_COST3;
-              case 1:
-                return STAT_OPTION_MAIN_COST1;
-              default:
-                return [];
+        <div className="drop-slot large">
+          <Select
+            options={HARMONY_DROP_OPTION}
+            isClearable={true}
+            isSearchable={false}
+            styles={STAT_DROP_STYLE_LARGE}
+            formatOptionLabel={(opt, meta) =>
+              formatOptionWithImage_Smaller(opt, lang, meta)
             }
-          })()}
-          styles={STAT_DROP_STYLE_OPTION_WIDE}
-          formatOptionLabel={(opt, meta) =>
-            formatOptionWithImage_Smaller(opt, lang, meta)
-          }
-          menuPortalTarget={document.body}
-          value={
-            STAT_OPTION_BASE.find(
-              (e) => e.value === characterData.echoData[index].mainOption.statId
-            ) ?? null
-          }
-          onChange={(opt) => {
-            if (!opt) return;
-            patchCharacterData(
-              patchEchoMainOption(characterData, index, {
-                statId: opt.value,
-                statValue: (() => {
-                  const echoData = characterData.echoData[index];
-                  const statId = opt.value;
+            value={
+              HARMONY_DROP_OPTION.find(
+                (e) => e.value === characterData.echoData[index].setId
+              ) ?? null
+            }
+            onChange={(opt) => {
+              patchCharacterData(
+                setEchoSetId(characterData, index, opt?.value ?? null)
+              );
+            }}
+          />
+        </div>
 
-                  if (!statId || statId === "dummy") return 0;
-
-                  const costIndexMap: Record<1 | 3 | 4, number> = {
-                    4: 0,
-                    3: 1,
-                    1: 2,
-                  };
-
-                  const idx = costIndexMap[echoData.cost];
-                  const stat = FixedStats[statId as keyof typeof FixedStats];
-
-                  if (!stat) return 0;
-
-                  return stat.ValueMain[idx];
-                })(),
-              })
-            );
-          }}
-        />
-
-        <span className="main-stat-span num-font">
-          {(characterData?.echoData[index]?.mainOption?.statValue ?? 0).toFixed(
-            1
-          )}
-          %
-        </span>
+        <div className="drop-slot large echo-select-echo-field">
+          <Select
+            options={ECHO_ID_DROP_OPTION}
+            isClearable={true}
+            isSearchable={true}
+            placeholder={
+              <div style={{display: "flex", alignItems: "center", gap: "min(0.5vw, 0.5rem)"}}>
+                <img
+                  style={{
+                    width: "auto",
+                    height: "min(2vw, 2rem)",
+                    aspectRatio: "1/1",
+                  }}
+                  src="/default.webp"
+                />
+                <span style={{whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)"}}>
+                  {localeText.echoSearch}
+                </span>
+              </div>
+            }
+            styles={STAT_DROP_STYLE_LARGE}
+            formatOptionLabel={(opt, meta) =>
+              formatOptionWithImage(opt, lang, meta)
+            }
+            value={
+              ECHO_ID_OPTION_BASE.find(
+                (e) => e.value === characterData.echoData[index].echoId
+              ) ?? null
+            }
+            onChange={(opt) => {
+              patchCharacterData(
+                setEchoId(
+                  characterData,
+                  index as 0 | 1 | 2 | 3 | 4,
+                  opt?.value ?? null
+                )
+              );
+            }}
+          />
+        </div>
       </div>
 
-      <div className="divider" />
+      <div className="echo-select-main-grid">
+        <div className="drop-slot">
+          <Select
+            options={(() => {
+              switch (characterData.echoData[index].cost) {
+                case 4:
+                  return STAT_OPTION_MAIN_COST4;
+                case 3:
+                  return STAT_OPTION_MAIN_COST3;
+                case 1:
+                  return STAT_OPTION_MAIN_COST1;
+                default:
+                  return [];
+              }
+            })()}
+            styles={STAT_DROP_STYLE_OPTION_WIDE}
+            formatOptionLabel={(opt, meta) =>
+              formatOptionWithImage_Smaller(opt, lang, meta)
+            }
+            menuPortalTarget={document.body}
+            value={
+              STAT_OPTION_BASE.find(
+                (e) => e.value === characterData.echoData[index].mainOption.statId
+              ) ?? null
+            }
+            onChange={(opt) => {
+              if (!opt) return;
+              patchCharacterData(
+                patchEchoMainOption(characterData, index, {
+                  statId: opt.value,
+                  statValue: (() => {
+                    const echoData = characterData.echoData[index];
+                    const statId = opt.value;
 
-      {[0, 1, 2, 3, 4].map((idx) => {
-        return (
-          <div key={`echo-stat-drop-${idx}`} className="drop-slot">
-            <div style={{ width: "65%" }}>
-              <Select
-                options={STAT_OPTION_SUB}
-                styles={STAT_DROP_STYLE_OPTION_WIDE}
+                    if (!statId || statId === "dummy") return 0;
+
+                    const costIndexMap: Record<1 | 3 | 4, number> = {
+                      4: 0,
+                      3: 1,
+                      1: 2,
+                    };
+
+                    const idx = costIndexMap[echoData.cost];
+                    const stat = FixedStats[statId as keyof typeof FixedStats];
+
+                    if (!stat) return 0;
+
+                    return stat.ValueMain[idx];
+                  })(),
+                })
+              );
+            }}
+          />
+
+          <span className="main-stat-span num-font">
+            {(characterData?.echoData[index]?.mainOption?.statValue ?? 0).toFixed(
+              1
+            )}
+            %
+          </span>
+        </div>
+      </div>
+
+      <div className="echo-select-sub-grid">
+        {[0, 1, 2, 3, 4].map((idx) => {
+          return (
+            <div key={`echo-stat-drop-${idx}`} className="drop-slot">
+              <div className="sub-stat-select">
+                <Select
+                  options={STAT_OPTION_SUB}
+                  styles={STAT_DROP_STYLE_OPTION_WIDE}
                 formatOptionLabel={(opt, meta) =>
                   formatOptionWithImage_Smaller(opt, lang, meta)
                 }
@@ -378,42 +379,43 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                       { statId: opt.value }
                     )
                   );
-                }}
-              />
-            </div>
+                  }}
+                />
+              </div>
 
-            <div style={{ width: "35%" }}>
-              <Select
-                options={STAT_OPTION_VALUE_SUBS[idx]}
-                styles={STAT_DROP_STYLE_OPTION_WIDE}
-                menuPlacement="auto"
-                menuPosition="fixed"
-                minMenuHeight={200}
-                menuShouldScrollIntoView={false}
-                menuPortalTarget={document.body}
-                value={
-                  STAT_OPTION_VALUE_SUBS[idx].find(
-                    (e) =>
-                      e.value ===
-                      characterData.echoData[index].subOptions[idx].statValue
-                  ) ?? null
-                }
-                onChange={(opt) => {
-                  if (!opt) return;
-                  patchCharacterData(
-                    patchEchoSubOption(
-                      characterData,
-                      index,
-                      idx as 0 | 1 | 2 | 3 | 4,
-                      { statValue: opt.value }
-                    )
-                  );
-                }}
-              />
+              <div className="sub-value-select">
+                <Select
+                  options={STAT_OPTION_VALUE_SUBS[idx]}
+                  styles={STAT_DROP_STYLE_OPTION_WIDE}
+                  menuPlacement="auto"
+                  menuPosition="fixed"
+                  minMenuHeight={200}
+                  menuShouldScrollIntoView={false}
+                  menuPortalTarget={document.body}
+                  value={
+                    STAT_OPTION_VALUE_SUBS[idx].find(
+                      (e) =>
+                        e.value ===
+                        characterData.echoData[index].subOptions[idx].statValue
+                    ) ?? null
+                  }
+                  onChange={(opt) => {
+                    if (!opt) return;
+                    patchCharacterData(
+                      patchEchoSubOption(
+                        characterData,
+                        index,
+                        idx as 0 | 1 | 2 | 3 | 4,
+                        { statValue: opt.value }
+                      )
+                    );
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
 
       <button
         type="button"

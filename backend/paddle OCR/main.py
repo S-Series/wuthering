@@ -135,6 +135,14 @@ def health():
         "ocr_loaded": ocr is not None
     }
 
+@app.get("/wake")
+def wake():
+    get_ocr()
+    return {
+        "ok": True,
+        "ocr_loaded": ocr is not None
+    }
+
 # ---------------------------
 # OCR endpoint
 # ---------------------------

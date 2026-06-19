@@ -221,3 +221,48 @@ export async function checkOcrHealthByLang(targetLang: string) {
   const data = await checkOcrHealth();
   return data.results.find((item) => item.lang === targetLang) ?? null;
 }
+
+export type OcrWakeResponse = {
+  ok: boolean;
+  lang: string;
+  status?: number;
+  upstream?: string;
+  error?: string;
+  detail?: string;
+  result?: unknown;
+};
+
+export async function wakeOcrByLang(
+  targetLang: string,
+  opts?: { timeoutMs?: number },
+): Promise<OcrWakeResponse> {
+  const controller = new AbortController();
+  const timeoutMs = opts?.timeoutMs ?? 180_000;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  const url = new URL(`${import.meta.env.VITE_GATEWAY_URL}/api/ocr/wake`);
+
+  url.searchParams.set("lang", targetLang);
+
+  try {
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      signal: controller.signal,
+    });
+    const contentType = response.headers.get("content-type") ?? "";
+    const text = await response.text();
+
+    if (!contentType.includes("application/json")) {
+      throw new Error(`Expected JSON but got ${contentType}: ${text.slice(0, 200)}`);
+    }
+
+    const data = JSON.parse(text) as OcrWakeResponse;
+
+    if (!response.ok) {
+      throw new Error(`OCR wake failed: ${response.status} / ${text}`);
+    }
+
+    return data;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}

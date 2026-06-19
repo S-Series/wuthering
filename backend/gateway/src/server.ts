@@ -122,6 +122,66 @@ async function main() {
     });
   });
 
+  app.post("/api/ocr/wake", async (req, reply) => {
+    const q = req.query as { lang?: string };
+    const lang = normalizeLang(q.lang);
+    const baseUrl = OCR_UPSTREAM[lang] ?? OCR_UPSTREAM.kr;
+
+    if (!baseUrl) {
+      return reply.code(500).send({
+        ok: false,
+        lang,
+        error: "upstream url is missing",
+      });
+    }
+
+    const controller = new AbortController();
+    const timeoutMs = 180_000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const upstreamUrl = new URL("/wake", baseUrl).toString();
+
+    try {
+      const res = await fetch(upstreamUrl, {
+        method: "GET",
+        signal: controller.signal,
+      });
+      const contentType = res.headers.get("content-type") ?? "";
+      const text = await res.text().catch(() => "");
+      const body = (() => {
+        if (!contentType.includes("application/json")) {
+          return { body: text.slice(0, 500) };
+        }
+
+        try {
+          return JSON.parse(text);
+        } catch {
+          return { body: text.slice(0, 500) };
+        }
+      })();
+
+      return reply.code(res.ok ? 200 : 502).send({
+        ok: res.ok,
+        lang,
+        status: res.status,
+        upstream: upstreamUrl,
+        result: body,
+      });
+    } catch (e: any) {
+      const msg =
+        e?.name === "AbortError" ? "upstream wake timeout" : "upstream wake failed";
+
+      return reply.code(504).send({
+        ok: false,
+        lang,
+        upstream: upstreamUrl,
+        error: msg,
+        detail: String(e?.message ?? e),
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  });
+
   app.get("/health/render", async (_req, reply) => {
     try {
       const res = await fetch(
@@ -309,7 +369,7 @@ async function main() {
     ).toString();
 
     const controller = new AbortController();
-    const timeoutMs = 60_000;
+    const timeoutMs = 180_000;
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     let upstreamRes: Response;

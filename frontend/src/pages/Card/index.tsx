@@ -240,6 +240,7 @@ function CloudSyncDataCard({
 function CloudSyncConfirmDialog({
   message,
   localeText,
+  showDownloadAllOption = false,
   onConfirm,
   onCancel,
   onComplete,
@@ -247,19 +248,21 @@ function CloudSyncConfirmDialog({
 }: {
   message: string;
   localeText: CardLocaleText;
-  onConfirm: () => Promise<void>;
+  showDownloadAllOption?: boolean;
+  onConfirm: (options?: { downloadAllCharacters: boolean }) => Promise<void>;
   onCancel: () => void;
   onComplete: () => void;
   onRunningChange: (isRunning: boolean) => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
+  const [downloadAllCharacters, setDownloadAllCharacters] = useState(false);
 
   const execute = async () => {
     setIsRunning(true);
     onRunningChange(true);
 
     try {
-      await onConfirm();
+      await onConfirm({ downloadAllCharacters });
     } finally {
       onRunningChange(false);
       setIsRunning(false);
@@ -273,6 +276,19 @@ function CloudSyncConfirmDialog({
     <div className="cloud-sync-confirm">
       <p>{message}</p>
       <strong>{localeText.cloudSyncIrreversibleWarning}</strong>
+      {showDownloadAllOption ? (
+        <label className="cloud-sync-confirm__option">
+          <input
+            type="checkbox"
+            checked={downloadAllCharacters}
+            disabled={isRunning}
+            onChange={(event) =>
+              setDownloadAllCharacters(event.currentTarget.checked)
+            }
+          />
+          <span>{localeText.cloudSyncDownloadAllCharacters}</span>
+        </label>
+      ) : null}
       <div className="cloud-sync-confirm__actions">
         <button
           type="button"
@@ -319,7 +335,7 @@ function CloudSyncPanel({
     characterId?: CharacterId;
   }) => Promise<void>;
   onUpload: () => Promise<void>;
-  onDownload: () => Promise<void>;
+  onDownload: (options?: { downloadAllCharacters: boolean }) => Promise<void>;
 }) {
   const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
   const { closeOverlay } = useOverlay();
@@ -370,6 +386,7 @@ function CloudSyncPanel({
             : localeText.cloudSyncDownloadConfirmMessage
         }
         localeText={localeText}
+        showDownloadAllOption={!isUpload}
         onConfirm={isUpload ? onUpload : onDownload}
         onCancel={closeElevatedOverlay}
         onComplete={closeOverlay}
@@ -460,7 +477,7 @@ export default function Card() {
     setCardGuideAutoOpenHandled,
     saveCardGuideDismissed,
   } = useAppStore();
-  const { characterId, setCharacterId, patchCharacterData, replaceCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
+  const { characterId, setCharacterId, patchCharacterData, replaceCharacterDataSnapshot, replaceCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
   const { openOverlay } = useOverlay();
   const {
@@ -778,7 +795,7 @@ export default function Card() {
     );
   };
 
-  const handleCloudDownload = async () => {
+  const handleCloudDownload = async (options?: { downloadAllCharacters: boolean }) => {
     if (!user) {
       alert(localeText.cloudSyncLoginRequired);
       return;
@@ -790,9 +807,12 @@ export default function Card() {
     }
 
     let result;
+    const downloadAllCharacters = options?.downloadAllCharacters ?? false;
 
     try {
-      result = await downloadCharacterCloudData(characterId);
+      result = await downloadCharacterCloudData(
+        downloadAllCharacters ? undefined : characterId
+      );
     } catch {
       alert(localeText.cloudSyncRequestFailed);
       return;
@@ -800,6 +820,18 @@ export default function Card() {
 
     if (!result.ok) {
       alert(result.message);
+      return;
+    }
+
+    if (downloadAllCharacters) {
+      if (!result.updatedAt || Object.keys(result.data).length === 0) {
+        alert(localeText.cloudSyncNoCloudData);
+        return;
+      }
+
+      replaceCharacterDataSnapshot(result.data);
+      setCloudCharacterDataSnapshot(result.data, result.updatedAt);
+      alert(localeText.cloudSyncDownloadSuccess);
       return;
     }
 
@@ -1277,7 +1309,19 @@ export default function Card() {
               </div>
             </div>
 
-            <div className="main-item-slot echos">
+            <div
+              className="main-item-slot echos"
+              role="button"
+              tabIndex={0}
+              aria-label={localeText.oMenu}
+              onClick={openEchoDataManager}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+
+                event.preventDefault();
+                openEchoDataManager();
+              }}
+            >
               {[0, 1, 2, 3, 4].map((idx) => {
                 return (
                   <EchoSlot

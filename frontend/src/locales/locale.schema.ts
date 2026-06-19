@@ -86,6 +86,7 @@ export type LocaleSchema = {
     cloudSyncDownloadConfirmTitle: string;
     cloudSyncUploadConfirmMessage: string;
     cloudSyncDownloadConfirmMessage: string;
+    cloudSyncDownloadAllCharacters: string;
     cloudSyncIrreversibleWarning: string;
     cloudSyncExecute: string;
     cloudSyncExecuting: string;
@@ -149,6 +150,7 @@ export type LocaleSchema = {
     healthCheck: string,
     healthFalse: string,
     echoList: string;
+    echoOrderHelp: string;
     echoData: string;
     inspectData: string;
   }

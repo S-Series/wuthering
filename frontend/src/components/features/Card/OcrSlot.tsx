@@ -23,6 +23,7 @@ export default function OcrPlayground() {
     openElevatedOverlay(
       <OcrImageInput
         selectIdx={selectIdx}
+        onSelectIdx={setSelectIdx}
         initialDebug={debug}
         onDebugChange={setDebug}
       />,
