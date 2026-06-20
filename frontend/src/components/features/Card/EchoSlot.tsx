@@ -10,6 +10,7 @@ import { useAppStore } from "@/stores/appStore";
 
 interface StatSlotProps {
   index: number;
+  highlightedStatId?: StatId | null;
 }
 
 const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
@@ -60,7 +61,7 @@ function StatToColor({StatId, StatValue, scoreValue}
   return hex;
 }
 
-export default function EchoSlot({index = 0 }: StatSlotProps) {
+export default function EchoSlot({index = 0, highlightedStatId = null }: StatSlotProps) {
   const { imgVer } = useAppStore();
   const { characterId, characterData, equipmentScore, setStatColors } = useCharacter();
 
@@ -90,7 +91,13 @@ export default function EchoSlot({index = 0 }: StatSlotProps) {
     }
 
     return colorMaps;
-  }, [index, characterId, characterData])
+  }, [
+    index,
+    characterId,
+    characterData.echoDataIndex,
+    Echodata.subOptions,
+    setStatColors,
+  ])
 
   return (
     <div className={`echo-slot-body ${index < 0 ? "select" : ""}`}>
@@ -136,11 +143,19 @@ export default function EchoSlot({index = 0 }: StatSlotProps) {
           return [0, 1, 2, 3, 4].map((idx) => {
             const statId: StatId = Echodata?.subOptions?.[idx]?.statId ?? "dummy";
             const statValue = Echodata?.subOptions?.[idx]?.statValue || 0;
-            return <MakeStatSlot
-              key={`echo-stat-container-${idx}`}
-              StatId={statId}
-              StatValue={statValue.toFixed(1)}
-              color={STAT_TEXT_COLOR[idx]} />
+            const isHighlighted = highlightedStatId !== null && statId === highlightedStatId;
+
+            return (
+              <div
+                className={`echo-stat-highlight-wrap ${isHighlighted ? "highlighted" : ""}`}
+                key={`echo-stat-container-${idx}`}
+              >
+                <MakeStatSlot
+                  StatId={statId}
+                  StatValue={statValue.toFixed(1)}
+                  color={STAT_TEXT_COLOR[idx]} />
+              </div>
+            );
           })
         })()}
       </div>

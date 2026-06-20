@@ -6,9 +6,15 @@ interface StatSlotProps {
     statId: StatId;
     statValue: number;
     plusValue: number;
+    onHoverStat?: (statId: StatId | null) => void;
 }
 
-export default function StatSlot({ statId, statValue, plusValue }: StatSlotProps) {
+export default function StatSlot({
+    statId,
+    statValue,
+    plusValue,
+    onHoverStat,
+}: StatSlotProps) {
     const { lang } = useAppStore();
     const isPct = ((
         statId.includes("crit")
@@ -18,7 +24,14 @@ export default function StatSlot({ statId, statValue, plusValue }: StatSlotProps
     );
     
     return (
-        <div className="stat-slot-body">
+        <div
+            className="stat-slot-body"
+            onMouseEnter={() => onHoverStat?.(statId)}
+            onMouseLeave={() => onHoverStat?.(null)}
+            onFocus={() => onHoverStat?.(statId)}
+            onBlur={() => onHoverStat?.(null)}
+            tabIndex={0}
+        >
             <div className="container">
                 <img src={`/ico/stats/${statId}.webp`}/>
                 <span className={`${lang}-font`}>{

@@ -61,6 +61,32 @@
     align-items: center;
     justify-content: space-between;
 }
+
+.echo-slot-body .stat-container.sub .echo-stat-highlight-wrap {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    transition:
+        border-color 0.16s ease-out,
+        background-color 0.16s ease-out,
+        box-shadow 0.16s ease-out,
+        filter 0.16s ease-out;
+}
+
+.echo-slot-body .stat-container.sub .echo-stat-highlight-wrap.highlighted {
+    border-color: rgba(255, 215, 100, 0.78);
+    background-color: rgba(255, 215, 100, 0.16);
+    box-shadow:
+        inset 0 0 0.45rem rgba(255, 215, 100, 0.16),
+        0 0 0.55rem rgba(255, 215, 100, 0.28);
+    filter: brightness(1.18);
+}
+
+.echo-slot-body .stat-container.sub .echo-stat-highlight-wrap.highlighted .echo-stat-slot span {
+    text-shadow: 0 0 0.35rem rgba(255, 215, 100, 0.7);
+}
 .echo-slot-body .stat-container.main {
     margin-top: 10%;
     margin-bottom: 2%;

@@ -9,11 +9,10 @@ import Signup from "@/components/features/Profile/Signup";
 import "./Profile.css"
 
 export default function Profile() {
-  const { user, isLoading } = useAuthStore();
+  const { user } = useAuthStore();
 
   const [isSignIn, setSignIn] = useState(false);
 
-  if (isLoading) return <div style={{alignSelf: "center"}}>Loading...</div>
   return (
     <div id="page-slot">{
       user

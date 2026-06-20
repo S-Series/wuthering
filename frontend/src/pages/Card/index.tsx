@@ -526,6 +526,8 @@ export default function Card() {
 
 
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [highlightedEchoSubStatId, setHighlightedEchoSubStatId] =
+    useState<StatId | null>(null);
 
   const openCardGuide = useCallback(() => {
     setCardGuideAutoOpenHandled(true);
@@ -1093,51 +1095,53 @@ export default function Card() {
           <div className="card-contents-slot main" data-card-guide="preview">
             <div className="main-item-slot character">
               <div className="card-character-slot">
-                <img className="character-img"
-                  src={`${BASE_URL}/character/${
-                    characterId?.includes("rover")
-                      ? `rover?v=${imgVer}`
-                      : characterId
-                  }/stand.png?v=${imgVer}`}
-                  onClick={openCharacterWeaponManager}
-                />
-
-                <div className="constell-overlay">
-                  <img
-                    className=""
-                    src={`/ui/CharacterC${characterData.constell[0]}.png`}
+                <div className="character-image-frame">
+                  <img className="character-img"
+                    src={`${BASE_URL}/character/${
+                      characterId?.includes("rover")
+                        ? `rover?v=${imgVer}`
+                        : characterId
+                    }/stand.png?v=${imgVer}`}
+                    onClick={openCharacterWeaponManager}
                   />
-                  {UI_BUTTON_POS.map((item, idx) => {
-                    return (
-                      <button
-                        key={`character-constell-button${idx}`}
-                        className={`constell-button ${
-                          characterData.constell[0] > idx ? "active" : ""
-                        }`}
-                        style={{ left: `${item.x}%`, top: `${item.y}%` }}
-                        onClick={() => {
-                          patchCharacterData(
-                            patchConstell(
-                              characterData,
-                              true,
-                              characterData.constell[0] === idx + 1
-                                ? 0
-                                : idx + 1
-                            )
-                          );
-                        }}
-                      >
-                        <img
-                          className="constell-image"
-                          src={`${BASE_URL}/character/${
-                            characterId?.includes("rover")
-                              ? "rover"
-                              : characterId
-                          }/C${idx + 1}.png`}
-                        />
-                      </button>
-                    );
-                  })}
+
+                  <div className="constell-overlay">
+                    <img
+                      className=""
+                      src={`/ui/CharacterC${characterData.constell[0]}.png`}
+                    />
+                    {UI_BUTTON_POS.map((item, idx) => {
+                      return (
+                        <button
+                          key={`character-constell-button${idx}`}
+                          className={`constell-button ${
+                            characterData.constell[0] > idx ? "active" : ""
+                          }`}
+                          style={{ left: `${item.x}%`, top: `${item.y}%` }}
+                          onClick={() => {
+                            patchCharacterData(
+                              patchConstell(
+                                characterData,
+                                true,
+                                characterData.constell[0] === idx + 1
+                                  ? 0
+                                  : idx + 1
+                              )
+                            );
+                          }}
+                        >
+                          <img
+                            className="constell-image"
+                            src={`${BASE_URL}/character/${
+                              characterId?.includes("rover")
+                                ? "rover"
+                                : characterId
+                            }/C${idx + 1}.png`}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <span className="account-info region en-font">{`Asia Server`}</span>
@@ -1171,7 +1175,18 @@ export default function Card() {
               </div>
             </div>
 
-            <div className="main-item-slot weapon">
+            <div
+              className="main-item-slot weapon"
+              role="button"
+              tabIndex={0}
+              onClick={openCharacterWeaponManager}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+
+                event.preventDefault();
+                openCharacterWeaponManager();
+              }}
+            >
               <div className="weapon-info-img">
                 <img
                   alt="weapon icon"
@@ -1183,7 +1198,11 @@ export default function Card() {
                 />
               </div>
 
-              <div className="weapon-constell-select en-font">
+              <div
+                className="weapon-constell-select en-font"
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
+              >
                 <Select
                   isSearchable={false}
                   styles={dropStyle}
@@ -1244,6 +1263,7 @@ export default function Card() {
                       (FINAL_STATS_MAP?.[item] ?? 0) -
                       (BASE_STATS_MAP?.[item] ?? 0)
                     }
+                    onHoverStat={setHighlightedEchoSubStatId}
                   />
                 );
               })}
@@ -1264,10 +1284,18 @@ export default function Card() {
               </div>
 
               <div className="score-slot">
-                <span className="en-font">
+                <span
+                  className="en-font score-help"
+                  tabIndex={0}
+                  data-tooltip="Critical Value · 크리티컬 점수"
+                >
                   Cv. <em className="num-font">{finalScore[0].toFixed(1)}</em>pt
                 </span>
-                <span className="en-font">
+                <span
+                  className="en-font score-help"
+                  tabIndex={0}
+                  data-tooltip="All Value · 종합점수"
+                >
                   Av. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
               </div>
@@ -1327,6 +1355,7 @@ export default function Card() {
                   <EchoSlot
                     key={`echos-slot-${idx}`}
                     index={characterData.echoDataIndex[idx]}
+                    highlightedStatId={highlightedEchoSubStatId}
                   />
                 );
               })}

@@ -46,11 +46,13 @@ export function normalizeType(raw: unknown): YtType {
     : "officialTrailer";
 }
 
+export const OCR_UPSTREAM_URL = (process.env.OCR_UPSTREAM_URL ?? "").trim();
+
 export const OCR_UPSTREAM = {
-  kr: (process.env.OCR_UPSTREAM_KR ?? "").trim(),
-  en: (process.env.OCR_UPSTREAM_EN ?? "").trim(),
-  jp: (process.env.OCR_UPSTREAM_JP ?? "").trim(),
-  zh: (process.env.OCR_UPSTREAM_ZH ?? "").trim(),
+  kr: (OCR_UPSTREAM_URL || process.env.OCR_UPSTREAM_KR || "").trim(),
+  en: (OCR_UPSTREAM_URL || process.env.OCR_UPSTREAM_EN || "").trim(),
+  jp: (OCR_UPSTREAM_URL || process.env.OCR_UPSTREAM_JP || "").trim(),
+  zh: (OCR_UPSTREAM_URL || process.env.OCR_UPSTREAM_ZH || "").trim(),
 } as const;
 
 export const RENDER_UPSTREAM = (process.env.RENDER_UPSTREAM ?? "").trim();
@@ -79,8 +81,8 @@ export const MAX_BYTES = 15 * 1024 * 1024;
 export const ALLOWED_MIME = new Set(["image/png", "image/jpeg", "image/webp"]);
 
 export function validateEnv() {
-  if (!OCR_UPSTREAM.kr) {
-    throw new Error("OCR_UPSTREAM_KR is missing in .env");
+  if (!OCR_UPSTREAM_URL && !OCR_UPSTREAM.kr) {
+    throw new Error("OCR_UPSTREAM_URL or OCR_UPSTREAM_KR is missing in .env");
   }
 
   if (!RENDER_UPSTREAM) {

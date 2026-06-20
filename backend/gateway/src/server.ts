@@ -87,7 +87,9 @@ async function main() {
         const timeoutId = setTimeout(() => controller.abort(), 5000);
 
         try {
-          const upstreamUrl = new URL("/health", baseUrl).toString();
+          const upstream = new URL("/health", baseUrl);
+          upstream.searchParams.set("lang", lang);
+          const upstreamUrl = upstream.toString();
 
           const res = await fetch(upstreamUrl, {
             method: "GET",
@@ -138,7 +140,9 @@ async function main() {
     const controller = new AbortController();
     const timeoutMs = 180_000;
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-    const upstreamUrl = new URL("/wake", baseUrl).toString();
+    const upstream = new URL("/wake", baseUrl);
+    upstream.searchParams.set("lang", lang);
+    const upstreamUrl = upstream.toString();
 
     try {
       const res = await fetch(upstreamUrl, {

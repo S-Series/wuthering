@@ -198,27 +198,59 @@ export type OcrHealthResponse = {
   results: OcrHealthItem[];
 };
 
-export async function checkOcrHealth(): Promise<OcrHealthResponse> {
-  const response = await fetch(`${import.meta.env.VITE_GATEWAY_URL}/health/ocr`);
+function getOcrUpstreamUrl(targetLang?: string) {
+  const env = import.meta.env as Record<string, string | undefined>;
+  const singleUrl = env.VITE_OCR_UPSTREAM_URL;
+  const langUrl = targetLang
+    ? env[`VITE_OCR_UPSTREAM_${targetLang.toUpperCase()}`]
+    : undefined;
 
-  const contentType = response.headers.get("content-type") ?? "";
-  const text = await response.text();
-
-  if (!contentType.includes("application/json")) {
-    throw new Error(`Expected JSON but got ${contentType}: ${text.slice(0, 200)}`);
-  }
-
-  const data = JSON.parse(text) as OcrHealthResponse;
-
-  if (!response.ok) {
-    throw new Error(`Health check failed: ${response.status} / ${text}`);
-  }
-
-  return data;
+  return (singleUrl || langUrl || "").replace(/\/+$/, "");
 }
 
-export async function checkOcrHealthByLang(targetLang: string) {
-  const data = await checkOcrHealth();
+export async function checkOcrHealth(
+  opts?: { signal?: AbortSignal; timeoutMs?: number },
+): Promise<OcrHealthResponse> {
+  const controller = new AbortController();
+  const timeoutMs = opts?.timeoutMs ?? 10_000;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  const signal = mergeAbortSignals(opts?.signal, controller.signal);
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_GATEWAY_URL}/health/ocr`, {
+      signal,
+    });
+
+    const contentType = response.headers.get("content-type") ?? "";
+    const text = await response.text();
+
+    if (!contentType.includes("application/json")) {
+      throw new Error(`Expected JSON but got ${contentType}: ${text.slice(0, 200)}`);
+    }
+
+    const data = JSON.parse(text) as OcrHealthResponse;
+
+    if (!response.ok) {
+      throw new Error(`Health check failed: ${response.status} / ${text}`);
+    }
+
+    return data;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+export async function checkOcrHealthByLang(
+  targetLang: string,
+  opts?: { signal?: AbortSignal; timeoutMs?: number },
+) {
+  const upstream = getOcrUpstreamUrl(targetLang);
+
+  if (upstream) {
+    return pingOcrServerByLang(targetLang, opts);
+  }
+
+  const data = await checkOcrHealth(opts);
   return data.results.find((item) => item.lang === targetLang) ?? null;
 }
 
@@ -234,11 +266,18 @@ export type OcrWakeResponse = {
 
 export async function wakeOcrByLang(
   targetLang: string,
-  opts?: { timeoutMs?: number },
+  opts?: { signal?: AbortSignal; timeoutMs?: number },
 ): Promise<OcrWakeResponse> {
+  const upstream = getOcrUpstreamUrl(targetLang);
+
+  if (upstream) {
+    return wakeOcrServerByLang(targetLang, opts);
+  }
+
   const controller = new AbortController();
   const timeoutMs = opts?.timeoutMs ?? 180_000;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  const signal = mergeAbortSignals(opts?.signal, controller.signal);
   const url = new URL(`${import.meta.env.VITE_GATEWAY_URL}/api/ocr/wake`);
 
   url.searchParams.set("lang", targetLang);
@@ -246,7 +285,7 @@ export async function wakeOcrByLang(
   try {
     const response = await fetch(url.toString(), {
       method: "POST",
-      signal: controller.signal,
+      signal,
     });
     const contentType = response.headers.get("content-type") ?? "";
     const text = await response.text();
@@ -265,4 +304,110 @@ export async function wakeOcrByLang(
   } finally {
     window.clearTimeout(timeoutId);
   }
+}
+
+async function pingOcrServerByLang(
+  targetLang: string,
+  opts?: { signal?: AbortSignal; timeoutMs?: number },
+): Promise<OcrHealthItem> {
+  const upstream = getOcrUpstreamUrl(targetLang);
+
+  if (!upstream) {
+    throw new Error(`OCR upstream url is missing: ${targetLang}`);
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = opts?.timeoutMs ?? 5_000;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  const signal = mergeAbortSignals(opts?.signal, controller.signal);
+  const url = new URL(`${upstream}/health`);
+
+  url.searchParams.set("lang", targetLang);
+
+  try {
+    const response = await fetch(url.toString(), { signal });
+    const contentType = response.headers.get("content-type") ?? "";
+    const text = await response.text();
+
+    if (!contentType.includes("application/json")) {
+      throw new Error(`Expected OCR pong JSON but got ${contentType}: ${text.slice(0, 200)}`);
+    }
+
+    const data = JSON.parse(text) as { ok?: boolean };
+
+    return {
+      lang: targetLang,
+      ok: response.ok && data.ok === true,
+      status: response.status,
+      upstream: url.toString(),
+    };
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function wakeOcrServerByLang(
+  targetLang: string,
+  opts?: { signal?: AbortSignal; timeoutMs?: number },
+): Promise<OcrWakeResponse> {
+  const upstream = getOcrUpstreamUrl(targetLang);
+
+  if (!upstream) {
+    throw new Error(`OCR upstream url is missing: ${targetLang}`);
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = opts?.timeoutMs ?? 180_000;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  const signal = mergeAbortSignals(opts?.signal, controller.signal);
+  const url = new URL(`${upstream}/wake`);
+
+  url.searchParams.set("lang", targetLang);
+
+  try {
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      signal,
+    });
+    const contentType = response.headers.get("content-type") ?? "";
+    const text = await response.text();
+
+    if (!contentType.includes("application/json")) {
+      throw new Error(`Expected OCR wake JSON but got ${contentType}: ${text.slice(0, 200)}`);
+    }
+
+    const data = JSON.parse(text) as { ok?: boolean };
+
+    if (!response.ok || data.ok !== true) {
+      throw new Error(`OCR wake failed: ${response.status} / ${text}`);
+    }
+
+    return {
+      ok: true,
+      lang: targetLang,
+      status: response.status,
+      upstream: url.toString(),
+      result: data,
+    };
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+function mergeAbortSignals(a?: AbortSignal, b?: AbortSignal) {
+  if (!a) return b;
+  if (!b) return a;
+
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+
+  if (a.aborted || b.aborted) {
+    controller.abort();
+    return controller.signal;
+  }
+
+  a.addEventListener("abort", onAbort, { once: true });
+  b.addEventListener("abort", onAbort, { once: true });
+
+  return controller.signal;
 }
