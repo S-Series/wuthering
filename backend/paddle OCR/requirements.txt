@@ -5,7 +5,7 @@ python-multipart==0.0.6
 
 # --- PaddleOCR ---
 paddleocr==2.7.0.3
-paddlepaddle==2.6.0
+paddlepaddle==2.6.2
 
 # --- Image processing ---
 Pillow==10.1.0
