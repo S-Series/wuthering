@@ -198,16 +198,6 @@ export type OcrHealthResponse = {
   results: OcrHealthItem[];
 };
 
-function getOcrUpstreamUrl(targetLang?: string) {
-  const env = import.meta.env as Record<string, string | undefined>;
-  const singleUrl = env.VITE_OCR_UPSTREAM_URL;
-  const langUrl = targetLang
-    ? env[`VITE_OCR_UPSTREAM_${targetLang.toUpperCase()}`]
-    : undefined;
-
-  return (singleUrl || langUrl || "").replace(/\/+$/, "");
-}
-
 export async function checkOcrHealth(
   opts?: { signal?: AbortSignal; timeoutMs?: number },
 ): Promise<OcrHealthResponse> {
@@ -244,12 +234,6 @@ export async function checkOcrHealthByLang(
   targetLang: string,
   opts?: { signal?: AbortSignal; timeoutMs?: number },
 ) {
-  const upstream = getOcrUpstreamUrl(targetLang);
-
-  if (upstream) {
-    return pingOcrServerByLang(targetLang, opts);
-  }
-
   const data = await checkOcrHealth(opts);
   return data.results.find((item) => item.lang === targetLang) ?? null;
 }
@@ -268,12 +252,6 @@ export async function wakeOcrByLang(
   targetLang: string,
   opts?: { signal?: AbortSignal; timeoutMs?: number },
 ): Promise<OcrWakeResponse> {
-  const upstream = getOcrUpstreamUrl(targetLang);
-
-  if (upstream) {
-    return wakeOcrServerByLang(targetLang, opts);
-  }
-
   const controller = new AbortController();
   const timeoutMs = opts?.timeoutMs ?? 180_000;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
@@ -291,7 +269,7 @@ export async function wakeOcrByLang(
     const text = await response.text();
 
     if (!contentType.includes("application/json")) {
-      throw new Error(`Expected JSON but got ${contentType}: ${text.slice(0, 200)}`);
+      throw new Error(`Expected OCR wake JSON but got ${contentType}: ${text.slice(0, 200)}`);
     }
 
     const data = JSON.parse(text) as OcrWakeResponse;
@@ -301,94 +279,6 @@ export async function wakeOcrByLang(
     }
 
     return data;
-  } finally {
-    window.clearTimeout(timeoutId);
-  }
-}
-
-async function pingOcrServerByLang(
-  targetLang: string,
-  opts?: { signal?: AbortSignal; timeoutMs?: number },
-): Promise<OcrHealthItem> {
-  const upstream = getOcrUpstreamUrl(targetLang);
-
-  if (!upstream) {
-    throw new Error(`OCR upstream url is missing: ${targetLang}`);
-  }
-
-  const controller = new AbortController();
-  const timeoutMs = opts?.timeoutMs ?? 5_000;
-  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-  const signal = mergeAbortSignals(opts?.signal, controller.signal);
-  const url = new URL(`${upstream}/health`);
-
-  url.searchParams.set("lang", targetLang);
-
-  try {
-    const response = await fetch(url.toString(), { signal });
-    const contentType = response.headers.get("content-type") ?? "";
-    const text = await response.text();
-
-    if (!contentType.includes("application/json")) {
-      throw new Error(`Expected OCR pong JSON but got ${contentType}: ${text.slice(0, 200)}`);
-    }
-
-    const data = JSON.parse(text) as { ok?: boolean };
-
-    return {
-      lang: targetLang,
-      ok: response.ok && data.ok === true,
-      status: response.status,
-      upstream: url.toString(),
-    };
-  } finally {
-    window.clearTimeout(timeoutId);
-  }
-}
-
-async function wakeOcrServerByLang(
-  targetLang: string,
-  opts?: { signal?: AbortSignal; timeoutMs?: number },
-): Promise<OcrWakeResponse> {
-  const upstream = getOcrUpstreamUrl(targetLang);
-
-  if (!upstream) {
-    throw new Error(`OCR upstream url is missing: ${targetLang}`);
-  }
-
-  const controller = new AbortController();
-  const timeoutMs = opts?.timeoutMs ?? 180_000;
-  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-  const signal = mergeAbortSignals(opts?.signal, controller.signal);
-  const url = new URL(`${upstream}/wake`);
-
-  url.searchParams.set("lang", targetLang);
-
-  try {
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      signal,
-    });
-    const contentType = response.headers.get("content-type") ?? "";
-    const text = await response.text();
-
-    if (!contentType.includes("application/json")) {
-      throw new Error(`Expected OCR wake JSON but got ${contentType}: ${text.slice(0, 200)}`);
-    }
-
-    const data = JSON.parse(text) as { ok?: boolean };
-
-    if (!response.ok || data.ok !== true) {
-      throw new Error(`OCR wake failed: ${response.status} / ${text}`);
-    }
-
-    return {
-      ok: true,
-      lang: targetLang,
-      status: response.status,
-      upstream: url.toString(),
-      result: data,
-    };
   } finally {
     window.clearTimeout(timeoutId);
   }
