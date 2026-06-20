@@ -35,6 +35,41 @@ const EMPTY_CLOUD_CHARACTER_DATA: CloudCharacterDataCache = {
   fetchedForUid: null,
 };
 
+const AUTH_USER_CACHE_KEY = "wuthering.auth.user";
+const AUTH_GAME_PROFILE_CACHE_KEY = "wuthering.auth.gameProfile";
+
+let authUnsubscribe: (() => void) | null = null;
+let authHydrationSeq = 0;
+
+function readCache<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    localStorage.removeItem(key);
+    return null;
+  }
+}
+
+function writeCache(key: string, value: unknown) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function clearAuthCache() {
+  localStorage.removeItem(AUTH_USER_CACHE_KEY);
+  localStorage.removeItem(AUTH_GAME_PROFILE_CACHE_KEY);
+}
+
+function writeAuthCache(user: UserProfile, gameProfile: GameProfile | null) {
+  writeCache(AUTH_USER_CACHE_KEY, user);
+
+  if (gameProfile) {
+    writeCache(AUTH_GAME_PROFILE_CACHE_KEY, gameProfile);
+  } else {
+    localStorage.removeItem(AUTH_GAME_PROFILE_CACHE_KEY);
+  }
+}
+
 type AuthState = {
   user: UserProfile | null;
   gameProfile: GameProfile | null;
@@ -60,12 +95,21 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  user: null,
-  gameProfile: null,
+  user: readCache<UserProfile>(AUTH_USER_CACHE_KEY),
+  gameProfile: readCache<GameProfile>(AUTH_GAME_PROFILE_CACHE_KEY),
   cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA,
   isLoading: true,
 
-  setUser: (user) => set({ user }),
+  setUser: (user) => {
+    if (!user) {
+      clearAuthCache();
+      set({ user });
+      return;
+    }
+
+    writeAuthCache(user, get().gameProfile);
+    set({ user });
+  },
 
   refreshCloudCharacterData: async (options) => {
     const force = options?.force ?? false;
@@ -163,8 +207,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   initAuth: () => {
-    onAuthStateChanged(auth, async (firebaseUser) => {
+    if (authUnsubscribe) return;
+
+    set({ isLoading: true });
+
+    authUnsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      const seq = ++authHydrationSeq;
+
       if (!firebaseUser) {
+        clearAuthCache();
+
         set({
           user: null,
           gameProfile: null,
@@ -174,19 +226,41 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
+      const current = get();
+      const isSameHydratedUser =
+        current.user?.uid === firebaseUser.uid &&
+        current.gameProfile?.uid === firebaseUser.uid;
+
+      if (isSameHydratedUser) {
+        set({ isLoading: false });
+
+        if (current.cloudCharacterData.fetchedForUid !== firebaseUser.uid) {
+          void get().refreshCloudCharacterData();
+        }
+        return;
+      }
+
       try {
-        const user = await syncGatewayUser(firebaseUser);
-        const gameProfile = await getGameProfile(firebaseUser.uid);
+        const [user, gameProfile] = await Promise.all([
+          syncGatewayUser(firebaseUser),
+          getGameProfile(firebaseUser.uid),
+        ]);
+
+        if (seq !== authHydrationSeq) return;
 
         set({
           user,
           gameProfile,
           isLoading: false,
         });
+        writeAuthCache(user, gameProfile);
 
         void get().refreshCloudCharacterData();
       } catch (error) {
+        if (seq !== authHydrationSeq) return;
+
         console.error(error);
+        clearAuthCache();
         set({
           user: null,
           gameProfile: null,
@@ -203,16 +277,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const gameProfile = await getGameProfile(uid);
     set({ gameProfile });
+
+    const user = get().user;
+    if (user) writeAuthCache(user, gameProfile);
   },
 
   signupAction: async (email, password, nickname) => {
     const startedAt = Date.now();
 
     try {
-      const user = await signup(email, password, nickname);
-      const gameProfile = await getGameProfile(user.uid)
-      set({ user, gameProfile });
-      void get().refreshCloudCharacterData();
+      set({ isLoading: true });
+      await signup(email, password, nickname);
 
       await logClientEvent({
         feature: "auth",
@@ -222,6 +297,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         meta: { method: "email" },
       });
     } catch (error) {
+      set({ isLoading: false });
+
       await logClientEvent({
         feature: "auth",
         eventName: "auth_signup",
@@ -239,11 +316,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const startedAt = Date.now();
 
     try {
-      const user = await login(email, password);
-      const gameProfile = await getGameProfile(user.uid);
-
-      set({ user, gameProfile });
-      void get().refreshCloudCharacterData();
+      set({ isLoading: true });
+      await login(email, password);
 
       await logClientEvent({
         feature: "auth",
@@ -253,6 +327,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         meta: { method: "email" },
       });
     } catch (error) {
+      set({ isLoading: false });
+
       await logClientEvent({
         feature: "auth",
         eventName: "auth_login",
@@ -270,10 +346,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const startedAt = Date.now();
 
     try {
-      const user = await loginWithGoogle();
-      const gameProfile = await getGameProfile(user.uid);
-      set({ user, gameProfile });
-      void get().refreshCloudCharacterData();
+      set({ isLoading: true });
+      await loginWithGoogle();
 
       await logClientEvent({
         feature: "auth",
@@ -283,6 +357,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         meta: { method: "google" },
       });
     } catch (error) {
+      set({ isLoading: false });
+
       await logClientEvent({
         feature: "auth",
         eventName: "auth_login",
@@ -327,6 +403,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const startedAt = Date.now();
 
     try {
+      set({ isLoading: true });
+      clearAuthCache();
+
       await logClientEvent({
         feature: "auth",
         eventName: "auth_logout",
@@ -335,12 +414,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       await logout();
-      set({
-        user: null,
-        gameProfile: null,
-        cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA,
-      });
     } catch (error) {
+      set({ isLoading: false });
+
       await logClientEvent({
         feature: "auth",
         eventName: "auth_logout",
@@ -362,6 +438,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set((state) => ({
       user: state.user ? { ...state.user, nickname } : state.user,
     }));
+
+    const updatedUser = get().user;
+    if (updatedUser) writeAuthCache(updatedUser, get().gameProfile);
   },
 
   saveGameProfileAction: async (next: GameProfile) => {
@@ -370,5 +449,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const gameProfile = await saveGameProfile(uid, next);
     set({ gameProfile });
+
+    const user = get().user;
+    if (user) writeAuthCache(user, gameProfile);
   },
 }));

@@ -1,0 +1,62 @@
+name: Test and Deploy OCR Space
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/paddle OCR/**"
+      - ".github/workflows/deploy-hf-ocr.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: "backend/paddle OCR"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install CI dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+
+      - name: Compile Python modules
+        run: |
+          python -m py_compile main.py ocr_config.py ocr_engine.py image_processing.py ocr_service.py
+
+      - name: Run tests
+        run: pytest
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Hugging Face target
+        run: |
+          test -n "${{ vars.HF_SPACE_REPO_ID }}"
+          test -n "${{ secrets.HF_TOKEN }}"
+
+      - name: Deploy OCR server to Hugging Face Space
+        uses: huggingface/hub-sync@v0.1.0
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: ${{ vars.HF_SPACE_REPO_ID }}
+          hf_token: ${{ secrets.HF_TOKEN }}
+          space_sdk: docker
+          subdirectory: "backend/paddle OCR"

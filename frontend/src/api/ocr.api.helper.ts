@@ -198,10 +198,14 @@ export type OcrHealthResponse = {
   results: OcrHealthItem[];
 };
 
-function getOcrUpstreamUrl(targetLang: string) {
-  const key = `VITE_OCR_UPSTREAM_${targetLang.toUpperCase()}`;
+function getOcrUpstreamUrl(targetLang?: string) {
   const env = import.meta.env as Record<string, string | undefined>;
-  return (env[key] ?? env.VITE_OCR_UPSTREAM_URL ?? "").replace(/\/+$/, "");
+  const singleUrl = env.VITE_OCR_UPSTREAM_URL;
+  const langUrl = targetLang
+    ? env[`VITE_OCR_UPSTREAM_${targetLang.toUpperCase()}`]
+    : undefined;
+
+  return (singleUrl || langUrl || "").replace(/\/+$/, "");
 }
 
 export async function checkOcrHealth(
@@ -316,10 +320,12 @@ async function pingOcrServerByLang(
   const timeoutMs = opts?.timeoutMs ?? 5_000;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
   const signal = mergeAbortSignals(opts?.signal, controller.signal);
-  const url = `${upstream}/health`;
+  const url = new URL(`${upstream}/health`);
+
+  url.searchParams.set("lang", targetLang);
 
   try {
-    const response = await fetch(url, { signal });
+    const response = await fetch(url.toString(), { signal });
     const contentType = response.headers.get("content-type") ?? "";
     const text = await response.text();
 
@@ -333,7 +339,7 @@ async function pingOcrServerByLang(
       lang: targetLang,
       ok: response.ok && data.ok === true,
       status: response.status,
-      upstream: url,
+      upstream: url.toString(),
     };
   } finally {
     window.clearTimeout(timeoutId);
@@ -354,10 +360,12 @@ async function wakeOcrServerByLang(
   const timeoutMs = opts?.timeoutMs ?? 180_000;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
   const signal = mergeAbortSignals(opts?.signal, controller.signal);
-  const url = `${upstream}/wake`;
+  const url = new URL(`${upstream}/wake`);
+
+  url.searchParams.set("lang", targetLang);
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(url.toString(), {
       method: "GET",
       signal,
     });
@@ -378,7 +386,7 @@ async function wakeOcrServerByLang(
       ok: true,
       lang: targetLang,
       status: response.status,
-      upstream: url,
+      upstream: url.toString(),
       result: data,
     };
   } finally {

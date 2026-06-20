@@ -1,9 +1,6 @@
 import { useEffect } from "react";
 
-import {
-  checkOcrHealthByLang,
-  wakeOcrByLang,
-} from "@/api/ocr.api.helper";
+import { checkOcrHealthByLang, wakeOcrByLang } from "@/api/ocr.api.helper";
 import { useAppStore } from "@/stores/appStore";
 
 const OCR_PING_TIMEOUT_MS = 5_000;
@@ -27,7 +24,6 @@ export default function OcrServerWatcher() {
 
     const scheduleRetry = () => {
       clearRetryTimer();
-
       retryTimer = window.setTimeout(() => {
         void pingAndWake();
       }, OCR_RETRY_INTERVAL_MS);

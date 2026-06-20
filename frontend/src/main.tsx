@@ -8,6 +8,7 @@ import { StyleProvider } from "@/stores/styleStore";
 import { CharacterProvider } from "@/stores/characterDataStore";
 import { OverlayProvider } from "@/contexts/PopupContext";
 import { ElevatedOverlayProvider } from "@/contexts/ElevatedOverlayContext";
+import AuthSessionProvider from "@/components/providers/AuthSessionProvider";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <CharacterProvider>
             <ElevatedOverlayProvider>
               <OverlayProvider>
-                <App />
+                <AuthSessionProvider>
+                  <App />
+                </AuthSessionProvider>
               </OverlayProvider>
             </ElevatedOverlayProvider>
           </CharacterProvider>

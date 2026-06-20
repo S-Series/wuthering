@@ -8,16 +8,7 @@ import Profile from "./pages/Profile";
 import DragDebugPage from "./pages/Debug";
 import OcrServerWatcher from "@/components/features/OcrServerWatcher";
 
-import { useAuthStore } from "@/stores/authStore";
-import { useEffect } from "react";
-
 export default function App() {
-  const initAuth = useAuthStore((state) => state.initAuth);
-
-  useEffect(() => {
-    initAuth();
-  }, [initAuth]);
-
   return (
     <>
       <OcrServerWatcher />

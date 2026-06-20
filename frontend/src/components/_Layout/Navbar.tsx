@@ -10,7 +10,7 @@ import "@/components/_Layout/Navbar.css"
 export default function Navbar() {
 
   const { lang, setLang } = useAppStore();
-  const { user, isLoading } = useAuthStore();
+  const { user } = useAuthStore();
   const [isActive, setIsActive] = useState(false);
 
   const localeText = locale(lang).navbar;
@@ -31,15 +31,9 @@ export default function Navbar() {
     { value: "zh", label: <LangLabel v="zh" src="/flag-zh.png" text="中文" /> },
   ];
 
-  const profileName = isLoading
-    ? ""
-    : user
-      ? user.nickname
-      : localeText.login;
+  const profileName = user ? user.nickname : localeText.login;
 
-  const profileImage = isLoading
-    ? "/default.webp"
-    : user?.imageUrl ?? "/default.webp";
+  const profileImage = user?.imageUrl ?? "/default.webp";
 
   useEffect(() => {
     document.body.classList.toggle("navbar-sidebar-active", isActive);
