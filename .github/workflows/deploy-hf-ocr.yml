@@ -43,20 +43,29 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
+    permissions:
+      contents: read
+      id-token: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Validate Hugging Face target
+        run: test -n "${{ vars.HF_SPACE_REPO_ID }}"
+
+      - name: Install Hugging Face CLI
         run: |
-          test -n "${{ vars.HF_SPACE_REPO_ID }}"
-          test -n "${{ secrets.HF_TOKEN }}"
+          curl -LsSf https://hf.co/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Deploy OCR server to Hugging Face Space
-        uses: huggingface/hub-sync@v0.1.0
-        with:
-          github_repo_id: ${{ github.repository }}
-          huggingface_repo_id: ${{ vars.HF_SPACE_REPO_ID }}
-          hf_token: ${{ secrets.HF_TOKEN }}
-          space_sdk: docker
-          subdirectory: "backend/paddle OCR"
+        working-directory: "backend/paddle OCR"
+        env:
+          HF_SPACE_REPO_ID: ${{ vars.HF_SPACE_REPO_ID }}
+          HF_OIDC_RESOURCE: spaces/${{ vars.HF_SPACE_REPO_ID }}
+        run: |
+          hf upload "$HF_SPACE_REPO_ID" . . \
+            --repo-type=space \
+            --delete="*" \
+            --commit-message="Deploy OCR from GitHub ${GITHUB_SHA::7}"
