@@ -505,6 +505,19 @@
   color: #c92a2a;
 }
 
+.profile-login-message {
+  margin: min(1vw, 0.5rem) 0 0;
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.45;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.profile-login-message.error {
+  color: #ff9a9a;
+}
+
 @media (max-width: 61.25rem) {
   .profile-info-desc {
     white-space: normal;

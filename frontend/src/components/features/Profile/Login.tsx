@@ -14,14 +14,82 @@ export default function Login({ setAction }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isValid = email.trim() !== "" && password.trim() !== "";
+  const isValid = email.trim() !== "" && password.trim() !== "" && !isSubmitting;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const getLoginErrorMessage = (error: unknown) => {
+    const code = typeof error === "object" && error !== null && "code" in error
+      ? String((error as { code?: unknown }).code)
+      : "";
+
+    if (
+      code === "auth/invalid-credential" ||
+      code === "auth/user-not-found" ||
+      code === "auth/wrong-password"
+    ) {
+      return "이메일 또는 비밀번호가 올바르지 않습니다.";
+    }
+
+    if (code === "auth/invalid-email") {
+      return "이메일 형식이 올바르지 않습니다.";
+    }
+
+    if (code === "auth/too-many-requests") {
+      return "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.";
+    }
+
+    if (code === "auth/popup-closed-by-user") {
+      return "Google 로그인 창이 닫혔습니다.";
+    }
+
+    if (code === "auth/popup-blocked") {
+      return "브라우저에서 Google 로그인 팝업이 차단되었습니다.";
+    }
+
+    if (code === "auth/cancelled-popup-request") {
+      return "이미 진행 중인 Google 로그인 요청이 있습니다.";
+    }
+
+    if (code === "auth/account-exists-with-different-credential") {
+      return "같은 이메일로 다른 로그인 방식의 계정이 이미 있습니다.";
+    }
+
+    if (code === "auth/unauthorized-domain") {
+      return "현재 도메인이 Google 로그인 허용 도메인에 등록되어 있지 않습니다.";
+    }
+
+    return "로그인에 실패했습니다. 잠시 후 다시 시도해주세요.";
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) return;
 
-    loginAction(email, password);
+    setMessage("");
+    setIsSubmitting(true);
+
+    try {
+      await loginAction(email, password);
+    } catch (error) {
+      setMessage(getLoginErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setMessage("");
+    setIsSubmitting(true);
+
+    try {
+      await loginWithGoogleAction();
+    } catch (error) {
+      setMessage(getLoginErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -110,8 +178,12 @@ export default function Login({ setAction }: Props) {
                 type="submit"
                 disabled={!isValid}
               >
-                로그인
+                {isSubmitting ? "로그인 중" : "로그인"}
               </button>
+
+              {message ? (
+                <p className="profile-login-message error">{message}</p>
+              ) : null}
 
               <div className="profile-card-footer">
                 <span>또는</span>
@@ -120,7 +192,8 @@ export default function Login({ setAction }: Props) {
               <button
                 type="button"
                 className="profile-submit google"
-                onClick={() => loginWithGoogleAction()}
+                disabled={isSubmitting}
+                onClick={handleGoogleLogin}
               >
                 Google 계정으로 로그인
               </button>

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 
 import {
@@ -40,6 +40,57 @@ const AUTH_GAME_PROFILE_CACHE_KEY = "wuthering.auth.gameProfile";
 
 let authUnsubscribe: (() => void) | null = null;
 let authHydrationSeq = 0;
+
+function createFallbackUserProfile(firebaseUser: FirebaseUser): UserProfile {
+  const provider = firebaseUser.providerData[0];
+  const email = firebaseUser.email ?? provider?.email ?? null;
+  const nickname =
+    firebaseUser.displayName ??
+    provider?.displayName ??
+    email?.split("@")[0] ??
+    "Guest";
+
+  return {
+    uid: firebaseUser.uid,
+    supabaseUid: null,
+    email,
+    nickname,
+    imageUrl: firebaseUser.photoURL ?? provider?.photoURL ?? null,
+    role: null,
+    status: "inactive",
+    membershipLevel: 0,
+    membershipExpiresAt: null,
+    membershipNickname: null,
+    isMember: false,
+    createdAt: Date.now(),
+  };
+}
+
+async function hydrateFirebaseUser(firebaseUser: FirebaseUser) {
+  const [userResult, gameProfileResult] = await Promise.allSettled([
+    syncGatewayUser(firebaseUser),
+    getGameProfile(firebaseUser.uid),
+  ]);
+
+  if (userResult.status === "rejected") {
+    console.warn("[auth] gateway user sync failed", userResult.reason);
+  }
+
+  if (gameProfileResult.status === "rejected") {
+    console.warn("[auth] game profile load failed", gameProfileResult.reason);
+  }
+
+  return {
+    user:
+      userResult.status === "fulfilled"
+        ? userResult.value
+        : createFallbackUserProfile(firebaseUser),
+    gameProfile:
+      gameProfileResult.status === "fulfilled"
+        ? gameProfileResult.value
+        : null,
+  };
+}
 
 function readCache<T>(key: string): T | null {
   try {
@@ -241,10 +292,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       try {
-        const [user, gameProfile] = await Promise.all([
-          syncGatewayUser(firebaseUser),
-          getGameProfile(firebaseUser.uid),
-        ]);
+        const { user, gameProfile } = await hydrateFirebaseUser(firebaseUser);
 
         if (seq !== authHydrationSeq) return;
 
