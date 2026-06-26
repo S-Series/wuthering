@@ -20,6 +20,15 @@ import "@/pages/Home.css";
 
 const DISPLAY_LIMIT_MEDIUM_BREAKPOINT = 1071;
 const DISPLAY_LIMIT_SMALL_BREAKPOINT = 572;
+const AUTO_NOTICE_SESSION_KEY = "wuthering.homeNotice.sessionShownIds";
+const AUTO_NOTICE_LOCAL_KEY = "wuthering.homeNotice.dismissedIds";
+
+const NOTICE_DISMISS_LABEL: Record<LangType, string> = {
+  kr: "다시 보지 않기",
+  en: "Do not show again",
+  jp: "今後表示しない",
+  zh: "不再显示",
+};
 
 function GameInfoSlot({
   content,
@@ -61,6 +70,35 @@ function textFromNode(node: ReactNode): string {
   return "";
 }
 
+function readNoticeIdSet(storage: Storage, key: string) {
+  try {
+    const raw = storage.getItem(key);
+    const parsed = raw ? JSON.parse(raw) : [];
+
+    if (!Array.isArray(parsed)) return new Set<number>();
+
+    return new Set(parsed.filter((id): id is number => Number.isInteger(id)));
+  } catch {
+    return new Set<number>();
+  }
+}
+
+function hasNoticeId(storage: Storage, key: string, id: number) {
+  return readNoticeIdSet(storage, key).has(id);
+}
+
+function setNoticeId(storage: Storage, key: string, id: number, enabled: boolean) {
+  const ids = readNoticeIdSet(storage, key);
+
+  if (enabled) {
+    ids.add(id);
+  } else {
+    ids.delete(id);
+  }
+
+  storage.setItem(key, JSON.stringify([...ids]));
+}
+
 function NoticeDetailSlot({ post, lang }: { post: HomePost; lang: LangType }) {
   return (
     <article className="notice-detail-slot">
@@ -70,6 +108,31 @@ function NoticeDetailSlot({ post, lang }: { post: HomePost; lang: LangType }) {
       </div>
       <div className="notice-detail-body">{post.data[lang]}</div>
     </article>
+  );
+}
+
+function AutoNoticeDismissControl({ postId, lang }: { postId: number; lang: LangType }) {
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return hasNoticeId(window.localStorage, AUTO_NOTICE_LOCAL_KEY, postId);
+  });
+
+  const handleDismissChange = (checked: boolean) => {
+    setDismissed(checked);
+
+    if (typeof window === "undefined") return;
+    setNoticeId(window.localStorage, AUTO_NOTICE_LOCAL_KEY, postId, checked);
+  };
+
+  return (
+    <label className="notice-dismiss-option notice-dismiss-option--header">
+      <input
+        type="checkbox"
+        checked={dismissed}
+        onChange={(event) => handleDismissChange(event.currentTarget.checked)}
+      />
+      <span>{NOTICE_DISMISS_LABEL[lang]}</span>
+    </label>
   );
 }
 
@@ -207,6 +270,21 @@ export default function Home() {
   }, []);
 
   const latestPosts = sortedPosts.slice(0, 4);
+  const latestNotice = sortedPosts[0];
+
+  useEffect(() => {
+    if (!latestNotice || typeof window === "undefined") return;
+    if (hasNoticeId(window.localStorage, AUTO_NOTICE_LOCAL_KEY, latestNotice.id)) return;
+    if (hasNoticeId(window.sessionStorage, AUTO_NOTICE_SESSION_KEY, latestNotice.id)) return;
+
+    setNoticeId(window.sessionStorage, AUTO_NOTICE_SESSION_KEY, latestNotice.id, true);
+    openOverlay(<NoticeDetailSlot post={latestNotice} lang={lang} />, {
+      title: textFromNode(latestNotice.title[lang]),
+      headerAction: <AutoNoticeDismissControl postId={latestNotice.id} lang={lang} />,
+      width: "min(90vw, 54rem)",
+      height: "min(82vh, 42rem)",
+    });
+  }, [lang, latestNotice, openOverlay]);
 
   const topCharacters = useMemo(() => {
     return characterList
@@ -242,6 +320,7 @@ export default function Home() {
                   onClick={() =>
                     openOverlay(<NoticeDetailSlot post={post} lang={lang} />, {
                       title: textFromNode(post.title[lang]),
+                      headerAction: <AutoNoticeDismissControl postId={post.id} lang={lang} />,
                       width: "min(90vw, 54rem)",
                       height: "min(82vh, 42rem)",
                     })

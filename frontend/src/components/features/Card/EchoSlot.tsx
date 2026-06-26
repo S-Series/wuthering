@@ -14,6 +14,15 @@ interface StatSlotProps {
 }
 
 const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
+const LINKED_HIGHLIGHT_STATS: Partial<Record<StatId, StatId[]>> = {
+  [FixedStats.atk.id]: [FixedStats.atk.id, FixedStats.atkPct.id],
+  [FixedStats.atkPct.id]: [FixedStats.atk.id, FixedStats.atkPct.id],
+  [FixedStats.hp.id]: [FixedStats.hp.id, FixedStats.hpPct.id],
+  [FixedStats.hpPct.id]: [FixedStats.hp.id, FixedStats.hpPct.id],
+  [FixedStats.def.id]: [FixedStats.def.id, FixedStats.defPct.id],
+  [FixedStats.defPct.id]: [FixedStats.def.id, FixedStats.defPct.id],
+};
+
 function MakeStatSlot({ StatId = "", StatValue = 0, color = "#666" }
   : { StatId: string; StatValue: number | string; color: string}) {
   return (
@@ -68,6 +77,11 @@ export default function EchoSlot({index = 0, highlightedStatId = null }: StatSlo
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
 
   const Echodata = useMemo<EchoRuntime>(() => { return characterData.echoData[index] }, [index, characterData])
+  const highlightedStatIds = useMemo(() => {
+    if (!highlightedStatId) return [];
+
+    return LINKED_HIGHLIGHT_STATS[highlightedStatId] ?? [highlightedStatId];
+  }, [highlightedStatId]);
 
   const STAT_TEXT_COLOR = useMemo(() => {
     const scoreMap = characterScoreSheet[characterId];
@@ -143,7 +157,7 @@ export default function EchoSlot({index = 0, highlightedStatId = null }: StatSlo
           return [0, 1, 2, 3, 4].map((idx) => {
             const statId: StatId = Echodata?.subOptions?.[idx]?.statId ?? "dummy";
             const statValue = Echodata?.subOptions?.[idx]?.statValue || 0;
-            const isHighlighted = highlightedStatId !== null && statId === highlightedStatId;
+            const isHighlighted = highlightedStatIds.includes(statId);
 
             return (
               <div

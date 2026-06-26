@@ -104,12 +104,28 @@ function createItems(data: EchoStatOption[] | null, lang: LangType): DragItem[] 
 const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
 
 function formatStatValue(statId: string, value: number) {
+  if (!statId || statId === "dummy") return "- - -";
   if (value === -1) return "- - -";
 
   const formatted = Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
   const suffix = PERCENT_STAT_KEYS.some((key) => statId.includes(key)) ? "%" : "";
 
   return `${formatted}${suffix}`;
+}
+
+function getMainStatValue(statId: string, cost: Cost) {
+  if (!statId || statId === "dummy") return 0;
+
+  const stat = FixedStats[statId as keyof typeof FixedStats];
+  if (!stat) return 0;
+
+  const costIndexMap: Record<Cost, number> = {
+    4: 0,
+    3: 1,
+    1: 2,
+  };
+
+  return stat.ValueMain[costIndexMap[cost]] ?? 0;
 }
 
 function OcrTargetPreview({
@@ -475,7 +491,17 @@ export default function OcrDragSelect({
                   if (!opt) return;
                   setTempEcho((p) => {
                     if (!p) return p;
-                    return { ...p, cost: opt.value };
+                    return {
+                      ...p,
+                      cost: opt.value,
+                      mainOption: {
+                        ...p.mainOption,
+                        statValue: getMainStatValue(
+                          p.mainOption.statId,
+                          opt.value,
+                        ),
+                      },
+                    };
                   });
                 }}
                 value={COST_DROP_OPTION.find(item => item.value === tempEcho.cost) ?? null}
@@ -547,13 +573,22 @@ export default function OcrDragSelect({
                       if (!opt) return;
                       setTempEcho((p) => {
                         if (!p) return p;
-                        return { ...p, mainOption:{ statId: opt.value, statValue: 0 } };
+                        return {
+                          ...p,
+                          mainOption: {
+                            statId: opt.value,
+                            statValue: getMainStatValue(opt.value, p.cost),
+                          },
+                        };
                       });
                     }}
                   />
                 </div>
                 <span className="num-font" style={{ marginLeft: "auto" }}>
-                  {(tempEcho.mainOption.statValue ?? 0).toFixed(1)}%
+                  {formatStatValue(
+                    tempEcho.mainOption.statId,
+                    tempEcho.mainOption.statValue ?? 0,
+                  )}
                 </span>
               </div>
 

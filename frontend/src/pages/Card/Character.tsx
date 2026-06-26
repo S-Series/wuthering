@@ -13,12 +13,45 @@ import {
 import { characterGuideData } from "@/datas/characters.guide";
 import { weapon, type WeaponId } from "@/datas/weapon";
 import { weaponStat } from "@/datas/weaponStats";
-import { setWeaponId } from "@/runtime/characterData.helpers";
+import { patchConstell, setWeaponId } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
 
 import "./Character.css";
 
 const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
+
+function BreakthroughButtons({
+  count,
+  label,
+  prefix,
+  value,
+  onChange,
+}: {
+  count: number;
+  label: string;
+  prefix: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="card-character-select__breakthrough-group">
+      <span>{label}</span>
+      <div className="card-character-select__breakthrough-buttons">
+        {Array.from({ length: count + 1 }, (_, index) => (
+          <button
+            key={`${prefix}-${index}`}
+            type="button"
+            className={value === index ? "active" : ""}
+            onClick={() => onChange(index)}
+          >
+            {prefix}
+            {index}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function CardCharacterSection() {
   const { lang, imgVer } = useAppStore();
@@ -138,6 +171,18 @@ export default function CardCharacterSection() {
           </div>
         </div>
 
+        <div className="card-character-select__breakthrough">
+          <BreakthroughButtons
+            count={6}
+            label="캐릭터 돌파"
+            prefix="C"
+            value={characterData.constell[0]}
+            onChange={(value) =>
+              patchCharacterData(patchConstell(characterData, true, value))
+            }
+          />
+        </div>
+
         <div className="card-character-select__character-list">
           {filteredCharacters.map((item) => {
             const assetId = item.id.includes("rover") ? "rover" : item.id;
@@ -177,6 +222,18 @@ export default function CardCharacterSection() {
             src={`${BASE_URL}/ico/weapon_type/${selectedCharacter.weapon}.webp`}
           />
         </header>
+
+        <div className="card-character-select__breakthrough">
+          <BreakthroughButtons
+            count={5}
+            label="무기 돌파"
+            prefix="R"
+            value={characterData.constell[1]}
+            onChange={(value) =>
+              patchCharacterData(patchConstell(characterData, false, value))
+            }
+          />
+        </div>
 
         <div className="card-character-select__weapon-list">
           {availableWeapons.map((item) => {

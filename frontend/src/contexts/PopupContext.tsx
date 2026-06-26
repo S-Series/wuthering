@@ -9,7 +9,8 @@ import {
 } from "./documentScrollLock";
 
 type OverlayOptions = {
-  title?: string;
+  title?: React.ReactNode;
+  headerAction?: React.ReactNode;
   width?: string | null;
   height?: string | null;
   ratio?: string | null;
@@ -30,6 +31,7 @@ type OverlayApi = {
 
 const DEFAULT_OPTIONS: Required<OverlayOptions> = {
   title: "",
+  headerAction: null,
   width: null,
   height: null,
   ratio: null,
@@ -99,9 +101,15 @@ export function OverlayProvider({ children }: { children: React.ReactNode }) {
                 height: state.options.height ?? undefined,
                 aspectRatio: state.options.ratio ?? undefined,
               }}>
-              {(state.options.title || state.options.showCloseButton) && (
+              {(state.options.title || state.options.headerAction || state.options.showCloseButton) && (
                 <div className="overlay-header">
                   <span className={`overlay-header-text ${lang}-font`}>{state.options.title}</span>
+
+                  {state.options.headerAction && (
+                    <div className="overlay-header-action">
+                      {state.options.headerAction}
+                    </div>
+                  )}
 
                   {state.options.showCloseButton && (
                     <button

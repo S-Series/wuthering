@@ -55,9 +55,20 @@ export default function OcrImageInput({
   const [isHealthy, setHealthy] = useState<boolean | null>(null);
   const [isBoaring, setBoaring] = useState(false);
   const [isFocused, setFocused] = useState(false);
+  const [activeSelectIdx, setActiveSelectIdx] = useState<EchoIndex>(selectIdx);
 
   const localeText = useMemo(() => locale(lang).ocr, [lang]);
   const endpointUrl = `${import.meta.env.VITE_GATEWAY_URL}/api/ocr`;
+
+  const handleSelectIdx: React.Dispatch<React.SetStateAction<EchoIndex>> = (
+    action,
+  ) => {
+    setActiveSelectIdx((current) => {
+      const next = typeof action === "function" ? action(current) : action;
+      onSelectIdx(next);
+      return next;
+    });
+  };
 
   const run = async () => {
     if (!file) return;
@@ -126,7 +137,7 @@ export default function OcrImageInput({
     if (!element) return;
 
     const updateHeight = () => {
-      setRefHeight(element.getBoundingClientRect().height * 3);
+      setRefHeight(element.getBoundingClientRect().height * 1.8);
     };
     updateHeight();
 
@@ -219,8 +230,8 @@ export default function OcrImageInput({
             echoId: debug?.echoId ?? null,
             stats: debug?.echoStats ?? null,
           }}
-          selectIdx={selectIdx}
-          onSelectIdx={onSelectIdx}
+          selectIdx={activeSelectIdx}
+          onSelectIdx={handleSelectIdx}
           height={refHeight}
           resetAction={handleResetDebug}
           inputSlot={

@@ -14,6 +14,7 @@ export default function Navbar() {
   const [isActive, setIsActive] = useState(false);
 
   const localeText = locale(lang).navbar;
+  const cardLocaleText = locale(lang).card;
 
   function LangLabel({ v, src, text }: { v: string; src: string; text: string; }) {
     return (
@@ -223,6 +224,22 @@ export default function Navbar() {
               src={profileImage} />
             <p className={`${lang}-font`}>{profileName}</p>
           </a>
+
+          <button
+            type="button"
+            className="sidebar-cloud-sync-slot"
+            onClick={() => {
+              setIsActive(false);
+              window.dispatchEvent(new CustomEvent("wuthering:open-cloud-sync"));
+            }}
+          >
+            <img
+              className="navbar-icon"
+              alt=""
+              src="/ico/harmony/Clouds.png"
+            />
+            <p className={`${lang}-font`}>{cardLocaleText.cloudSync}</p>
+          </button>
 
           <div className="sidebar-social-slot">
             <a href="https://ko-fi.com/sseries" target="_blank" rel="noreferrer">

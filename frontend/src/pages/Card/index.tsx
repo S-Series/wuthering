@@ -429,7 +429,7 @@ function CloudSyncPanel({
   ]);
 
   return (
-    <div className="cloud-sync-panel">
+    <div className="cloud-sync-panel" data-card-guide="cloud-sync-panel">
       <p className="cloud-sync-caption">{localeText.cloudSyncDescription}</p>
       <div className="cloud-sync-data-grid">
         <CloudSyncDataCard
@@ -479,7 +479,7 @@ export default function Card() {
   } = useAppStore();
   const { characterId, setCharacterId, patchCharacterData, replaceCharacterDataSnapshot, replaceCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
-  const { openOverlay } = useOverlay();
+  const { openOverlay, closeOverlay } = useOverlay();
   const {
     user,
     gameProfile,
@@ -526,6 +526,7 @@ export default function Card() {
 
 
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const cloudGuideOverlayOpenedRef = useRef(false);
   const [highlightedEchoSubStatId, setHighlightedEchoSubStatId] =
     useState<StatId | null>(null);
 
@@ -544,6 +545,11 @@ export default function Card() {
 
   const closeGuide = () => {
     setIsGuideOpen(false);
+
+    if (cloudGuideOverlayOpenedRef.current) {
+      closeOverlay();
+      cloudGuideOverlayOpenedRef.current = false;
+    }
 
     if (window.location.hash.startsWith("#card-guide")) {
       window.history.replaceState(
@@ -855,7 +861,7 @@ export default function Card() {
     alert(localeText.cloudSyncDownloadSuccess);
   };
 
-  const openCloudSyncManager = () => {
+  const openCloudSyncManager = useCallback(() => {
     openOverlay(
       <CloudSyncPanel
         lang={lang}
@@ -875,7 +881,35 @@ export default function Card() {
         ratio: null,
       }
     );
-  };
+  }, [
+    characterId,
+    cloudCharacterData,
+    cloudSyncCurrentData,
+    handleCloudDownload,
+    handleCloudUpload,
+    lang,
+    localeText,
+    openOverlay,
+    refreshCloudCharacterData,
+  ]);
+
+  const handleCardGuideStepChange = useCallback(
+    (step: { target: string }) => {
+      if (step.target === "cloud-sync-panel") {
+        if (!cloudGuideOverlayOpenedRef.current) {
+          openCloudSyncManager();
+          cloudGuideOverlayOpenedRef.current = true;
+        }
+        return;
+      }
+
+      if (cloudGuideOverlayOpenedRef.current) {
+        closeOverlay();
+        cloudGuideOverlayOpenedRef.current = false;
+      }
+    },
+    [closeOverlay, openCloudSyncManager],
+  );
 
   type RenderStatus = "ready" | "lock" | "cooldown";
   const [renderStatus, setRenderStatus] = useState<RenderStatus>("ready");
@@ -956,23 +990,30 @@ export default function Card() {
           dismissed={cardGuideDismissed}
           onDismissedChange={saveCardGuideDismissed}
           onClose={closeGuide}
+          onStepChange={handleCardGuideStepChange}
         />
       )}
 
       <section className="card-management-bar" data-card-guide="management">
         <button
           type="button"
+          data-card-guide="management-character"
           onClick={openCharacterWeaponManager}
         >
           <span>{localeText.characterWeaponData}</span>
         </button>
         <button
           type="button"
+          data-card-guide="management-echo"
           onClick={openEchoDataManager}
         >
           <span>{localeText.oMenu}</span>
         </button>
-        <button type="button" onClick={openCloudSyncManager}>
+        <button
+          type="button"
+          data-card-guide="management-cloud"
+          onClick={openCloudSyncManager}
+        >
           <span>{localeText.cloudSync}</span>
         </button>
       </section>
@@ -1093,7 +1134,7 @@ export default function Card() {
 
           {/* == //$ Main Content */}
           <div className="card-contents-slot main" data-card-guide="preview">
-            <div className="main-item-slot character">
+            <div className="main-item-slot character" data-card-guide="card-character">
               <div className="card-character-slot">
                 <div className="character-image-frame">
                   <img className="character-img"
@@ -1105,7 +1146,10 @@ export default function Card() {
                     onClick={openCharacterWeaponManager}
                   />
 
-                  <div className="constell-overlay">
+                  <div
+                    className="constell-overlay"
+                    data-card-guide="card-constellation"
+                  >
                     <img
                       className=""
                       src={`/ui/CharacterC${characterData.constell[0]}.png`}
@@ -1177,6 +1221,7 @@ export default function Card() {
 
             <div
               className="main-item-slot weapon"
+              data-card-guide="card-weapon"
               role="button"
               tabIndex={0}
               onClick={openCharacterWeaponManager}
@@ -1252,7 +1297,7 @@ export default function Card() {
               </div>
             </div>
 
-            <div className="main-item-slot stats">
+            <div className="main-item-slot stats" data-card-guide="card-stats">
               {STAT_IDS.map((item: StatId) => {
                 return (
                   <StatSlot
@@ -1315,7 +1360,7 @@ export default function Card() {
               </span>
             </div>
 
-            <div className="main-item-slot namecard">
+            <div className="main-item-slot namecard" data-card-guide="card-namecard">
               <div className="namecard-score">
                 <img
                   alt="rank icon"
@@ -1339,6 +1384,7 @@ export default function Card() {
 
             <div
               className="main-item-slot echos"
+              data-card-guide="card-echos"
               role="button"
               tabIndex={0}
               aria-label={localeText.oMenu}

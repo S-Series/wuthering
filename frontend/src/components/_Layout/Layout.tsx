@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 import Navbar from "@/components/_Layout/Navbar";
 import Footer from "@/components/_Layout/Footer";
+import CloudSyncManager from "@/components/features/CloudSync/CloudSyncManager";
 
 import "@/components/_Layout/Layout.css";
 
@@ -64,6 +65,7 @@ export default function Layout() {
         <Footer />
       </footer>
 
+      <CloudSyncManager />
       <Analytics />
     </>
   );

@@ -129,7 +129,8 @@
     background: #101216fa;
 }
 
-#navbar-sidebar a {
+#navbar-sidebar a,
+#navbar-sidebar button.sidebar-cloud-sync-slot {
     display: flex;
     width: 100%;
     min-height: 2.55rem;
@@ -148,12 +149,14 @@
     transition: border-color 0.2s ease-out, background 0.2s ease-out;
 }
 
-#navbar-sidebar.active a {
+#navbar-sidebar.active a,
+#navbar-sidebar.active button.sidebar-cloud-sync-slot {
     justify-content: flex-start;
     padding: 0 0.75rem;
 }
 
-#navbar-sidebar a:hover {
+#navbar-sidebar a:hover,
+#navbar-sidebar button.sidebar-cloud-sync-slot:hover {
     border-color: #8f8f8f;
     background: #2d313a;
 }
@@ -274,6 +277,26 @@
 
 #navbar-sidebar:not(.active) .sidebar-profile-slot {
     border-top: 0;
+}
+
+.sidebar-cloud-sync-slot {
+    min-height: 2.85rem !important;
+    cursor: pointer;
+}
+
+#navbar-sidebar:not(.active) .sidebar-cloud-sync-slot {
+    padding: 0 !important;
+    justify-content: center !important;
+}
+
+#navbar-sidebar.active .sidebar-cloud-sync-slot {
+    border-color: rgba(255, 215, 100, 0.38);
+    background: rgba(85, 70, 31, 0.25);
+}
+
+.sidebar-cloud-sync-slot:hover {
+    border-color: #ffd764 !important;
+    background: #55461f !important;
 }
 
 .sidebar-social-slot {

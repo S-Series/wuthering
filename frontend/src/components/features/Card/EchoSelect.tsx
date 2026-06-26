@@ -28,6 +28,37 @@ type DropStyleOption =
   | SelectOptionStatOriginal
   | SelectOpt;
 
+const PLACEHOLDERS = {
+  kr: {
+    cost: "코스트 선택",
+    harmony: "하모니 선택",
+    mainStat: "주옵션 선택",
+    subStat: "부옵션 선택",
+    subValue: "수치 선택",
+  },
+  en: {
+    cost: "Select cost",
+    harmony: "Select harmony",
+    mainStat: "Select main stat",
+    subStat: "Select sub stat",
+    subValue: "Select value",
+  },
+  jp: {
+    cost: "コスト選択",
+    harmony: "ハーモニー選択",
+    mainStat: "メイン選択",
+    subStat: "サブ選択",
+    subValue: "数値選択",
+  },
+  zh: {
+    cost: "选择Cost",
+    harmony: "选择套装",
+    mainStat: "选择主词条",
+    subStat: "选择副词条",
+    subValue: "选择数值",
+  },
+} as const;
+
 export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { lang, imgVer } = useAppStore();
@@ -35,6 +66,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const { characterData, patchCharacterData } = useCharacter();
   const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
   const localeText = locale(lang).card;
+  const placeholders = PLACEHOLDERS[lang] ?? PLACEHOLDERS.kr;
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [slotHeight, setSlotHeight] = useState(16);
@@ -155,7 +187,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
     const update = () => {
       const rect = el.getBoundingClientRect();
-      const h = Math.max(1, Math.round(rect.height));
+      const h = Math.max(1, Math.round(rect.height)) * 0.8;
       setSlotHeight((prev) => (prev === h ? prev : h));
     };
 
@@ -212,6 +244,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
           <Select
             options={COST_DROP_OPTION}
             isSearchable={false}
+            placeholder={placeholders.cost}
             styles={STAT_DROP_STYLE_LARGE}
             value={COST_DROP_OPTION.find((e) => e.value === selectedCost) ?? null}
             onChange={(opt) => {
@@ -225,6 +258,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             options={HARMONY_DROP_OPTION}
             isClearable={true}
             isSearchable={false}
+            placeholder={placeholders.harmony}
             styles={STAT_DROP_STYLE_LARGE}
             formatOptionLabel={(opt, meta) =>
               formatOptionWithImage_Smaller(opt, lang, meta)
@@ -299,6 +333,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                   return [];
               }
             })()}
+            placeholder={placeholders.mainStat}
             styles={STAT_DROP_STYLE_OPTION_WIDE}
             formatOptionLabel={(opt, meta) =>
               formatOptionWithImage_Smaller(opt, lang, meta)
@@ -354,6 +389,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
               <div className="sub-stat-select">
                 <Select
                   options={STAT_OPTION_SUB}
+                  placeholder={placeholders.subStat}
                   styles={STAT_DROP_STYLE_OPTION_WIDE}
                 formatOptionLabel={(opt, meta) =>
                   formatOptionWithImage_Smaller(opt, lang, meta)
@@ -386,6 +422,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
               <div className="sub-value-select">
                 <Select
                   options={STAT_OPTION_VALUE_SUBS[idx]}
+                  placeholder={placeholders.subValue}
                   styles={STAT_DROP_STYLE_OPTION_WIDE}
                   menuPlacement="auto"
                   menuPosition="fixed"

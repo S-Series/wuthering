@@ -17,14 +17,21 @@ type Props = {
   dismissed: boolean;
   onDismissedChange: (value: boolean) => void;
   onClose: () => void;
+  onStepChange?: (step: GuideStep) => void;
 };
 
 const GUIDE_STEPS: GuideStep[] = [
   {
     target: "management",
-    title: "데이터 관리",
+    title: "데이터 관리 메뉴",
     description:
-      "캐릭터와 무기 데이터를 바꾸거나, 에코 데이터를 OCR/수동 입력으로 정리하는 곳입니다. 클라우드 동기화는 준비 중인 기능입니다.",
+      "캐릭터/무기 데이터, 에코 데이터, 클라우드 동기화를 여는 상단 메뉴입니다. 캐릭터 세팅을 바꾸거나 저장 데이터를 정리할 때 먼저 사용하는 영역입니다.",
+  },
+  {
+    target: "cloud-sync-panel",
+    title: "클라우드 동기화",
+    description:
+      "현재 선택한 캐릭터 세팅과 클라우드에 저장된 데이터를 비교합니다. 업로드는 현재 세팅을 저장하고, 다운로드는 저장된 세팅을 불러옵니다.",
   },
   {
     target: "actions",
@@ -33,10 +40,40 @@ const GUIDE_STEPS: GuideStep[] = [
       "현재 카드 상태로 이미지를 생성하고, 생성된 이미지가 있으면 다운로드 창을 열 수 있습니다.",
   },
   {
-    target: "preview",
-    title: "명함 미리보기",
+    target: "card-character",
+    title: "캐릭터 카드",
     description:
-      "캐릭터 이미지, 무기, 스탯, 에코 점수를 한 장의 카드로 확인합니다. 캐릭터 이미지를 클릭하면 캐릭터/무기 선택 창이 열립니다.",
+      "캐릭터 이미지, 공명 체인, 서버/플레이어 정보, 속성 아이콘을 보여줍니다. 이미지 영역을 클릭하면 캐릭터/무기 관리 창이 열립니다.",
+  },
+  {
+    target: "card-constellation",
+    title: "캐릭터 돌파",
+    description:
+      "캐릭터 이미지 위의 6개 공명 체인 버튼으로 C1부터 C6까지 바로 조정할 수 있습니다. 이미 활성화된 단계를 다시 누르면 C0으로 초기화됩니다.",
+  },
+  {
+    target: "card-weapon",
+    title: "무기 카드",
+    description:
+      "선택한 무기와 무기 공진 단계, 기본 공격력, 보조 옵션을 표시합니다. 이 영역을 클릭해도 캐릭터/무기 관리 창으로 이동합니다.",
+  },
+  {
+    target: "card-stats",
+    title: "스탯과 점수",
+    description:
+      "최종 스탯과 장비로 증가한 수치를 확인합니다. 스탯에 마우스를 올리면 같은 부옵션을 가진 우측 에코가 강조됩니다. CV는 크리티컬 점수, AV는 종합점수입니다.",
+  },
+  {
+    target: "card-namecard",
+    title: "명함 이미지",
+    description:
+      "캐릭터 배경 이미지와 현재 종합 점수를 보여줍니다. 이미지는 클릭해서 원하는 이미지로 바꿀 수 있습니다.",
+  },
+  {
+    target: "card-echos",
+    title: "장착 에코",
+    description:
+      "현재 장착 중인 5개 에코의 주옵션, 부옵션, 점수를 표시합니다. 클릭하면 에코 데이터 관리 창이 열립니다.",
   },
   {
     target: "detail",
@@ -88,6 +125,7 @@ export default function CardGuideOverlay({
   dismissed,
   onDismissedChange,
   onClose,
+  onStepChange,
 }: Props) {
   const [stepIndex, setStepIndex] = useState(getStepIndexFromHash);
   const [rect, setRect] = useState<HighlightRect | null>(null);
@@ -148,6 +186,10 @@ export default function CardGuideOverlay({
       window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
+
+  useEffect(() => {
+    onStepChange?.(currentStep);
+  }, [currentStep, onStepChange]);
 
   useEffect(() => {
     const updateRect = () => setRect(getTargetRect(currentStep.target));
