@@ -14,6 +14,11 @@ import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { weaponDict } from "@/datas/weapon";
 import { locale } from "@/locales/locale";
 import { calcAllEchoScore, calcFinalScore, calcFinalStat } from "@/runtime/characterData.helpers";
+import {
+  CHARACTER_SUMMARY_UPDATED_EVENT,
+  saveCharacterScore,
+  saveCharacterScores,
+} from "@/summaryData/storage";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { useAuthStore, type CloudCharacterDataCache } from "@/stores/authStore";
 import { readCharacterDataSnapshot } from "@/stores/characterDataStorage";
@@ -104,6 +109,38 @@ function getCharacterDataScore(data: CharacterData) {
   const finalStat = calcFinalStat(data, data.echoDataIndex, dataHarmonySet);
   const scoreList = calcAllEchoScore(data);
   return calcFinalScore(data, finalStat, data.weaponId ?? null, scoreList)[1];
+}
+
+function notifyCharacterSummaryUpdated() {
+  window.dispatchEvent(new Event(CHARACTER_SUMMARY_UPDATED_EVENT));
+}
+
+function refreshSummaryScoresFromSnapshot(data: Partial<Record<CharacterId, CharacterData>>) {
+  saveCharacterScores(
+    Object.fromEntries(
+      characterIds.map((id) => {
+        const item = data[id];
+        if (!item) return [id, 0];
+
+        try {
+          return [id, getCharacterDataScore(item)];
+        } catch {
+          return [id, 0];
+        }
+      })
+    )
+  );
+  notifyCharacterSummaryUpdated();
+}
+
+function refreshSummaryScoreFromCharacter(id: CharacterId, data: CharacterData) {
+  try {
+    saveCharacterScore(id, getCharacterDataScore(data));
+  } catch {
+    saveCharacterScore(id, 0);
+  }
+
+  notifyCharacterSummaryUpdated();
 }
 
 function createDataNoneSummary(
@@ -627,6 +664,7 @@ export default function CloudSyncManager() {
 
       replaceCharacterDataSnapshot(result.data);
       setCloudCharacterDataSnapshot(result.data, result.updatedAt);
+      refreshSummaryScoresFromSnapshot(result.data);
       alert(localeText.cloudSyncDownloadSuccess);
       return;
     }
@@ -639,6 +677,7 @@ export default function CloudSyncManager() {
     }
 
     replaceCharacterData(selectedCharacterId, targetData);
+    refreshSummaryScoreFromCharacter(selectedCharacterId, targetData);
     setCloudCharacterDataSnapshot(
       {
         ...cloudCharacterData.data,

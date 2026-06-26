@@ -1,11 +1,15 @@
 import {
+  useEffect,
   useMemo,
   useState,
   type Dispatch,
   type SetStateAction,
 } from "react"
 
-import { loadSummaryStore } from "@/summaryData/storage";
+import {
+  CHARACTER_SUMMARY_UPDATED_EVENT,
+  loadSummaryStore,
+} from "@/summaryData/storage";
 
 import {
   characterList,
@@ -42,7 +46,23 @@ export default function Characters() {
   const [weaponFilters, setWeaponFilters] = useState<WeaponType[]>([]);
   const [elementFilters, setElementFilters] = useState<ElementType[]>([]);
 
-  const summaryStore = useMemo(() => loadSummaryStore(), []);
+  const [summaryStore, setSummaryStore] = useState(() => loadSummaryStore());
+
+  useEffect(() => {
+    const handleSummaryUpdated = () => setSummaryStore(loadSummaryStore());
+
+    window.addEventListener(
+      CHARACTER_SUMMARY_UPDATED_EVENT,
+      handleSummaryUpdated
+    );
+
+    return () => {
+      window.removeEventListener(
+        CHARACTER_SUMMARY_UPDATED_EVENT,
+        handleSummaryUpdated
+      );
+    };
+  }, []);
 
   const toggleFilter = <T extends string>(
     value: T,
