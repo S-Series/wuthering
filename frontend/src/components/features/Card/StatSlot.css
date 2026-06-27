@@ -11,17 +11,16 @@
     cursor: default;
     transition:
         background-color 0.16s ease-out,
-        box-shadow 0.16s ease-out,
-        filter 0.16s ease-out;
+        box-shadow 0.16s ease-out;
 }
 
 .stat-slot-body:hover,
-.stat-slot-body:focus-visible {
+.stat-slot-body:focus-visible,
+.stat-slot-body.highlighted {
     background-color: rgba(126, 217, 255, 0.22);
     box-shadow:
         inset 0 0 0 1px rgba(126, 217, 255, 0.58),
         0 0 0.45rem rgba(61, 177, 255, 0.36);
-    filter: brightness(1.08);
 }
 
 .stat-slot-body .container {

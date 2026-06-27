@@ -10,18 +10,10 @@ import { useAppStore } from "@/stores/appStore";
 
 interface StatSlotProps {
   index: number;
-  highlightedStatId?: StatId | null;
+  highlightedStatIds?: StatId[];
 }
 
 const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
-const LINKED_HIGHLIGHT_STATS: Partial<Record<StatId, StatId[]>> = {
-  [FixedStats.atk.id]: [FixedStats.atk.id, FixedStats.atkPct.id],
-  [FixedStats.atkPct.id]: [FixedStats.atk.id, FixedStats.atkPct.id],
-  [FixedStats.hp.id]: [FixedStats.hp.id, FixedStats.hpPct.id],
-  [FixedStats.hpPct.id]: [FixedStats.hp.id, FixedStats.hpPct.id],
-  [FixedStats.def.id]: [FixedStats.def.id, FixedStats.defPct.id],
-  [FixedStats.defPct.id]: [FixedStats.def.id, FixedStats.defPct.id],
-};
 
 function MakeStatSlot({ StatId = "", StatValue = 0, color = "#666" }
   : { StatId: string; StatValue: number | string; color: string}) {
@@ -70,18 +62,13 @@ function StatToColor({StatId, StatValue, scoreValue}
   return hex;
 }
 
-export default function EchoSlot({index = 0, highlightedStatId = null }: StatSlotProps) {
+export default function EchoSlot({index = 0, highlightedStatIds = [] }: StatSlotProps) {
   const { imgVer } = useAppStore();
   const { characterId, characterData, equipmentScore, setStatColors } = useCharacter();
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
 
   const Echodata = useMemo<EchoRuntime>(() => { return characterData.echoData[index] }, [index, characterData])
-  const highlightedStatIds = useMemo(() => {
-    if (!highlightedStatId) return [];
-
-    return LINKED_HIGHLIGHT_STATS[highlightedStatId] ?? [highlightedStatId];
-  }, [highlightedStatId]);
 
   const STAT_TEXT_COLOR = useMemo(() => {
     const scoreMap = characterScoreSheet[characterId];

@@ -219,6 +219,30 @@ function getCharacterDataScore(data: CharacterData) {
   return calcFinalScore(data, finalStat, data.weaponId ?? null, scoreList)[1];
 }
 
+const LINKED_HIGHLIGHT_STATS: Partial<Record<StatId, StatId[]>> = {
+  [FixedStats.atk.id]: [FixedStats.atk.id, FixedStats.atkPct.id],
+  [FixedStats.atkPct.id]: [FixedStats.atk.id, FixedStats.atkPct.id],
+  [FixedStats.hp.id]: [FixedStats.hp.id, FixedStats.hpPct.id],
+  [FixedStats.hpPct.id]: [FixedStats.hp.id, FixedStats.hpPct.id],
+  [FixedStats.def.id]: [FixedStats.def.id, FixedStats.defPct.id],
+  [FixedStats.defPct.id]: [FixedStats.def.id, FixedStats.defPct.id],
+};
+
+function getLinkedHighlightStatIds(statId: StatId) {
+  return LINKED_HIGHLIGHT_STATS[statId] ?? [statId];
+}
+
+function getHarmonyHighlightStatIds(harmonyId: HarmonyId, activeCount: number) {
+  const statIds = harmony[harmonyId].option
+    .filter((option) => activeCount >= option.count)
+    .flatMap((option) => option.options)
+    .map((option) => option.statId)
+    .filter((statId) => statId !== FixedStats.dummy.id)
+    .flatMap(getLinkedHighlightStatIds);
+
+  return Array.from(new Set(statIds));
+}
+
 function createDataNoneSummary(
   characterName: string,
   localeText: CardLocaleText,
@@ -658,8 +682,25 @@ export default function Card() {
 
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const cloudGuideOverlayOpenedRef = useRef(false);
-  const [highlightedEchoSubStatId, setHighlightedEchoSubStatId] =
-    useState<StatId | null>(null);
+  const [highlightedEchoSubStatIds, setHighlightedEchoSubStatIds] =
+    useState<StatId[]>([]);
+
+  const handleHoverStat = useCallback((statId: StatId | null) => {
+    setHighlightedEchoSubStatIds(statId ? getLinkedHighlightStatIds(statId) : []);
+  }, []);
+
+  const handleHoverHarmony = useCallback(
+    (harmonyId: HarmonyId, activeCount: number) => {
+      setHighlightedEchoSubStatIds(
+        getHarmonyHighlightStatIds(harmonyId, activeCount)
+      );
+    },
+    []
+  );
+
+  const clearHighlightedStats = useCallback(() => {
+    setHighlightedEchoSubStatIds([]);
+  }, []);
 
   const openCardGuide = useCallback(() => {
     setCardGuideAutoOpenHandled(true);
@@ -1309,9 +1350,9 @@ export default function Card() {
                   </div>
                 </div>
 
-                <span className="account-info region en-font">{`Asia Server`}</span>
-                <span className="account-info player-name en-font">{`Lv.-- Guest Player`}</span>
-                <span className="account-info player-uid en-font">{`UID. - - -  - - -  - - -`}</span>
+                <span className="account-info region en-font">{`${gameProfile?.server ?? "Asia"} Server`}</span>
+                <span className="account-info player-name en-font">{`Lv.${gameProfile?.gameLevel ?? "--"} ${user?.membershipNickname ?? user?.nickname ?? "Guest Player"}`}</span>
+                <span className="account-info player-uid en-font">{`UID. ${gameProfile?.gameUid ?? "- - -  - - -  - - -"}`}</span>
                 <span className={`character-name ${lang}-font`}>
                   {selectedCharacterData[lang]?.charAt(0).toUpperCase() +
                     selectedCharacterData[lang]?.slice(1)}
@@ -1429,7 +1470,8 @@ export default function Card() {
                       (FINAL_STATS_MAP?.[item] ?? 0) -
                       (BASE_STATS_MAP?.[item] ?? 0)
                     }
-                    onHoverStat={setHighlightedEchoSubStatId}
+                    onHoverStat={handleHoverStat}
+                    highlighted={highlightedEchoSubStatIds.includes(item)}
                   />
                 );
               })}
@@ -1438,7 +1480,15 @@ export default function Card() {
                 {Object.entries(harmonySet).map(([id, number]) => {
                   const harmonyId = id as HarmonyId;
                   return (
-                    <div className="container" key={harmonyId}>
+                    <div
+                      className="container"
+                      key={harmonyId}
+                      tabIndex={0}
+                      onMouseEnter={() => handleHoverHarmony(harmonyId, number)}
+                      onMouseLeave={clearHighlightedStats}
+                      onFocus={() => handleHoverHarmony(harmonyId, number)}
+                      onBlur={clearHighlightedStats}
+                    >
                       <img src={`/ico/harmony/${harmonyId}.png`} />
                       <span className={`${lang}-font`}>
                         {harmony[harmonyId][lang]}{" "}
@@ -1522,7 +1572,7 @@ export default function Card() {
                   <EchoSlot
                     key={`echos-slot-${idx}`}
                     index={characterData.echoDataIndex[idx]}
-                    highlightedStatId={highlightedEchoSubStatId}
+                    highlightedStatIds={highlightedEchoSubStatIds}
                   />
                 );
               })}

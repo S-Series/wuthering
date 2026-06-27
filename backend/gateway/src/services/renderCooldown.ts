@@ -10,6 +10,7 @@ export type RenderAccessResult =
 
 const RENDER_LOCK_MS = 60_000;
 const RENDER_COOLDOWN_MS = 10 * 60 * 1000;
+export const MEMBER_RENDER_COOLDOWN_MS = 3 * 60 * 1000;
 
 const renderLocks = new Map<string, number>();
 const renderCooldowns = new Map<string, number>();
@@ -84,9 +85,12 @@ export function releaseRenderLock(uid: RenderUserKey) {
   renderLocks.delete(uid);
 }
 
-export function startRenderCooldown(uid: RenderUserKey) {
+export function startRenderCooldown(
+  uid: RenderUserKey,
+  cooldownMs = RENDER_COOLDOWN_MS
+) {
   if (hasRenderBypass(uid)) return;
-  renderCooldowns.set(uid, now() + RENDER_COOLDOWN_MS);
+  renderCooldowns.set(uid, now() + cooldownMs);
 }
 
 export function getRenderStatus(uid: RenderUserKey): RenderStatus {

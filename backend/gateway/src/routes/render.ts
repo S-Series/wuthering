@@ -1,16 +1,22 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 import {
   acquireRenderLock,
   canStartRender,
   releaseRenderLock,
   startRenderCooldown,
   getRenderStatus,
+  MEMBER_RENDER_COOLDOWN_MS,
 } from "../services/renderCooldown.js";
 import { requestRenderUpstream } from "../services/renderUpstream.js";
 import { requireUid } from "../lib/requireAuth.js";
 import { getClientIp } from "../lib/getClientIp.js";
 import { safeLogEvent } from "../lib/logEvent.js";
-import { getOptionalSupabaseUserId } from "../services/supabaseUsers.js";
+import {
+  getActiveSupabaseMembership,
+  getOptionalSupabaseUserId,
+  getRequiredSupabaseUser,
+  isMembershipUser,
+} from "../services/supabaseUsers.js";
 import {
   cacheStore,
   createRenderCardCacheKey,
@@ -20,6 +26,18 @@ const inFlightRenderRequests = new Map<
   string,
   Promise<Awaited<ReturnType<typeof requestRenderUpstream>>>
 >();
+
+async function getRenderCooldownMs(req: FastifyRequest) {
+  try {
+    const user = await getRequiredSupabaseUser(req);
+    const membership = await getActiveSupabaseMembership(user.id);
+    return isMembershipUser(user, membership)
+      ? MEMBER_RENDER_COOLDOWN_MS
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 export async function registerRenderRoutes(app: FastifyInstance) {
   app.post("/api/render/card", async (req, reply) => {
@@ -188,7 +206,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         return reply.code(result.statusCode).send(result.body);
       }
 
-      startRenderCooldown(uid);
+      startRenderCooldown(uid, await getRenderCooldownMs(req));
 
       cacheStore.renderCard.set(cacheKey, {
         contentType: result.contentType,

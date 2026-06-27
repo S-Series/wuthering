@@ -7,6 +7,7 @@ interface StatSlotProps {
     statValue: number;
     plusValue: number;
     onHoverStat?: (statId: StatId | null) => void;
+    highlighted?: boolean;
 }
 
 export default function StatSlot({
@@ -14,6 +15,7 @@ export default function StatSlot({
     statValue,
     plusValue,
     onHoverStat,
+    highlighted = false,
 }: StatSlotProps) {
     const { lang } = useAppStore();
     const isPct = ((
@@ -25,7 +27,7 @@ export default function StatSlot({
     
     return (
         <div
-            className="stat-slot-body"
+            className={`stat-slot-body ${highlighted ? "highlighted" : ""}`}
             onMouseEnter={() => onHoverStat?.(statId)}
             onMouseLeave={() => onHoverStat?.(null)}
             onFocus={() => onHoverStat?.(statId)}
