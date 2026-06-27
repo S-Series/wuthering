@@ -68,6 +68,7 @@ export const zh = {
     cloudSyncSuccess: "云端同步已完成。",
     cloudSyncRequestFailed: "云端请求失败。",
     cloudSyncDescription: "可以将角色配置数据上传到云端，或下载已保存的数据。",
+    cloudSyncMembershipNotice: "目前无需会员也可使用云端同步，但未来可能会调整为会员专属功能。",
     cloudSyncUpload: "上传",
     cloudSyncUploadDescription: "将当前设备的角色数据保存到云端。",
     cloudSyncDownload: "下载",

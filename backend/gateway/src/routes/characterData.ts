@@ -1,9 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import {
-  getActiveSupabaseMembership,
-  getRequiredSupabaseUser,
-  isMembershipUser,
-} from "../services/supabaseUsers.js";
+import { getRequiredSupabaseUser } from "../services/supabaseUsers.js";
 import { supabaseAdmin } from "../lib/supabaseAdmin.js";
 
 type CharacterDataBody = {
@@ -29,15 +25,6 @@ export async function registerCharacterDataRoutes(app: FastifyInstance) {
       user = await getRequiredSupabaseUser(req);
     } catch {
       return reply.code(401).send({ error: "unauthorized" });
-    }
-
-    const membership = await getActiveSupabaseMembership(user.id);
-
-    if (!isMembershipUser(user, membership)) {
-      return reply.code(403).send({
-        error: "membership required",
-        reason: "membership-required",
-      });
     }
 
     const query = (req.query ?? {}) as CharacterDataQuery;
@@ -79,15 +66,6 @@ export async function registerCharacterDataRoutes(app: FastifyInstance) {
       user = await getRequiredSupabaseUser(req);
     } catch {
       return reply.code(401).send({ error: "unauthorized" });
-    }
-
-    const membership = await getActiveSupabaseMembership(user.id);
-
-    if (!isMembershipUser(user, membership)) {
-      return reply.code(403).send({
-        error: "membership required",
-        reason: "membership-required",
-      });
     }
 
     const body = (req.body ?? {}) as CharacterDataBody;

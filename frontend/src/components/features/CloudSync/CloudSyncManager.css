@@ -17,6 +17,19 @@
     word-break: keep-all;
 }
 
+.cloud-sync-membership-notice {
+    margin: 0;
+    padding: min(2vw, 0.65rem) min(3vw, 0.9rem);
+    border: 1px solid rgba(255, 215, 100, 0.46);
+    background: rgba(85, 70, 31, 0.22);
+    color: #ffe7a1;
+    font-size: min(2.4vw, 0.8rem);
+    font-weight: 850;
+    line-height: 1.5;
+    text-align: center;
+    word-break: keep-all;
+}
+
 .cloud-sync-actions,
 .cloud-sync-data-grid {
     display: flex;

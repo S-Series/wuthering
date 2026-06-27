@@ -12,10 +12,7 @@ import {
 import { getGameProfile, saveGameProfile, saveUserNickname } from "@/firebase/user";
 import { logClientEvent } from "@/api/logger";
 import { syncGatewayUser } from "@/api/user.api";
-import {
-  downloadCharacterCloudData,
-  isMembershipUser,
-} from "@/api/characterCloudSync.api";
+import { downloadCharacterCloudData } from "@/api/characterCloudSync.api";
 import type { CharacterDataSnapshot } from "@/stores/characterDataStorage";
 import type { CharacterId } from "@/datas/characterStats";
 
@@ -116,7 +113,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const characterId = options?.characterId;
     const { user, cloudCharacterData } = get();
 
-    if (!user || !isMembershipUser(user)) {
+    if (!user) {
       set({ cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA });
       return;
     }

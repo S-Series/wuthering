@@ -68,6 +68,7 @@ export const en = {
     cloudSyncSuccess: "Cloud sync complete.",
     cloudSyncRequestFailed: "Cloud request failed.",
     cloudSyncDescription: "Upload character setup data to the cloud or download saved data.",
+    cloudSyncMembershipNotice: "Cloud Sync is currently available without membership, but it may become a membership-only feature later.",
     cloudSyncUpload: "Upload",
     cloudSyncUploadDescription: "Save this device's character data to the cloud.",
     cloudSyncDownload: "Download",
