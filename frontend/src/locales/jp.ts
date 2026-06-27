@@ -68,6 +68,7 @@ export const jp = {
     cloudSyncSuccess: "クラウド同期が完了しました。",
     cloudSyncRequestFailed: "クラウドリクエストに失敗しました。",
     cloudSyncDescription: "キャラクター設定データをクラウドへアップロード、または保存済みデータをダウンロードできます。",
+    cloudSyncMembershipNotice: "現在はメンバーシップなしで利用できますが、今後メンバーシップ専用機能へ変更される場合があります。",
     cloudSyncUpload: "アップロード",
     cloudSyncUploadDescription: "この端末のキャラクターデータをクラウドに保存します。",
     cloudSyncDownload: "ダウンロード",

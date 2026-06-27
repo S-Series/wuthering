@@ -68,6 +68,7 @@ export const kr = {
     cloudSyncSuccess: "클라우드 동기화가 완료되었습니다.",
     cloudSyncRequestFailed: "클라우드 요청에 실패했습니다.",
     cloudSyncDescription: "캐릭터 세팅 데이터를 클라우드에 올리거나, 저장된 데이터를 내려받을 수 있습니다.",
+    cloudSyncMembershipNotice: "현재는 멤버십 없이 사용할 수 있지만, 추후 멤버십 전용 기능으로 전환될 수 있습니다.",
     cloudSyncUpload: "업로드",
     cloudSyncUploadDescription: "현재 기기의 캐릭터 데이터를 클라우드에 저장합니다.",
     cloudSyncDownload: "내려받기",

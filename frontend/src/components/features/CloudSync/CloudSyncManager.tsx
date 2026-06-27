@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 
 import {
   downloadCharacterCloudData,
-  isMembershipUser,
   uploadCharacterCloudData,
 } from "@/api/characterCloudSync.api";
 import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
@@ -493,6 +492,9 @@ function CloudSyncPanel({
   return (
     <div className="cloud-sync-panel" data-card-guide="cloud-sync-panel">
       <p className="cloud-sync-caption">{localeText.cloudSyncDescription}</p>
+      <p className="cloud-sync-membership-notice">
+        {localeText.cloudSyncMembershipNotice}
+      </p>
       <div className="cloud-sync-data-grid">
         <CloudSyncDataCard
           title={localeText.cloudSyncCurrentData}
@@ -583,11 +585,6 @@ export default function CloudSyncManager() {
       return;
     }
 
-    if (!isMembershipUser(user)) {
-      alert(localeText.cloudSyncMembershipRequired);
-      return;
-    }
-
     const data = selectedCharacterId ? characterData : readCharacterDataSnapshot();
 
     let result;
@@ -630,11 +627,6 @@ export default function CloudSyncManager() {
   const handleCloudDownload = useCallback(async (options?: { downloadAllCharacters: boolean }) => {
     if (!user) {
       alert(localeText.cloudSyncLoginRequired);
-      return;
-    }
-
-    if (!isMembershipUser(user)) {
-      alert(localeText.cloudSyncMembershipRequired);
       return;
     }
 

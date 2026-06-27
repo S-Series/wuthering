@@ -66,6 +66,7 @@ export type LocaleSchema = {
     cloudSyncSuccess: string;
     cloudSyncRequestFailed: string;
     cloudSyncDescription: string;
+    cloudSyncMembershipNotice: string;
     cloudSyncUpload: string;
     cloudSyncUploadDescription: string;
     cloudSyncDownload: string;

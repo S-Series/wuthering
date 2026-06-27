@@ -38,7 +38,6 @@ import { createPayloadData, getRenderCardStatus, requestRenderCard } from "@/api
 import { logClientEvent } from "@/api/logger";
 import {
   downloadCharacterCloudData,
-  isMembershipUser,
   uploadCharacterCloudData,
 } from "@/api/characterCloudSync.api";
 import { useAuthStore } from "@/stores/authStore";
@@ -431,6 +430,9 @@ function CloudSyncPanel({
   return (
     <div className="cloud-sync-panel" data-card-guide="cloud-sync-panel">
       <p className="cloud-sync-caption">{localeText.cloudSyncDescription}</p>
+      <p className="cloud-sync-membership-notice">
+        {localeText.cloudSyncMembershipNotice}
+      </p>
       <div className="cloud-sync-data-grid">
         <CloudSyncDataCard
           title={localeText.cloudSyncCurrentData}
@@ -774,11 +776,6 @@ export default function Card() {
       return;
     }
 
-    if (!isMembershipUser(user)) {
-      alert(localeText.cloudSyncMembershipRequired);
-      return;
-    }
-
     let result;
 
     try {
@@ -806,11 +803,6 @@ export default function Card() {
   const handleCloudDownload = async (options?: { downloadAllCharacters: boolean }) => {
     if (!user) {
       alert(localeText.cloudSyncLoginRequired);
-      return;
-    }
-
-    if (!isMembershipUser(user)) {
-      alert(localeText.cloudSyncMembershipRequired);
       return;
     }
 
