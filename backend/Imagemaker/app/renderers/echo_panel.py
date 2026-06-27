@@ -47,7 +47,7 @@ def draw_echo_panel(
         draw_line(base, (1330 + i_gap * i, 795), (1462 + i_gap * i, 795), (255,255,255), 2)
 
         #draw_rect(base, (1320 + i_gap * i, 810, 152, 60), (0,0,0,0), (255,0,0))
-        draw_image(base, echo_data.get("rank_image"), (1345 + i_gap * i, 803, 101, 67))
+        draw_image(base, echo_data.get("rank_image"), (1362 + i_gap * i, 803, 67, 67))
 
         draw_text(base, "Cv.", (1335 + i_gap * i, 873), "en", 21, anchor="la")
         draw_text(base, echo_data.get("scores")[0], (1462 + i_gap * i, 873), "en", 21, anchor="ra")
