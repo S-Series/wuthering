@@ -63,11 +63,10 @@
 
 .echo-drag-item {
     display: flex;
-    width: 100%;
-    min-width: 0;
+    width: 90%;
     height: 100%;
     
-    padding: min(0.16vw, 0.12rem);
+    padding: 0 5%;
     align-items: center;
     justify-content: center;
 
@@ -78,7 +77,14 @@
     cursor: grab;
     user-select: none;
     overflow: hidden;
-    transition: all 0.2s ease-out;
+    touch-action: none;
+    contain: layout paint;
+    will-change: transform;
+    transition:
+        filter 0.16s ease-out,
+        border-color 0.16s ease-out,
+        box-shadow 0.16s ease-out,
+        background-color 0.16s ease-out;
 }
 
 .echo-drag-item.selected {
@@ -116,11 +122,15 @@
     align-items: center;
     justify-content: flex-start;
     
-    transition: all 0.2s ease-out;
+    transition: transform 0.16s ease-out;
 }
 
 .echo-drag-item .hover-motion:hover {
     transform: scale(1.05);
+}
+
+.echo-drag-item.dragging .hover-motion:hover {
+    transform: none;
 }
 
 .echo-drag-header {
@@ -130,7 +140,7 @@
     min-height: min(1.2vw, 0.85rem);
     padding: 0 min(0.28vw, 0.2rem);
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     box-sizing: border-box;
 }
 
@@ -148,7 +158,7 @@
     width: 100%;
     min-width: 0;
     overflow: hidden;
-    text-align: left;
+    text-align: center;
     white-space: nowrap;
     text-overflow: ellipsis;
     word-break: keep-all;
@@ -185,48 +195,39 @@
 }
 
 .echo-drag-stat-list.main {
-    height: 17.5%;
+    height: 18.5%;
     padding-top: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.38);
 }
 
 .echo-drag-stat-list.sub {
-    height: 36%;
+    height: 37%;
     padding-top: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.26);
 }
 
 .echo-drag-stat {
     display: flex;
-    width: 92%;
-    min-height: 0;
-    flex: 1 1 0;
+    width: 80%;
+    height: 100%;
     align-items: center;
     justify-content: space-between;
-    gap: min(0.14vw, 0.1rem);
     overflow: hidden;
 }
 
 .echo-drag-stat.muted {
-    opacity: 0.74;
+    filter: brightness(0.5)
 }
 
 .echo-drag-stat img {
-    width: min(0.92vw, 0.66rem);
-    height: min(0.92vw, 0.66rem);
-    flex: 0 0 auto;
-    object-fit: contain;
+    width: auto !important;
+    height: 65%;
+    aspect-ratio: 1 / 1;
 }
 
 .echo-drag-stat span {
-    min-width: 0;
-    overflow: hidden;
     color: #f4f7ff;
-    font-size: min(0.7vw, 0.6rem);
-    font-weight: 700;
-    text-align: right;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: min(1vw, 1rem) !important;
 }
 
 .echo-drag-score {

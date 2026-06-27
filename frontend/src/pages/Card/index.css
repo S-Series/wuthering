@@ -348,6 +348,89 @@
     cursor: not-allowed;
 }
 
+.echo-drag-performance-notice {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: min(3vw, 1rem);
+    color: #f4f7ff;
+    box-sizing: border-box;
+}
+
+.echo-drag-performance-notice p {
+    margin: 0;
+    color: #f4f7ff;
+    font-size: min(2.7vw, 0.95rem);
+    font-weight: 800;
+    line-height: 1.55;
+    text-align: center;
+    word-break: keep-all;
+}
+
+.echo-drag-performance-notice__renderer {
+    padding: min(2vw, 0.55rem) min(3vw, 0.75rem);
+    border: 1px solid rgba(255, 215, 100, 0.28);
+    background: rgba(3, 7, 16, 0.34);
+    color: #c7c9cf !important;
+    font-size: min(2.1vw, 0.74rem) !important;
+    text-align: left !important;
+}
+
+.echo-drag-performance-notice__option {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    margin-left: auto;
+    align-items: center;
+    gap: min(2vw, 0.5rem);
+    justify-content: flex-end;
+    color: #c7c9cf;
+    font-size: min(2.5vw, 0.86rem);
+    font-weight: 800;
+    line-height: 1.35;
+    cursor: pointer;
+    user-select: none;
+}
+
+.echo-drag-performance-notice__option input {
+    width: min(4vw, 1rem);
+    height: min(4vw, 1rem);
+    margin: 0;
+    flex: 0 0 auto;
+    accent-color: #ffd764;
+    cursor: pointer;
+}
+
+.echo-drag-performance-notice__actions {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.echo-drag-performance-notice__actions button {
+    display: flex;
+    min-width: min(28vw, 7rem);
+    min-height: min(8vw, 2.4rem);
+    padding: 0 5%;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ffd764;
+    border-radius: 0;
+    background: #1b1e25;
+    color: #f4f7ff;
+    font-size: min(2.4vw, 0.86rem);
+    font-weight: 900;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.echo-drag-performance-notice__actions button:hover,
+.echo-drag-performance-notice__actions button:focus-visible {
+    outline: none;
+    color: #ffd764;
+    background: #55461f;
+}
+
 #card-page-slot .card-section.left {
     min-width: min(90vw, 25rem);
     width: 85%;
