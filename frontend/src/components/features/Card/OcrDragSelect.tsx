@@ -196,7 +196,7 @@ function OcrTargetPreview({
 
       <div className="ocr-target-preview-card__score">
         <span>Cv. <em className="num-font">{score[0].toFixed(1)}</em>pt</span>
-        <span>Av. <em className="num-font">{score[1].toFixed(1)}</em>pt</span>
+        <span>Tv. <em className="num-font">{score[1].toFixed(1)}</em>pt</span>
       </div>
     </div>
   );

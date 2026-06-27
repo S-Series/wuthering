@@ -183,7 +183,7 @@ export default function EchoSlot({index = 0, highlightedStatId = null }: StatSlo
           <span className="en-font"> <em className="num-font">{equipmentScore[Math.abs(index)][0].toFixed(1)}</em>pt</span>
         </div>
         <div className="slot">
-          <span className="en-font">Av.</span>
+          <span className="en-font">Tv.</span>
           <span className="en-font"> <em className="num-font">{equipmentScore[Math.abs(index)][1].toFixed(1)}</em>pt</span>
         </div>
       </div>

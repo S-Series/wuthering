@@ -125,6 +125,53 @@ def draw_image(base, path, xy1, xy2=(0, 0, 1), color_filter=(255, 255, 255), opa
         print("*Image Load Failed*: ", err)
 
 
+def draw_contain_image(
+    base,
+    path,
+    xy1,
+    xy2=(0, 0, 1),
+    opacity=1.0,
+    glow_color=None,
+    glow_radius=0,
+    glow_opacity=0.0,
+):
+    x, y, w, h = xy1
+    x_off, y_off, scale = xy2
+
+    try:
+        if not path:
+            return
+
+        overlay = open_image(str(path))
+
+        src_w, src_h = overlay.size
+        fit_scale = min(w / src_w, h / src_h) * scale
+        new_w = max(1, int(src_w * fit_scale))
+        new_h = max(1, int(src_h * fit_scale))
+
+        overlay = overlay.resize((new_w, new_h), Image.Resampling.LANCZOS)
+
+        if opacity < 1:
+            alpha = overlay.split()[3]
+            alpha = alpha.point(lambda p: int(p * opacity))
+            overlay.putalpha(alpha)
+
+        paste_x = int(x + w / 2 + x_off - new_w / 2)
+        paste_y = int(y + h / 2 + y_off - new_h / 2)
+
+        if glow_color and glow_radius > 0 and glow_opacity > 0:
+            glow_alpha = overlay.split()[3].filter(ImageFilter.GaussianBlur(glow_radius))
+            glow_alpha = glow_alpha.point(lambda p: int(p * glow_opacity))
+            glow = Image.new("RGBA", overlay.size, (*glow_color, 0))
+            glow.putalpha(glow_alpha)
+            base.alpha_composite(glow, dest=(paste_x, paste_y))
+
+        base.alpha_composite(overlay, dest=(paste_x, paste_y))
+
+    except Exception as err:
+        print("*Contain Image Load Failed*: ", err)
+
+
 def draw_rect_topleft_round(base, xy1, xy2, radius, fill = None, color_filter=(255,255,255), border=None, img_path=None):
     x1, y1, w, h = xy1
     x_off, y_off, a = xy2

@@ -1333,7 +1333,7 @@ export default function Card() {
                   tabIndex={0}
                   data-tooltip="All Value · 종합점수"
                 >
-                  Av. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
+                  Tv. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
               </div>
             </div>
@@ -1359,7 +1359,7 @@ export default function Card() {
                   src={`/ico/rank/${getCharacterRank(finalScore[1])}.png`}
                 />
                 <span className="en-font">
-                  Av. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
+                  Tv. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
               </div>
 
