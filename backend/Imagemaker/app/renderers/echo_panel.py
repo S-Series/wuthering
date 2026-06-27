@@ -50,7 +50,7 @@ def draw_echo_panel(
         draw_contain_image(
             base,
             echo_data.get("rank_image"),
-            (1362 + i_gap * i, 803, 67, 67),
+            (1354 + i_gap * i, 795, 84, 84),
             glow_color=(255, 225, 120),
             glow_radius=4,
             glow_opacity=0.2,

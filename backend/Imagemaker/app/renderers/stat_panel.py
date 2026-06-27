@@ -124,4 +124,4 @@ def draw_stat_panel(
 
     cv, av = stat.get("score")
     draw_text(base, f"Cv. {cv}pt", (870, 865), "en", 36, anchor="ma", is_bold=True)
-    draw_text(base, f"Av. {av}pt", (1130, 865), "en", 36, anchor="ma", is_bold=True)
+    draw_text(base, f"Tv. {av}pt", (1130, 865), "en", 36, anchor="ma", is_bold=True)
