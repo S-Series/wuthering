@@ -1,6 +1,6 @@
 from PIL import Image
 from app.utils.draw import draw_rect
-from app.utils.image import draw_image, draw_rect_topleft_round
+from app.utils.image import draw_contain_image, draw_image, draw_rect_topleft_round
 from app.utils.text import draw_text
 
 
@@ -13,5 +13,12 @@ def draw_namecard_panel(
     draw_rect(base, layout["namecard_box"], (0,0,0,0), (255,255,255), 2)
 
     #draw_rect(base, layout["rank_icon"], (0,0,0,0), (255,255,255), 2)
-    draw_image(base, namecard.get("rank_icon_path"), layout["rank_icon"])
+    draw_contain_image(
+        base,
+        namecard.get("rank_icon_path"),
+        layout["rank_icon"],
+        glow_color=(255, 225, 120),
+        glow_radius=12,
+        glow_opacity=0.22,
+    )
     draw_text(base, namecard.get("score_text"), layout["rank_text"], namecard.get("lang"), 34, anchor="mb", is_bold=True)

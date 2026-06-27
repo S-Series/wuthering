@@ -68,6 +68,23 @@ const CLOUD_SYNC_DATE_LOCALE: Record<LangType, string> = {
   jp: "ja-JP",
   zh: "zh-CN",
 };
+const ECHO_DRAG_PERFORMANCE_NOTICE_LOCAL_KEY =
+  "wuthering.echoDragPerformanceNotice.dismissed";
+const ECHO_DRAG_PERFORMANCE_NOTICE_SESSION_KEY =
+  "wuthering.echoDragPerformanceNotice.shown";
+const SOFTWARE_RENDERER_KEYWORDS = [
+  "swiftshader",
+  "software",
+  "llvmpipe",
+  "warp",
+  "microsoft basic render",
+  "mesa offscreen",
+];
+
+type GpuAccelerationWarning = {
+  shouldWarn: boolean;
+  renderer: string | null;
+};
 
 function formatCloudSyncDate(updatedAt: string, lang: LangType) {
   const date = new Date(updatedAt);
@@ -78,6 +95,81 @@ function formatCloudSyncDate(updatedAt: string, lang: LangType) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
+}
+
+function detectGpuAccelerationWarning(): GpuAccelerationWarning {
+  if (typeof document === "undefined") {
+    return { shouldWarn: false, renderer: null };
+  }
+
+  const canvas = document.createElement("canvas");
+  const gl = canvas.getContext("webgl2") ?? canvas.getContext("webgl");
+
+  if (!gl) {
+    return { shouldWarn: true, renderer: null };
+  }
+
+  const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+  const renderer = debugInfo
+    ? String(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) ?? "")
+    : "";
+  const normalizedRenderer = renderer.toLowerCase();
+
+  return {
+    shouldWarn: SOFTWARE_RENDERER_KEYWORDS.some((keyword) =>
+      normalizedRenderer.includes(keyword)
+    ),
+    renderer: renderer || null,
+  };
+}
+
+function shouldShowEchoDragPerformanceNotice() {
+  if (typeof window === "undefined") return false;
+  if (window.localStorage.getItem(ECHO_DRAG_PERFORMANCE_NOTICE_LOCAL_KEY) === "true") {
+    return false;
+  }
+  if (window.sessionStorage.getItem(ECHO_DRAG_PERFORMANCE_NOTICE_SESSION_KEY) === "true") {
+    return false;
+  }
+
+  return detectGpuAccelerationWarning().shouldWarn;
+}
+
+function EchoDragPerformanceNotice({
+  renderer,
+  onConfirm,
+}: {
+  renderer: string | null;
+  onConfirm: (dismissed: boolean) => void;
+}) {
+  const [dismissed, setDismissed] = useState(false);
+
+  return (
+    <div className="echo-drag-performance-notice">
+      <p>
+        현재 브라우저가 소프트웨어 렌더링으로 동작 중일 수 있습니다. 에코 목록
+        드래그가 버벅이면 브라우저 설정에서 하드웨어 가속을 켜는 것을 권장합니다.
+      </p>
+      {renderer ? (
+        <p className="echo-drag-performance-notice__renderer en-font">
+          Renderer: {renderer}
+        </p>
+      ) : null}
+      <label className="echo-drag-performance-notice__option">
+        <input
+          type="checkbox"
+          checked={dismissed}
+          onChange={(event) => setDismissed(event.target.checked)}
+        />
+        <span>다시 보지 않기</span>
+      </label>
+      <div className="echo-drag-performance-notice__actions">
+        <button type="button" className="confirm" onClick={() => onConfirm(dismissed)}>
+          확인
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function countConfiguredEcho(data: CharacterData) {
@@ -482,6 +574,7 @@ export default function Card() {
   const { characterId, setCharacterId, patchCharacterData, replaceCharacterDataSnapshot, replaceCharacterData, characterData, characterBaseStat, characterFinalStat, equipmentScore, finalScore, harmonySet, statColors } = useCharacter();
   const { baseSelectStyles } = useStyleStore();
   const { openOverlay, closeOverlay } = useOverlay();
+  const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
   const {
     user,
     gameProfile,
@@ -503,13 +596,49 @@ export default function Card() {
     });
   };
 
-  const openEchoDataManager = () => {
+  const openEchoDataManagerOverlay = () => {
     openOverlay(<OcrPlayground />, {
       title: localeText.oMenu,
       width: "min(90vw, 90rem)",
       height: "min(80vh, 80rem)",
       ratio: null,
     });
+  };
+
+  const openEchoDataManager = () => {
+    if (!shouldShowEchoDragPerformanceNotice()) {
+      openEchoDataManagerOverlay();
+      return;
+    }
+
+    const warning = detectGpuAccelerationWarning();
+    window.sessionStorage.setItem(
+      ECHO_DRAG_PERFORMANCE_NOTICE_SESSION_KEY,
+      "true",
+    );
+
+    openElevatedOverlay(
+      <EchoDragPerformanceNotice
+        renderer={warning.renderer}
+        onConfirm={(dismissed) => {
+          if (dismissed) {
+            window.localStorage.setItem(
+              ECHO_DRAG_PERFORMANCE_NOTICE_LOCAL_KEY,
+              "true",
+            );
+          }
+          closeElevatedOverlay();
+          openEchoDataManagerOverlay();
+        }}
+      />,
+      {
+        title: "드래그 성능 안내",
+        width: "min(92vw, 34rem)",
+        ratio: null,
+        closeOnEsc: true,
+        closeOnBackdrop: true,
+      },
+    );
   };
 
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
@@ -1333,7 +1462,7 @@ export default function Card() {
                   tabIndex={0}
                   data-tooltip="All Value · 종합점수"
                 >
-                  Av. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
+                  Tv. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
               </div>
             </div>
@@ -1359,7 +1488,7 @@ export default function Card() {
                   src={`/ico/rank/${getCharacterRank(finalScore[1])}.png`}
                 />
                 <span className="en-font">
-                  Av. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
+                  Tv. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
               </div>
 

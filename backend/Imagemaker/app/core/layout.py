@@ -42,7 +42,7 @@ DEFAULT_LAYOUT = {
     },
     "namecard": {
         "namecard_box": (1590, 85, 520, 196),
-        "rank_icon": (1375, 80, 160, 160),
+        "rank_icon": (1330, 42, 250, 250),
         "rank_text": (1455, 285),
     },
     "echoes": {

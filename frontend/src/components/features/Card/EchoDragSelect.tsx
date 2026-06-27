@@ -108,7 +108,7 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
     isDragging,
   } = useSortable({ id: item.id });
 
-  const { characterData, equipmentScore } = useCharacter();
+  const { characterData } = useCharacter();
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -127,8 +127,6 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
       default: return -1;
     }
   })();
-  const score = equipmentScore?.[Math.abs(index)] ?? [0, 0];
-
   return (
     <div
       ref={setNodeRef}
@@ -146,6 +144,10 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
       {...listeners}
     >
       <div className="hover-motion">
+        <div className="echo-drag-header">
+          <span className="echo-drag-label">{item.echoName ?? "Empty Slot"}</span>
+        </div>
+
         <div className="echo-drag-image-slot">
           <img className="echo-img" src={`${baseUrl}/ico/echos/${item.src[0]}`}
             onError={(e) => {
@@ -161,8 +163,6 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
             }}
           />
         </div>
-
-        <span className="echo-drag-label">{item.echoName ?? "Empty Slot"}</span>
 
         <div className="echo-drag-stat-list main">
           <EchoDragStat
@@ -185,9 +185,6 @@ function SortableItem({ item, baseUrl, index, onClick }: SortableItemProps) {
 
         <div className="echo-drag-score">
           <img className="score-img" src={`/ico/rank/${item.src[1]}`} />
-          <span className="en-font">
-            Av. <em className="num-font">{score[1].toFixed(1)}</em>pt
-          </span>
         </div>
       </div>
     </div>
