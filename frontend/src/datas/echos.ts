@@ -2,6 +2,7 @@ import type { LangType } from "@/stores/appStore";
 import { FixedStats, type StatId } from "./stats";
 import { harmony, type HarmonyId } from "./harmonies";
 import type { CharacterId } from "./characterStats";
+import { character } from "./characters";
 
 export interface EchoRuntime {
   echoId: string;
@@ -59,6 +60,18 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
   */
 
   Cost4: {
+    X80: {
+      en: "Reminiscence - Nightmare: Adam Smasher",
+      kr: "공명의 메아리 · 악몽 아담 · 스매셔",
+      jp: "響き渡る共鳴・ナイトメア・スマッシャー",
+      zh: "共鸣回响·梦魇亚当·重锤",
+      type: [harmony.Adam.id],
+      getStats: (id) => {
+        if (id === character.lucy.id || id === character.rebecca.id)
+          return [{ statId: FixedStats.critRate.id, value: 15.0 }];
+        return [];
+      },
+    },
     Z05: {
       en: "Reminiscence: Denia",
       kr: "공명의 메아리 · 데니아",
@@ -93,7 +106,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       zh: "辛吉勒姆",
       type: [harmony.Star.id],
       getStats: (id) => {
-        if (id === "aemeath")
+        if (id === character.aemeath.id)
           return [{ statId: FixedStats.liberationBns.id, value: 25.0 }];
         return [];
       },
