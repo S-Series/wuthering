@@ -111,7 +111,10 @@ def prepare_render_data(payload: dict) -> bytes:
         harmony_count = item[2] if len(item) > 2 else "-"
 
         stats["harmony_items"].append({
+            "id": harmony_id,
             "icon_path": f"{ASSET_DIR}/ico/harmony/{harmony_id}.png",
+            "name": harmony_text,
+            "count": str(harmony_count),
             "text": f"{harmony_text} [{harmony_count}]",
         })
 

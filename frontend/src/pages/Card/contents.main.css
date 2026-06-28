@@ -468,6 +468,12 @@
     transform: translate(-50%, -50%);
 }
 
+.main-item-slot.stats .harmony-slot.triple {
+    display: flex;
+    flex-direction: column;
+    gap: min(0.28vw, 0.3rem);
+}
+
 .main-item-slot.stats .harmony-slot .container {
     display: flex;
     width: fit-content;
@@ -480,6 +486,56 @@
 
     background-color: #ffffff19;
     font-size: min(1vw, 0.9rem);
+}
+
+.main-item-slot.stats .harmony-slot .container span {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+}
+
+.main-item-slot.stats .harmony-slot .container .harmony-name {
+    display: inline-block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+.main-item-slot.stats .harmony-slot .container em {
+    flex: 0 0 auto;
+    margin-left: min(0.18vw, 0.18rem);
+}
+
+.main-item-slot.stats .harmony-slot.triple .container {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.main-item-slot.stats .harmony-slot.triple .container.primary {
+    max-width: 90%;
+    height: 45%;
+}
+
+.main-item-slot.stats .harmony-slot.triple .harmony-sub-row {
+    display: flex;
+    width: 90%;
+    height: 42%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.main-item-slot.stats .harmony-slot.triple .harmony-sub-row .container {
+    width: 49.5%;
+}
+
+.main-item-slot.stats .harmony-slot.triple .container span {
+    width: 100%;
+    max-width: 100%;
+}
+
+.main-item-slot.stats .harmony-slot.triple .container .harmony-name {
+    text-align: left;
+    text-overflow: ellipsis;
 }
 
 .main-item-slot.stats .harmony-slot .container img {

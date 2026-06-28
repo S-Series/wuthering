@@ -243,6 +243,23 @@ function getHarmonyHighlightStatIds(harmonyId: HarmonyId, activeCount: number) {
   return Array.from(new Set(statIds));
 }
 
+function getSortedHarmonyEntries(
+  characterId: CharacterId,
+  harmonySet: Partial<Record<HarmonyId, number>>
+) {
+  const entries = Object.entries(harmonySet) as [HarmonyId, number][];
+  const supportsTripleHarmony =
+    characterId === character.lucy.id || characterId === character.rebecca.id;
+
+  if (!supportsTripleHarmony || entries.length < 3) return entries;
+
+  return [...entries].sort(([leftId], [rightId]) => {
+    if (leftId === harmony.Adam.id) return -1;
+    if (rightId === harmony.Adam.id) return 1;
+    return 0;
+  });
+}
+
 function createDataNoneSummary(
   characterName: string,
   localeText: CardLocaleText,
@@ -701,6 +718,13 @@ export default function Card() {
   const clearHighlightedStats = useCallback(() => {
     setHighlightedEchoSubStatIds([]);
   }, []);
+  const sortedHarmonyEntries = useMemo(
+    () => getSortedHarmonyEntries(characterId, harmonySet),
+    [characterId, harmonySet]
+  );
+  const isTripleHarmonyLayout =
+    (characterId === character.lucy.id || characterId === character.rebecca.id) &&
+    sortedHarmonyEntries.length >= 3;
 
   const openCardGuide = useCallback(() => {
     setCardGuideAutoOpenHandled(true);
@@ -1476,12 +1500,14 @@ export default function Card() {
                 );
               })}
 
-              <div className="harmony-slot">
-                {Object.entries(harmonySet).map(([id, number]) => {
-                  const harmonyId = id as HarmonyId;
-                  return (
+              <div className={`harmony-slot ${isTripleHarmonyLayout ? "triple" : ""}`}>
+                {(() => {
+                  const renderHarmonyItem = (
+                    [harmonyId, number]: [HarmonyId, number],
+                    className = ""
+                  ) => (
                     <div
-                      className="container"
+                      className={`container ${className}`.trim()}
                       key={harmonyId}
                       tabIndex={0}
                       onMouseEnter={() => handleHoverHarmony(harmonyId, number)}
@@ -1491,12 +1517,31 @@ export default function Card() {
                     >
                       <img src={`/ico/harmony/${harmonyId}.png`} />
                       <span className={`${lang}-font`}>
-                        {harmony[harmonyId][lang]}{" "}
+                        <span className="harmony-name">
+                          {harmony[harmonyId][lang]}
+                        </span>
                         <em className="num-font">[{number}]</em>
                       </span>
                     </div>
                   );
-                })}
+
+                  if (!isTripleHarmonyLayout) {
+                    return sortedHarmonyEntries.map((entry) =>
+                      renderHarmonyItem(entry)
+                    );
+                  }
+
+                  return (
+                    <>
+                      {renderHarmonyItem(sortedHarmonyEntries[0], "primary")}
+                      <div className="harmony-sub-row">
+                        {sortedHarmonyEntries
+                          .slice(1, 3)
+                          .map((entry) => renderHarmonyItem(entry))}
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
               <div className="score-slot">
