@@ -56,7 +56,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideSkillOrder: ["liberation", "skill", "forte", "outro", "basic"],
   },
   lucy: {
-    guideMainEcho: "Z05",
+    guideMainEcho: "X80",
     guideWeapons: [
       weapon.pistol.pistol007.id,
       weapon.pistol.pistol005.id,
@@ -75,7 +75,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideSkillOrder: ["liberation", "basic", "forte", "skill", "outro"],
   },
   rebecca: {
-    guideMainEcho: "Z05",
+    guideMainEcho: "X80",
     guideWeapons: [
       weapon.pistol.pistol008.id,
       weapon.pistol.pistol005.id,
