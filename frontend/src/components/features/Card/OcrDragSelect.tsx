@@ -509,8 +509,8 @@ export default function OcrDragSelect({
                 />
               <Select options={HARMONY_DROP_OPTION}
                 styles={STAT_DROP_STYLE_LARGE}
-                formatOptionLabel={(opt, meta) =>
-                  formatOptionWithImage_Smaller(opt, lang, meta)
+                formatOptionLabel={(opt) =>
+                  formatOptionWithImage_Smaller(opt, lang)
                 }
                 onChange={(opt) => {
                   if (!opt) return;
@@ -539,8 +539,8 @@ export default function OcrDragSelect({
                   </div>
                 }
                 isClearable={true}
-                formatOptionLabel={(opt, meta) =>
-                  formatOptionWithImage(opt, lang, meta)
+                formatOptionLabel={(opt) =>
+                  formatOptionWithImage(opt, lang)
                 }
                 onChange={(opt) => {
                   setTempEcho((p) => {
@@ -566,8 +566,8 @@ export default function OcrDragSelect({
                       }
                     })()}
                     styles={STAT_DROP_STYLE_LARGE}
-                    formatOptionLabel={(opt, meta) =>
-                      formatOptionWithImage_Smaller(opt, lang, meta)
+                    formatOptionLabel={(opt) =>
+                      formatOptionWithImage_Smaller(opt, lang)
                     }
                     onChange={(opt) => {
                       if (!opt) return;

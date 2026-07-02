@@ -235,55 +235,152 @@ export function createPayloadData(
   };
 }
 
-export async function requestRenderCard(payload: RenderCardPayload) {
-  const user = auth.currentUser;
+export type RenderCardResponse = {
+  blob: Blob;
+  requestId: string | null;
+  cacheStatus: string | null;
+};
 
-  if (!user) {
-    throw new Error("Login required");
+async function readApiError(response: Response) {
+  const requestId = response.headers.get("x-request-id");
+  const text = await response.text().catch(() => "");
+  const suffix = requestId ? ` (request_id: ${requestId})` : "";
+
+  if (!text) return `${response.status}${suffix}`;
+
+  try {
+    const data = JSON.parse(text) as { error?: unknown; message?: unknown };
+    const message =
+      typeof data.error === "string"
+        ? data.error
+        : typeof data.message === "string"
+          ? data.message
+          : text.slice(0, 300);
+    return `${response.status} ${message}${suffix}`;
+  } catch {
+    return `${response.status} ${text.slice(0, 300)}${suffix}`;
   }
-
-  const idToken = await user.getIdToken();
-
-  const response = await fetch(`${renderEndPoint}/api/render/card`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${idToken}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Render request failed: ${response.status}`);
-  }
-
-  return response.blob();
 }
 
-export async function getRenderCardStatus() {
+function mergeAbortSignals(a?: AbortSignal, b?: AbortSignal) {
+  if (!a) return { signal: b, cleanup: () => undefined };
+  if (!b) return { signal: a, cleanup: () => undefined };
+
+  const controller = new AbortController();
+  const cleanup = () => {
+    a.removeEventListener("abort", onAbort);
+    b.removeEventListener("abort", onAbort);
+  };
+  const onAbort = () => {
+    cleanup();
+    controller.abort();
+  };
+
+  if (a.aborted || b.aborted) {
+    controller.abort();
+    return { signal: controller.signal, cleanup: () => undefined };
+  }
+
+  a.addEventListener("abort", onAbort, { once: true });
+  b.addEventListener("abort", onAbort, { once: true });
+
+  return { signal: controller.signal, cleanup };
+}
+
+export async function requestRenderCard(
+  payload: RenderCardPayload,
+  opts?: { signal?: AbortSignal; timeoutMs?: number }
+): Promise<RenderCardResponse> {
   const user = auth.currentUser;
 
   if (!user) {
     throw new Error("Login required");
   }
 
-  const idToken = await user.getIdToken();
+  const timeoutMs = opts?.timeoutMs ?? 90_000;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  const { signal, cleanup } = mergeAbortSignals(opts?.signal, controller.signal);
 
-  const response = await fetch(`${renderEndPoint}/api/render/card/status`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-    },
-  });
+  try {
+    const idToken = await user.getIdToken();
+    const response = await fetch(`${renderEndPoint}/api/render/card`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify(payload),
+      signal,
+    });
 
-  if (!response.ok) {
-    throw new Error(`Render status request failed: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Render request failed: ${await readApiError(response)}`);
+    }
+
+    return {
+      blob: await response.blob(),
+      requestId: response.headers.get("x-request-id"),
+      cacheStatus: response.headers.get("x-cache"),
+    };
+  } catch (error) {
+    if (controller.signal.aborted && !opts?.signal?.aborted) {
+      throw new Error(
+        `Render request timed out after ${Math.round(timeoutMs / 1000)}s`
+      );
+    }
+
+    throw error;
+  } finally {
+    cleanup();
+    window.clearTimeout(timeoutId);
+  }
+}
+
+export async function getRenderCardStatus(
+  opts?: { signal?: AbortSignal; timeoutMs?: number }
+) {
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("Login required");
   }
 
-  return response.json() as Promise<{
-    status: "ready" | "lock" | "cooldown";
-    retryAfterSec: number;
-  }>;
+  const timeoutMs = opts?.timeoutMs ?? 10_000;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  const { signal, cleanup } = mergeAbortSignals(opts?.signal, controller.signal);
+
+  try {
+    const idToken = await user.getIdToken();
+    const response = await fetch(`${renderEndPoint}/api/render/card/status`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+      signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Render status request failed: ${await readApiError(response)}`);
+    }
+
+    return response.json() as Promise<{
+      status: "ready" | "lock" | "cooldown";
+      retryAfterSec: number;
+    }>;
+  } catch (error) {
+    if (controller.signal.aborted && !opts?.signal?.aborted) {
+      throw new Error(
+        `Render status request timed out after ${Math.round(timeoutMs / 1000)}s`
+      );
+    }
+
+    throw error;
+  } finally {
+    cleanup();
+    window.clearTimeout(timeoutId);
+  }
 }
 
 //! Only for Debug

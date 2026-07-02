@@ -8,11 +8,15 @@ type CacheEntry<T> = {
 
 export class MemoryCache<T> {
   private readonly store = new Map<string, CacheEntry<T>>();
+  private lastPrunedAt = 0;
+  private readonly pruneIntervalMs: number;
 
   constructor(
     private readonly ttlMs: number,
     private readonly maxEntries: number
-  ) {}
+  ) {
+    this.pruneIntervalMs = Math.max(1_000, Math.min(60_000, ttlMs / 4));
+  }
 
   get(key: string): T | undefined {
     if (this.ttlMs <= 0 || this.maxEntries <= 0) {
@@ -80,6 +84,7 @@ export class MemoryCache<T> {
 
   clear() {
     this.store.clear();
+    this.lastPrunedAt = 0;
   }
 
   getRemainingTtlMs(key: string): number {
@@ -100,12 +105,18 @@ export class MemoryCache<T> {
   }
 
   get size() {
-    this.pruneExpired();
+    this.pruneExpired(true);
     return this.store.size;
   }
 
-  private pruneExpired() {
+  private pruneExpired(force = false) {
     const now = Date.now();
+
+    if (!force && now - this.lastPrunedAt < this.pruneIntervalMs) {
+      return;
+    }
+
+    this.lastPrunedAt = now;
 
     for (const [key, entry] of this.store) {
       if (entry.expiresAt <= now) {

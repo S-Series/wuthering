@@ -1,11 +1,30 @@
 import { useEffect, useState } from "react";
-import Select from "react-select";
+import type { ReactNode } from "react";
+import Select, { type StylesConfig } from "react-select";
 
 import { locale } from "@/locales/locale";
 
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 import "@/components/_Layout/Navbar.css"
+
+type LangOption = { value: LangType; label: ReactNode };
+
+function LangLabel({ v, src, text }: { v: string; src: string; text: string; }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, filter: "drop-shadow(0px 0px 4px #444)" }}>
+      <img src={src} style={{ width: "20%", minWidth: "1.25rem"}} />
+      <span className={`${v}-font`} style={{ fontSize: "max(min(1.3vw, 1.3rem), 0.75rem)" }}>{text}</span>
+    </div>
+  );
+}
+
+const LANG_OPTION: LangOption[] = [
+  { value: "kr", label: <LangLabel v="kr" src="/flag-kr.png" text="한국어" /> },
+  { value: "en", label: <LangLabel v="en" src="/flag-en.png" text="English" /> },
+  { value: "jp", label: <LangLabel v="jp" src="/flag-jp.png" text="日本語" /> },
+  { value: "zh", label: <LangLabel v="zh" src="/flag-zh.png" text="中文" /> },
+];
 
 export default function Navbar() {
 
@@ -15,22 +34,6 @@ export default function Navbar() {
 
   const localeText = locale(lang).navbar;
   const cardLocaleText = locale(lang).card;
-
-  function LangLabel({ v, src, text }: { v: string; src: string; text: string; }) {
-    return (
-      <div style={{ display: "flex", alignItems: "center", gap: 6, filter: "drop-shadow(0px 0px 4px #444)" }}>
-        <img src={src} style={{ width: "20%", minWidth: "1.25rem"}} />
-        <span className={`${v}-font`} style={{ fontSize: "max(min(1.3vw, 1.3rem), 0.75rem)" }}>{text}</span>
-      </div>
-    );
-  }
-
-  const LANG_OPTION: {value: LangType, label: React.ReactNode}[] = [
-    { value: "kr", label: <LangLabel v="kr" src="/flag-kr.png" text="한국어" /> },
-    { value: "en", label: <LangLabel v="en" src="/flag-en.png" text="English" /> },
-    { value: "jp", label: <LangLabel v="jp" src="/flag-jp.png" text="日本語" /> },
-    { value: "zh", label: <LangLabel v="zh" src="/flag-zh.png" text="中文" /> },
-  ];
 
   const profileName = user ? user.nickname : localeText.login;
 
@@ -44,8 +47,8 @@ export default function Navbar() {
     };
   }, [isActive]);
 
-  const langSelectStyles = {
-    control: (base: any) => ({
+  const langSelectStyles: StylesConfig<LangOption, false> = {
+    control: (base) => ({
       ...base,
       width: "max(min(11.5vw, 11.5rem), 7.5rem)",
       minHeight: "2.5rem",
@@ -58,11 +61,11 @@ export default function Navbar() {
         borderColor: "#ffd764",
       },
     }),
-    singleValue: (base: any) => ({
+    singleValue: (base) => ({
       ...base,
       color: "#fff",
     }),
-    menu: (base: any) => ({
+    menu: (base) => ({
       ...base,
       overflow: "hidden",
       border: "1px solid #666",
@@ -70,11 +73,11 @@ export default function Navbar() {
       backgroundColor: "#101216",
       zIndex: 1010,
     }),
-    menuList: (base: any) => ({
+    menuList: (base) => ({
       ...base,
       padding: 0,
     }),
-    option: (base: any, state: any) => ({
+    option: (base, state) => ({
       ...base,
       color: "#fff",
       backgroundColor: state.isSelected
@@ -84,7 +87,7 @@ export default function Navbar() {
           : "#101216",
       cursor: "pointer",
     }),
-    dropdownIndicator: (base: any) => ({
+    dropdownIndicator: (base) => ({
       ...base,
       color: "#bfc2ca",
       padding: "0 min(1vw, 1rem)"
@@ -94,9 +97,9 @@ export default function Navbar() {
     }),
   };
 
-  const sidebarLangSelectStyles = {
+  const sidebarLangSelectStyles: StylesConfig<LangOption, false> = {
     ...langSelectStyles,
-    control: (base: any) => ({
+    control: (base) => ({
       ...base,
       width: "100%",
       minHeight: "2.25rem",
@@ -105,7 +108,7 @@ export default function Navbar() {
       backgroundColor: "#1b1e25",
       boxShadow: "none",
     }),
-    menu: (base: any) => ({
+    menu: (base) => ({
       ...base,
       zIndex: 1010,
     }),

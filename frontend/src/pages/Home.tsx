@@ -151,17 +151,36 @@ export default function Home() {
       setIntro(null);
       setCombat(null);
 
-      const [t, i, c] = await Promise.all([
-        fetchLatestYoutube(lang, "officialTrailer", { signal: controller.signal }),
-        fetchLatestYoutube(lang, "characterIntro", { signal: controller.signal }),
-        fetchLatestYoutube(lang, "characterTrailer", { signal: controller.signal }),
-      ]);
+      const fetchLatestOrNull = async (
+        type: "officialTrailer" | "characterIntro" | "characterTrailer",
+      ) => {
+        try {
+          return await fetchLatestYoutube(lang, type, {
+            signal: controller.signal,
+          });
+        } catch (error) {
+          if (controller.signal.aborted) throw error;
+          console.warn(`[youtube latest failed:${type}]`, error);
+          return null;
+        }
+      };
 
-      if (controller.signal.aborted) return;
+      try {
+        const [t, i, c] = await Promise.all([
+          fetchLatestOrNull("officialTrailer"),
+          fetchLatestOrNull("characterIntro"),
+          fetchLatestOrNull("characterTrailer"),
+        ]);
 
-      setTrailer(t);
-      setIntro(i);
-      setCombat(c);
+        if (controller.signal.aborted) return;
+
+        setTrailer(t);
+        setIntro(i);
+        setCombat(c);
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.warn("[youtube latest failed]", error);
+      }
     })();
 
     return () => controller.abort();

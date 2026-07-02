@@ -3,7 +3,7 @@ import { search as fuzzySearch } from "fast-fuzzy";
 import type { OcrApiResponse } from "@/api/ocr.api";
 import { FixedStats, type StatId } from "@/datas/stats";
 import type { LangType } from "@/stores/appStore";
-import { ECHO_CANDIDATES, echoDict, type EchoData, type EchoId } from "@/datas/echos";
+import { ECHO_CANDIDATES, echoDict, type EchoId } from "@/datas/echos";
 import type { Cost } from "@/components/features/Card/EchoSelect.type";
 
 const RETOUCH_LIST:Record<LangType, [RegExp, string][]> = {
@@ -148,9 +148,9 @@ export function textsToStats(texts: string[][], lang: LangType):{
         const echoId = ECHO_CANDIDATES[lang].find(item => item.text === bestEcho[0])?.echoId ?? null
         if (!echoId) return 4;
 
-        if (Object.entries(echoDict.Cost4).some(([id, _]) => id === echoId)) return 4;
-        if (Object.entries(echoDict.Cost3).some(([id, _]) => id === echoId)) return 3;
-        if (Object.entries(echoDict.Cost1).some(([id, _]) => id === echoId)) return 1;
+        if (Object.keys(echoDict.Cost4).some((id) => id === echoId)) return 4;
+        if (Object.keys(echoDict.Cost3).some((id) => id === echoId)) return 3;
+        if (Object.keys(echoDict.Cost1).some((id) => id === echoId)) return 1;
         return 4;
       }
     }
@@ -204,7 +204,7 @@ export async function checkOcrHealth(
   const controller = new AbortController();
   const timeoutMs = opts?.timeoutMs ?? 10_000;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-  const signal = mergeAbortSignals(opts?.signal, controller.signal);
+  const { signal, cleanup } = mergeAbortSignals(opts?.signal, controller.signal);
 
   try {
     const response = await fetch(`${import.meta.env.VITE_GATEWAY_URL}/health/ocr`, {
@@ -226,6 +226,7 @@ export async function checkOcrHealth(
 
     return data;
   } finally {
+    cleanup();
     window.clearTimeout(timeoutId);
   }
 }
@@ -255,7 +256,7 @@ export async function wakeOcrByLang(
   const controller = new AbortController();
   const timeoutMs = opts?.timeoutMs ?? 180_000;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-  const signal = mergeAbortSignals(opts?.signal, controller.signal);
+  const { signal, cleanup } = mergeAbortSignals(opts?.signal, controller.signal);
   const url = new URL(`${import.meta.env.VITE_GATEWAY_URL}/api/ocr/wake`);
 
   url.searchParams.set("lang", targetLang);
@@ -280,24 +281,32 @@ export async function wakeOcrByLang(
 
     return data;
   } finally {
+    cleanup();
     window.clearTimeout(timeoutId);
   }
 }
 
 function mergeAbortSignals(a?: AbortSignal, b?: AbortSignal) {
-  if (!a) return b;
-  if (!b) return a;
+  if (!a) return { signal: b, cleanup: () => undefined };
+  if (!b) return { signal: a, cleanup: () => undefined };
 
   const controller = new AbortController();
-  const onAbort = () => controller.abort();
+  const cleanup = () => {
+    a.removeEventListener("abort", onAbort);
+    b.removeEventListener("abort", onAbort);
+  };
+  const onAbort = () => {
+    cleanup();
+    controller.abort();
+  };
 
   if (a.aborted || b.aborted) {
     controller.abort();
-    return controller.signal;
+    return { signal: controller.signal, cleanup: () => undefined };
   }
 
   a.addEventListener("abort", onAbort, { once: true });
   b.addEventListener("abort", onAbort, { once: true });
 
-  return controller.signal;
+  return { signal: controller.signal, cleanup };
 }

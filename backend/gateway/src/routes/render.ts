@@ -1,11 +1,10 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import {
-  acquireRenderLock,
-  canStartRender,
   releaseRenderLock,
   startRenderCooldown,
   getRenderStatus,
   MEMBER_RENDER_COOLDOWN_MS,
+  tryAcquireRenderLock,
 } from "../services/renderCooldown.js";
 import { requestRenderUpstream } from "../services/renderUpstream.js";
 import { requireUid } from "../lib/requireAuth.js";
@@ -149,7 +148,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         .send(Buffer.from(result.buffer));
     }
 
-    const access = canStartRender(uid);
+    const access = await tryAcquireRenderLock(uid);
 
     if (!access.ok) {
       safeLogEvent({
@@ -181,7 +180,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
       });
     }
 
-    acquireRenderLock(uid);
+    const renderLockToken = access.lockToken;
 
     const upstreamRequest = requestRenderUpstream(body);
     inFlightRenderRequests.set(cacheKey, upstreamRequest);
@@ -206,7 +205,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         return reply.code(result.statusCode).send(result.body);
       }
 
-      startRenderCooldown(uid, await getRenderCooldownMs(req));
+      await startRenderCooldown(uid, await getRenderCooldownMs(req));
 
       cacheStore.renderCard.set(cacheKey, {
         contentType: result.contentType,
@@ -248,7 +247,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
         error: "render upstream request failed",
       });
     } finally {
-      releaseRenderLock(uid);
+      await releaseRenderLock(uid, renderLockToken);
 
       if (inFlightRenderRequests.get(cacheKey) === upstreamRequest) {
         inFlightRenderRequests.delete(cacheKey);
@@ -259,7 +258,7 @@ export async function registerRenderRoutes(app: FastifyInstance) {
   app.get("/api/render/card/status", async (req, reply) => {
     try {
       const uid = await requireUid(req);
-      const status = getRenderStatus(uid);
+      const status = await getRenderStatus(uid);
       return reply.send(status);
     } catch {
       return reply.status(401).send({

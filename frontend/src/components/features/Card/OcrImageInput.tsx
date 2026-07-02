@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { requestOcrByUrl } from "@/api/ocr.api";
 import {
@@ -42,6 +42,9 @@ export default function OcrImageInput({
   const { lang } = useAppStore();
   const slotRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const ocrAbortRef = useRef<AbortController | null>(null);
+  const ocrRequestIdRef = useRef(0);
+  const filePreviewUrlRef = useRef<string | null>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<
@@ -59,6 +62,7 @@ export default function OcrImageInput({
 
   const localeText = useMemo(() => locale(lang).ocr, [lang]);
   const endpointUrl = `${import.meta.env.VITE_GATEWAY_URL}/api/ocr`;
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
 
   const handleSelectIdx: React.Dispatch<React.SetStateAction<EchoIndex>> = (
     action,
@@ -70,8 +74,43 @@ export default function OcrImageInput({
     });
   };
 
+  const cancelActiveOcrRequest = useCallback(() => {
+    ocrAbortRef.current?.abort();
+    ocrAbortRef.current = null;
+    ocrRequestIdRef.current += 1;
+  }, []);
+
+  const replaceFile = useCallback((nextFile: File | null) => {
+    cancelActiveOcrRequest();
+
+    if (filePreviewUrlRef.current) {
+      URL.revokeObjectURL(filePreviewUrlRef.current);
+      filePreviewUrlRef.current = null;
+    }
+
+    const nextPreviewUrl = nextFile ? URL.createObjectURL(nextFile) : null;
+    filePreviewUrlRef.current = nextPreviewUrl;
+
+    setFile(nextFile);
+    setFilePreviewUrl(nextPreviewUrl);
+    setStatus("Idle");
+    setBoaring(false);
+    setPreview(null);
+    setDebug(null);
+    onDebugChange(null);
+
+    if (!nextFile && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [cancelActiveOcrRequest, onDebugChange]);
+
   const run = async () => {
     if (!file) return;
+
+    cancelActiveOcrRequest();
+    const controller = new AbortController();
+    ocrAbortRef.current = controller;
+    const requestId = ocrRequestIdRef.current;
 
     setStatus("Requested");
     setBoaring(false);
@@ -81,8 +120,13 @@ export default function OcrImageInput({
 
     try {
       const data = await requestOcrByUrl(endpointUrl, file, lang, {
+        signal: controller.signal,
         timeoutMs: 180_000,
       });
+      if (controller.signal.aborted || ocrRequestIdRef.current !== requestId) {
+        return;
+      }
+
       const texts = normalizeOcrTexts(data);
       const image = ocrImageBase64ToDataUrl(data.image_base64);
       const nextDebug = textsToStats(
@@ -96,21 +140,31 @@ export default function OcrImageInput({
       setBoaring(false);
       setStatus("Successed");
     } catch (error) {
+      if (controller.signal.aborted) return;
       setBoaring(false);
       setStatus("Failed");
       setDebug(null);
       onDebugChange(null);
       console.error(error);
+    } finally {
+      if (ocrRequestIdRef.current === requestId) {
+        ocrAbortRef.current = null;
+      }
     }
   };
 
   const handleResetDebug = () => {
-    setFile(null);
-    setPreview(null);
-    setDebug(null);
-    setBoaring(false);
-    onDebugChange(null);
+    replaceFile(null);
   };
+
+  useEffect(() => {
+    return () => {
+      ocrAbortRef.current?.abort();
+      if (filePreviewUrlRef.current) {
+        URL.revokeObjectURL(filePreviewUrlRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -149,22 +203,28 @@ export default function OcrImageInput({
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
 
     const checkHealth = async () => {
       setHealthy(null);
 
       try {
-        await wakeOcrByLang(lang, { timeoutMs: 180_000 });
+        await wakeOcrByLang(lang, {
+          signal: controller.signal,
+          timeoutMs: 180_000,
+        });
         if (cancelled) return;
 
-        const health = await checkOcrHealthByLang(lang);
+        const health = await checkOcrHealthByLang(lang, {
+          signal: controller.signal,
+        });
         if (cancelled) return;
 
         setHealthy(health?.ok || false);
       } catch (error) {
-        console.error(error);
         if (cancelled) return;
 
+        console.error(error);
         setHealthy(false);
       }
     };
@@ -173,6 +233,7 @@ export default function OcrImageInput({
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [lang]);
 
@@ -192,7 +253,7 @@ export default function OcrImageInput({
         `pasted-${Date.now()}.${extension}`,
         { type: blob.type },
       );
-      setFile(pastedFile);
+      replaceFile(pastedFile);
 
       if (fileInputRef.current) {
         const transfer = new DataTransfer();
@@ -205,7 +266,7 @@ export default function OcrImageInput({
 
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-  }, [isFocused]);
+  }, [isFocused, replaceFile]);
 
   useEffect(() => {
     if (status !== "Requested") return;
@@ -255,11 +316,11 @@ export default function OcrImageInput({
                   type="file"
                   accept="image/*"
                   onChange={(event) =>
-                    setFile(event.target.files?.[0] ?? null)
+                    replaceFile(event.target.files?.[0] ?? null)
                   }
                 />
                 {file ? (
-                  <img src={URL.createObjectURL(file)} alt="" />
+                  <img src={filePreviewUrl ?? ""} alt="" />
                 ) : !isFocused ? (
                   <span style={{ textDecoration: "underline" }}>
                     {localeText.description1}

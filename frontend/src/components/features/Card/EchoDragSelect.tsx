@@ -22,6 +22,7 @@ import { ECHO_CANDIDATES } from "@/datas/echos";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { setEchoDataIndexes } from "@/runtime/characterData.helpers";
 import { getEquipmentRank } from "@/types/character.type";
+import type { ScoreList } from "@/types/character.type";
 import { FixedStats, type StatId } from "@/datas/stats";
 
 type DragItem = {
@@ -32,7 +33,12 @@ type DragItem = {
   label: EchoRuntime | null;
 };
 
-const createItems = (num: number, data: EchoRuntime[] | null, scores: any, lang: LangType): DragItem[] => {
+const createItems = (
+  num: number,
+  data: EchoRuntime[] | null,
+  scores: ScoreList,
+  lang: LangType
+): DragItem[] => {
   const names = ECHO_CANDIDATES[lang];
 
   return Array.from({ length: 10 }, (_, index) => ({

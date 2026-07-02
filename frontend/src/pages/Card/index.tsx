@@ -627,6 +627,8 @@ export default function Card() {
 
   const navigate = useNavigate();
   const localeText = locale(lang).card;
+  const renderAbortRef = useRef<AbortController | null>(null);
+  const renderRequestIdRef = useRef(0);
 
   const openCharacterWeaponManager = () => {
     openOverlay(<CardCharacterSection />, {
@@ -930,12 +932,14 @@ export default function Card() {
     },
   }
 
-  const refreshRenderStatus = async () => {
+  const refreshRenderStatus = async (opts?: { signal?: AbortSignal }) => {
     try {
-      const data = await getRenderCardStatus();
+      const data = await getRenderCardStatus(opts);
+      if (opts?.signal?.aborted) return;
       setRenderStatus(data.status);
       setRetryAfterSec(data.retryAfterSec);
     } catch (e) {
+      if (opts?.signal?.aborted) return;
       console.error(e);
     }
   };
@@ -943,7 +947,10 @@ export default function Card() {
   const handlePreview = async () => {
     if (!user) {
       alert("Need to login")
+      return;
     }
+
+    if (renderStatus !== "ready" || retryAfterSec > 0) return;
 
     const testing = (user && gameProfile && characterFinalStat) ? createPayloadData(
       lang, user, gameProfile, characterData, characterFinalStat, harmonySet, equipmentScore, finalScore, statColors
@@ -951,20 +958,37 @@ export default function Card() {
 
     if (!testing) return;
 
+    renderAbortRef.current?.abort();
+    const controller = new AbortController();
+    renderAbortRef.current = controller;
+    const requestId = renderRequestIdRef.current + 1;
+    renderRequestIdRef.current = requestId;
+    setRenderStatus("lock");
+    setRetryAfterSec(60);
+
     try {
       //! Debug code 
       /// const blob = await requestRenderCardDirect(testing);
-      const blob = await requestRenderCard(testing);
-      setRenderedImage(blob);
+      const result = await requestRenderCard(testing, {
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted || renderRequestIdRef.current !== requestId) return;
+
+      setRenderedImage(result.blob);
       alert("Complete!")
     } catch (e) {
+      if (controller.signal.aborted) return;
       console.error(e);
+      alert(e instanceof Error ? e.message : "Render request failed");
     } finally {
-      await refreshRenderStatus();
+      if (renderRequestIdRef.current === requestId) {
+        renderAbortRef.current = null;
+      }
+      await refreshRenderStatus({ signal: controller.signal });
     }
   };
 
-  const handleCloudUpload = async () => {
+  const handleCloudUpload = useCallback(async () => {
     if (!user) {
       alert(localeText.cloudSyncLoginRequired);
       return;
@@ -992,9 +1016,16 @@ export default function Card() {
       },
       result.updatedAt
     );
-  };
+  }, [
+    characterData,
+    characterId,
+    cloudCharacterData.data,
+    localeText,
+    setCloudCharacterDataSnapshot,
+    user,
+  ]);
 
-  const handleCloudDownload = async (options?: { downloadAllCharacters: boolean }) => {
+  const handleCloudDownload = useCallback(async (options?: { downloadAllCharacters: boolean }) => {
     if (!user) {
       alert(localeText.cloudSyncLoginRequired);
       return;
@@ -1045,7 +1076,15 @@ export default function Card() {
       result.updatedAt
     );
     alert(localeText.cloudSyncDownloadSuccess);
-  };
+  }, [
+    characterId,
+    cloudCharacterData.data,
+    localeText,
+    replaceCharacterData,
+    replaceCharacterDataSnapshot,
+    setCloudCharacterDataSnapshot,
+    user,
+  ]);
 
   const openCloudSyncManager = useCallback(() => {
     openOverlay(
@@ -1102,17 +1141,29 @@ export default function Card() {
   const [retryAfterSec, setRetryAfterSec] = useState(0);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadStatus = async () => {
       try {
-        const data = await getRenderCardStatus();
+        const data = await getRenderCardStatus({ signal: controller.signal });
+        if (controller.signal.aborted) return;
         setRenderStatus(data.status);
         setRetryAfterSec(data.retryAfterSec);
       } catch (e) {
+        if (controller.signal.aborted) return;
         console.error(e);
       }
     };
 
-    loadStatus();
+    void loadStatus();
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      renderAbortRef.current?.abort();
+    };
   }, []);
 
   useEffect(() => {

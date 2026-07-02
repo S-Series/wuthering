@@ -1,8 +1,8 @@
 import type { RenderCardPayload } from "@/api/render.api";
 import { useAppStore } from "@/stores/appStore";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export async function requestRenderCard(payload: RenderCardPayload) {
+async function requestDebugRenderCard(payload: RenderCardPayload) {
   const response = await fetch("http://localhost:8080/render/card", {
     method: "POST",
     headers: {
@@ -20,11 +20,17 @@ export async function requestRenderCard(payload: RenderCardPayload) {
 
 export default function Debug() {
   const {lang} = useAppStore();
+  const previewUrlRef = useRef("");
   const [previewUrl, setPreviewUrl] = useState<string>("")
 
   const handleClick = async () => {
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = "";
+    }
+
     setPreviewUrl("");
-    const blob = await requestRenderCard({
+    const blob = await requestDebugRenderCard({
       base: {
         lang: lang,
       },
@@ -136,8 +142,18 @@ export default function Debug() {
     });
 
     const imageUrl = URL.createObjectURL(blob);
+    previewUrlRef.current = imageUrl;
     setPreviewUrl(imageUrl);
   };
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <button onClick={handleClick}>ASDF</button>

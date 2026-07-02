@@ -260,8 +260,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             isSearchable={false}
             placeholder={placeholders.harmony}
             styles={STAT_DROP_STYLE_LARGE}
-            formatOptionLabel={(opt, meta) =>
-              formatOptionWithImage_Smaller(opt, lang, meta)
+            formatOptionLabel={(opt) =>
+              formatOptionWithImage_Smaller(opt, lang)
             }
             value={
               HARMONY_DROP_OPTION.find(
@@ -297,8 +297,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
               </div>
             }
             styles={STAT_DROP_STYLE_LARGE}
-            formatOptionLabel={(opt, meta) =>
-              formatOptionWithImage(opt, lang, meta)
+            formatOptionLabel={(opt) =>
+              formatOptionWithImage(opt, lang)
             }
             value={
               ECHO_ID_OPTION_BASE.find(
@@ -335,8 +335,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             })()}
             placeholder={placeholders.mainStat}
             styles={STAT_DROP_STYLE_OPTION_WIDE}
-            formatOptionLabel={(opt, meta) =>
-              formatOptionWithImage_Smaller(opt, lang, meta)
+            formatOptionLabel={(opt) =>
+              formatOptionWithImage_Smaller(opt, lang)
             }
             menuPortalTarget={document.body}
             value={
@@ -391,8 +391,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                   options={STAT_OPTION_SUB}
                   placeholder={placeholders.subStat}
                   styles={STAT_DROP_STYLE_OPTION_WIDE}
-                formatOptionLabel={(opt, meta) =>
-                  formatOptionWithImage_Smaller(opt, lang, meta)
+                formatOptionLabel={(opt) =>
+                  formatOptionWithImage_Smaller(opt, lang)
                 }
                 menuPosition="fixed"
                 minMenuHeight={200}

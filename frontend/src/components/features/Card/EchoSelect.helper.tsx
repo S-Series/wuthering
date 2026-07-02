@@ -1,6 +1,6 @@
 import { echoDict } from "@/datas/echos";
 import type { SelectOptionWithImage, SelectOptionStatOriginal, SelectOriginalOption, Cost } from "./EchoSelect.type";
-import Select, { type FormatOptionLabelMeta, type StylesConfig } from "react-select";
+import { type StylesConfig } from "react-select";
 import type { LangType } from "@/stores/appStore";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import type { CharacterId } from "@/datas/characterStats";
@@ -8,11 +8,10 @@ import { FixedStats } from "@/datas/stats";
 import { harmony } from "@/datas/harmonies";
 
 export const formatOptionWithImage = <
-    T extends SelectOptionWithImage<any>
+    T extends SelectOptionWithImage
 >(
     opt: T,
-    lang: string,
-    _meta: FormatOptionLabelMeta<T>
+    lang: string
 ) => (
     <div style={{ display: "flex", alignItems: "center", gap: "min(1vw, 0.7rem)", height: "min(2.75vw, 2.75rem)" }}>
         {opt.path && (
@@ -37,11 +36,10 @@ export const formatOptionWithImage = <
 );
 
 export const formatOptionWithImage_Smaller = <
-    T extends SelectOptionWithImage<any>
+    T extends SelectOptionWithImage
 >(
     opt: T,
-    lang: string,
-    _meta: FormatOptionLabelMeta<T>
+    lang: string
 ) => (
     <div style={{ display: "flex", alignItems: "center", gap: "min(0.5vw, 0.27rem)", height: "min(2vw, 2rem)" }}>
         {opt.path && (
@@ -61,9 +59,9 @@ export const formatOptionWithImage_Smaller = <
     </div>
 );
 
-export const getStatDropStyle = (
-    baseSelectStyles: StylesConfig<any, false>,
-    slotHeight: number): StylesConfig<any, false> => ({
+export const getStatDropStyle = <Option,>(
+    baseSelectStyles: StylesConfig<Option, false>,
+    slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
         control: (base, state) => {
             const common = baseSelectStyles.control
@@ -149,9 +147,9 @@ export const getStatDropStyle = (
         },
     })
 
-export const getStatDropStyleOptionWide = (
-    baseSelectStyles: StylesConfig<any, false>,
-    slotHeight: number): StylesConfig<any, false> => ({
+export const getStatDropStyleOptionWide = <Option,>(
+    baseSelectStyles: StylesConfig<Option, false>,
+    slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
         menu: (base, state) => {
             const common = baseSelectStyles.menu
@@ -275,9 +273,9 @@ export const getStatDropStyleOptionWide = (
         },
     })
 
-export const getStatDropStyleLarge = (
-    baseSelectStyles: StylesConfig<any, false>,
-    slotHeight: number): StylesConfig<any, false> => ({
+export const getStatDropStyleLarge = <Option,>(
+    baseSelectStyles: StylesConfig<Option, false>,
+    slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
         control: (base, state) => {
             const common = baseSelectStyles.control
@@ -324,9 +322,9 @@ export const getStatDropStyleLarge = (
         },
     })
 
-export const getStatDropStyleDrag = (
-    baseSelectStyles: StylesConfig<any, false>,
-    slotHeight: number): StylesConfig<any, false> => ({
+export const getStatDropStyleDrag = <Option,>(
+    baseSelectStyles: StylesConfig<Option, false>,
+    slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
         menu: (base, state) => {
             const common = baseSelectStyles.menu

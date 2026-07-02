@@ -1,11 +1,11 @@
 import type { HarmonyId } from "@/datas/harmonies";
 
-export type SelectOption<T = any> = {
+export type SelectOption<T = unknown> = {
   value: T;
   label: string;
   isDisabled?: false;
 }
-export type SelectOriginalOption<T = any> = {
+export type SelectOriginalOption<T = unknown> = {
   value: T;
   kr: string;
   en: string;
@@ -14,14 +14,14 @@ export type SelectOriginalOption<T = any> = {
   path: string;
   harmonies?: HarmonyId[]
 }
-export type SelectOptionWithImage<T = any> = {
+export type SelectOptionWithImage<T = unknown> = {
   value: T;
   label: string;
   path: string;
   isDisabled?: false;
 }
 
-export type SelectOptionStatOriginal<T = any> = {
+export type SelectOptionStatOriginal<T = unknown> = {
   value: T;
   label: string;
   kr: string;

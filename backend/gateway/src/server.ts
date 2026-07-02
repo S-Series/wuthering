@@ -13,6 +13,7 @@ import { registerUserRoutes } from "./routes/users.js";
 import { registerCharacterDataRoutes } from "./routes/characterData.js";
 import { getClientIp } from "./lib/getClientIp.js";
 import { safeLogEvent } from "./lib/logEvent.js";
+import { getErrorMessage, isAbortError } from "./lib/errors.js";
 import { getOptionalSupabaseUserId } from "./services/supabaseUsers.js";
 
 import {
@@ -37,11 +38,32 @@ import {
   type YoutubeLatestCacheValue,
 } from "./services/cacheStore.js";
 
+type YoutubePlaylistItemsResponse = {
+  items?: Array<{
+    snippet?: {
+      resourceId?: {
+        videoId?: string;
+      };
+      title?: string;
+      thumbnails?: {
+        high?: { url?: string };
+        medium?: { url?: string };
+        default?: { url?: string };
+      };
+      publishedAt?: string;
+    };
+  }>;
+};
+
 async function main() {
   validateEnv();
 
   const app = Fastify({ logger: true });
   const limitOcr = pLimit(OCR_CONCURRENCY);
+
+  app.addHook("onRequest", async (req, reply) => {
+    reply.header("x-request-id", req.id);
+  });
 
   await app.register(multipart, {
     limits: {
@@ -170,16 +192,17 @@ async function main() {
         upstream: upstreamUrl,
         result: body,
       });
-    } catch (e: any) {
-      const msg =
-        e?.name === "AbortError" ? "upstream wake timeout" : "upstream wake failed";
+    } catch (e: unknown) {
+      const msg = isAbortError(e)
+        ? "upstream wake timeout"
+        : "upstream wake failed";
 
       return reply.code(504).send({
         ok: false,
         lang,
         upstream: upstreamUrl,
         error: msg,
-        detail: String(e?.message ?? e),
+        detail: getErrorMessage(e),
       });
     } finally {
       clearTimeout(timeoutId);
@@ -386,9 +409,10 @@ async function main() {
           signal: controller.signal,
         })
       );
-    } catch (e: any) {
-      const msg =
-        e?.name === "AbortError" ? "upstream timeout" : "upstream fetch failed";
+    } catch (e: unknown) {
+      const msg = isAbortError(e)
+        ? "upstream timeout"
+        : "upstream fetch failed";
 
       safeLogEvent({
         service: "gateway",
@@ -410,7 +434,7 @@ async function main() {
 
       return reply
         .code(504)
-        .send({ error: msg, detail: String(e?.message ?? e) });
+        .send({ error: msg, detail: getErrorMessage(e) });
     } finally {
       clearTimeout(timeoutId);
     }
@@ -526,11 +550,23 @@ async function main() {
     let ytRes: Response;
     let text = "";
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
     try {
-      ytRes = await fetch(url.toString());
+      ytRes = await fetch(url.toString(), {
+        signal: controller.signal,
+      });
       text = await ytRes.text();
-    } catch {
-      return reply.code(502).send({ error: "youtube fetch failed" });
+    } catch (error: unknown) {
+      const isTimeout = isAbortError(error);
+
+      return reply.code(isTimeout ? 504 : 502).send({
+        error: isTimeout ? "youtube fetch timeout" : "youtube fetch failed",
+        requestId: req.id,
+      });
+    } finally {
+      clearTimeout(timeoutId);
     }
 
     if (!ytRes.ok) {
@@ -543,10 +579,10 @@ async function main() {
       });
     }
 
-    let data: any;
+    let data: YoutubePlaylistItemsResponse;
 
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(text) as YoutubePlaylistItemsResponse;
     } catch {
       return reply.code(502).send({ error: "youtube invalid json" });
     }

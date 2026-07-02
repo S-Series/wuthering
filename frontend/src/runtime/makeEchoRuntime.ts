@@ -13,8 +13,7 @@ export const makeEchoRuntime = (echoId: EchoId): EchoRuntime => {
   const keys: CostKey[] = ["Cost4", "Cost3", "Cost1"];
 
   for (const k of keys) {
-    const bucket = echoDict[k] as Record<string, any> | undefined;
-    const leaf = bucket?.[echoId];
+    const leaf = echoDict[k]?.[echoId];
     if (!leaf) continue;
 
     const cost = costFromKey(k);

@@ -19,7 +19,7 @@ export async function requestOcrByUrl(
   const timeoutMs = opts?.timeoutMs ?? 60_000;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-  const signal = mergeAbortSignals(opts?.signal, controller.signal);
+  const { signal, cleanup } = mergeAbortSignals(opts?.signal, controller.signal);
 
   try {
     const formData = new FormData();
@@ -43,24 +43,32 @@ export async function requestOcrByUrl(
 
     return (await res.json()) as OcrApiResponse;
   } finally {
+    cleanup();
     window.clearTimeout(timeoutId);
   }
 }
 
 function mergeAbortSignals(a?: AbortSignal, b?: AbortSignal) {
-  if (!a) return b;
-  if (!b) return a;
+  if (!a) return { signal: b, cleanup: () => undefined };
+  if (!b) return { signal: a, cleanup: () => undefined };
 
   const controller = new AbortController();
-  const onAbort = () => controller.abort();
+  const cleanup = () => {
+    a.removeEventListener("abort", onAbort);
+    b.removeEventListener("abort", onAbort);
+  };
+  const onAbort = () => {
+    cleanup();
+    controller.abort();
+  };
 
   if (a.aborted || b.aborted) {
     controller.abort();
-    return controller.signal;
+    return { signal: controller.signal, cleanup: () => undefined };
   }
 
   a.addEventListener("abort", onAbort, { once: true });
   b.addEventListener("abort", onAbort, { once: true });
 
-  return controller.signal;
+  return { signal: controller.signal, cleanup };
 }

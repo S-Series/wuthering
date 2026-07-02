@@ -1,4 +1,5 @@
 import { RENDER_UPSTREAM } from "../config/env.js";
+import { getErrorMessage, isAbortError } from "../lib/errors.js";
 
 export type RenderUpstreamSuccess = {
   ok: true;
@@ -35,16 +36,17 @@ export async function requestRenderUpstream(
       body: JSON.stringify(body),
       signal: controller.signal,
     });
-  } catch (e: any) {
-    const msg =
-      e?.name === "AbortError" ? "upstream timeout" : "upstream fetch failed";
+  } catch (e: unknown) {
+    const msg = isAbortError(e)
+      ? "upstream timeout"
+      : "upstream fetch failed";
 
     return {
       ok: false,
       statusCode: 504,
       body: {
         error: msg,
-        detail: String(e?.message ?? e),
+        detail: getErrorMessage(e),
       },
     };
   } finally {

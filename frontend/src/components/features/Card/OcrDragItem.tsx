@@ -11,8 +11,11 @@ type SortableItemProps = {
   item: EchoStatOption;
   itemId: number;
   displayIndex: number;
-  styles: [StylesConfig<any, false>, StylesConfig<any, false>];
-  options: [SelectOptionStatOriginal[], SelectOpt[]];
+  styles: [
+    StylesConfig<SelectOptionStatOriginal<StatId>, false>,
+    StylesConfig<SelectOpt, false>,
+  ];
+  options: [SelectOptionStatOriginal<StatId>[], SelectOpt[]];
   onSelectChange: React.Dispatch<React.SetStateAction<EchoRuntimeWith7Subs>>;
 };
 
@@ -69,7 +72,7 @@ export function OcrDragItem({
           <Select
             styles={styles[0]}
             options={options[0]}
-            onChange={(opt: SingleValue<SelectOptionStatOriginal>) => {
+            onChange={(opt: SingleValue<SelectOptionStatOriginal<StatId>>) => {
               if (!opt) return;
 
               onSelectChange((prev) => {
@@ -104,7 +107,7 @@ export function OcrDragItem({
           <Select
             styles={styles[1]}
             options={options[1]}
-            onChange={(opt: SingleValue<SelectOptionStatOriginal>) => {
+            onChange={(opt: SingleValue<SelectOpt>) => {
               if (!opt) return;
 
               onSelectChange((prev) => {
