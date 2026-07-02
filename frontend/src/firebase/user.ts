@@ -1,7 +1,6 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
-import { db} from "./firebase";
-import { auth } from "./firebase";
+import { requireAuth, requireDb } from "./firebase";
 import { characterStat, type CharacterId } from "@/datas/characterStats";
 import { type GameProfile } from "@/firebase/firebase"
 
@@ -44,6 +43,7 @@ export function normalizeGameProfile(raw: unknown, uid: string): GameProfile {
 }
 
 export async function getGameProfile(uid: string): Promise<GameProfile> {
+  const db = requireDb();
   const ref = doc(db, "gameProfiles", uid);
   const snap = await getDoc(ref);
 
@@ -55,6 +55,8 @@ export async function getGameProfile(uid: string): Promise<GameProfile> {
 }
 
 export async function saveUserNickname(uid: string, nickname: string) {
+  const auth = requireAuth();
+
   if (auth.currentUser?.uid !== uid) {
     throw new Error("Current Firebase user does not match requested uid");
   }
@@ -67,6 +69,7 @@ export async function saveGameProfile(
   uid: string,
   next: Partial<Omit<GameProfile, "uid">>
 ): Promise<GameProfile> {
+  const db = requireDb();
   const ref = doc(db, "gameProfiles", uid);
   const prev = await getGameProfile(uid);
 

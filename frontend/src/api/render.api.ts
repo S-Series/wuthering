@@ -291,7 +291,7 @@ export async function requestRenderCard(
   payload: RenderCardPayload,
   opts?: { signal?: AbortSignal; timeoutMs?: number }
 ): Promise<RenderCardResponse> {
-  const user = auth.currentUser;
+  const user = auth?.currentUser ?? null;
 
   if (!user) {
     throw new Error("Login required");
@@ -340,7 +340,7 @@ export async function requestRenderCard(
 export async function getRenderCardStatus(
   opts?: { signal?: AbortSignal; timeoutMs?: number }
 ) {
-  const user = auth.currentUser;
+  const user = auth?.currentUser ?? null;
 
   if (!user) {
     throw new Error("Login required");

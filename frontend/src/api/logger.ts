@@ -1,4 +1,4 @@
-import { getAuth } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
 
 type ClientEventName =
   | "page_view"
@@ -29,8 +29,7 @@ export async function logClientEvent(input: LogClientEventInput) {
   }
 
   try {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const user = auth?.currentUser ?? null;
     const idToken = user ? await user.getIdToken() : null;
 
     await fetch(`${gatewayUrl}/api/client-event`, {

@@ -38,7 +38,7 @@ export async function uploadCharacterCloudData(
     };
   }
 
-  const user = auth.currentUser;
+  const user = auth?.currentUser ?? null;
 
   if (!user) {
     return {
@@ -103,7 +103,7 @@ export async function downloadCharacterCloudData(
     };
   }
 
-  const user = auth.currentUser;
+  const user = auth?.currentUser ?? null;
 
   if (!user) {
     return {

@@ -259,6 +259,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     set({ isLoading: true });
 
+    if (!auth) {
+      clearAuthCache();
+      set({
+        user: null,
+        gameProfile: null,
+        cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA,
+        isLoading: false,
+      });
+      return;
+    }
+
     authUnsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       const seq = ++authHydrationSeq;
 

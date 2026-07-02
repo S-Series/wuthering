@@ -26,7 +26,7 @@ export async function requestOcrByUrl(
     formData.append("file", file);
     formData.append("lang", lang);
 
-    const user = auth.currentUser;
+    const user = auth?.currentUser ?? null;
     const idToken = user ? await user.getIdToken() : null;
 
     const res = await fetch(endpointUrl, {
