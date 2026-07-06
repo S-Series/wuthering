@@ -71,6 +71,40 @@
   scrollbar-width: none;
 }
 
+body {
+  --app-bg: #08090c;
+  --app-text: #f5f8ff;
+  --nav-bg: #08090cf2;
+  --nav-panel-bg: #101216f5;
+  --nav-control-bg: #1b1e25;
+  --nav-hover-bg: #2d313a;
+  --nav-accent-bg: #55461f;
+  --nav-border: #666;
+  --nav-border-muted: #555;
+  --nav-accent: #ffd764;
+  --nav-text: #fff;
+  --nav-muted-text: #bfc2ca;
+  --nav-shadow: #00000061;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+}
+
+body[data-theme="light"] {
+  --app-bg: #eef2f7;
+  --app-text: #111827;
+  --nav-bg: #f8fafcf2;
+  --nav-panel-bg: #f3f6faf5;
+  --nav-control-bg: #ffffff;
+  --nav-hover-bg: #e6ebf2;
+  --nav-accent-bg: #fff0bf;
+  --nav-border: #aab3c0;
+  --nav-border-muted: #9aa4b2;
+  --nav-accent: #b88a00;
+  --nav-text: #111827;
+  --nav-muted-text: #546172;
+  --nav-shadow: #8290a533;
+}
+
 html,
 body,
 #root {

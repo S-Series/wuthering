@@ -1,21 +1,25 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useLayoutEffect } from "react";
 import type { ReactNode } from "react";
 
 // ===============================================
 
 export type LangType = "kr" | "en" | "jp" | "zh";
+export type ThemeType = "dark" | "light";
 export type LocaleText = Record<LangType, string>;
 
 const CARD_GUIDE_DISMISSED_STORAGE_KEY =
     "wuthering.cardGuide.dismissed";
 const CARD_GUIDE_AUTO_OPEN_HANDLED_SESSION_KEY =
     "wuthering.cardGuide.autoOpenHandled";
+const APP_THEME_STORAGE_KEY = "wuthering.theme";
 
 export interface AppStore {
     imgVer: number;
     isAppStorageReady: boolean;
     lang: LangType;
     setLang: (v: LangType) => void;
+    theme: ThemeType;
+    toggleTheme: () => void;
 
     characterId: string | null;
     setCharacterId: (v: string | null) => void;
@@ -30,6 +34,10 @@ export interface AppStore {
 
 export function isLangType(v: string | null): v is LangType {
   return v === "kr" || v === "en" || v === "jp" || v === "zh";
+}
+
+function isThemeType(v: string | null): v is ThemeType {
+  return v === "dark" || v === "light";
 }
 
 // ===============================================
@@ -55,6 +63,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     });
     const [characterId, setCharacterId] = useState<string | null>(() => {
         return localStorage.getItem("LastCharacter");
+    });
+    const [theme, setTheme] = useState<ThemeType>(() => {
+        const saved = localStorage.getItem(APP_THEME_STORAGE_KEY);
+        if (isThemeType(saved)) return saved;
+
+        return "dark";
     });
     const [cardGuideDismissed, setCardGuideDismissed] = useState(false);
     const [cardGuideAutoOpenHandled, setCardGuideAutoOpenHandled] =
@@ -85,6 +99,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } else { localStorage.removeItem("LastCharacter"); }
     }, [characterId])
 
+    useLayoutEffect(() => {
+        document.body.dataset.theme = theme;
+        localStorage.setItem(APP_THEME_STORAGE_KEY, theme);
+    }, [theme]);
+
     const saveCardGuideDismissed = (value: boolean) => {
         setCardGuideDismissed(value);
         localStorage.setItem(CARD_GUIDE_DISMISSED_STORAGE_KEY, String(value));
@@ -98,11 +117,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
         );
     };
 
+    const toggleTheme = () => {
+        setTheme((current) => (current === "dark" ? "light" : "dark"));
+    };
+
     const value: AppStore = {
         imgVer,
         isAppStorageReady,
         lang,
         setLang,
+        theme,
+        toggleTheme,
         characterId,
         setCharacterId,
         cardGuideDismissed,

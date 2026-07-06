@@ -35,6 +35,40 @@ export const characterStat = {
   },
   */
 
+    // == 3.4 ======================================= //
+  suisui: {
+    baseHp: 12238,
+    baseAtk: 375,
+    baseDef: 1198,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  yangyang_2: {
+    baseHp: 11600,
+    baseAtk: 400,
+    baseDef: 1173,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+
   // == 3.4 ======================================= //
   lucilla: {
     baseHp: 12238,

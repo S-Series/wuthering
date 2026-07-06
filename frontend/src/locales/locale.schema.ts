@@ -88,6 +88,7 @@ export type LocaleSchema = {
     cloudSyncUploadConfirmMessage: string;
     cloudSyncDownloadConfirmMessage: string;
     cloudSyncDownloadAllCharacters: string;
+    cloudSyncUploadAllCharacters: string;
     cloudSyncIrreversibleWarning: string;
     cloudSyncExecute: string;
     cloudSyncExecuting: string;

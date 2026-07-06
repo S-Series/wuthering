@@ -45,6 +45,27 @@ FixedStats.atkPct.id],
     
   },*/
 
+    //*== ver 3.5 ===========================//
+  suisui: {
+    ...baseMeta,
+    harmonySets: [harmony.Snowfall.id, harmony.Clouds.id],
+    cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
+    resReq: 100,
+    subResReq: 0,
+  },
+  yangyang_2: {
+    ...baseMeta,
+    harmonySets: [
+      harmony.Adam.id,
+      harmony.Thunder.id,
+      harmony.Memories.id,
+      harmony.Tunes.id,
+    ],
+    cost3MainStats: [FixedStats.electroBns.id, FixedStats.atkPct.id],
+    resReq: 125,
+    subResReq: 25,
+  },
+
   //*== ver 3.4 ===========================//
   lucilla: {
     ...baseMeta,
@@ -86,7 +107,7 @@ FixedStats.atkPct.id],
     ...baseMeta,
     harmonySets: [harmony.Foam.id, harmony.Memories.id],
     cost3MainStats: [FixedStats.fusionBns.id, FixedStats.atkPct.id],
-    resReq: 130,
+    resReq: 125,
     subResReq: 30,
   },
   hiyuki: {

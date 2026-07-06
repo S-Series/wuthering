@@ -90,6 +90,7 @@ export const zh = {
     cloudSyncUploadConfirmMessage: "要将当前本地角色数据保存到云端吗？",
     cloudSyncDownloadConfirmMessage: "要下载云端数据并替换当前本地角色数据吗？",
     cloudSyncDownloadAllCharacters: "下载所有角色数据",
+    cloudSyncUploadAllCharacters: "上传所有角色数据",
     cloudSyncIrreversibleWarning: "此操作无法撤销。",
     cloudSyncExecute: "执行",
     cloudSyncExecuting: "执行中",

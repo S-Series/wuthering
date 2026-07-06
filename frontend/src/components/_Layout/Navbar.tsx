@@ -28,7 +28,7 @@ const LANG_OPTION: LangOption[] = [
 
 export default function Navbar() {
 
-  const { lang, setLang } = useAppStore();
+  const { lang, setLang, theme, toggleTheme } = useAppStore();
   const { user } = useAuthStore();
   const [isActive, setIsActive] = useState(false);
 
@@ -38,6 +38,8 @@ export default function Navbar() {
   const profileName = user ? user.nickname : localeText.login;
 
   const profileImage = user?.imageUrl ?? "/default.webp";
+  const themeLabel = theme === "dark" ? "Light" : "Dark";
+  const themeIcon = theme === "dark" ? "☀" : "☾";
 
   useEffect(() => {
     document.body.classList.toggle("navbar-sidebar-active", isActive);
@@ -52,25 +54,25 @@ export default function Navbar() {
       ...base,
       width: "max(min(11.5vw, 11.5rem), 7.5rem)",
       minHeight: "2.5rem",
-      borderColor: "#555",
+      borderColor: "var(--nav-border-muted)",
       borderRadius: 0,
-      backgroundColor: "#1b1e25",
+      backgroundColor: "var(--nav-control-bg)",
       boxShadow: "none",
       cursor: "pointer",
       ":hover": {
-        borderColor: "#ffd764",
+        borderColor: "var(--nav-accent)",
       },
     }),
     singleValue: (base) => ({
       ...base,
-      color: "#fff",
+      color: "var(--nav-text)",
     }),
     menu: (base) => ({
       ...base,
       overflow: "hidden",
-      border: "1px solid #666",
+      border: "1px solid var(--nav-border)",
       borderRadius: 0,
-      backgroundColor: "#101216",
+      backgroundColor: "var(--nav-panel-bg)",
       zIndex: 1010,
     }),
     menuList: (base) => ({
@@ -79,17 +81,17 @@ export default function Navbar() {
     }),
     option: (base, state) => ({
       ...base,
-      color: "#fff",
+      color: "var(--nav-text)",
       backgroundColor: state.isSelected
-        ? "#55461f"
+        ? "var(--nav-accent-bg)"
         : state.isFocused
-          ? "#2d313a"
-          : "#101216",
+          ? "var(--nav-hover-bg)"
+          : "var(--nav-panel-bg)",
       cursor: "pointer",
     }),
     dropdownIndicator: (base) => ({
       ...base,
-      color: "#bfc2ca",
+      color: "var(--nav-muted-text)",
       padding: "0 min(1vw, 1rem)"
     }),
     indicatorSeparator: () => ({
@@ -103,9 +105,9 @@ export default function Navbar() {
       ...base,
       width: "100%",
       minHeight: "2.25rem",
-      borderColor: "#555",
+      borderColor: "var(--nav-border-muted)",
       borderRadius: 0,
-      backgroundColor: "#1b1e25",
+      backgroundColor: "var(--nav-control-bg)",
       boxShadow: "none",
     }),
     menu: (base) => ({
@@ -146,6 +148,16 @@ export default function Navbar() {
             onChange={(opt) => {
               if (opt) setLang(opt.value);
             }} />
+          <button
+            className="navbar-theme-toggle"
+            type="button"
+            aria-label={`Switch to ${themeLabel} mode`}
+            title={`${themeLabel} mode`}
+            onClick={toggleTheme}
+          >
+            <span aria-hidden="true">{themeIcon}</span>
+            <p className="en-font">{themeLabel}</p>
+          </button>
           <a href="/characters">
             <img className="navbar-icon"
               alt="characters"
@@ -196,6 +208,14 @@ export default function Navbar() {
         </div>
 
         <nav className="sidebar-link-slot">
+          <button
+            type="button"
+            className="sidebar-theme-toggle-slot"
+            onClick={toggleTheme}
+          >
+            <span aria-hidden="true" className="navbar-theme-icon">{themeIcon}</span>
+            <p className="en-font">{themeLabel} mode</p>
+          </button>
           <a
             href="/characters"
             onClick={() => setIsActive(false)}

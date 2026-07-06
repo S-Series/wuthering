@@ -382,36 +382,240 @@
 
 /* Target stats */
 .card-detail-body .content-area .stat-area {
+  display: grid;
+  grid-template-rows: 1.45rem minmax(0, 1fr) minmax(4.2rem, 31%);
   background: #15181ee8;
+  gap: 2%;
 }
 
-.card-detail-body .stat-area .stat-info {
+.card-detail-body .content-area .stat-area > span {
+  min-height: 0;
+  flex: initial;
+  margin-bottom: 0;
+}
+
+.card-detail-body .stat-area .target-option-list {
   display: flex;
   min-height: 0;
-  flex: 1;
+  height: 100%;
   flex-direction: column;
-  gap: 2.5%;
-  padding: 3%;
+  gap: 3%;
+  padding: 2.5%;
+  justify-content: space-between;
   border: 1px solid #666;
-  background: #0d0f13;
+  background:
+    linear-gradient(155deg, rgba(35, 68, 96, 0.42), rgba(10, 13, 19, 0.92)),
+    #0d0f13;
   box-sizing: border-box;
 }
 
-.card-detail-body .stat-area .stat-info.extra {
-  flex: 0 0 auto;
-  margin-top: 3%;
-  border-color: #d2af4a;
+.card-detail-body .stat-area .target-option-row {
+  display: grid;
+  min-height: 0;
+  flex: 0 0 19%;
+  grid-template-columns: 1rem minmax(0, 1fr) auto auto;
+  gap: 4%;
+  align-items: center;
+  padding: 0 4%;
+  overflow: hidden;
+  border: 1px solid rgba(143, 143, 143, 0.55);
+  background: rgba(27, 30, 37, 0.82);
+  box-sizing: border-box;
+}
+
+.card-detail-body .stat-area .resonance-penalty-row {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  flex-direction: column;
+  gap: 0;
+  justify-content: center;
+  padding: 3% 4%;
+  margin-top: 0;
+  overflow: hidden;
+  border: 1px solid #d2af4a;
   background: #272417;
+  box-sizing: border-box;
 }
 
-.card-detail-body .stat-area .stat-slot {
-  flex: 1;
-  min-height: 1.35rem;
+.card-detail-body .stat-area .resonance-penalty-item {
+  display: flex;
+  min-height: 0;
+  flex: 0 0 33.333%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4%;
+  overflow: hidden;
 }
 
-.card-detail-body .stat-area .stat-slot > span {
+.card-detail-body .stat-area .resonance-penalty-item > span {
+  min-width: 0;
+  overflow: hidden;
+  color: #fff;
+  font-size: min(0.66vw, 0.66rem);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-detail-body .stat-area .resonance-penalty-item > em {
+  color: #ffd764;
+  font-size: min(0.66vw, 0.66rem);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.card-detail-body .stat-area .target-option-row.passed {
+  border-color: rgba(126, 217, 255, 0.72);
+  background: rgba(28, 61, 79, 0.72);
+}
+
+.card-detail-body .stat-area .target-option-row.pending {
+  border-color: rgba(255, 215, 100, 0.62);
+}
+
+.card-detail-body .stat-area .target-option-row > img {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
+}
+
+.card-detail-body .stat-area .target-option-name {
+  min-width: 0;
+  overflow: hidden;
   color: #fff;
   font-size: min(0.8vw, 0.8rem);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-detail-body .stat-area .target-option-value {
+  color: #ffd764;
+  font-size: min(0.72vw, 0.72rem);
+  white-space: nowrap;
+}
+
+.card-detail-body .stat-area .target-option-status {
+  min-width: 2.15rem;
+  color: #bfc2ca;
+  font-size: min(0.68vw, 0.68rem);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.card-detail-body .stat-area .target-option-row.passed .target-option-status {
+  color: #7ed9ff;
+}
+
+.card-detail-body .stat-area .target-option-row.pending .target-option-status {
+  color: #ffd764;
+}
+
+body[data-theme="light"] .card-detail-body {
+  border-color: #aab5c5;
+  background: rgba(247, 250, 255, 0.9);
+  box-shadow: 0 0.375rem 1rem rgba(74, 92, 119, 0.18);
+  color: #172033;
+}
+
+body[data-theme="light"] .card-detail-body .title-area,
+body[data-theme="light"] .card-detail-body .content-area .inner-slot > span {
+  border-color: #b6c0cf;
+  background: rgba(226, 234, 247, 0.88);
+}
+
+body[data-theme="light"] .card-detail-body .title-area > img,
+body[data-theme="light"] .card-detail-body .party-character-image-slot,
+body[data-theme="light"] .card-detail-body .detail-echo-image-slot,
+body[data-theme="light"] .card-detail-body .weapon-image-slot > img,
+body[data-theme="light"] .card-detail-body .detail-area .party-slot > img {
+  border-color: #aab5c5;
+  background: rgba(238, 243, 251, 0.86);
+}
+
+body[data-theme="light"] .card-detail-body .title-area > span,
+body[data-theme="light"] .card-detail-body .stat-list-slot > span,
+body[data-theme="light"] .card-detail-body .stat-area .target-option-value,
+body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-item > em {
+  color: #9a7100;
+}
+
+body[data-theme="light"] .card-detail-body .content-area .inner-slot > span,
+body[data-theme="light"] .card-detail-body .echo-data-field > span,
+body[data-theme="light"] .card-detail-body .stat-area .target-option-name,
+body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-item > span {
+  color: #172033;
+}
+
+body[data-theme="light"] .card-detail-body .party-detail-item > span,
+body[data-theme="light"] .card-detail-body .skill-slot .container span,
+body[data-theme="light"] .card-detail-body .harmony-slot > span,
+body[data-theme="light"] .card-detail-body .stat-slot > span,
+body[data-theme="light"] .card-detail-body .stat-area .target-option-status {
+  color: #4a5870;
+}
+
+body[data-theme="light"] .card-detail-body .divider,
+body[data-theme="light"] .card-detail-body .party-detail-item.has-divider {
+  border-color: #c7d0dd;
+  background: #c7d0dd;
+}
+
+body[data-theme="light"] .card-detail-body .skill-slot .container,
+body[data-theme="light"] .card-detail-body .harmony-slot,
+body[data-theme="light"] .card-detail-body .stat-slot {
+  border-color: #c7d0dd;
+  background: transparent;
+}
+
+body[data-theme="light"] .card-detail-body .party-detail-item,
+body[data-theme="light"] .card-detail-body .party-detail-spacer {
+  background: transparent;
+}
+
+body[data-theme="light"] .card-detail-body .skill-slot .container img,
+body[data-theme="light"] .card-detail-body .stat-slot > img,
+body[data-theme="light"] .card-detail-body .stat-area .target-option-row > img {
+  filter: brightness(0.5);
+}
+
+body[data-theme="light"] .card-detail-body .content-area .stat-area {
+  background: rgba(226, 234, 247, 0.76);
+}
+
+body[data-theme="light"] .card-detail-body .stat-area .target-option-list {
+  border-color: #aab5c5;
+  background:
+    linear-gradient(155deg, rgba(227, 235, 248, 0.62), rgba(247, 250, 255, 0.94)),
+    #f7faff;
+}
+
+body[data-theme="light"] .card-detail-body .stat-area .target-option-row {
+  border-color: #c7d0dd;
+  background: rgba(238, 243, 251, 0.88);
+}
+
+body[data-theme="light"] .card-detail-body .stat-area .target-option-row.passed {
+  border-color: rgba(43, 126, 158, 0.48);
+  background: rgba(209, 233, 244, 0.72);
+}
+
+body[data-theme="light"] .card-detail-body .stat-area .target-option-row.pending,
+body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-row {
+  border-color: rgba(184, 138, 0, 0.56);
+}
+
+body[data-theme="light"] .card-detail-body .stat-area .target-option-row.passed .target-option-status {
+  color: #247897;
+}
+
+body[data-theme="light"] .card-detail-body .stat-area .target-option-row.pending .target-option-status {
+  color: #9a7100;
+}
+
+body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-row {
+  background: #fff8de;
 }
 
 @media (max-width: 64rem) {
@@ -442,15 +646,6 @@
 
   .card-detail-body .content-area > .stat-area {
     min-height: 16.5rem;
-  }
-
-  .card-detail-body .stat-area .stat-info {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .card-detail-body .stat-area .stat-info.extra {
-    display: flex;
   }
 
   .card-detail-body .content-area .inner-slot > span {

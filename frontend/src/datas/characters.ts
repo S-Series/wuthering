@@ -70,32 +70,34 @@ export const character: Record<CharacterId, Character> = {
   },*/
 
   //*== ver 3.5 ===========================//
-  /* yangyang_secondary: {
-    en: "",
-    kr: "",
-    jp: "",
-    zh: "",
-    hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
-    version: 3.1,
-    isElite: true,
-    region: ,
-  },
   suisui: {
+    id: "suisui",
     en: "",
-    kr: "",
+    kr: "수수",
     jp: "",
     zh: "",
     hasSkin: false,
-    weapon: ,
-    element: ,
-    type: ,
-    version: 3.1,
+    weapon: "rectifier",
+    element: "glacio",
+    type: "heal",
+    version: 3.5,
     isElite: true,
-    region: ,
-  },*/
+    region: "Huanglong",
+  },
+  yangyang_2: {
+    id: "yangyang_2",
+    en: "",
+    kr: "양양 현령",
+    jp: "",
+    zh: "",
+    hasSkin: false,
+    weapon: "sword",
+    element: "havoc",
+    type: "heavy",
+    version: 3.5,
+    isElite: true,
+    region: "Huanglong",
+  },
   
   //*== ver 3.4 ===========================//
   lucilla: {

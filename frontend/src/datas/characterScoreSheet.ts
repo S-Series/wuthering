@@ -28,6 +28,14 @@ const BaseSheet: Partial<CharacterScore> = {
 };
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
+  suisui: {
+    ...BaseSheet,
+    maxResCount: 0,
+  },
+  yangyang_2: {
+    ...BaseSheet,
+    maxResCount: 0,
+  },
   lucilla: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,

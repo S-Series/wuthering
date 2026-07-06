@@ -1023,6 +1023,107 @@
     pointer-events: none;
 }
 
+body[data-theme="light"].page-card {
+    background-color: #eef3fb;
+    background-image:
+        linear-gradient(180deg, rgba(246, 249, 255, 0.9), rgba(222, 231, 244, 0.84)),
+        url("/cardBg.jpg");
+    background-blend-mode: normal, screen;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-size: cover, cover;
+}
+
+body[data-theme="light"].page-card::before {
+    opacity: 0.08;
+    mix-blend-mode: screen;
+}
+
+body[data-theme="light"] .card-management-bar {
+    border-color: #aab5c5;
+    background:
+        linear-gradient(90deg, rgba(246, 249, 255, 0.86), rgba(227, 235, 248, 0.68), rgba(246, 249, 255, 0.86)),
+        url("/bg.jpg") center 42% / cover;
+    box-shadow: 0 0.375rem 1rem rgba(74, 92, 119, 0.18);
+}
+
+body[data-theme="light"] .card-management-bar > button {
+    border-color: #aab5c5;
+    background: rgba(247, 250, 255, 0.88);
+    color: #172033;
+}
+
+body[data-theme="light"] .card-management-bar > button:hover {
+    border-color: #b88a00;
+    background: #fff0bf;
+    color: #5f4600;
+}
+
+body[data-theme="light"] .card-management-bar > button:disabled,
+body[data-theme="light"] .card-management-bar > button:disabled:hover {
+    border-color: #c3cad5;
+    background: rgba(232, 237, 246, 0.72);
+    color: #8b96a8;
+}
+
+body[data-theme="light"] .card-page-button {
+    border-color: #aab5c5;
+    background: linear-gradient(0deg, #dce5f3, #f7faff, #dce5f3);
+    color: #172033;
+    box-shadow: 0 0.2rem 0.65rem rgba(74, 92, 119, 0.14);
+}
+
+body[data-theme="light"] .card-page-button:hover {
+    border-color: #b88a00;
+    background: linear-gradient(0deg, #fff0bf, #fff9e6, #fff0bf);
+    color: #5f4600;
+}
+
+body[data-theme="light"] .card-page-button:disabled,
+body[data-theme="light"] .card-page-button:disabled:hover {
+    color: #8b96a8;
+    background: linear-gradient(0deg, #d9dee8, #eef3fb, #d9dee8);
+}
+
+body[data-theme="light"] .card-page-button.active::after {
+    opacity: 0.28;
+}
+
+body[data-theme="light"] .card-guide-panel {
+    border-color: rgba(184, 138, 0, 0.72);
+    background:
+        linear-gradient(180deg, rgba(248, 251, 255, 0.98), rgba(229, 237, 249, 0.98)),
+        rgba(247, 250, 255, 0.98);
+    color: #172033;
+    box-shadow: 0 0.5rem 1.25rem rgba(74, 92, 119, 0.22);
+}
+
+body[data-theme="light"] .card-guide-progress > span,
+body[data-theme="light"] .card-guide-panel h2 {
+    color: #172033;
+}
+
+body[data-theme="light"] .card-guide-progress > a,
+body[data-theme="light"] .card-guide-panel p,
+body[data-theme="light"] .card-guide-dismiss-option {
+    color: #4a5870;
+}
+
+body[data-theme="light"] .card-guide-progress > a:hover {
+    color: #9a7100;
+}
+
+body[data-theme="light"] .card-guide-actions > a {
+    border-color: #aab5c5;
+    background: rgba(247, 250, 255, 0.9);
+    color: #172033;
+}
+
+body[data-theme="light"] .card-guide-actions > a:hover:not(.disabled) {
+    border-color: #b88a00;
+    color: #9a7100;
+}
+
 @media (max-width: 48.75rem) {
     #card-page-slot {
         width: 100%;

@@ -90,6 +90,7 @@ export const en = {
     cloudSyncUploadConfirmMessage: "Save the current local character data to the cloud?",
     cloudSyncDownloadConfirmMessage: "Download cloud data and replace the current local character data?",
     cloudSyncDownloadAllCharacters: "Download all character data",
+    cloudSyncUploadAllCharacters: "Upload all character data",
     cloudSyncIrreversibleWarning: "This action cannot be undone.",
     cloudSyncExecute: "Run",
     cloudSyncExecuting: "Running",

@@ -512,6 +512,109 @@
     justify-content: space-evenly;
 }
 
+body[data-theme="light"].page-home {
+    background-color: #eef3fb;
+    background-image:
+        linear-gradient(180deg, rgba(246, 249, 255, 0.9), rgba(222, 231, 244, 0.86)),
+        url("/cardBg.jpg");
+    background-blend-mode: normal, screen;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    background-size: cover, cover;
+}
+
+body[data-theme="light"] .home-slot {
+    color: #172033;
+}
+
+body[data-theme="light"] .banner-slot {
+    border-color: #aab5c5;
+    background:
+        linear-gradient(90deg, rgba(246, 249, 255, 0.86), rgba(227, 235, 248, 0.68), rgba(246, 249, 255, 0.86)),
+        url("/bg.jpg") center 42% / cover;
+    box-shadow: 0 8px 22px rgba(74, 92, 119, 0.2);
+}
+
+body[data-theme="light"] .banner-slot h1 {
+    color: #172033;
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9);
+}
+
+body[data-theme="light"] .summary-item,
+body[data-theme="light"] .display-slot,
+body[data-theme="light"] .info-slot {
+    border-color: #aab5c5;
+    background: rgba(247, 250, 255, 0.9);
+    box-shadow: 0 8px 24px rgba(74, 92, 119, 0.18);
+}
+
+body[data-theme="light"] .summary-item h2,
+body[data-theme="light"] .display-slot h2 {
+    color: #172033;
+    border-bottom-color: #b6c0cf;
+    background: rgba(226, 234, 247, 0.88);
+}
+
+body[data-theme="light"] .notice-slot li {
+    border-bottom-color: #c7d0dd;
+    color: #253047;
+}
+
+body[data-theme="light"] .notice-item:hover {
+    color: #9a7100;
+}
+
+body[data-theme="light"] .notice-item time {
+    color: #627086;
+}
+
+body[data-theme="light"] .notice-slot > button,
+body[data-theme="light"] .video-button-slot button {
+    border-color: #aab5c5;
+    background-color: #eef3fb;
+    color: #172033;
+}
+
+body[data-theme="light"] .notice-slot > button:hover,
+body[data-theme="light"] .video-button-slot button:hover {
+    border-color: #b88a00;
+    background-color: #fff0bf;
+}
+
+body[data-theme="light"] .video-main-item {
+    color: #172033;
+}
+
+body[data-theme="light"] .video-main-item img {
+    border-color: #aab5c5;
+}
+
+body[data-theme="light"] .video-main-item span {
+    color: #253047;
+}
+
+body[data-theme="light"] .game-info-slot {
+    color: #4a5870;
+}
+
+body[data-theme="light"] .game-info-slot > .inner-slot {
+    border-color: #aab5c5;
+}
+
+body[data-theme="light"] .game-info-slot > .inner-slot::after {
+    background: linear-gradient(90deg, rgba(246, 249, 255, 0.18) 0%, rgba(238, 243, 251, 0.48) 42%, rgba(238, 243, 251, 0.88) 74%);
+}
+
+body[data-theme="light"] .game-info-slot > .inner-slot > span,
+body[data-theme="light"] .game-info-slot > .inner-slot > span.title {
+    color: #172033;
+    filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.7));
+}
+
+body[data-theme="light"] .game-info-slot > .inner-slot > span > em {
+    color: #9a7100;
+}
+
 @media (max-width: 1180px) {
     .summary-slot {
         grid-template-columns: repeat(2, minmax(0, 1fr));

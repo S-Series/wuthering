@@ -258,6 +258,103 @@
     cursor: not-allowed;
 }
 
+body[data-theme="light"] .cloud-sync-panel {
+    color: #172033;
+}
+
+body[data-theme="light"] .cloud-sync-caption {
+    color: #4b6078;
+}
+
+body[data-theme="light"] .cloud-sync-membership-notice {
+    border-color: rgba(188, 141, 0, 0.42);
+    background: rgba(255, 244, 189, 0.72);
+    color: #6f5100;
+}
+
+body[data-theme="light"] .cloud-sync-data-card {
+    border-color: rgba(64, 103, 145, 0.42);
+    background: rgba(238, 246, 255, 0.82);
+}
+
+body[data-theme="light"] .cloud-sync-data-card > span,
+body[data-theme="light"] .cloud-sync-data-rows > p > span {
+    color: #8a6200;
+}
+
+body[data-theme="light"] .cloud-sync-data-card > b,
+body[data-theme="light"] .cloud-sync-data-rows > p,
+body[data-theme="light"] .cloud-sync-data-rows > p > strong {
+    color: #172033;
+}
+
+body[data-theme="light"] .cloud-sync-action {
+    border-color: rgba(64, 103, 145, 0.52);
+    background: linear-gradient(180deg, rgba(240, 247, 255, 0.96), rgba(215, 229, 245, 0.96));
+    color: #172033;
+}
+
+body[data-theme="light"] .cloud-sync-action span {
+    color: #4b6078;
+}
+
+body[data-theme="light"] .cloud-sync-action:hover,
+body[data-theme="light"] .cloud-sync-action:focus-visible {
+    border-color: #bc8d00;
+    background: #fff4bd;
+    color: #6f5100;
+}
+
+body[data-theme="light"] .cloud-sync-action:disabled {
+    border-color: rgba(119, 132, 148, 0.42);
+    background: rgba(221, 229, 239, 0.72);
+    color: #7a8696;
+}
+
+body[data-theme="light"] .cloud-sync-action:disabled span {
+    color: #7a8696;
+}
+
+body[data-theme="light"] .cloud-sync-confirm,
+body[data-theme="light"] .cloud-sync-confirm p {
+    color: #172033;
+}
+
+body[data-theme="light"] .cloud-sync-confirm > strong {
+    color: #8a6200;
+}
+
+body[data-theme="light"] .cloud-sync-confirm__option {
+    color: #2f3f55;
+}
+
+body[data-theme="light"] .cloud-sync-confirm__option:has(input:disabled) {
+    color: #7a8696;
+}
+
+body[data-theme="light"] .cloud-sync-confirm__actions button {
+    border-color: rgba(64, 103, 145, 0.5);
+    background: rgba(240, 247, 255, 0.96);
+    color: #172033;
+}
+
+body[data-theme="light"] .cloud-sync-confirm__actions button.confirm {
+    border-color: #bc8d00;
+}
+
+body[data-theme="light"] .cloud-sync-confirm__actions button:hover:not(:disabled),
+body[data-theme="light"] .cloud-sync-confirm__actions button:focus-visible:not(:disabled) {
+    border-color: #bc8d00;
+    background: #fff4bd;
+    color: #6f5100;
+}
+
+body[data-theme="light"] .cloud-sync-confirm__actions button:disabled {
+    border-color: rgba(119, 132, 148, 0.42);
+    background: rgba(221, 229, 239, 0.72);
+    color: #7a8696;
+}
+
 @media (max-width: 34rem) {
     .cloud-sync-actions,
     .cloud-sync-data-grid {

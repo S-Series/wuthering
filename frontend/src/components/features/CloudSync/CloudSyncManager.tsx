@@ -37,6 +37,10 @@ type CloudSyncDataSummary = {
 };
 
 type CloudSyncAction = "upload" | "download";
+type CloudSyncConfirmOptions = {
+  downloadAllCharacters: boolean;
+  uploadAllCharacters: boolean;
+};
 
 const CLOUD_SYNC_DATE_LOCALE: Record<LangType, string> = {
   kr: "ko-KR",
@@ -278,8 +282,11 @@ function CloudSyncConfirmDialog({
   message,
   localeText,
   showDownloadAllOption = false,
+  showUploadAllOption = false,
   initialDownloadAllCharacters = false,
+  initialUploadAllCharacters = false,
   lockDownloadAllOption = false,
+  lockUploadAllOption = false,
   onConfirm,
   onCancel,
   onComplete,
@@ -288,9 +295,12 @@ function CloudSyncConfirmDialog({
   message: string;
   localeText: CardLocaleText;
   showDownloadAllOption?: boolean;
+  showUploadAllOption?: boolean;
   initialDownloadAllCharacters?: boolean;
+  initialUploadAllCharacters?: boolean;
   lockDownloadAllOption?: boolean;
-  onConfirm: (options?: { downloadAllCharacters: boolean }) => Promise<void>;
+  lockUploadAllOption?: boolean;
+  onConfirm: (options?: CloudSyncConfirmOptions) => Promise<void>;
   onCancel: () => void;
   onComplete: () => void;
   onRunningChange: (isRunning: boolean) => void;
@@ -299,13 +309,16 @@ function CloudSyncConfirmDialog({
   const [downloadAllCharacters, setDownloadAllCharacters] = useState(
     initialDownloadAllCharacters
   );
+  const [uploadAllCharacters, setUploadAllCharacters] = useState(
+    initialUploadAllCharacters
+  );
 
   const execute = async () => {
     setIsRunning(true);
     onRunningChange(true);
 
     try {
-      await onConfirm({ downloadAllCharacters });
+      await onConfirm({ downloadAllCharacters, uploadAllCharacters });
     } finally {
       onRunningChange(false);
       setIsRunning(false);
@@ -329,6 +342,19 @@ function CloudSyncConfirmDialog({
             }
           />
           <span>{localeText.cloudSyncDownloadAllCharacters}</span>
+        </label>
+      ) : null}
+      {showUploadAllOption ? (
+        <label className="cloud-sync-confirm__option">
+          <input
+            type="checkbox"
+            checked={uploadAllCharacters}
+            disabled={isRunning || lockUploadAllOption}
+            onChange={(event) =>
+              setUploadAllCharacters(event.currentTarget.checked)
+            }
+          />
+          <span>{localeText.cloudSyncUploadAllCharacters}</span>
         </label>
       ) : null}
       <strong>{localeText.cloudSyncIrreversibleWarning}</strong>
@@ -377,8 +403,8 @@ function CloudSyncPanel({
     force?: boolean;
     characterId?: CharacterId;
   }) => Promise<void>;
-  onUpload: () => Promise<void>;
-  onDownload: (options?: { downloadAllCharacters: boolean }) => Promise<void>;
+  onUpload: (options?: CloudSyncConfirmOptions) => Promise<void>;
+  onDownload: (options?: CloudSyncConfirmOptions) => Promise<void>;
 }) {
   const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
   const { closeOverlay } = useOverlay();
@@ -442,8 +468,11 @@ function CloudSyncPanel({
         }
         localeText={localeText}
         showDownloadAllOption={!isUpload}
+        showUploadAllOption={isUpload}
         initialDownloadAllCharacters={isAllCharactersMode}
+        initialUploadAllCharacters={isAllCharactersMode}
         lockDownloadAllOption={isAllCharactersMode}
+        lockUploadAllOption={isAllCharactersMode}
         onConfirm={isUpload ? onUpload : onDownload}
         onCancel={closeElevatedOverlay}
         onComplete={closeOverlay}
@@ -579,18 +608,23 @@ export default function CloudSyncManager() {
     selectedCharacterId,
   ]);
 
-  const handleCloudUpload = useCallback(async () => {
+  const handleCloudUpload = useCallback(async (options?: CloudSyncConfirmOptions) => {
     if (!user) {
       alert(localeText.cloudSyncLoginRequired);
       return;
     }
 
-    const data = selectedCharacterId ? characterData : readCharacterDataSnapshot();
+    const uploadAllCharacters =
+      !selectedCharacterId || options?.uploadAllCharacters === true;
+    const data = uploadAllCharacters ? readCharacterDataSnapshot() : characterData;
 
     let result;
 
     try {
-      result = await uploadCharacterCloudData(data, selectedCharacterId);
+      result = await uploadCharacterCloudData(
+        data,
+        uploadAllCharacters ? undefined : selectedCharacterId
+      );
     } catch {
       alert(localeText.cloudSyncRequestFailed);
       return;
@@ -603,8 +637,8 @@ export default function CloudSyncManager() {
 
     alert(localeText.cloudSyncSuccess);
 
-    if (!selectedCharacterId) {
-      setCloudCharacterDataSnapshot(readCharacterDataSnapshot(), result.updatedAt);
+    if (uploadAllCharacters) {
+      setCloudCharacterDataSnapshot(data, result.updatedAt);
       return;
     }
 

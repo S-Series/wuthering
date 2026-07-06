@@ -29,19 +29,70 @@ import { useAppStore } from "@/stores/appStore";
 type OrderByOption = "score" | "version";
 type SortDirection = "asc" | "desc";
 const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
+const CHARACTERS_FILTER_STORAGE_KEY = "wuthering.characters.filters";
+
+interface StoredCharactersFilters {
+  orderBy: OrderByOption;
+  sortDirections: Record<OrderByOption, SortDirection>;
+  configuredOnly: boolean;
+}
+
+function isOrderByOption(value: unknown): value is OrderByOption {
+  return value === "score" || value === "version";
+}
+
+function isSortDirection(value: unknown): value is SortDirection {
+  return value === "asc" || value === "desc";
+}
+
+function loadStoredCharactersFilters(): StoredCharactersFilters {
+  const fallback: StoredCharactersFilters = {
+    orderBy: "version",
+    sortDirections: {
+      score: "asc",
+      version: "desc",
+    },
+    configuredOnly: false,
+  };
+
+  const raw = localStorage.getItem(CHARACTERS_FILTER_STORAGE_KEY);
+  if (!raw) return fallback;
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<StoredCharactersFilters>;
+    const scoreDirection = parsed.sortDirections?.score;
+    const versionDirection = parsed.sortDirections?.version;
+
+    return {
+      orderBy: isOrderByOption(parsed.orderBy) ? parsed.orderBy : fallback.orderBy,
+      sortDirections: {
+        score: isSortDirection(scoreDirection)
+          ? scoreDirection
+          : fallback.sortDirections.score,
+        version: isSortDirection(versionDirection)
+          ? versionDirection
+          : fallback.sortDirections.version,
+      },
+      configuredOnly:
+        typeof parsed.configuredOnly === "boolean"
+          ? parsed.configuredOnly
+          : fallback.configuredOnly,
+    };
+  } catch {
+    return fallback;
+  }
+}
 
 export default function Characters() {
   const { lang } = useAppStore();
   const localeText = locale(lang).characters;
+  const initialFilters = useMemo(() => loadStoredCharactersFilters(), []);
 
-  const [orderBy, setOrderBy] = useState<OrderByOption>("version");
+  const [orderBy, setOrderBy] = useState<OrderByOption>(initialFilters.orderBy);
   const [sortDirections, setSortDirections] = useState<
     Record<OrderByOption, SortDirection>
-  >({
-    score: "asc",
-    version: "desc",
-  });
-  const [configuredOnly, setConfiguredOnly] = useState(false);
+  >(initialFilters.sortDirections);
+  const [configuredOnly, setConfiguredOnly] = useState(initialFilters.configuredOnly);
   const [searchQuery, setSearchQuery] = useState("");
   const [weaponFilters, setWeaponFilters] = useState<WeaponType[]>([]);
   const [elementFilters, setElementFilters] = useState<ElementType[]>([]);
@@ -63,6 +114,16 @@ export default function Characters() {
       );
     };
   }, []);
+
+  useEffect(() => {
+    const payload: StoredCharactersFilters = {
+      orderBy,
+      sortDirections,
+      configuredOnly,
+    };
+
+    localStorage.setItem(CHARACTERS_FILTER_STORAGE_KEY, JSON.stringify(payload));
+  }, [configuredOnly, orderBy, sortDirections]);
 
   const toggleFilter = <T extends string>(
     value: T,

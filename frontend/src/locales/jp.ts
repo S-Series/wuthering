@@ -90,6 +90,7 @@ export const jp = {
     cloudSyncUploadConfirmMessage: "現在のローカルキャラクターデータをクラウドに保存しますか？",
     cloudSyncDownloadConfirmMessage: "クラウドデータをダウンロードして現在のローカルキャラクターデータを置き換えますか？",
     cloudSyncDownloadAllCharacters: "すべてのキャラクターデータをダウンロード",
+    cloudSyncUploadAllCharacters: "すべてのキャラクターデータをアップロード",
     cloudSyncIrreversibleWarning: "この操作は元に戻せません。",
     cloudSyncExecute: "実行",
     cloudSyncExecuting: "実行中",

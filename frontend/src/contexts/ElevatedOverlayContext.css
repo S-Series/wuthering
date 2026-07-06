@@ -112,6 +112,47 @@
     background: #55461f;
 }
 
+body[data-theme="light"] .elevated-overlay-backdrop {
+    background: rgba(211, 223, 241, 0.76);
+}
+
+body[data-theme="light"] .elevated-overlay-panel {
+    border-color: #aab5c5;
+    background: rgba(247, 250, 255, 0.96);
+    color: #172033;
+    box-shadow: 0 14px 40px rgba(74, 92, 119, 0.28);
+}
+
+body[data-theme="light"] .elevated-overlay-header {
+    color: #172033;
+    border-bottom-color: #c7d0dd;
+    background: rgba(226, 234, 247, 0.92);
+}
+
+body[data-theme="light"] .elevated-overlay-header-text {
+    color: #9a7100;
+}
+
+body[data-theme="light"] .elevated-overlay-body {
+    scrollbar-color: #9aa4b2 #eef3fb;
+}
+
+body[data-theme="light"] .elevated-overlay-close-btn {
+    border-color: #aab5c5;
+    background: #eef3fb;
+}
+
+body[data-theme="light"] .elevated-overlay-close-btn::before,
+body[data-theme="light"] .elevated-overlay-close-btn::after {
+    background: #253047;
+}
+
+body[data-theme="light"] .elevated-overlay-close-btn:hover,
+body[data-theme="light"] .elevated-overlay-close-btn:focus-visible {
+    border-color: #b88a00;
+    background: #fff0bf;
+}
+
 @keyframes elevatedOverlayFadeIn {
     from {
         opacity: 0;

@@ -32,16 +32,19 @@ body {
   background-position: center;
   background-attachment: fixed;
   
-  color: #f4f7ff;
-  background-color: #101216;
+  color: var(--app-text);
+  background-color: var(--app-bg);
 }
 
-body.page-home {
+body.page-home,
+body.page-characters,
+body.page-card,
+body.page-profile {
   background-image: url("/cardBg.jpg");
-}
-
-body.page-characters {
-  background-image: url("/cardBg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 /*body.page-characters::before {
@@ -59,10 +62,6 @@ body.page-characters {
     background-position: center;
 }*/
 
-body.page-card {
-  background-image: url("/cardBg.jpg");
-}
-
 body.page-card::before {
     content: "";
     position: fixed;
@@ -78,9 +77,6 @@ body.page-card::before {
     background-position: center;
 }
 
-body.page-profile {
-  background-image: url("/cardBg.jpg");
-}
 @media (max-width: 780px) {
   #main-container {
     width: 100vw;

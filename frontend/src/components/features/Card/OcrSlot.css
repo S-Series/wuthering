@@ -324,6 +324,49 @@
 	background-color: #666;
 }
 
+body[data-theme="light"] .ocr-image-card > span,
+body[data-theme="light"] .ocr-image-input-bottom > span,
+body[data-theme="light"] .ocr-comp-body .ocr-slot span {
+	color: #253047;
+	filter: none;
+}
+
+body[data-theme="light"] .ocr-image-card > .file-slot,
+body[data-theme="light"] .ocr-comp-body .ocr-slot .file-slot {
+	border-color: #9aa4b2;
+	background: rgba(247, 250, 255, 0.72);
+}
+
+body[data-theme="light"] .ocr-image-card--preview > .file-slot {
+	border-color: #aab5c5;
+}
+
+body[data-theme="light"] .ocr-image-card > .file-slot.focused,
+body[data-theme="light"] .ocr-comp-body .ocr-slot .file-slot.focused {
+	border-color: #b88a00;
+	background: #fff8de;
+}
+
+body[data-theme="light"] .ocr-image-card .ocr-button,
+body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button {
+	border-color: #aab5c5;
+	background: #eef3fb;
+	color: #172033;
+}
+
+body[data-theme="light"] .ocr-image-card .ocr-button:hover,
+body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:hover {
+	border-color: #b88a00;
+	background: #fff0bf;
+	color: #5f4600;
+}
+
+body[data-theme="light"] .ocr-image-card .ocr-button:disabled:hover,
+body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:disabled:hover {
+	color: #172033;
+	background: #eef3fb;
+}
+
 .ocr-comp-body .ocr-slot .ocr-loading-slot,
 .ocr-image-card .ocr-loading-slot {
 	display: flex;

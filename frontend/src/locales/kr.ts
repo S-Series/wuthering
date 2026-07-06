@@ -90,6 +90,7 @@ export const kr = {
     cloudSyncUploadConfirmMessage: "현재 로컬 캐릭터 데이터를 클라우드 데이터로 저장할까요?",
     cloudSyncDownloadConfirmMessage: "클라우드 데이터를 내려받아 현재 로컬 캐릭터 데이터를 교체할까요?",
     cloudSyncDownloadAllCharacters: "모든 캐릭터 데이터 내려받기",
+    cloudSyncUploadAllCharacters: "모든 캐릭터 데이터 업로드",
     cloudSyncIrreversibleWarning: "이 작업은 되돌릴 수 없습니다.",
     cloudSyncExecute: "실행",
     cloudSyncExecuting: "실행 중",

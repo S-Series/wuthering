@@ -315,6 +315,81 @@
     opacity: 0.25;
 }
 
+body[data-theme="light"] .ocr-drag-select__target-buttons button {
+    border-color: #aab5c5;
+    background: rgba(247, 250, 255, 0.9);
+    color: #253047;
+}
+
+body[data-theme="light"] .ocr-drag-select__target-buttons button.active,
+body[data-theme="light"] .ocr-drag-select__target-buttons button:hover,
+body[data-theme="light"] .ocr-drag-select__target-buttons button:focus-visible {
+    border-color: #b88a00;
+    color: #5f4600;
+    background: #fff0bf;
+}
+
+body[data-theme="light"] .ocr-target-preview-card {
+    border-color: rgba(43, 126, 158, 0.48);
+    background:
+        linear-gradient(180deg, rgba(224, 240, 248, 0.82), rgba(247, 250, 255, 0.94)),
+        rgba(255, 255, 255, 0.84);
+}
+
+body[data-theme="light"] .ocr-target-preview-card__header {
+    border-bottom-color: rgba(170, 181, 197, 0.78);
+}
+
+body[data-theme="light"] .ocr-target-preview-card__header span {
+    color: #9a7100;
+}
+
+body[data-theme="light"] .ocr-target-preview-card__hero .echo {
+    border-color: rgba(170, 181, 197, 0.78);
+    background: rgba(238, 243, 251, 0.78);
+}
+
+body[data-theme="light"] .ocr-target-preview-card__stats,
+body[data-theme="light"] .ocr-target-preview-card__score {
+    border-top-color: rgba(170, 181, 197, 0.78);
+}
+
+body[data-theme="light"] .ocr-target-preview-stat span,
+body[data-theme="light"] .ocr-target-preview-card__score span {
+    color: #172033;
+}
+
+body[data-theme="light"] .ocr-target-preview-stat img {
+    filter: brightness(0.5);
+}
+
+body[data-theme="light"] .ocr-drag-item {
+    border-color: #aab5c5;
+    background-color: rgba(247, 250, 255, 0.78);
+}
+
+body[data-theme="light"] .ocr-drag-item.selected {
+    border-color: #b88a00;
+    filter: drop-shadow(0 2px 4px rgba(184, 138, 0, 0.28));
+}
+
+body[data-theme="light"] .ocr-drag-item .ocr-drag-item__handle {
+    color: #6b778a;
+}
+
+body[data-theme="light"] .ocr-drag-select__apply-button {
+    border-color: #aab5c5;
+    background: #eef3fb;
+    color: #172033;
+}
+
+body[data-theme="light"] .ocr-drag-select__apply-button:hover,
+body[data-theme="light"] .ocr-drag-select__apply-button:focus-visible {
+    color: #5f4600;
+    border-color: #b88a00;
+    background: #fff0bf;
+}
+
 @media (max-width: 780px) {
     .ocr-drag-select__list {
         grid-template-columns: 28% 34% minmax(0, 38%);
