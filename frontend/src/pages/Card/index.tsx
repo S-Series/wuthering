@@ -916,6 +916,46 @@ export default function Card() {
 
   const dropStyle: StylesConfig<SelectOption, false> = {
     ...baseSelectStyles,
+    container: (base) => ({
+      ...base,
+      width: "100%",
+      minWidth: "2.35rem",
+      height: "100%",
+      minHeight: "1.35rem",
+    }),
+    control: (base, state) => {
+      const common = baseSelectStyles.control
+        ? baseSelectStyles.control(base, state)
+        : base;
+
+      return {
+        ...common,
+        width: "100%",
+        minWidth: "2.35rem",
+        minHeight: "1.35rem",
+        height: "100%",
+        fontSize: "0.78rem",
+      };
+    },
+    valueContainer: (base, state) => {
+      const common = baseSelectStyles.valueContainer
+        ? baseSelectStyles.valueContainer(base, state)
+        : base;
+
+      return {
+        ...common,
+        minWidth: 0,
+        padding: "0 0.25rem",
+      };
+    },
+    indicatorsContainer: (base) => ({
+      ...base,
+      height: "100%",
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      padding: "0 0.18rem",
+    }),
     menu: (base, state) => {
       const common = baseSelectStyles.menu
         ? baseSelectStyles.menu(base, state)

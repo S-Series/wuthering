@@ -338,7 +338,7 @@ export default function CardDetail({ cData }: Props) {
           </div>
         </div>
 
-        <div className="inner-slot equipment-area">
+        <div className="inner-slot weapon-area">
           <span className={`${lang}-font`}>{localeText.sections.weapon}</span>
 
           <div className="weapon-image-slot">
@@ -355,7 +355,9 @@ export default function CardDetail({ cData }: Props) {
               );
             })}
           </div>
+        </div>
 
+        <div className="inner-slot echo-area">
           <span className={`${lang}-font`}>{localeText.sections.echo}</span>
 
           <div className="echo-recommend-slot">

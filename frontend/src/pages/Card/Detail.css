@@ -55,6 +55,7 @@
   grid-template-columns:
     minmax(0, 1.45fr)
     minmax(0, 1.05fr)
+    minmax(0, 1.05fr)
     minmax(0, 0.72fr)
     minmax(0, 0.72fr)
     minmax(0, 1.1fr);
@@ -250,10 +251,6 @@
 .card-detail-body .weapon-image-slot > img.sub {
   width: 25%;
   border-color: #7951a8;
-}
-
-.card-detail-body .equipment-area > span:nth-of-type(2) {
-  margin-top: 2.5%;
 }
 
 .card-detail-body .echo-recommend-slot {
@@ -630,8 +627,9 @@ body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-row {
   }
 
   .card-detail-body .detail-area,
-  .card-detail-body .equipment-area {
-    grid-column: span 3;
+  .card-detail-body .weapon-area,
+  .card-detail-body .echo-area {
+    grid-column: span 2;
   }
 
   .card-detail-body .option-area,
@@ -689,11 +687,15 @@ body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-row {
 
 @media (max-width: 42rem) {
   .card-detail-body .content-area {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .card-detail-body .detail-area,
-  .card-detail-body .equipment-area,
+  .card-detail-body .weapon-area,
+  .card-detail-body .echo-area {
+    grid-column: span 1;
+  }
+
   .card-detail-body .option-area,
   .card-detail-body .stat-area {
     grid-column: 1 / -1;

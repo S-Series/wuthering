@@ -24,12 +24,14 @@ function BreakthroughButtons({
   count,
   label,
   prefix,
+  start = 0,
   value,
   onChange,
 }: {
   count: number;
   label: string;
   prefix: string;
+  start?: number;
   value: number;
   onChange: (value: number) => void;
 }) {
@@ -37,17 +39,21 @@ function BreakthroughButtons({
     <div className="card-character-select__breakthrough-group">
       <span>{label}</span>
       <div className="card-character-select__breakthrough-buttons">
-        {Array.from({ length: count + 1 }, (_, index) => (
+        {Array.from({ length: count - start + 1 }, (_, index) => {
+          const optionValue = start + index;
+
+          return (
           <button
-            key={`${prefix}-${index}`}
+            key={`${prefix}-${optionValue}`}
             type="button"
-            className={value === index ? "active" : ""}
-            onClick={() => onChange(index)}
+            className={value === optionValue ? "active" : ""}
+            onClick={() => onChange(optionValue)}
           >
             {prefix}
-            {index}
+            {optionValue}
           </button>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -228,7 +234,8 @@ export default function CardCharacterSection() {
             count={5}
             label="무기 돌파"
             prefix="R"
-            value={characterData.constell[1]}
+            start={1}
+            value={Math.max(1, characterData.constell[1])}
             onChange={(value) =>
               patchCharacterData(patchConstell(characterData, false, value))
             }

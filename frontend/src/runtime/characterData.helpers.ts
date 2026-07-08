@@ -45,7 +45,7 @@ export const patchConstell = (
 ): Partial<CharacterData> => {
   const next: CharacterData["constell"] = [data.constell[0], data.constell[1]];
 
-  next[isMain ? 0 : 1] = value;
+  next[isMain ? 0 : 1] = isMain ? value : Math.max(1, value);
 
   return { constell: next };
 };
@@ -236,7 +236,8 @@ export const calcFinalStat = (
   equipmentStats[`${characterData.type}Bns`] += C_baseStat.typeBns[1];
 
   equipmentStats[W_baseStat.statType[0]] += W_baseStat.value[0];
-  equipmentStats[W_baseStat.statType[1]] += W_baseStat.value[1];
+  equipmentStats[W_baseStat.statType[1]] +=
+    W_baseStat.value[1] * (1 + (Math.max(1, data.constell[1]) - 1) * 0.25);
   
   // Should i remove magic number 5?
   for (let i = 0; i < 5; i++) {

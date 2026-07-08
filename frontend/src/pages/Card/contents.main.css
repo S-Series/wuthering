@@ -389,13 +389,16 @@
     left: calc(-10% - 1px);
     bottom: -10%;
     width: calc(50% - 3px);
-    height: auto;
+    min-width: min(4.1vw, 4rem);
+    min-height: min(1.45vw, 1.5rem);
+    height: min(2vw, 2rem);
     aspect-ratio: 4 / 1;
     z-index: 500;
     align-items: center;
     justify-content: center;
     transform: scale(0.5);
     border: 1px solid #fff;
+    box-sizing: border-box;
 }
 
 .main-item-slot.weapon .weapon-info-img img {
