@@ -33,7 +33,7 @@ export type characterGuide = {
 
 export const characterGuideData: Record<CharacterId, characterGuide> = {
   suisui: {
-    guideMainEcho: "H01",
+    guideMainEcho: "R71",
     guideWeapons: [
       weapon.rectifier.rectifier011.id,
       weapon.rectifier.rectifier102.id,
@@ -55,7 +55,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideSkillOrder: ["liberation", "skill", "forte", "outro", "basic"],
   },
   xuanling: {
-    guideMainEcho: "H01",
+    guideMainEcho: "N91",
     guideWeapons: [weapon.sword.sword011.id, weapon.sword.sword001.id],
     guideParties: [],
     guideSkillOrder: ["liberation", "forte", "skill", "basic", "outro"],
