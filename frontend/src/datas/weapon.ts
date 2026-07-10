@@ -15,6 +15,14 @@ export interface Weapon {
 export const weapon = {
   sword: { //* 직검
     //$ 5-Starts
+    sword011: { //* 양양:현령
+			id: "sword011",
+      en: "Azure Oath",
+      kr: "아득히 푸른 하늘",
+      jp: "天つ蒼淵",
+      zh: "天之苍苍",
+      imgKey: "ico011",
+    },
     sword001: {
 			id: "sword001",
       en: "Emerald of Genesis",
@@ -568,6 +576,14 @@ export const weapon = {
   },
   rectifier: { //* 증폭기
     //$ 5-Starts
+    rectifier011:{ //* 수수
+			id: "rectifier011",
+      en: "Firstlight's Herald",
+      kr: "노을에 깃든 이슬",
+      jp: "夕霞の飲露",
+      zh: "栖霞饮露",
+      imgKey: "ico011",
+    },
     rectifier001:{
 			id: "rectifier001",
       en: "Cosmic Ripples",

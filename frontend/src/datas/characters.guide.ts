@@ -35,22 +35,30 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
   suisui: {
     guideMainEcho: "H01",
     guideWeapons: [
-
+      weapon.rectifier.rectifier011.id,
+      weapon.rectifier.rectifier102.id,
     ],
     guideParties: [
-
+      {
+        nameKey: "fusionAnomaly",
+        characters: [character.aemeath.id, character.denia.id],
+      },
+      {
+        nameKey: "glacioAnomaly",
+        characters: [character.hiyuki.id, character.lucilla.id],
+      },
+      {
+        nameKey: "aeroAnomaly",
+        characters: [character.cartethyia.id, character.chiaccona.id],
+      },
     ],
     guideSkillOrder: ["liberation", "skill", "forte", "outro", "basic"],
   },
-  yangyang_2: {
+  xuanling: {
     guideMainEcho: "H01",
-    guideWeapons: [
-
-    ],
-    guideParties: [
-
-    ],
-    guideSkillOrder: ["liberation", "basic", "forte", "skill", "outro"],
+    guideWeapons: [weapon.sword.sword011.id, weapon.sword.sword001.id],
+    guideParties: [],
+    guideSkillOrder: ["liberation", "forte", "skill", "basic", "outro"],
   },
   lucilla: {
     guideMainEcho: "Z06",

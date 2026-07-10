@@ -84,12 +84,12 @@ export const character: Record<CharacterId, Character> = {
     isElite: true,
     region: "Huanglong",
   },
-  yangyang_2: {
-    id: "yangyang_2",
-    en: "",
-    kr: "양양 현령",
-    jp: "",
-    zh: "",
+  xuanling: {
+    id: "xuanling",
+    en: "Yangyang: Xuanling",
+    kr: "양양 · 현령",
+    jp: "秧秧・玄翎",
+    zh: "秧秧·玄翎",
     hasSkin: false,
     weapon: "sword",
     element: "havoc",

@@ -45,23 +45,25 @@ FixedStats.atkPct.id],
     
   },*/
 
-    //*== ver 3.5 ===========================//
+  //*== ver 3.5 ===========================//
   suisui: {
     ...baseMeta,
-    harmonySets: [harmony.Snowfall.id, harmony.Clouds.id],
-    cost3MainStats: [FixedStats.glacioBns.id, FixedStats.atkPct.id],
-    resReq: 100,
-    subResReq: 0,
-  },
-  yangyang_2: {
-    ...baseMeta,
-    harmonySets: [
-      harmony.Adam.id,
-      harmony.Thunder.id,
-      harmony.Memories.id,
-      harmony.Tunes.id,
+    harmonySets: [harmony.Song.id],
+    cost4MainStats: [
+      FixedStats.healBns.id,
+      FixedStats.hpPct.id,
+      FixedStats.critDmg.id,
     ],
-    cost3MainStats: [FixedStats.electroBns.id, FixedStats.atkPct.id],
+    cost3MainStats: [FixedStats.resonanceBns.id, FixedStats.hpPct.id],
+    statType: "hp",
+    isNeedCrit: false,
+    resReq: 260,
+    subResReq: 50,
+  },
+  xuanling: {
+    ...baseMeta,
+    harmonySets: [harmony.Song.id],
+    cost3MainStats: [FixedStats.havocBns.id, FixedStats.atkPct.id],
     resReq: 125,
     subResReq: 25,
   },

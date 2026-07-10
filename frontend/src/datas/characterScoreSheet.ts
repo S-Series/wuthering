@@ -32,8 +32,10 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     ...BaseSheet,
     maxResCount: 0,
   },
-  yangyang_2: {
+  xuanling: {
     ...BaseSheet,
+    [FixedStats.atkPct.id]: 1.5,
+    [FixedStats.heavyBns.id]: 1.5,
     maxResCount: 0,
   },
   lucilla: {

@@ -46,6 +46,76 @@ export const harmony = {
   */
 
   //#region Ver3.0 Echos
+  Song: {
+    id: "Song",
+    en: "Song of Feathered Trace",
+    kr: "내려앉은 깃털의 노래",
+    jp: "羽舞う塵世の歌",
+    zh: "羽落空尘之歌",
+    option: [
+      {
+        count: 2,
+        options: [
+          { statId: FixedStats.resonanceBns.id, value: 10.0 },
+        ],
+      },
+      {
+        count: 5,
+        options: [
+          { statId: FixedStats.critRate.id, value: 20.0 },
+          { statId: FixedStats.heavyBns.id, value: 35.0 },
+        ],
+      },
+    ],
+    colorCode: "#",
+  },
+  Heart: {
+    id: "Heart",
+    en: "Heart of Evil's Purge",
+    kr: "악을 씻어내는 마음",
+    jp: "煞を祓う浄心",
+    zh: "清邪荡煞之心",
+    option: [
+      {
+        count: 2,
+        options: [
+          { statId: FixedStats.resonanceBns.id, value: 10.0 },
+        ],
+      },
+      {
+        count: 5,
+        options: [
+          { statId: FixedStats.critRate.id, value: 20.0 },
+          { statId: FixedStats.aeroBns.id, value: 30.0 },
+        ],
+      },
+    ],
+    colorCode: "#",
+  },
+  Lamp: {
+    id: "Lamp",
+    en: "Lamp of Nether Road",
+    kr: "황천길을 밝히는 등불",
+    jp: "冥夜を導く灯",
+    zh: "冥途夜行之灯",
+    option: [
+      {
+        count: 2,
+        options: [
+          { statId: FixedStats.hpPct.id, value: 10.0 },
+        ],
+      },
+      {
+        count: 5,
+        options: [
+          { statId: FixedStats.critRate.id, value: 20.0 },
+          { statId: FixedStats.fusionBns.id, value: 15.0 },
+        ],
+      },
+    ],
+    colorCode: "#",
+  },
+  
   Adam: {
     id: "Adam",
     en: "Shadow of Shattered Dreams",

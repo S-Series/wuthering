@@ -8,6 +8,11 @@ export interface WeaponStat {
 
 export const weaponStat = {
   //#region StraightSword
+  sword011: {
+    atk: 587,
+    value: [24.3, 12.0],
+    statType: ["critRate", "typeBns"],
+  },
   sword001: {
     atk: 587,
     value: [24.3, 12.8],
@@ -359,6 +364,11 @@ export const weaponStat = {
   //#endregion
 
   //#region Amplifter
+  rectifier011: { //* 노을에 깃든 이슬 (수수)
+    atk: 412,
+    value: [77.0, 12],
+    statType: [FixedStats.resonanceBns.id, FixedStats.hpPct.id],
+  },
   rectifier010: { //* 프리즈 프레임 (루실라)
     atk: 587,
     value: [24.3, 12],

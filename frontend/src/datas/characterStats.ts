@@ -37,29 +37,29 @@ export const characterStat = {
 
     // == 3.4 ======================================= //
   suisui: {
-    baseHp: 12238,
-    baseAtk: 375,
-    baseDef: 1198,
+    baseHp: 16712,
+    baseAtk: 287,
+    baseDef: 1099,
 
-    CritRate: 13.0,
+    CritRate: 5.0,
     CritDmg: 150.0,
-    healBns: 0.0,
+    healBns: 12.0,
     ResonanceBns: 100.0,
 
-    atkPct: 12.0,
-    hpPct: 0.0,
+    atkPct: 0.0,
+    hpPct: 12.0,
     defPct: 0.0,
 
     typeBns: [0, 0.0],
   },
-  yangyang_2: {
-    baseHp: 11600,
-    baseAtk: 400,
-    baseDef: 1173,
+  xuanling: {
+    baseHp: 11025,
+    baseAtk: 425,
+    baseDef: 1148,
 
     CritRate: 13.0,
     CritDmg: 150.0,
-    healBns: 0.0,
+    healBns: 12.0,
     ResonanceBns: 100.0,
 
     atkPct: 12.0,
