@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
-import type { SeasonInfo } from "@/datas/periodic/types";
+import type { PeriodicSeasonSource } from "@/datas/periodic/types";
 import {
   getCurrentSeasonRemainingTime,
   type RemainingTime,
 } from "@/utils/seasonUtils";
 
 export const useSeasonRemainingTime = (
-  seasons: SeasonInfo[]
+  source: PeriodicSeasonSource,
 ): RemainingTime | null => {
   const [remainingTime, setRemainingTime] = useState<RemainingTime | null>(() =>
-    getCurrentSeasonRemainingTime(seasons)
+    getCurrentSeasonRemainingTime(source),
   );
 
   useEffect(() => {
     const updateRemainingTime = () => {
-      setRemainingTime(getCurrentSeasonRemainingTime(seasons));
+      setRemainingTime(getCurrentSeasonRemainingTime(source));
     };
 
     updateRemainingTime();
@@ -24,7 +24,7 @@ export const useSeasonRemainingTime = (
     return () => {
       window.clearInterval(timerId);
     };
-  }, [seasons]);
+  }, [source]);
 
   return remainingTime;
 };

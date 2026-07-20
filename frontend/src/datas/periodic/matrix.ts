@@ -2,6 +2,21 @@ import type { SeasonInfo, PeriodicContent } from "./types";
 
 export const matrixSeasons: SeasonInfo[] = [
   {
+    season: 6,
+    startDate: "2026-12-31",
+    endDate: "2026-12-31",
+  },
+  {
+    season: 5,
+    startDate: "2026-08-27",
+    endDate: "2026-12-31",
+  },
+  {
+    season: 4,
+    startDate: "2026-07-17",
+    endDate: "2026-08-20",
+  },
+  {
     season: 3,
     startDate: "2026-06-15",
     endDate: "2026-07-09",

@@ -13,4 +13,5 @@ export const periodicContents = [
 export type {
   SeasonInfo,
   PeriodicContent,
+  PeriodicSeasonSource,
 } from "./types";

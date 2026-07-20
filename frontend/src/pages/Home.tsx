@@ -38,7 +38,7 @@ function GameInfoSlot({
   resetLabel: string;
   waitingLabel: string;
 }) {
-  const remainingTime = useSeasonRemainingTime(content.seasons);
+  const remainingTime = useSeasonRemainingTime(content);
 
   return (
     <div className={`inner-slot ${content.className ?? content.id}`}>
@@ -288,7 +288,7 @@ export default function Home() {
               <span className={`${lang}-font`}>초기화: <em>{" 000 : 00 : 00"}</em></span>
             </div>
             <div className="inner-slot gateway">
-              <span className={`${lang}-font title`}>수많은 문의 환상</span>
+              <span className={`${lang}-font title`}>주간 활약도</span>
               <span className={`${lang}-font`}>초기화: <em>{" 000 : 00 : 00"}</em></span>
             </div>
             <div className="inner-slot matrix">
