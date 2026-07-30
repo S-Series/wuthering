@@ -118,27 +118,35 @@ export const jp = {
       secondary: "次点オプション",
     },
     parties: {
+      standard: "基本編成",
       temporary: "おすすめ編成",
       harmonyBreak: "協奏度破壊編成",
+      //=========================
       fusionAnomaly: "焦熱異常編成",
       glacioAnomaly: "凝縮異常編成",
       aeroAnomaly: "気動異常編成",
       spectroAnomaly: "回折異常編成",
+      havocAnomaly: "消滅異常編成",
+      //=========================
       echoDamageAmp: "音骸ダメージ強化編成",
-      cyberpunk: "サイバーパンク編成",
+      basicAttackAmp: "通常攻撃ダメージ強化編成",
+      skillDamageAmp: "スキルダメージ強化編成",
+      //=========================
       concertoCluster: "協奏度集中編成",
       concertoWave: "協奏度波動編成",
       linmoEngine: "リンモエンジン編成",
-      basicAttackAmp: "通常攻撃ダメージ強化編成",
-      skillDamageAmp: "スキルダメージ強化編成",
-      standard: "基本編成",
+      hypercarryMainDps: "ハイパーキャリーメインDPS",
+      //=========================
       secondSlotSupport: "2枠目サポーター",
       thirdSlotSupport: "3枠目サポーター",
-      hypercarryMainDps: "ハイパーキャリーメインDPS",
-      teamDps: "編成DPS",
+      //=========================
       teamCore: "編成コア",
+      teamDps: "編成DPS",
       aeroDps: "気動DPS編成",
+      //=========================
+      cyberpunk: "サイバーパンク編成",
       quickswap: "クイックスワップ枠",
+      //=========================
       alternative: "代替キャラクター",
       budgetAlternatives: "低コスト代替",
     },

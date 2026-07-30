@@ -116,27 +116,35 @@ export type LocaleSchema = {
       secondary: string;
     };
     parties: {
+      standard: string;
       temporary: string;
       harmonyBreak: string;
+      //=========================
       fusionAnomaly: string;
       glacioAnomaly: string;
       aeroAnomaly: string;
       spectroAnomaly: string;
+      havocAnomaly: string;
+      //=========================
       echoDamageAmp: string;
-      cyberpunk: string;
+      basicAttackAmp: string;
+      skillDamageAmp: string;
+      //=========================
       concertoCluster: string;
       concertoWave: string;
       linmoEngine: string;
-      basicAttackAmp: string;
-      skillDamageAmp: string;
-      standard: string;
+      hypercarryMainDps: string;
+      //=========================
       secondSlotSupport: string;
       thirdSlotSupport: string;
-      hypercarryMainDps: string;
-      teamDps: string;
+      //=========================
       teamCore: string;
+      teamDps: string;
       aeroDps: string;
+      //=========================
+      cyberpunk: string;
       quickswap: string;
+      //=========================
       alternative: string;
       budgetAlternatives: string;
     };

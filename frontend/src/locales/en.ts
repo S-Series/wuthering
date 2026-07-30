@@ -118,27 +118,35 @@ export const en = {
       secondary: "Secondary",
     },
     parties: {
+      standard: "Standard Party",
       temporary: "Recommended Team",
       harmonyBreak: "Tune Break Party",
+      //=========================
       fusionAnomaly: "Fusion Anomaly Party",
       glacioAnomaly: "Glacio Anomaly Party",
       aeroAnomaly: "Aero Anomaly Party",
       spectroAnomaly: "Spectro Anomaly Party",
+      havocAnomaly: "Havoc Anomaly Party",
+      //=========================
       echoDamageAmp: "Echo DMG Amp Party",
-      cyberpunk: "Cyberpunk Party",
+      basicAttackAmp: "Basic Attack DMG Amp Party",
+      skillDamageAmp: "Skill DMG Amp Party",
+      //=========================
       concertoCluster: "Concerto Cluster Party",
       concertoWave: "Concerto Wave Party",
       linmoEngine: "Lyn-Mo Engine Party",
-      basicAttackAmp: "Basic Attack DMG Amp Party",
-      skillDamageAmp: "Skill DMG Amp Party",
-      standard: "Standard Party",
+      hypercarryMainDps: "Hypercarry Main DPS",
+      //=========================
       secondSlotSupport: "Slot 2 Support",
       thirdSlotSupport: "Slot 3 Support",
-      hypercarryMainDps: "Hypercarry Main DPS",
-      teamDps: "Team DPS",
+      //=========================
       teamCore: "Team Core",
+      teamDps: "Team DPS",
       aeroDps: "Aero DPS Team",
+      //=========================
+      cyberpunk: "Cyberpunk Party",
       quickswap: "Quickswap Piece",
+      //=========================
       alternative: "Alternative Character",
       budgetAlternatives: "Budget Alternatives",
     },

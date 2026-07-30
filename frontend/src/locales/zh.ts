@@ -118,27 +118,35 @@ export const zh = {
       secondary: "次选词条",
     },
     parties: {
+      standard: "标准配队",
       temporary: "推荐配队",
       harmonyBreak: "协奏值破坏队",
+      //=========================
       fusionAnomaly: "热熔异常队",
       glacioAnomaly: "冷凝异常队",
       aeroAnomaly: "气动异常队",
       spectroAnomaly: "衍射异常队",
+      havocAnomaly: "湮灭异常队",
+      //=========================
       echoDamageAmp: "声骸伤害增幅队",
-      cyberpunk: "赛博朋克队",
+      basicAttackAmp: "普攻伤害增幅队",
+      skillDamageAmp: "技能伤害增幅队",
+      //=========================
       concertoCluster: "协奏值聚集队",
       concertoWave: "协奏值波动队",
       linmoEngine: "林莫引擎队",
-      basicAttackAmp: "普攻伤害增幅队",
-      skillDamageAmp: "技能伤害增幅队",
-      standard: "标准配队",
+      hypercarryMainDps: "单核主C",
+      //=========================
       secondSlotSupport: "2号位辅助",
       thirdSlotSupport: "3号位辅助",
-      hypercarryMainDps: "单核主C",
-      teamDps: "组合输出",
+      //=========================
       teamCore: "组合核心",
+      teamDps: "组合输出",
       aeroDps: "气动输出队",
+      //=========================
+      cyberpunk: "赛博朋克队",
       quickswap: "速切组件",
+      //=========================
       alternative: "替代角色",
       budgetAlternatives: "低成本替代",
     },

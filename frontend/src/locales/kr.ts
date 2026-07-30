@@ -118,27 +118,35 @@ export const kr = {
       secondary: "반유효 옵션",
     },
     parties: {
+      standard: "정석 파티",
       temporary: "추천 조합",
       harmonyBreak: "조화도 파괴 파티",
+      //=========================
       fusionAnomaly: "불꽃 이상효과 파티",
       glacioAnomaly: "서리 이상효과 파티",
       aeroAnomaly: "풍식 이상효과 파티",
       spectroAnomaly: "광학 이상효과 파티",
+      havocAnomaly: "암흑 이상효과 파티",
+      //=========================
       echoDamageAmp: "에코 피해 증폭 파티",
-      cyberpunk: "사이버펑크 파티",
+      basicAttackAmp: "일반공격 피해 증폭 파티",
+      skillDamageAmp: "스킬 피해 증폭 파티",
+      //=========================
       concertoCluster: "조화도 밀집 파티",
       concertoWave: "조화도 파동 파티",
       linmoEngine: "린모 엔진 파티",
-      basicAttackAmp: "일반공격 피해 증폭 파티",
-      skillDamageAmp: "스킬 피해 증폭 파티",
-      standard: "정석 파티",
+      hypercarryMainDps: "하이퍼캐리 메인딜러",
+      //=========================
       secondSlotSupport: "2번 자리 서포터",
       thirdSlotSupport: "3번 자리 서포터",
-      hypercarryMainDps: "하이퍼캐리 메인딜러",
-      teamDps: "조합 딜러",
+      //=========================
       teamCore: "조합 핵심 캐릭터",
+      teamDps: "조합 딜러",
       aeroDps: "기류 딜러 조합",
+      //=========================
+      cyberpunk: "사이버펑크 파티",
       quickswap: "퀵스왑 파츠",
+      //=========================
       alternative: "대체 캐릭터",
       budgetAlternatives: "가성비 대체 캐릭",
     },

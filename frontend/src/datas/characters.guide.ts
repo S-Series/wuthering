@@ -40,16 +40,16 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     ],
     guideParties: [
       {
-        nameKey: "fusionAnomaly",
-        characters: [character.aemeath.id, character.denia.id],
+        nameKey: "havocAnomaly",
+        characters: [character.xuanling.id, character.chisa.id],
       },
       {
         nameKey: "glacioAnomaly",
         characters: [character.hiyuki.id, character.lucilla.id],
       },
       {
-        nameKey: "aeroAnomaly",
-        characters: [character.cartethyia.id, character.chiaccona.id],
+        nameKey: "fusionAnomaly",
+        characters: [character.aemeath.id, character.denia.id],
       },
     ],
     guideSkillOrder: ["liberation", "skill", "forte", "outro", "basic"],
@@ -57,7 +57,16 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
   xuanling: {
     guideMainEcho: "N91",
     guideWeapons: [weapon.sword.sword011.id, weapon.sword.sword001.id],
-    guideParties: [],
+    guideParties: [
+      {
+        nameKey: "havocAnomaly",
+        characters: [character.suisui.id, character.chisa.id],
+      },
+      {
+        nameKey: "havocAnomaly",
+        characters: [character.rover_havoc.id, character.chisa.id],
+      },
+    ],
     guideSkillOrder: ["liberation", "forte", "skill", "basic", "outro"],
   },
   lucilla: {
@@ -230,8 +239,8 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
         characters: [character.denia.id, character.chisa.id],
       },
       {
-        nameKey: "concertoWave",
-        characters: [character.lynae.id, character.mornye.id],
+        nameKey: "fusionAnomaly",
+        characters: [character.denia.id, character.suisui.id],
       },
       {
         nameKey: "temporary",

@@ -2,6 +2,7 @@ import type { EchoRuntime } from "@/runtime/echo.runtime";
 import type { CharacterId } from "./characterStats";
 import { FixedStats, type StatId } from "./stats";
 import type { WeaponId } from "./weapon";
+import { character } from "./characters";
 
 type StatWeightMap = Partial<Record<StatId, number>>;
 export interface CharacterScore extends StatWeightMap {
@@ -30,12 +31,20 @@ const BaseSheet: Partial<CharacterScore> = {
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
   suisui: {
     ...BaseSheet,
-    maxResCount: 0,
+    [FixedStats.atkPct.id]: 0.5,
+    [FixedStats.hpPct.id]: 3,
+    [FixedStats.critRate.id]: 0,
+    [FixedStats.critDmg.id]: 0,
+    [FixedStats.basicBns.id]: 0.3,
+    [FixedStats.skillBns.id]: 0.1,
+    [FixedStats.resonanceBns.id]: 1,
+    maxResCount: 5,
   },
   xuanling: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
     [FixedStats.heavyBns.id]: 1.5,
+    [FixedStats.resonanceBns.id]: 1,
     maxResCount: 0,
   },
   lucilla: {
@@ -632,6 +641,17 @@ export function getCharacterScore(
     }
 
     //$ Constell
+    case character.suisui.id: {
+      //수수 6돌
+      if (constell >= 6) {
+        result[FixedStats.atkPct.id] = 1.5;
+        result[FixedStats.critRate.id] = 3;
+        result[FixedStats.critDmg.id] = 1.5;
+        result[FixedStats.basicBns.id] = 0.3;
+        result[FixedStats.skillBns.id] = 0.1;
+      }
+      break;
+    }
     case "iuno": {
       //유노 1돌+
       if (constell >= 1) {
