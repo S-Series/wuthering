@@ -2,6 +2,11 @@ import type { SeasonInfo, PeriodicContent } from "./types";
 
 export const towerSeasons: SeasonInfo[] = [
   {
+    season: 40,
+    startDate: "2026-09-14",
+    endDate: "2026-10-12",
+  },
+  {
     season: 39,
     startDate: "2026-08-17",
     endDate: "2026-09-14",

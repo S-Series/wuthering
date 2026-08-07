@@ -1,6 +1,12 @@
 import { useState } from "react";
+import type { PasswordValidationStatus } from "firebase/auth";
+
 import { useAuthStore } from "@/stores/authStore";
+import { useAppStore } from "@/stores/appStore";
 import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
+import { validateNewPassword } from "@/firebase/auth";
+import { locale } from "@/locales/locale";
+import type { LocaleSchema } from "@/locales/locale.schema";
 
 import Terms from "@/components/features/Profile/Terms";
 import Privacy from "@/components/features/Profile/Privacy";
@@ -9,9 +15,108 @@ type Props = {
   setAction: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+type SignupLocale = LocaleSchema["profile"]["signup"];
+
+const getErrorCode = (error: unknown) =>
+  typeof error === "object" && error !== null && "code" in error
+    ? String((error as { code?: unknown }).code)
+    : "";
+
+const formatLocaleText = (
+  template: string,
+  values: Record<string, string | number>,
+) => Object.entries(values).reduce(
+  (result, [key, value]) => result.split(`{${key}}`).join(String(value)),
+  template,
+);
+
+const getPasswordValidationMessage = (
+  status: PasswordValidationStatus,
+  text: SignupLocale["password"],
+) => {
+  const requirements: string[] = [];
+  const options = status.passwordPolicy.customStrengthOptions;
+
+  if (status.meetsMinPasswordLength === false) {
+    requirements.push(formatLocaleText(text.minLength, {
+      count: options.minPasswordLength ?? 6,
+    }));
+  }
+  if (status.meetsMaxPasswordLength === false && options.maxPasswordLength) {
+    requirements.push(formatLocaleText(text.maxLength, {
+      count: options.maxPasswordLength,
+    }));
+  }
+  if (status.containsLowercaseLetter === false) {
+    requirements.push(text.lowercase);
+  }
+  if (status.containsUppercaseLetter === false) {
+    requirements.push(text.uppercase);
+  }
+  if (status.containsNumericCharacter === false) {
+    requirements.push(text.numeric);
+  }
+  if (status.containsNonAlphanumericCharacter === false) {
+    requirements.push(text.special);
+  }
+
+  return requirements.length > 0
+    ? formatLocaleText(text.requirements, {
+      requirements: requirements.join(text.requirementSeparator),
+    })
+    : text.policy;
+};
+
+const getSignupErrorMessage = (
+  error: unknown,
+  text: SignupLocale["errors"],
+) => {
+  const code = getErrorCode(error);
+
+  if (code === "auth/weak-password") {
+    return text.weakPassword;
+  }
+  if (code === "auth/email-already-in-use") {
+    return text.emailAlreadyInUse;
+  }
+  if (code === "auth/invalid-email") {
+    return text.invalidEmail;
+  }
+  if (code === "auth/operation-not-allowed") {
+    return text.operationNotAllowed;
+  }
+  if (code === "auth/network-request-failed") {
+    return text.networkRequestFailed;
+  }
+  if (code === "auth/too-many-requests") {
+    return text.tooManyRequests;
+  }
+  if (code === "auth/popup-closed-by-user") {
+    return text.popupClosed;
+  }
+  if (code === "auth/popup-blocked") {
+    return text.popupBlocked;
+  }
+  if (code === "auth/cancelled-popup-request") {
+    return text.popupInProgress;
+  }
+  if (code === "auth/account-exists-with-different-credential") {
+    return text.differentCredential;
+  }
+  if (code === "auth/unauthorized-domain") {
+    return text.unauthorizedDomain;
+  }
+
+  return text.generic;
+};
+
 export default function Signup({ setAction }: Props) {
+  const { lang } = useAppStore();
+  const localeText = locale(lang).profile.signup;
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     email: "",
@@ -24,13 +129,15 @@ export default function Signup({ setAction }: Props) {
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
+    setMessage("");
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const { signupAction } = useAuthStore();
+  const { signupAction, loginWithGoogleAction } = useAuthStore();
   const { openElevatedOverlay } = useElevatedOverlay();
 
   const isPasswordMatched =
@@ -44,32 +151,72 @@ export default function Signup({ setAction }: Props) {
     form.passwordConfirm.trim() !== "" &&
     form.nickname.trim() !== "" &&
     form.agree &&
-    isPasswordMatched;
+    isPasswordMatched &&
+    !isSubmitting;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isValid) return;
 
-    await signupAction(form.email, form.password, form.nickname);
+    setMessage("");
+    setIsSubmitting(true);
+
+    try {
+      try {
+        const validation = await validateNewPassword(form.password);
+
+        if (!validation.isValid) {
+          setMessage(getPasswordValidationMessage(validation, localeText.password));
+          return;
+        }
+      } catch (error) {
+        console.warn("[password policy validation failed]", error);
+      }
+
+      await signupAction(
+        form.email.trim(),
+        form.password,
+        form.nickname.trim(),
+      );
+    } catch (error) {
+      setMessage(getSignupErrorMessage(error, localeText.errors));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setMessage("");
+    setIsSubmitting(true);
+
+    try {
+      await loginWithGoogleAction();
+    } catch (error) {
+      setMessage(getSignupErrorMessage(error, localeText.errors));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="profile-page">
       <section className="profile-info">
         <div className="profile-info-inner">
-          <p className="profile-info-eyebrow">Create Account</p>
+          <p className="profile-info-eyebrow">{localeText.eyebrow}</p>
           <h1 className="profile-info-title">
-            {`환영합니다\n`}<em>WuWa DEV</em> 입니다
+            {localeText.titleBeforeBrand}
+            <em>WuWa DEV</em>
+            {localeText.titleAfterBrand}
           </h1>
           <p className="profile-info-desc">
-            {`계정을 만들면 다양한 편의기능을 받으실 수 있습니다.`}
+            {localeText.description}
           </p>
 
           <ul className="profile-info-list">
-            <li>유저별 데이터 저장</li>
-            <li>OCR / 이미지 생성 기록 관리</li>
-            <li>멤버십 기능 확장 대비</li>
+            <li>{localeText.benefits.dataStorage}</li>
+            <li>{localeText.benefits.history}</li>
+            <li>{localeText.benefits.membership}</li>
           </ul>
         </div>
       </section>
@@ -77,75 +224,77 @@ export default function Signup({ setAction }: Props) {
       <section className="profile-panel">
         <form className="profile-card" onSubmit={onSubmit}>
           <div className="profile-card-header">
-            <h2>회원가입</h2>
-            <p>이메일과 비밀번호로 계정을 생성합니다.</p>
+            <h2>{localeText.heading}</h2>
+            <p>{localeText.subheading}</p>
           </div>
 
           <div className="profile-card-body">
           <div className="profile-field">
-            <label htmlFor="email">이메일</label>
+            <label htmlFor="email">{localeText.fields.email}</label>
             <input
               id="email"
               name="email"
               type="email"
-              placeholder="example@email.com"
+              placeholder={localeText.fields.emailPlaceholder}
               value={form.email}
               onChange={onChangeInput}
             />
           </div>
 
           <div className="profile-field">
-            <label htmlFor="nickname">닉네임</label>
+            <label htmlFor="nickname">{localeText.fields.nickname}</label>
             <input
               id="nickname"
               name="nickname"
               type="text"
-              placeholder="닉네임 입력"
+              placeholder={localeText.fields.nicknamePlaceholder}
               value={form.nickname}
               onChange={onChangeInput}
             />
           </div>
 
           <div className="profile-field">
-            <label htmlFor="password">비밀번호</label>
+            <label htmlFor="password">{localeText.fields.password}</label>
             <div className="profile-password-field">
               <input
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="비밀번호 입력"
+                placeholder={localeText.fields.passwordPlaceholder}
                 value={form.password}
                 onChange={onChangeInput}
+                autoComplete="new-password"
               />
               <button
                 type="button"
                 className="profile-password-toggle"
-                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                aria-label={showPassword ? localeText.password.hide : localeText.password.show}
                 onClick={() => setShowPassword((prev) => !prev)}
               >
-                {showPassword ? "숨김" : "보기"}
+                {showPassword ? localeText.password.hide : localeText.password.show}
               </button>
             </div>
           </div>
 
           <div className="profile-field">
-            <label htmlFor="passwordConfirm">비밀번호 확인</label>
+            <label htmlFor="passwordConfirm">{localeText.fields.passwordConfirm}</label>
             <div className="profile-password-field">
               <input
                 id="passwordConfirm"
                 name="passwordConfirm"
                 type={showPasswordConfirm ? "text" : "password"}
-                placeholder="비밀번호 다시 입력"
+                placeholder={localeText.fields.passwordConfirmPlaceholder}
                 value={form.passwordConfirm}
                 onChange={onChangeInput}
+                autoComplete="new-password"
               />
               <button
                 type="button"
                 className="profile-password-toggle"
-                aria-label={showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
+                aria-label={showPasswordConfirm ? localeText.password.hide : localeText.password.show}
                 onClick={() => setShowPasswordConfirm((prev) => !prev)}
               >
-                {showPasswordConfirm ? "숨김" : "보기"}
+                {showPasswordConfirm ? localeText.password.hide : localeText.password.show}
               </button>
             </div>
             {form.passwordConfirm.length > 0 ? (
@@ -156,8 +305,8 @@ export default function Signup({ setAction }: Props) {
                 ].join(" ")}
               >
                 {isPasswordMatched
-                  ? "비밀번호가 일치합니다."
-                  : "비밀번호가 일치하지 않습니다."}
+                  ? localeText.password.matched
+                  : localeText.password.mismatch}
               </p>
             ) : (<div style={{height: "16px"}}/>)}
           </div>
@@ -170,21 +319,51 @@ export default function Signup({ setAction }: Props) {
               onChange={onChangeInput}
             />
             <span>
-              <em onClick={() => { openElevatedOverlay(<Terms/>) }}>이용약관</em>
-              &nbsp;및&nbsp;
-              <em onClick={() => { openElevatedOverlay(<Privacy/>) }}>개인정보 처리</em>에 동의합니다.
+              {localeText.agreement.beforeTerms}
+              <em onClick={() => { openElevatedOverlay(<Terms/>) }}>
+                {localeText.agreement.terms}
+              </em>
+              {localeText.agreement.between}
+              <em onClick={() => { openElevatedOverlay(<Privacy/>) }}>
+                {localeText.agreement.privacy}
+              </em>
+              {localeText.agreement.afterPrivacy}
             </span>
           </label>
 
           <button className="profile-submit" type="submit" disabled={!isValid}>
-            회원가입
+            {isSubmitting ? localeText.actions.submitting : localeText.actions.submit}
+          </button>
+
+          {message ? (
+            <p
+              id="signup-message"
+              className="profile-login-message error"
+              role="alert"
+              aria-live="polite"
+            >
+              {message}
+            </p>
+          ) : null}
+
+          <div className="profile-card-footer">
+            <span>{localeText.actions.divider}</span>
+          </div>
+
+          <button
+            type="button"
+            className="profile-submit google"
+            disabled={isSubmitting}
+            onClick={handleGoogleSignup}
+          >
+            {localeText.actions.googleSignup}
           </button>
 
           <div className="profile-card-footer">
-            <span>이미 계정이 있나요?</span>
+            <span>{localeText.actions.hasAccount}</span>
             <button type="button" className="profile-text-button"
               onClick={() => {setAction(false)}}>
-              로그인
+              {localeText.actions.login}
             </button>
           </div>
           </div>

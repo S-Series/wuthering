@@ -149,6 +149,75 @@ export type LocaleSchema = {
       budgetAlternatives: string;
     };
   };
+  profile: {
+    signup: {
+      eyebrow: string;
+      titleBeforeBrand: string;
+      titleAfterBrand: string;
+      description: string;
+      benefits: {
+        dataStorage: string;
+        history: string;
+        membership: string;
+      };
+      heading: string;
+      subheading: string;
+      fields: {
+        email: string;
+        emailPlaceholder: string;
+        nickname: string;
+        nicknamePlaceholder: string;
+        password: string;
+        passwordPlaceholder: string;
+        passwordConfirm: string;
+        passwordConfirmPlaceholder: string;
+      };
+      password: {
+        show: string;
+        hide: string;
+        matched: string;
+        mismatch: string;
+        minLength: string;
+        maxLength: string;
+        lowercase: string;
+        uppercase: string;
+        numeric: string;
+        special: string;
+        requirementSeparator: string;
+        requirements: string;
+        policy: string;
+      };
+      agreement: {
+        beforeTerms: string;
+        terms: string;
+        between: string;
+        privacy: string;
+        afterPrivacy: string;
+      };
+      actions: {
+        submit: string;
+        submitting: string;
+        divider: string;
+        googleSignup: string;
+        hasAccount: string;
+        login: string;
+      };
+      errors: {
+        weakPassword: string;
+        emailAlreadyInUse: string;
+        invalidEmail: string;
+        operationNotAllowed: string;
+        networkRequestFailed: string;
+        tooManyRequests: string;
+        popupClosed: string;
+        popupBlocked: string;
+        popupInProgress: string;
+        differentCredential: string;
+        unauthorizedDomain: string;
+        generic: string;
+      };
+    };
+  };
   ocr: {
     status: string;
     request: string;

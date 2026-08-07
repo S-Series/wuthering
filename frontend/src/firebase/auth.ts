@@ -6,6 +6,8 @@ import {
   GoogleAuthProvider,
   sendPasswordResetEmail,
   updateProfile,
+  validatePassword,
+  type PasswordValidationStatus,
 } from "firebase/auth";
 import { requireAuth } from "./firebase";
 
@@ -18,6 +20,13 @@ export async function signup(
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(credential.user, { displayName: nickname });
   await credential.user.reload();
+}
+
+export async function validateNewPassword(
+  password: string,
+): Promise<PasswordValidationStatus> {
+  const auth = requireAuth();
+  return validatePassword(auth, password);
 }
 
 export async function login(
