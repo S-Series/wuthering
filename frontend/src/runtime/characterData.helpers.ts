@@ -314,13 +314,14 @@ export const calcFinalStat = (
     const harmonyData = harmony[harmonyId];
     if (!harmonyData) continue;
 
-    const activeOption = harmonyData.option.find(
-      (opt) => opt.count === activeCount
+    const activeOptions = harmonyData.option.filter(
+      (opt) => activeCount >= opt.count
     );
-    if (!activeOption) continue;
 
-    for (const stat of activeOption.options) {
-      harmonyStats[stat.statId] += stat.value;
+    for (const option of activeOptions) {
+      for (const stat of option.options) {
+        harmonyStats[stat.statId] += stat.value;
+      }
     }
   }
 
