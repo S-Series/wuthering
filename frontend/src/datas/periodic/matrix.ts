@@ -9,7 +9,7 @@ export const matrixSeasons: SeasonInfo[] = [
   {
     season: 5,
     startDate: "2026-08-27",
-    endDate: "2026-12-31",
+    endDate: "2026-09-09",
   },
   {
     season: 4,

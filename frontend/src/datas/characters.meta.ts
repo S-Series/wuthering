@@ -45,6 +45,15 @@ FixedStats.atkPct.id],
     
   },*/
 
+  //*== ver 3.6 ===========================//
+  qingxiao: {
+    ...baseMeta,
+    harmonySets: [harmony.Heart.id],
+    cost3MainStats: [FixedStats.aeroBns.id, FixedStats.atkPct.id],
+    resReq: 125,
+    subResReq: 25,
+  },
+
   //*== ver 3.5 ===========================//
   suisui: {
     ...baseMeta,

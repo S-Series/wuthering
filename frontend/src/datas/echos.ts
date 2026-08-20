@@ -60,6 +60,16 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
   */
 
   Cost4: {
+    X81: {
+      en: "Calamity Effigy",
+      kr: "하늘의 기관 인형 · 겁살",
+      jp: "天傀劫殺",
+      zh: "天傀劫煞",
+      type: [harmony.Heart.id, harmony.Lamp.id],
+      getStats: (_) => [
+        { statId: FixedStats.aeroBns.id, value: 20.0 },
+      ],
+    },
     N91: {
       en: "Thousand-Puppet Pavilion",
       kr: "천괴중루",
@@ -76,7 +86,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "만와뢰 · 잔해",
       jp: "万囮の檻・朽躯",
       zh: "万囮牢·朽躯",
-      type: [harmony.Heart.id,harmony.Lamp.id,],
+      type: [harmony.Heart.id, harmony.Lamp.id],
       getStats: (_) => [
         { statId: FixedStats.fusionBns.id, value: 12.0 },
         { statId: FixedStats.heavyBns.id, value: 12.0 },
@@ -495,7 +505,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "안개 수존",
       jp: "霽息の獣尊",
       zh: "霁息兽尊",
-      type: [harmony.Song.id,harmony.Heart.id,harmony.Lamp.id,],
+      type: [harmony.Song.id, harmony.Heart.id, harmony.Lamp.id],
       getStats: (_) => [],
     },
     R70: {
@@ -503,7 +513,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "봉정계유",
       jp: "封庭の械囿",
       zh: "封庭械囿",
-      type: [harmony.Song.id,harmony.Heart.id,harmony.Lamp.id,],
+      type: [harmony.Song.id, harmony.Heart.id, harmony.Lamp.id],
       getStats: (_) => [{ statId: FixedStats.healBns.id, value: 10.0 }],
     },
     H57: {
@@ -949,7 +959,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "금정후",
       jp: "金鉄の庭候",
       zh: "金庭候",
-      type: [harmony.Heart.id,],
+      type: [harmony.Heart.id],
       getStats: (_) => [],
     },
     R16: {
@@ -957,7 +967,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 희(喜)",
       jp: "心傀・喜",
       zh: "心傀·喜",
-      type: [harmony.Song.id,],
+      type: [harmony.Song.id],
       getStats: (_) => [],
     },
     R17: {
@@ -965,7 +975,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 노(怒)",
       jp: "心傀・怒",
       zh: "心傀·怒",
-      type: [harmony.Heart.id,],
+      type: [harmony.Heart.id],
       getStats: (_) => [],
     },
     R18: {
@@ -981,7 +991,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 사(思)",
       jp: "心傀・思",
       zh: "心傀·思",
-      type: [harmony.Heart.id,],
+      type: [harmony.Heart.id],
       getStats: (_) => [],
     },
     R20: {
@@ -1005,7 +1015,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "안개 수존 · 몸",
       jp: "霽息の獣尊・胴",
       zh: "霁息兽尊·身",
-      type: [harmony.Song.id, ],
+      type: [harmony.Song.id],
       getStats: (_) => [],
     },
     R23: {
@@ -1013,7 +1023,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "안개 수존 · 머리",
       jp: "霽息の獣尊・首",
       zh: "霁息兽尊·首",
-      type: [harmony.Song.id,],
+      type: [harmony.Song.id],
       getStats: (_) => [],
     },
     W40: {
@@ -1021,7 +1031,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "분해된 전사",
       jp: "融躯の戦士",
       zh: "融躯战士",
-      type: [harmony.Song.id,],
+      type: [harmony.Song.id],
       getStats: (_) => [],
     },
     W41: {
@@ -1029,7 +1039,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "불씨의 사냥꾼",
       jp: "熄えぬ狩人",
       zh: "不熄猎手",
-      type: [harmony.Song.id,],
+      type: [harmony.Song.id],
       getStats: (_) => [],
     },
     W38: {

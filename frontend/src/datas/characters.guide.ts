@@ -32,6 +32,29 @@ export type characterGuide = {
 };
 
 export const characterGuideData: Record<CharacterId, characterGuide> = {
+  qingxiao: {
+    guideMainEcho: "X81",
+    guideWeapons: [
+      weapon.sword.sword012.id,
+      weapon.sword.sword004.id,
+      weapon.sword.sword001.id,
+    ],
+    guideParties: [
+      {
+        nameKey: "concertoCluster",
+        characters: [character.denia.id, character.mornye.id],
+      },
+      {
+        nameKey: "concertoCluster",
+        characters: [character.denia.id, character.mornye.id],
+      },
+      {
+        nameKey: "temporary",
+        characters: [character.sanhua.id, character.shorekeeper.id, character.verina.id],
+      },
+    ],
+    guideSkillOrder: ["forte", "liberation", "outro", "basic", "skill"],
+  },
   suisui: {
     guideMainEcho: "R71",
     guideWeapons: [

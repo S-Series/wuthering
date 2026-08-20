@@ -35,7 +35,25 @@ export const characterStat = {
   },
   */
 
-    // == 3.4 ======================================= //
+  // == 3.6 ======================================= //
+  qingxiao: {
+    baseHp: 10300,
+    baseAtk: 462,
+    baseDef: 1112,
+
+    CritRate: 5.0,
+    CritDmg: 166.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+
+  // == 3.5 ======================================= //
   suisui: {
     baseHp: 16712,
     baseAtk: 287,

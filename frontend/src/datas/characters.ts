@@ -54,7 +54,6 @@ export interface Character {
 
 export const character: Record<CharacterId, Character> = {
   //$== ver 3.X ===========================//
-  //*== ver 3.6 ===========================//
   /* temp: {
     en: "",
     kr: "",
@@ -68,6 +67,22 @@ export const character: Record<CharacterId, Character> = {
     isElite: true,
     region: ,
   },*/
+
+  //*== ver 3.6 ===========================//
+  qingxiao: {
+    id: "qingxiao",
+    en: "Qingxiao",
+    kr: "청초",
+    jp: "清宵",
+    zh: "清宵",
+    hasSkin: false,
+    weapon: "sword",
+    element: "aero",
+    type: "basic",
+    version: 3.6,
+    isElite: true,
+    region: "Huanglong",
+  },
 
   //*== ver 3.5 ===========================//
   suisui: {

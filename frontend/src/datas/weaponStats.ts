@@ -8,6 +8,11 @@ export interface WeaponStat {
 
 export const weaponStat = {
   //#region StraightSword
+  sword012: {
+    atk: 500,
+    value: [36.0, 12.0],
+    statType: ["critRate", "atkPct"],
+  },
   sword011: {
     atk: 587,
     value: [24.3, 12.0],

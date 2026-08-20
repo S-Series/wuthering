@@ -15,6 +15,14 @@ export interface Weapon {
 export const weapon = {
   sword: { //* 직검
     //$ 5-Starts
+    sword012: { //* 청초
+			id: "sword012",
+      en: "Glint of Clouds",
+      kr: "옥빛 구름",
+      jp: "雲琅",
+      zh: "雲琅",
+      imgKey: "ico012",
+    },
     sword011: { //* 양양:현령
 			id: "sword011",
       en: "Azure Oath",

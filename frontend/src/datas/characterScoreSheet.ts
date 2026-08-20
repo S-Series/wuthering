@@ -29,6 +29,13 @@ const BaseSheet: Partial<CharacterScore> = {
 };
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
+  qingxiao: {
+    ...BaseSheet,
+    [FixedStats.atkPct.id]: 1.5,
+
+    [FixedStats.resonanceBns.id]: 1,
+    maxResCount: 3,
+  },
   suisui: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 0.5,
@@ -37,6 +44,7 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.critDmg.id]: 0,
     [FixedStats.basicBns.id]: 0.3,
     [FixedStats.skillBns.id]: 0.1,
+    
     [FixedStats.resonanceBns.id]: 1,
     maxResCount: 5,
   },
