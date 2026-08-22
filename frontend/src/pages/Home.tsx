@@ -4,7 +4,7 @@ import { fetchLatestYoutube, type YoutubeLatestVideo } from "@/api/youtube.api";
 import { useOverlay } from "@/contexts/PopupContext";
 import CharacterSlot from "@/components/features/Characters/CharacterSlot";
 import { characterList } from "@/datas/characters";
-import type { HomePost } from "@/posts/homePosts.tsx";
+import type { HomePost } from "@/posts/homePosts";
 import { loadSummaryStore } from "@/summaryData/storage";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { getCharacterRank } from "@/types/character.type";
