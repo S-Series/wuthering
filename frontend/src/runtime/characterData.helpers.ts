@@ -2,6 +2,7 @@ import { character } from "@/datas/characters";
 import type { CharacterData, CharacterStat, ScoreList } from "@/types/character.type";
 import type { EchoRuntime, EchoStatOption } from "@/runtime/echo.runtime";
 import { characterStat, type CharacterId } from "@/datas/characterStats";
+import { getCharacterConstellStatBonuses } from "@/datas/characterConstellStats";
 import { weaponStat } from "@/datas/weaponStats";
 import type { WeaponId } from "@/datas/weapon";
 import { FixedStats, type StatId } from "@/datas/stats";
@@ -234,6 +235,15 @@ export const calcFinalStat = (
 
   equipmentStats[`${characterData.element}Bns`] += C_baseStat.typeBns[0];
   equipmentStats[`${characterData.type}Bns`] += C_baseStat.typeBns[1];
+
+  const constellStatBonuses = getCharacterConstellStatBonuses(
+    id,
+    data.constell[0]
+  );
+
+  for (const bonus of constellStatBonuses) {
+    equipmentStats[bonus.statId] += bonus.value;
+  }
 
   equipmentStats[W_baseStat.statType[0]] += W_baseStat.value[0];
   equipmentStats[W_baseStat.statType[1]] +=

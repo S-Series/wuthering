@@ -85,7 +85,7 @@ export const harmony = {
       {
         count: 5,
         options: [
-          { statId: FixedStats.critRate.id, value: 20.0 },
+          { statId: FixedStats.critDmg.id, value: 20.0 },
           { statId: FixedStats.aeroBns.id, value: 30.0 },
         ],
       },
