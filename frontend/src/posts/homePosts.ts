@@ -7,12 +7,14 @@ import { HOME_POST_1_0_0 } from "./homePosts/1.0.0";
 import { HOME_POST_1_0_1 } from "./homePosts/1.0.1";
 import { HOME_POST_1_0_2 } from "./homePosts/1.0.2";
 import { HOME_POST_1_1_0 } from "./homePosts/1.1.0";
+import { HOME_POST_1_2_0 } from "./homePosts/1.2.0";
 import { HOME_POST_PRELAUNCH } from "./homePosts/prelaunch";
 import type { HomePost } from "./homePosts/types";
 
 export type { HomePost, LocaleReactNode } from "./homePosts/types";
 
 export const HOME_POSTS: HomePost[] = [
+  HOME_POST_1_2_0,
   HOME_POST_1_1_0,
   HOME_POST_1_0_2,
   HOME_POST_1_0_1,

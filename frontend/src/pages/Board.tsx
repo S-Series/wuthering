@@ -1,10 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { fetchBoardPosts } from "@/api/board.api";
 import { locale } from "@/locales/locale";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
+import { auth } from "@/firebase/firebase";
 import type {
   BoardCategory,
   BoardPostListResponse,
@@ -45,7 +46,7 @@ function formatPostDate(value: string, lang: LangType) {
 export default function Board() {
   const { lang } = useAppStore();
   const user = useAuthStore((state) => state.user);
-  const navigate = useNavigate();
+  const writePath = user || auth?.currentUser ? "/board/write" : "/profile";
   const text = locale(lang).board;
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
@@ -143,15 +144,14 @@ export default function Board() {
               {isLoading && result === null ? "—" : (result?.total ?? 0).toLocaleString()}
             </strong>
           </div>
-          <button
+          <Link
             className="board-write-button"
-            type="button"
-            title={user ? text.write : text.writeLoginRequired}
-            onClick={() => navigate(user ? "/board/write" : "/profile")}
+            to={writePath}
+            title={writePath === "/board/write" ? text.write : text.writeLoginRequired}
           >
             <span aria-hidden="true">＋</span>
             {text.write}
-          </button>
+          </Link>
         </div>
       </header>
 
