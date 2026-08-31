@@ -17,7 +17,8 @@ export default function Layout() {
       "page-home",
       "page-characters",
       "page-card",
-      "page-profile"
+      "page-profile",
+      "page-board"
     );
 
     switch (true) {
@@ -37,6 +38,10 @@ export default function Layout() {
         document.body.classList.add("page-profile");
         break;
 
+      case location.pathname.startsWith("/board"):
+        document.body.classList.add("page-board");
+        break;
+
       default:
         document.body.classList.add("page-home");
         break;
@@ -47,7 +52,8 @@ export default function Layout() {
         "page-home",
         "page-characters",
         "page-card",
-        "page-profile"
+        "page-profile",
+        "page-board"
       );
     };
   }, [location.pathname]);

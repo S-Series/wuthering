@@ -39,7 +39,8 @@ body {
 body.page-home,
 body.page-characters,
 body.page-card,
-body.page-profile {
+body.page-profile,
+body.page-board {
   background-image: url("/cardBg.jpg");
   background-size: cover;
   background-repeat: no-repeat;

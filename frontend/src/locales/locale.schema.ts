@@ -8,8 +8,38 @@ export type LocaleSchema = {
     title: string;
     characters: string;
     generator: string;
+    board: string;
     login: string;
     menu: string;
+  };
+  board: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    totalPosts: string;
+    all: string;
+    categories: {
+      general: string;
+      question: string;
+      guide: string;
+    };
+    searchPlaceholder: string;
+    search: string;
+    write: string;
+    writeComingSoon: string;
+    columnTitle: string;
+    columnAuthor: string;
+    columnDate: string;
+    columnViews: string;
+    notice: string;
+    comments: string;
+    loading: string;
+    empty: string;
+    emptyHint: string;
+    error: string;
+    retry: string;
+    previous: string;
+    next: string;
   };
   home: {
     title1: string;

@@ -170,6 +170,12 @@ export default function Navbar() {
               src="/ico/card.png" />
             <p className={`${lang}-font`}>{localeText.generator}</p>
           </a>
+          <a href="/board">
+            <img className="navbar-icon"
+              alt="board"
+              src="/ico/board.svg" />
+            <p className={`${lang}-font`}>{localeText.board}</p>
+          </a>
           <a href="/profile">
             <img className="navbar-icon"
               alt="profile"
@@ -233,6 +239,15 @@ export default function Navbar() {
               alt="generator"
               src="/ico/card.png" />
             <p className={`${lang}-font`}>{localeText.generator}</p>
+          </a>
+          <a
+            href="/board"
+            onClick={() => setIsActive(false)}
+          >
+            <img className="navbar-icon"
+              alt="board"
+              src="/ico/board.svg" />
+            <p className={`${lang}-font`}>{localeText.board}</p>
           </a>
         </nav>
 

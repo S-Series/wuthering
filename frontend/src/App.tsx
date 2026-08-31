@@ -4,6 +4,7 @@ import Home from "@/pages/Home";
 import Card from "@/pages/Card/index";
 import Characters from "@/pages/Characters";
 import Profile from "./pages/Profile";
+import Board from "@/pages/Board";
 
 import DragDebugPage from "./pages/Debug";
 import OcrServerWatcher from "@/components/features/OcrServerWatcher";
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/card" element={<Card />} />
           <Route path="/card/:characterId" element={<Card />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/board" element={<Board />} />
 
           <Route path="/debug" element={<DragDebugPage />} />
         </Route>

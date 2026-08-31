@@ -4,6 +4,7 @@ import type { LocaleSchema } from "@/locales/locale.schema";
 import {
   common,
   navbar,
+  board,
   home,
   characters,
   card,
@@ -15,6 +16,7 @@ import {
 const createLocale = (lang: LangType): LocaleSchema => ({
   common: common[lang],
   navbar: navbar[lang],
+  board: board[lang],
   home: home[lang],
   characters: characters[lang],
   card: card[lang],

@@ -1,5 +1,6 @@
 export { common } from "./common";
 export { navbar } from "./navbar";
+export { board } from "./board";
 export { home } from "./home";
 export { characters } from "./characters";
 export { card } from "./card";
