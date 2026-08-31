@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { fetchBoardPosts } from "@/api/board.api";
 import { locale } from "@/locales/locale";
 import { useAppStore, type LangType } from "@/stores/appStore";
+import { useAuthStore } from "@/stores/authStore";
 import type {
   BoardCategory,
   BoardPostListResponse,
@@ -43,6 +44,8 @@ function formatPostDate(value: string, lang: LangType) {
 
 export default function Board() {
   const { lang } = useAppStore();
+  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
   const text = locale(lang).board;
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
@@ -143,9 +146,8 @@ export default function Board() {
           <button
             className="board-write-button"
             type="button"
-            disabled
-            aria-disabled="true"
-            title={text.writeComingSoon}
+            title={user ? text.write : text.writeLoginRequired}
+            onClick={() => navigate(user ? "/board/write" : "/profile")}
           >
             <span aria-hidden="true">＋</span>
             {text.write}
@@ -223,7 +225,7 @@ export default function Board() {
           <div className="board-post-list">
             {result.items.map((post) => (
               <article className="board-post-row" key={post.id}>
-                <div className="board-post-main">
+                <Link className="board-post-main" to={"/board/" + post.id}>
                   <div className="board-post-badges">
                     {post.isPinned ? (
                       <span className="board-pin-badge">{text.notice}</span>
@@ -248,7 +250,7 @@ export default function Board() {
                     <span>{formatPostDate(post.createdAt, lang)}</span>
                     <span>{text.columnViews} {post.viewCount.toLocaleString()}</span>
                   </div>
-                </div>
+                </Link>
                 <span className="board-post-author">{post.authorName}</span>
                 <time dateTime={post.createdAt}>{formatPostDate(post.createdAt, lang)}</time>
                 <span className="board-post-views num-font">

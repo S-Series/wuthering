@@ -27,6 +27,7 @@ export type LocaleSchema = {
     search: string;
     write: string;
     writeComingSoon: string;
+    writeLoginRequired: string;
     columnTitle: string;
     columnAuthor: string;
     columnDate: string;
@@ -40,6 +41,49 @@ export type LocaleSchema = {
     retry: string;
     previous: string;
     next: string;
+    editor: {
+      eyebrow: string;
+      createTitle: string;
+      editTitle: string;
+      createDescription: string;
+      editDescription: string;
+      categoryLabel: string;
+      titleLabel: string;
+      titlePlaceholder: string;
+      contentLabel: string;
+      contentPlaceholder: string;
+      cancel: string;
+      createSubmit: string;
+      updateSubmit: string;
+      submitting: string;
+      loading: string;
+      loginTitle: string;
+      loginDescription: string;
+      loginAction: string;
+      forbiddenTitle: string;
+      forbiddenDescription: string;
+      validationTitle: string;
+      validationContent: string;
+      loadError: string;
+      saveError: string;
+    };
+    detail: {
+      loading: string;
+      loadError: string;
+      notFound: string;
+      back: string;
+      author: string;
+      date: string;
+      views: string;
+      edit: string;
+      delete: string;
+      deleteConfirmTitle: string;
+      deleteConfirmDescription: string;
+      deleteCancel: string;
+      deleteConfirm: string;
+      deleting: string;
+      deleteError: string;
+    };
   };
   home: {
     title1: string;

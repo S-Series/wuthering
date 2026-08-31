@@ -19,3 +19,14 @@ export type BoardPostListResponse = {
   total: number;
   totalPages: number;
 };
+
+export type BoardPostDetail = BoardPostListItem & {
+  authorId: string;
+  content: string;
+};
+
+export type BoardPostInput = {
+  category: BoardCategory;
+  title: string;
+  content: string;
+};

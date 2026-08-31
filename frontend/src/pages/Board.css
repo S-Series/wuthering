@@ -234,8 +234,15 @@
 }
 
 .board-post-main {
+  display: block;
   min-width: 0;
   padding: 1rem 1.4rem;
+  color: var(--board-text);
+  box-sizing: border-box;
+}
+
+.board-post-main:hover {
+  color: var(--board-text);
 }
 
 .board-post-badges,
