@@ -16,6 +16,7 @@ import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime
 import { patchEchoAt, setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
 import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
+import { ResetScrollMenuList } from "@/components/common/ResetScrollMenuList";
 
 import "./EchoSelect.css"
 
@@ -246,6 +247,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             isSearchable={false}
             placeholder={placeholders.cost}
             styles={STAT_DROP_STYLE_LARGE}
+            components={{ MenuList: ResetScrollMenuList }}
+            menuShouldScrollIntoView={false}
             value={COST_DROP_OPTION.find((e) => e.value === selectedCost) ?? null}
             onChange={(opt) => {
               patchCharacterData(setEchoCost(characterData, index, opt?.value));
@@ -260,6 +263,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             isSearchable={false}
             placeholder={placeholders.harmony}
             styles={STAT_DROP_STYLE_LARGE}
+            components={{ MenuList: ResetScrollMenuList }}
+            menuShouldScrollIntoView={false}
             formatOptionLabel={(opt) =>
               formatOptionWithImage_Smaller(opt, lang)
             }
@@ -281,6 +286,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             options={ECHO_ID_DROP_OPTION}
             isClearable={true}
             isSearchable={true}
+            components={{ MenuList: ResetScrollMenuList }}
+            menuShouldScrollIntoView={false}
             placeholder={
               <div style={{display: "flex", alignItems: "center", gap: "min(0.5vw, 0.5rem)"}}>
                 <img
@@ -335,6 +342,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             })()}
             placeholder={placeholders.mainStat}
             styles={STAT_DROP_STYLE_OPTION_WIDE}
+            components={{ MenuList: ResetScrollMenuList }}
+            menuShouldScrollIntoView={false}
             formatOptionLabel={(opt) =>
               formatOptionWithImage_Smaller(opt, lang)
             }
@@ -391,6 +400,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                   options={STAT_OPTION_SUB}
                   placeholder={placeholders.subStat}
                   styles={STAT_DROP_STYLE_OPTION_WIDE}
+                  components={{ MenuList: ResetScrollMenuList }}
                 formatOptionLabel={(opt) =>
                   formatOptionWithImage_Smaller(opt, lang)
                 }
@@ -424,6 +434,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                   options={STAT_OPTION_VALUE_SUBS[idx]}
                   placeholder={placeholders.subValue}
                   styles={STAT_DROP_STYLE_OPTION_WIDE}
+                  components={{ MenuList: ResetScrollMenuList }}
                   menuPlacement="auto"
                   menuPosition="fixed"
                   minMenuHeight={200}

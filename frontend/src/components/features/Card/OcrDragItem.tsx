@@ -6,6 +6,7 @@ import type { StatId } from "@/datas/stats";
 import type React from "react";
 import type { EchoStatOption } from "@/runtime/echo.runtime";
 import type { EchoRuntimeWith7Subs } from "./OcrDragSelect";
+import { ResetScrollMenuList } from "@/components/common/ResetScrollMenuList";
 
 type SortableItemProps = {
   item: EchoStatOption;
@@ -72,6 +73,7 @@ export function OcrDragItem({
           <Select
             styles={styles[0]}
             options={options[0]}
+            components={{ MenuList: ResetScrollMenuList }}
             onChange={(opt: SingleValue<SelectOptionStatOriginal<StatId>>) => {
               if (!opt) return;
 
@@ -92,6 +94,7 @@ export function OcrDragItem({
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
+            menuShouldScrollIntoView={false}
             isSearchable={false}
             value={options[0].find((opt) => opt.value === item.statId) ?? null}
           />
@@ -107,6 +110,7 @@ export function OcrDragItem({
           <Select
             styles={styles[1]}
             options={options[1]}
+            components={{ MenuList: ResetScrollMenuList }}
             onChange={(opt: SingleValue<SelectOpt>) => {
               if (!opt) return;
 
@@ -127,6 +131,7 @@ export function OcrDragItem({
             }}
             menuPortalTarget={document.body}
             menuPosition="fixed"
+            menuShouldScrollIntoView={false}
             isSearchable={false}
             value={
               options[1].find(

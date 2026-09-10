@@ -6,6 +6,47 @@ import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import type { CharacterId } from "@/datas/characterStats";
 import { FixedStats } from "@/datas/stats";
 import { harmony } from "@/datas/harmonies";
+import { characterMeta } from "@/datas/characters.meta";
+
+type RelevantOptionData = {
+    scoreWeight?: number;
+    isRelevant?: boolean;
+};
+
+function getRelevantWeight(data: unknown) {
+    if (typeof data !== "object" || data === null) return 0;
+
+    const option = data as RelevantOptionData;
+    if (typeof option.scoreWeight === "number") return option.scoreWeight;
+    return option.isRelevant ? 1 : 0;
+}
+
+function getRelevantOptionStyle<Option>(
+    baseSelectStyles: StylesConfig<Option, false>
+): StylesConfig<Option, false>["option"] {
+    return (base, state) => {
+        const common = baseSelectStyles.option
+            ? baseSelectStyles.option(base, state)
+            : base;
+        const weight = getRelevantWeight(state.data);
+
+        if (weight <= 0) return common;
+
+        const background = state.isSelected
+            ? "linear-gradient(90deg, rgba(255, 215, 100, 0.62), rgba(74, 54, 12, 0.92))"
+            : state.isFocused
+                ? "linear-gradient(90deg, rgba(255, 215, 100, 0.48), rgba(49, 58, 86, 0.94))"
+                : "linear-gradient(90deg, rgba(255, 215, 100, 0.28), rgba(11, 11, 68, 0.96))";
+
+        return {
+            ...common,
+            borderLeft: "3px solid #ffd764",
+            background,
+            color: "#fff",
+            fontWeight: 900,
+        };
+    };
+}
 
 export const formatOptionWithImage = <
     T extends SelectOptionWithImage
@@ -63,6 +104,7 @@ export const getStatDropStyle = <Option,>(
     baseSelectStyles: StylesConfig<Option, false>,
     slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
+        option: getRelevantOptionStyle(baseSelectStyles),
         control: (base, state) => {
             const common = baseSelectStyles.control
                 ? baseSelectStyles.control(base, state)
@@ -151,6 +193,7 @@ export const getStatDropStyleOptionWide = <Option,>(
     baseSelectStyles: StylesConfig<Option, false>,
     slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
+        option: getRelevantOptionStyle(baseSelectStyles),
         menu: (base, state) => {
             const common = baseSelectStyles.menu
                 ? baseSelectStyles.menu(base, state)
@@ -277,6 +320,7 @@ export const getStatDropStyleLarge = <Option,>(
     baseSelectStyles: StylesConfig<Option, false>,
     slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
+        option: getRelevantOptionStyle(baseSelectStyles),
         control: (base, state) => {
             const common = baseSelectStyles.control
                 ? baseSelectStyles.control(base, state)
@@ -326,6 +370,7 @@ export const getStatDropStyleDrag = <Option,>(
     baseSelectStyles: StylesConfig<Option, false>,
     slotHeight: number): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
+        option: getRelevantOptionStyle(baseSelectStyles),
         menu: (base, state) => {
             const common = baseSelectStyles.menu
                 ? baseSelectStyles.menu(base, state)
@@ -462,8 +507,14 @@ export const getStatOptionBase = (
     characterId?: CharacterId,
 ): SelectOptionStatOriginal[] => {
     const score = characterId ? characterScoreSheet[characterId] : null;
+    const flatRelevantStat = characterId ? characterMeta[characterId]?.statType : null;
     const list = Object.entries(FixedStats).filter(
-      (v) => v[1].id !== "dummy").map(([statId, stat]) => ({
+      (v) => v[1].id !== "dummy").map(([, stat]) => {
+        const statId = stat.id;
+        const scoreWeight = score?.[statId] ?? 0;
+        const isRelevant = scoreWeight > 0 || statId === flatRelevantStat;
+
+        return {
         value: statId,
         label: stat[lang],
         kr: stat.kr,
@@ -473,13 +524,16 @@ export const getStatOptionBase = (
         path: `/ico/stats/${statId}.webp`,
         mainValue: stat.ValueMain,
         subValue: stat.ValueSub,
-      }));
+        scoreWeight,
+        isRelevant,
+      };
+    });
 
     if (!score) return list;
 
     return [...list].sort((a, b) => {
-      const aScore = score?.[a.value as keyof typeof score] ?? 0;
-      const bScore = score?.[b.value as keyof typeof score] ?? 0;
+      const aScore = a.scoreWeight ?? 0;
+      const bScore = b.scoreWeight ?? 0;
       return bScore - aScore;
     })
 }

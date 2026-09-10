@@ -23,7 +23,9 @@ export default function CharacterSlot({ isGrid, prop }: CharaterSlotProps) {
         <div className="character-image-slot">
           <img className={`character-image ${prop.rank}`} alt="character image" 
             src={`${BASE_URL}/character/${id.includes("rover") ? "rover" : id}/stand.png?ver=2`} 
-            />
+            loading="lazy"
+            decoding="async"
+          />
           <div className={`card-bg ${prop.rank === "Empty" ? "empty" : prop.element}`} />
           <div className="overlay" />
           {prop.rank === "Empty" ? null :
@@ -41,7 +43,13 @@ export default function CharacterSlot({ isGrid, prop }: CharaterSlotProps) {
       <div className="character-slot">
 
         <div className="character-image-slot">
-          <img alt="character image" className="character-image" src={`${BASE_URL}/character/${id}/stand.png`} />
+          <img
+            alt="character image"
+            className="character-image"
+            src={`${BASE_URL}/character/${id}/stand.png`}
+            loading="lazy"
+            decoding="async"
+          />
           <div className="rank-slot">
             <img alt="rack icon" className="rank-icon" src={`/ico/rank/1.png`} />
           </div>

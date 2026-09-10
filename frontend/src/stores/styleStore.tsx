@@ -17,6 +17,7 @@ export interface StyleStore {
 const StyleContext = createContext<StyleStore | null>(null);
 
 const UI_COLOR = ["#333366ff", "#0b0b44ff"];
+const SELECT_MENU_Z_INDEX = 11000;
 
 export function StyleProvider({ children }: { children: ReactNode }) {
   const baseSelectStyles = useMemo<SingleSelectStyles>(
@@ -34,7 +35,7 @@ export function StyleProvider({ children }: { children: ReactNode }) {
       }),
       menu: (base) => ({
         ...base,
-        zIndex: 9999,
+        zIndex: SELECT_MENU_Z_INDEX,
         color: "white",
       }),
       option: (base) => ({
@@ -49,7 +50,7 @@ export function StyleProvider({ children }: { children: ReactNode }) {
         backgroundColor: UI_COLOR[1],
         borderRadius: "4px",
       }),
-      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+      menuPortal: (base) => ({ ...base, zIndex: SELECT_MENU_Z_INDEX }),
       valueContainer: (base) => ({
         ...base,
         height: "100%",

@@ -86,24 +86,11 @@ export function textsToStats(texts: string[][], lang: LangType):{
   console.log(filtered);
   console.log(merged);
   const startIdx:number = merged.findIndex((item) => item[0].toLowerCase().includes("cost"))
-  if (startIdx === -1)
-    return {
-      echoId: null,
-      echoName: null,
-      cost: 1,
-      echoStats: [
-        [FixedStats.dummy.id, 0 ],
-        [FixedStats.dummy.id, 0 ],
-        [FixedStats.dummy.id, 0 ],
-        [FixedStats.dummy.id, 0 ],
-        [FixedStats.dummy.id, 0 ],
-        [FixedStats.dummy.id, 0 ],
-      ],
-    };
-
-  const head = merged.slice(0, startIdx).flat();
-  const body = merged[startIdx];
-  const temp = merged.slice(startIdx + 1, merged.length);
+  const head = startIdx === -1 ? [] : merged.slice(0, startIdx).flat();
+  const body = startIdx === -1 ? [""] : merged[startIdx];
+  const temp = startIdx === -1
+    ? merged
+    : merged.slice(startIdx + 1, merged.length);
 
   const candidates: { id: StatId; text: string }[] = Object.values(
     FixedStats
@@ -117,6 +104,8 @@ export function textsToStats(texts: string[][], lang: LangType):{
   
   const tail: [StatId, string][] = [];
   for (const [label, value] of temp) {
+    if (!/^[-+]?\d+(\.\d+)?%?$/.test(value.trim())) continue;
+
     const bestText = fuzzySearch(label, candidateTexts)[0];
     const statId = textToId.get(bestText) ?? FixedStats.dummy.id;
 
@@ -124,10 +113,13 @@ export function textsToStats(texts: string[][], lang: LangType):{
     tail.push([statId, value]);
   }
   const echoCandidates = ECHO_CANDIDATES[lang];
-  const bestEcho = fuzzySearch(
-    head.join(""),
-    echoCandidates.map((c) => c.text)
-  );
+  const echoQuery = head.join("").trim();
+  const bestEcho = echoQuery
+    ? fuzzySearch(
+        echoQuery,
+        echoCandidates.map((c) => c.text)
+      )
+    : [];
   console.log("E: ", bestEcho);
   console.log("B: ", body)
   console.log("T: ", tail)

@@ -29,6 +29,7 @@ import { createEmptyEchoRuntime, type EchoRuntime, type EchoStatOption } from "@
 import { patchEchoAt } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
 import { getEquipmentRank } from "@/types/character.type";
+import { ResetScrollMenuList } from "@/components/common/ResetScrollMenuList";
 
 export type DragItem = {
   id: number;
@@ -67,15 +68,7 @@ const InitTempEcho = () => {
   const temp = createEmptyEchoRuntime(4)
   const data:EchoRuntimeWith7Subs = {
     ...temp,
-    subOptions: [
-      {statId: "dummy", statValue: 0},
-      {statId: "dummy", statValue: 0},
-      {statId: "dummy", statValue: 0},
-      {statId: "dummy", statValue: 0},
-      {statId: "dummy", statValue: 0},
-      {statId: "dummy", statValue: 0},
-      {statId: "dummy", statValue: 0}
-    ]
+    subOptions: createEmptySubOptions(),
   }
 
   return data;
@@ -84,7 +77,7 @@ const InitTempEcho = () => {
 const DEFAULT_ORDER = [0, 1, 2, 3, 4, 5, 6];
 
 function createItems(data: EchoStatOption[] | null, lang: LangType): DragItem[] {
-  const stats = data?.slice(2) ?? [];
+  const stats = data ?? [];
   const fixedStats = Object.values(FixedStats);
 
   return Array.from({ length: 7 }, (_, index) => {
@@ -99,6 +92,21 @@ function createItems(data: EchoStatOption[] | null, lang: LangType): DragItem[] 
         : null,
     };
   });
+}
+
+function createEmptySubOptions(): EchoRuntimeWith7Subs["subOptions"] {
+  return Array.from({ length: 7 }, () => ({
+    statId: FixedStats.dummy.id,
+    statValue: 0,
+  })) as EchoRuntimeWith7Subs["subOptions"];
+}
+
+function getRecognizedSubStats(stats: [StatId, number][] | null) {
+  if (!stats) return [];
+
+  return stats.length > 5
+    ? stats.slice(2, 9)
+    : stats.slice(0, 7);
 }
 
 const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
@@ -254,43 +262,27 @@ export default function OcrDragSelect({
   );
 
   useEffect(() => {
-    const nextStats: EchoStatOption[] = (stats ?? []).map(
+    const recognizedSubStats = getRecognizedSubStats(stats);
+    const nextStats: EchoStatOption[] = recognizedSubStats.map(
       ([statId, statValue]) => ({
         statId,
         statValue,
       })
     );
+    const hasFullEchoRows = (stats?.length ?? 0) > 5;
 
     const tempEchoData: EchoRuntimeWith7Subs = {
       echoId,
       setId: null,
       cost,
       mainOption: { 
-        statId: stats?.[0]?.[0] ?? "dummy",
-        statValue: stats?.[0]?.[1] ?? 0
+        statId: hasFullEchoRows ? stats?.[0]?.[0] ?? "dummy" : "dummy",
+        statValue: hasFullEchoRows ? stats?.[0]?.[1] ?? 0 : 0,
       },
-      subOptions: [{
-        statId: stats?.[2]?.[0] ?? "dummy",
-        statValue: stats?.[2]?.[1] ?? 0
-      },{
-        statId: stats?.[3]?.[0] ?? "dummy",
-        statValue: stats?.[3]?.[1] ?? 0
-      },{
-        statId: stats?.[4]?.[0] ?? "dummy",
-        statValue: stats?.[4]?.[1] ?? 0
-      },{
-        statId: stats?.[5]?.[0] ?? "dummy",
-        statValue: stats?.[5]?.[1] ?? 0
-      },{
-        statId: stats?.[6]?.[0] ?? "dummy",
-        statValue: stats?.[6]?.[1] ?? 0
-      },{
-        statId: stats?.[7]?.[0] ?? "dummy",
-        statValue: stats?.[7]?.[1] ?? 0
-      },{
-        statId: stats?.[8]?.[0] ?? "dummy",
-        statValue: stats?.[8]?.[1] ?? 0
-      }]
+      subOptions: Array.from({ length: 7 }, (_, index) => ({
+        statId: recognizedSubStats[index]?.[0] ?? FixedStats.dummy.id,
+        statValue: recognizedSubStats[index]?.[1] ?? 0,
+      })) as EchoRuntimeWith7Subs["subOptions"],
     }
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -334,10 +326,16 @@ export default function OcrDragSelect({
     };
   }
 
-  const DragOptions = [
-    (() => getStatDropStyleDrag(baseSelectStyles, height))(),
-    (() => getStatDropStyleDrag(baseSelectStyles, height))(),
-  ] as [StylesConfig<SelectOptionStatOriginal | SelectOpt, false>, StylesConfig<SelectOptionStatOriginal | SelectOpt, false>];
+  const DragOptions = useMemo(
+    () => [
+      getStatDropStyleDrag(baseSelectStyles, height),
+      getStatDropStyleDrag(baseSelectStyles, height),
+    ] as [
+      StylesConfig<SelectOptionStatOriginal | SelectOpt, false>,
+      StylesConfig<SelectOptionStatOriginal | SelectOpt, false>,
+    ],
+    [baseSelectStyles, height],
+  );
 
   const STAT_DROP_STYLE_LARGE = useMemo(
     () => getStatDropStyleLarge(baseSelectStyles, height),
@@ -395,8 +393,8 @@ export default function OcrDragSelect({
   }, [lang, tempEchoData?.type]);
 
   const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() =>
-    getStatOptionBase(lang)
-    , [lang])
+    getStatOptionBase(lang, characterData.characterId)
+    , [lang, characterData.characterId])
 
   const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[0] !== 0
@@ -487,6 +485,8 @@ export default function OcrDragSelect({
             <div className="ocr-drag-select__editor-fields">
               <Select options={COST_DROP_OPTION}
                 styles={STAT_DROP_STYLE_LARGE}
+                components={{ MenuList: ResetScrollMenuList }}
+                menuShouldScrollIntoView={false}
                 onChange={(opt) => {
                   if (!opt) return;
                   setTempEcho((p) => {
@@ -509,6 +509,8 @@ export default function OcrDragSelect({
                 />
               <Select options={HARMONY_DROP_OPTION}
                 styles={STAT_DROP_STYLE_LARGE}
+                components={{ MenuList: ResetScrollMenuList }}
+                menuShouldScrollIntoView={false}
                 formatOptionLabel={(opt) =>
                   formatOptionWithImage_Smaller(opt, lang)
                 }
@@ -523,6 +525,8 @@ export default function OcrDragSelect({
                 />
               <Select options={EchoOption}
                 styles={STAT_DROP_STYLE_LARGE}
+                components={{ MenuList: ResetScrollMenuList }}
+                menuShouldScrollIntoView={false}
                 placeholder={
                   <div style={{ display: "flex", alignItems: "center", gap: "min(0.5vw, 0.5rem)" }}>
                     <img
@@ -566,6 +570,8 @@ export default function OcrDragSelect({
                       }
                     })()}
                     styles={STAT_DROP_STYLE_LARGE}
+                    components={{ MenuList: ResetScrollMenuList }}
+                    menuShouldScrollIntoView={false}
                     formatOptionLabel={(opt) =>
                       formatOptionWithImage_Smaller(opt, lang)
                     }
@@ -601,7 +607,7 @@ export default function OcrDragSelect({
                     displayIndex={displayIndex}
                     onSelectChange={setTempEcho}
                     styles={DragOptions}
-                    options={[STAT_OPTION_SUB, dropStatOptions[displayIndex]]}
+                    options={[STAT_OPTION_SUB, dropStatOptions[item.id]]}
                   />
                 ))}
               </div>

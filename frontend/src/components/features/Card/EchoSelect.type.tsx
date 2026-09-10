@@ -31,6 +31,8 @@ export type SelectOptionStatOriginal<T = unknown> = {
   path: string;
   mainValue: number[];
   subValue: number[];
+  scoreWeight?: number;
+  isRelevant?: boolean;
 }
 
 export type SelectOpt = { value: number; label: string };

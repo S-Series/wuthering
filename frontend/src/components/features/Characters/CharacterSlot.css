@@ -14,11 +14,11 @@
     background: linear-gradient(#4d4d4d, #d8d8d8, #fff, #d8d8d8, #4d4d4d);
     border-top-left-radius: 1.5rem;
     border-bottom-right-radius: 1.5rem;
-    filter: drop-shadow(4px 6px 4px #00000055);
-    transition: 
-        width 0.3s ease-out,
-        height 0.3s ease-out, 
-        transform 0.3s ease-out;
+    box-shadow: 4px 6px 14px #00000055;
+    content-visibility: auto;
+    contain: layout paint;
+    contain-intrinsic-size: 180px 240px;
+    transition: transform 0.2s ease-out;
 }
 
 .character-slot:hover,
@@ -211,6 +211,7 @@
         min-height: 160px;
         border-top-left-radius: 1rem;
         border-bottom-right-radius: 1rem;
+        contain-intrinsic-size: 120px 160px;
     }
 
     .character-slot .character-image-slot {
@@ -227,6 +228,7 @@
         min-height: 120px;
         border-top-left-radius: 0.75rem;
         border-bottom-right-radius: 0.75rem;
+        contain-intrinsic-size: 90px 120px;
     }
 
     .character-slot .character-image-slot {
