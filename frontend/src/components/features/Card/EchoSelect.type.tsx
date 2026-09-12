@@ -33,6 +33,7 @@ export type SelectOptionStatOriginal<T = unknown> = {
   subValue: number[];
   scoreWeight?: number;
   isRelevant?: boolean;
+  relevanceTier?: "valid" | "partial" | "invalid";
 }
 
 export type SelectOpt = { value: number; label: string };

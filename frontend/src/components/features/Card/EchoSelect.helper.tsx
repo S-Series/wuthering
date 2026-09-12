@@ -8,17 +8,13 @@ import { FixedStats } from "@/datas/stats";
 import { harmony } from "@/datas/harmonies";
 import { characterMeta } from "@/datas/characters.meta";
 
-type RelevantOptionData = {
-    scoreWeight?: number;
-    isRelevant?: boolean;
-};
+type RelevantOptionData = Pick<SelectOptionStatOriginal, "scoreWeight" | "isRelevant" | "relevanceTier">;
 
-function getRelevantWeight(data: unknown) {
-    if (typeof data !== "object" || data === null) return 0;
+function getRelevantTier(data: unknown) {
+    if (typeof data !== "object" || data === null) return undefined;
 
     const option = data as RelevantOptionData;
-    if (typeof option.scoreWeight === "number") return option.scoreWeight;
-    return option.isRelevant ? 1 : 0;
+    return option.relevanceTier;
 }
 
 function getRelevantOptionStyle<Option>(
@@ -28,21 +24,23 @@ function getRelevantOptionStyle<Option>(
         const common = baseSelectStyles.option
             ? baseSelectStyles.option(base, state)
             : base;
-        const weight = getRelevantWeight(state.data);
+        const tier = getRelevantTier(state.data);
 
-        if (weight <= 0) return common;
+        if (!tier) return common;
 
+        const rgb = tier === "valid" ? "255, 215, 100"
+            : tier === "partial" ? "125, 211, 252" : "156, 163, 175";
         const background = state.isSelected
-            ? "linear-gradient(90deg, rgba(255, 215, 100, 0.62), rgba(74, 54, 12, 0.92))"
+            ? `linear-gradient(90deg, rgba(${rgb}, 0.62), #252830)`
             : state.isFocused
-                ? "linear-gradient(90deg, rgba(255, 215, 100, 0.48), rgba(49, 58, 86, 0.94))"
-                : "linear-gradient(90deg, rgba(255, 215, 100, 0.28), rgba(11, 11, 68, 0.96))";
+                ? `linear-gradient(90deg, rgba(${rgb}, 0.48), #202329)`
+                : `linear-gradient(90deg, rgba(${rgb}, 0.28), #14171d)`;
 
         return {
             ...common,
-            borderLeft: "3px solid #ffd764",
+            borderLeft: `3px solid rgb(${rgb})`,
             background,
-            color: "#fff",
+            color: tier === "invalid" ? "#c5c8ce" : "#fff",
             fontWeight: 900,
         };
     };
@@ -512,7 +510,13 @@ export const getStatOptionBase = (
       (v) => v[1].id !== "dummy").map(([, stat]) => {
         const statId = stat.id;
         const scoreWeight = score?.[statId] ?? 0;
-        const isRelevant = scoreWeight > 0 || statId === flatRelevantStat;
+        const isFlatRelevant = statId === FixedStats.atk.id
+            ? (score?.atkPct ?? 0) >= 1
+            : statId === flatRelevantStat;
+        const relevanceTier: NonNullable<SelectOptionStatOriginal["relevanceTier"]> =
+            scoreWeight >= 1 ? "valid"
+                : scoreWeight > 0 || isFlatRelevant ? "partial" : "invalid";
+        const isRelevant = relevanceTier !== "invalid";
 
         return {
         value: statId,
@@ -526,12 +530,16 @@ export const getStatOptionBase = (
         subValue: stat.ValueSub,
         scoreWeight,
         isRelevant,
+        relevanceTier,
       };
     });
 
     if (!score) return list;
 
     return [...list].sort((a, b) => {
+      const rank = { valid: 2, partial: 1, invalid: 0 };
+      const tierDifference = rank[b.relevanceTier] - rank[a.relevanceTier];
+      if (tierDifference !== 0) return tierDifference;
       const aScore = a.scoreWeight ?? 0;
       const bScore = b.scoreWeight ?? 0;
       return bScore - aScore;
