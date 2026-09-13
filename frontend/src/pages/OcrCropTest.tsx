@@ -3,6 +3,7 @@ import { prepareOcrImage, type CropMetadata } from "@/api/ocr.preprocess";
 import "./OcrCropTest.css";
 import { requestOcrBatch, type OcrRegionResult } from "@/api/ocr.batch";
 import { useAppStore } from "@/stores/appStore";
+import { matchOcrImages, resolveMatchedStat, statName, harmonyName, type LocalMatches } from "@/api/ocr.match";
 
 type Result = { url: string; file: File; metadata: CropMetadata; elapsed: number };
 const bandLabel = (index: number) => index === -2 ? "에코 이름 / 하모니" : index === -1
@@ -15,6 +16,8 @@ export default function OcrCropTest() {
   const [ocrBusy, setOcrBusy] = useState(false);
   const [source, setSource] = useState<{ url: string; name: string } | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [matchReport, setMatchReport] = useState<{ source: Result; lang: string; data?: LocalMatches; error?: string } | null>(null);
+  const local = matchReport?.source === result && matchReport?.lang === lang ? matchReport : null;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
@@ -30,9 +33,21 @@ export default function OcrCropTest() {
     urls.current.forEach(URL.revokeObjectURL);
   }, []);
 
+  useEffect(() => {
+    if (!result) return;
+    const current = new AbortController();
+    void matchOcrImages(result.file, result.metadata, lang, current.signal).then(data => {
+      if (!current.signal.aborted) setMatchReport({ source: result, lang, data });
+    }).catch((cause: unknown) => {
+      if (!current.signal.aborted) setMatchReport({ source: result, lang, error: cause instanceof Error ? cause.message : "이미지 비교 실패" });
+    });
+    return () => current.abort();
+  }, [result, lang]);
+
   async function upload(file: File) {
     release();
     setResult(null);
+    setMatchReport(null);
     setOcrResults(null);
     setOcrBusy(false);
     setSource(null);
@@ -113,16 +128,24 @@ export default function OcrCropTest() {
       {result && <>
         <section aria-label="항목별 자르기 결과">
           <h2>항목별 결과</h2>
+          <p className="crop-match-status">{!local ? "이미지 비교 중…" : local.error ? local.error : lang !== "kr" ? "하모니 비교 완료 · 옵션 이미지 비교는 한국어만 지원" : "이미지 비교 완료"}</p>
+          {local?.data && <p className="crop-harmony">하모니: {local.data.harmony ? `${harmonyName(local.data.harmony.id)} (유사도 ${Math.round(local.data.harmony.score * 100)}%)` : "미확정"}</p>}
           <div className="crop-bands">
-            {result.metadata.bands.map((band) => <figure key={band.index} style={{ width: "100%", maxWidth: result.metadata.width }}>
+            {result.metadata.bands.map((band) => {
+              const match = local?.data?.rows.find(row => row.index === band.index)?.match ?? null;
+              const resolved = resolveMatchedStat(match, ocrResults?.[band.index + 2], band.index);
+              return <figure key={band.index} style={{ width: "100%", maxWidth: result.metadata.width }}>
               <figcaption>{bandLabel(band.index)}</figcaption>
               <div className="crop-band-image" style={{ aspectRatio: `${result.metadata.width} / ${band.bottom - band.top}` }}>
                 <img src={result.url} alt={bandLabel(band.index)} style={{ transform: `translateY(-${band.top / result.metadata.height * 100}%)` }} />
               </div>
+              {band.index >= 0 && local?.data && <p className="crop-visual-text">이미지: {match ? `${statName(match.id)} (유사도 ${Math.round(match.score * 100)}%)` : "미확정"}</p>}
               {ocrResults && <p className="crop-ocr-text">{ocrResults[band.index + 2].success
                 ? ocrResults[band.index + 2].texts.join(" · ") || "인식된 텍스트 없음"
                 : "인식 실패"}</p>}
-            </figure>)}
+              {resolved && <p className="crop-resolved-text">판정: {statName(resolved.id)} {resolved.value}{!["hp", "atk", "def"].includes(resolved.id) ? "%" : ""}{resolved.corrected ? " · 소수점 보정" : ""}</p>}
+            </figure>;
+            })}
           </div>
         </section>
         <section className="crop-atlas">

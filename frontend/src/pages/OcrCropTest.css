@@ -10,6 +10,9 @@
 .crop-status { color: #62c9ed; min-height: 24px; }
 .crop-error { color: #f18b8b; overflow-wrap: anywhere; }
 .crop-ocr-text { white-space: pre-wrap; overflow-wrap: anywhere; color: #62c9ed; font-size: 14px; }
+.crop-visual-text, .crop-resolved-text { overflow-wrap: anywhere; font-size: 14px; }
+.crop-visual-text { color: #ffd764; }
+.crop-resolved-text { color: #8bd7b0; }
 .ocr-crop-test section { border-top: 1px solid #62666e; padding: 20px 0; }
 .crop-source p { overflow-wrap: anywhere; font-size: 14px; }
 .crop-source img { display: block; max-width: 100%; max-height: 440px; object-fit: contain; }
