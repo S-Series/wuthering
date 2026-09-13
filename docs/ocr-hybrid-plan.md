@@ -1,8 +1,42 @@
 # Hybrid OCR implementation handoff
 
-Status: design reviewed against local code; image matching is not implemented.
+Status: historical proposal and superseded server prototype.
+Current implementation: [Browser preprocessing](ocr-client-pipeline.md).
+The browser now owns cropping; the server does not detect or recrop panels.
 Reference: ChatGPT conversation 6aa38077-a484-83e9-b605-3ea59964ba8e.
-Template images and labeled screenshots will be supplied later.
+Templates were extracted from the supplied desktop, Fold, phone, tablet and panel screenshots.
+
+## Implemented on 2026-09-13
+
+- `echo_vision.py` searches for COST in a bounded image, restoring original coordinates and scale. Aspect ratio selects a reference layout; unknown layouts retain whole-image OCR fallback.
+- The header and seven original-resolution rows are placed into one OCR atlas with gaps. Row indexes survive missing detections, preventing subsequent options from shifting.
+- `ocr_service.py` returns optional versioned image evidence and OCR confidence, retaining legacy response fields. It runs CPU work in a thread pool and serializes inference.
+- `ocr.vision.ts` resolves text/image evidence against known stats and permitted substat values. Conflicting evidence and uncertain numeric text remain empty. Percent markers distinguish flat and percentage stats.
+- Harmony suggestions use existing icons plus two screenshot variants, and are checked against recognized echo compatibility. Ambiguous icons remain unselected.
+- The old parser no longer discards every string containing `25`, and numeric parsing preserves decimal points.
+
+Matching currently runs in the existing Python/OpenCV service, not a browser worker.
+Original images are still uploaded; client-side bandwidth reduction is not implemented.
+PaddleOCR still runs detection and recognition, not recognition-only inference.
+
+Deploy both the frontend and `backend/paddle OCR`, including `vision_assets`, to activate
+the complete flow. The gateway forwards these optional fields unchanged; existing cached
+responses remain compatible. No remote deployment was performed.
+
+Validation: run `python -m unittest test_echo_vision -v` in the OCR directory and
+`node scripts/test-ocr-vision.mjs` in the frontend. Geometry checks cover all 12 supplied
+images plus an enlarged panel. Local screenshot checks skip explicitly if files are absent.
+`python preview_vision.py` writes a montage to the OS temp directory. Asset generation
+uses `build_vision_assets.py`; runtime does not require the original screenshots.
+Only small templates are bundled, not full screenshots or UIDs.
+
+PaddleOCR is not installed locally, so end-to-end OCR accuracy has not been measured.
+Some references also supply templates: their scores are not held-out accuracy.
+The thresholds are conservative initial values, and small/background-obscured labels
+and some harmony icons can remain unresolved. Unknown UI versions and other languages
+need separate samples and validation.
+
+The sections below preserve the original proposal and pre-implementation observations.
 
 ## Current integration points
 

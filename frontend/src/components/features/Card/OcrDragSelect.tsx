@@ -30,6 +30,7 @@ import { patchEchoAt } from "@/runtime/characterData.helpers";
 import { locale } from "@/locales/locale";
 import { getEquipmentRank } from "@/types/character.type";
 import { ResetScrollMenuList } from "@/components/common/ResetScrollMenuList";
+import type { HarmonyId } from "@/datas/harmonies";
 
 export type DragItem = {
   id: number;
@@ -43,6 +44,7 @@ type Props = {
     cost: 4 | 3 | 1;
     echoId: EchoId | null;
     stats: [StatId, number][] | null;
+    setId?: HarmonyId | null;
   };
   selectIdx: number;
   onSelectIdx: React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>>;
@@ -244,7 +246,7 @@ export default function OcrDragSelect({
   resultSlot,
 }: Props) {
   const baseUrl = import.meta.env.VITE_IMAGE_BASE;
-  const { cost, echoId, stats } = datas;
+  const { cost, echoId, stats, setId } = datas;
   const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
   const { characterData, equipmentScore, patchCharacterData } = useCharacter();
@@ -273,7 +275,7 @@ export default function OcrDragSelect({
 
     const tempEchoData: EchoRuntimeWith7Subs = {
       echoId,
-      setId: null,
+      setId: setId ?? null,
       cost,
       mainOption: { 
         statId: hasFullEchoRows ? stats?.[0]?.[0] ?? "dummy" : "dummy",
@@ -289,7 +291,7 @@ export default function OcrDragSelect({
     setTempEcho(tempEchoData);
     setSourceItems(createItems(nextStats, lang));
     setItemOrder(DEFAULT_ORDER);
-  }, [echoId, cost, stats, lang]);
+  }, [echoId, cost, stats, setId, lang]);
 
   const displayItems = useMemo(() => {
     return itemOrder
@@ -392,7 +394,7 @@ export default function OcrDragSelect({
       }));
   }, [lang, tempEchoData?.type]);
 
-  const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() =>
+  const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal<StatId>[]>(() =>
     getStatOptionBase(lang, characterData.characterId)
     , [lang, characterData.characterId])
 
@@ -557,7 +559,7 @@ export default function OcrDragSelect({
 
               <div className="ocr-drag-select__main-stat">
                 <div style={{ width: "70%" }}>
-                  <Select options={(() => {
+                  <Select<SelectOptionStatOriginal<StatId>> options={(() => {
                       switch (tempEcho?.cost) {
                         case 4:
                           return STAT_OPTION_MAIN_COST4;
@@ -569,7 +571,9 @@ export default function OcrDragSelect({
                           return [];
                       }
                     })()}
-                    styles={STAT_DROP_STYLE_LARGE}
+                    value={STAT_OPTION_BASE.find(option => option.value === tempEcho.mainOption.statId) ?? null}
+                    // Shared styles inspect relevance metadata, never the option value type.
+                    styles={STAT_DROP_STYLE_LARGE as unknown as StylesConfig<SelectOptionStatOriginal<StatId>, false>}
                     components={{ MenuList: ResetScrollMenuList }}
                     menuShouldScrollIntoView={false}
                     formatOptionLabel={(opt) =>

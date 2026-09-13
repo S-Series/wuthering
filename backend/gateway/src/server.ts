@@ -8,6 +8,7 @@ import pLimit from "p-limit";
 
 import { getClientKey } from "./utils/clientKey.js";
 import { registerRenderRoutes } from "./routes/render.js";
+import { registerOcrBatchRoute } from "./routes/ocrBatch.js";
 import { registerClientEventRoutes } from "./routes/clientEvent.js";
 import { registerUserRoutes } from "./routes/users.js";
 import { registerCharacterDataRoutes } from "./routes/characterData.js";
@@ -232,6 +233,8 @@ async function main() {
     }
   });
 
+  registerOcrBatchRoute(app, limitOcr);
+
   app.post("/api/ocr", async (req, reply) => {
     const startedAt = Date.now();
     const supabaseUserId = await getOptionalSupabaseUserId(req);
@@ -329,12 +332,20 @@ async function main() {
 
     const langValue = normalizeLang(langRaw);
 
+    const preprocessingField = part.fields?.preprocessing;
+    const preprocessing = preprocessingField && "value" in preprocessingField
+      ? String(preprocessingField.value) : undefined;
+    if (preprocessing && preprocessing.length > 16_384) {
+      return reply.code(400).send({ error: "preprocessing metadata too large" });
+    }
+
     req.log.info(
       { lang: langValue, filename: part.filename, mimetype: part.mimetype, size: buf.length },
       "ocr request"
     );
 
     const ocrCacheKey = createOcrCacheKey({
+      preprocessing,
       lang: langValue,
       mimetype: part.mimetype,
       buffer: buf,
@@ -390,6 +401,7 @@ async function main() {
     );
 
     form.set("lang", langValue);
+    if (preprocessing) form.set("preprocessing", preprocessing);
 
     const upstreamUrl = new URL(
       "/ocr",

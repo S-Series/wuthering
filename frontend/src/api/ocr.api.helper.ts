@@ -49,7 +49,7 @@ export function retouchOcrTexts(texts: string[], lang: LangType) {
     }
     s = s.trim();
     return s;
-  }).filter((item) => !item.includes("+") && !item.includes("25"));
+  }).filter((item) => !/^\+\s*\d+$/.test(item));
 
   const indexes: number[] = [0];
   for(let i = 0; i < retouched.length; i++) {
@@ -169,9 +169,7 @@ export function textsToStats(texts: string[][], lang: LangType):{
         }
         return statId;
       })(),
-      valueText.includes("%")
-        ? Number(valueText.replace(/\D/g, "")) / 10
-        : Number(valueText.replace(/\D/g, "")),
+      Number(valueText.replace("%", "").trim()),
     ]),
   };
 }

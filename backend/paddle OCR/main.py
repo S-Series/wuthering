@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ocr_config import PRELOAD_LANG, normalize_lang
 from ocr_engine import get_ocr, is_lang_loaded, loaded_langs, supported_langs
-from ocr_service import run_ocr
+from ocr_service import run_ocr, run_ocr_batch
 
 logging.basicConfig(
     level=logging.INFO,
@@ -74,13 +74,26 @@ def wake(lang: str = Query("kr")):
     }
 
 
+@app.post("/ocr/batch")
+async def ocr_batch(files: list[UploadFile] = File(...), lang: str = Form("kr")):
+    from fastapi import HTTPException
+    try:
+        return await run_ocr_batch(files, lang)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+    finally:
+        for file in files:
+            await file.close()
+
+
 @app.post("/ocr")
 async def ocr_process(
     file: UploadFile = File(...),
     lang: str = Form("kr"),
+    preprocessing: str | None = Form(None),
 ):
     try:
-        return await run_ocr(file, lang)
+        return await run_ocr(file, lang, preprocessing)
     except Exception as e:
         logger.exception("OCR error.")
         return {

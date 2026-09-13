@@ -1,0 +1,26 @@
+.ocr-crop-test { box-sizing: border-box; width: 100%; max-width: 1200px; margin: 0 auto; padding: 24px; color: var(--app-text); letter-spacing: 0; }
+.ocr-crop-test * { box-sizing: border-box; }
+.ocr-crop-test header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.ocr-crop-test h1 { font-size: 24px; margin: 0; }
+.ocr-crop-test h2 { font-size: 18px; margin: 0 0 12px; }
+.ocr-crop-test a { color: #62c9ed; }
+.crop-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.crop-toolbar input { max-width: 100%; min-width: 0; font: inherit; }
+.crop-toolbar button { font: inherit; padding: 6px 12px; cursor: pointer; }
+.crop-status { color: #62c9ed; min-height: 24px; }
+.crop-error { color: #f18b8b; overflow-wrap: anywhere; }
+.crop-ocr-text { white-space: pre-wrap; overflow-wrap: anywhere; color: #62c9ed; font-size: 14px; }
+.ocr-crop-test section { border-top: 1px solid #62666e; padding: 20px 0; }
+.crop-source p { overflow-wrap: anywhere; font-size: 14px; }
+.crop-source img { display: block; max-width: 100%; max-height: 440px; object-fit: contain; }
+.crop-bands { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.crop-bands figure { margin: 0; min-width: 0; }
+.crop-bands figcaption { margin-bottom: 8px; font-size: 14px; }
+.crop-band-image { position: relative; overflow: hidden; background: #08090c; }
+.crop-band-image img { position: absolute; top: 0; left: 0; display: block; width: 100%; height: auto; }
+.crop-atlas > img { display: block; width: 100%; max-width: 700px; height: auto; margin-top: 16px; }
+@media (max-width: 600px) {
+  .ocr-crop-test { padding: 16px; }
+  .ocr-crop-test h1 { font-size: 20px; }
+  .crop-bands { grid-template-columns: minmax(0, 1fr); }
+}

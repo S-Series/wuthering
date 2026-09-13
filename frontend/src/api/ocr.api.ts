@@ -1,4 +1,6 @@
 import { auth } from "@/firebase/firebase";
+import type { VisionResponse } from "./ocr.vision";
+import type { CropMetadata } from "./ocr.preprocess";
 
 export type OcrApiResponse = {
   success?: boolean;
@@ -7,13 +9,14 @@ export type OcrApiResponse = {
   image_base64?: string;
   error?: string;
   error_type?: string;
+  vision?: VisionResponse | null;
 };
 
 export async function requestOcrByUrl(
   endpointUrl: string,
   file: File,
   lang: string,
-  opts?: { signal?: AbortSignal; timeoutMs?: number }
+  opts?: { signal?: AbortSignal; timeoutMs?: number; preprocessing?: CropMetadata }
 ): Promise<OcrApiResponse> {
   const controller = new AbortController();
   const timeoutMs = opts?.timeoutMs ?? 60_000;
@@ -23,8 +26,9 @@ export async function requestOcrByUrl(
 
   try {
     const formData = new FormData();
-    formData.append("file", file);
     formData.append("lang", lang);
+    if (opts?.preprocessing) formData.append("preprocessing", JSON.stringify(opts.preprocessing));
+    formData.append("file", file);
 
     const user = auth?.currentUser ?? null;
     const idToken = user ? await user.getIdToken() : null;
@@ -41,7 +45,9 @@ export async function requestOcrByUrl(
       throw new Error(`서버 오류: ${res.status} ${body}`);
     }
 
-    return (await res.json()) as OcrApiResponse;
+    const data = (await res.json()) as OcrApiResponse;
+    if (data.success === false) throw new Error(data.error || "OCR failed");
+    return data;
   } finally {
     cleanup();
     window.clearTimeout(timeoutId);

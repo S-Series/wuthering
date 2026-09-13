@@ -1,0 +1,177 @@
+[
+  {
+    "statId": "critRate",
+    "template": "label-0.png",
+    "language": "kr"
+  },
+  {
+    "statId": "liberationBns",
+    "template": "label-1.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critDmg",
+    "template": "label-2.png",
+    "language": "kr"
+  },
+  {
+    "statId": "resonanceBns",
+    "template": "label-3.png",
+    "language": "kr"
+  },
+  {
+    "statId": "def",
+    "template": "label-4.png",
+    "language": "kr"
+  },
+  {
+    "statId": "atk",
+    "template": "label-5.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critRate",
+    "template": "label-6.png",
+    "language": "kr"
+  },
+  {
+    "statId": "resonanceBns",
+    "template": "label-7.png",
+    "language": "kr"
+  },
+  {
+    "statId": "basicBns",
+    "template": "label-8.png",
+    "language": "kr"
+  },
+  {
+    "statId": "liberationBns",
+    "template": "label-9.png",
+    "language": "kr"
+  },
+  {
+    "statId": "resonanceBns",
+    "template": "label-10.png",
+    "language": "kr"
+  },
+  {
+    "statId": "atk",
+    "template": "label-11.png",
+    "language": "kr"
+  },
+  {
+    "statId": "hp",
+    "template": "label-12.png",
+    "language": "kr"
+  },
+  {
+    "statId": "atk",
+    "template": "label-13.png",
+    "language": "kr"
+  },
+  {
+    "statId": "def",
+    "template": "label-14.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critDmg",
+    "template": "label-15.png",
+    "language": "kr"
+  },
+  {
+    "statId": "atk",
+    "template": "label-16.png",
+    "language": "kr"
+  },
+  {
+    "statId": "skillBns",
+    "template": "label-17.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critRate",
+    "template": "label-18.png",
+    "language": "kr"
+  },
+  {
+    "statId": "def",
+    "template": "label-19.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critRate",
+    "template": "label-20.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critDmg",
+    "template": "label-21.png",
+    "language": "kr"
+  },
+  {
+    "statId": "skillBns",
+    "template": "label-22.png",
+    "language": "kr"
+  },
+  {
+    "statId": "heavyBns",
+    "template": "label-23.png",
+    "language": "kr"
+  },
+  {
+    "statId": "resonanceBns",
+    "template": "label-24.png",
+    "language": "kr"
+  },
+  {
+    "statId": "skillBns",
+    "template": "label-25.png",
+    "language": "kr"
+  },
+  {
+    "statId": "atk",
+    "template": "label-26.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critDmg",
+    "template": "label-27.png",
+    "language": "kr"
+  },
+  {
+    "statId": "critRate",
+    "template": "label-28.png",
+    "language": "kr"
+  },
+  {
+    "statId": "def",
+    "template": "label-29.png",
+    "language": "kr"
+  },
+  {
+    "statId": "atk",
+    "template": "label-30.png",
+    "language": "en"
+  },
+  {
+    "statId": "critDmg",
+    "template": "label-31.png",
+    "language": "en"
+  },
+  {
+    "statId": "critRate",
+    "template": "label-32.png",
+    "language": "en"
+  },
+  {
+    "statId": "atk",
+    "template": "label-33.png",
+    "language": "en"
+  },
+  {
+    "statId": "skillBns",
+    "template": "label-34.png",
+    "language": "en"
+  }
+]

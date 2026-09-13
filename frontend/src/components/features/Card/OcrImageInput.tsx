@@ -14,6 +14,9 @@ import { locale } from "@/locales/locale";
 import { getRandomGif } from "@/lib/randomImg";
 import { useAppStore } from "@/stores/appStore";
 import type { StatId } from "@/datas/stats";
+import type { HarmonyId } from "@/datas/harmonies";
+import { parseVisionResponse } from "@/api/ocr.vision";
+import { prepareOcrImage } from "@/api/ocr.preprocess";
 
 import OcrDragSelect from "./OcrDragSelect";
 
@@ -22,6 +25,7 @@ export type OcrDebugData = {
   echoName: string | null;
   cost: number;
   echoStats: [StatId, number][];
+  setId?: HarmonyId | null;
 };
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -54,6 +58,7 @@ export default function OcrImageInput({
     initialDebug ?? null,
   );
   const [preview, setPreview] = useState<string | null>(null);
+  const [ocrError, setOcrError] = useState<string | null>(null);
   const [refHeight, setRefHeight] = useState(0);
   const [isHealthy, setHealthy] = useState<boolean | null>(null);
   const [isBoaring, setBoaring] = useState(false);
@@ -94,6 +99,7 @@ export default function OcrImageInput({
     setFile(nextFile);
     setFilePreviewUrl(nextPreviewUrl);
     setStatus("Idle");
+    setOcrError(null);
     setBoaring(false);
     setPreview(null);
     setDebug(null);
@@ -113,13 +119,17 @@ export default function OcrImageInput({
     const requestId = ocrRequestIdRef.current;
 
     setStatus("Requested");
+    setOcrError(null);
     setBoaring(false);
     setDebug(null);
     setPreview(null);
     onDebugChange(null);
 
     try {
-      const data = await requestOcrByUrl(endpointUrl, file, lang, {
+      const prepared = await prepareOcrImage(file, controller.signal);
+      controller.signal.throwIfAborted();
+      const data = await requestOcrByUrl(endpointUrl, prepared.file, lang, {
+        preprocessing: prepared.metadata,
         signal: controller.signal,
         timeoutMs: 180_000,
       });
@@ -129,7 +139,7 @@ export default function OcrImageInput({
 
       const texts = normalizeOcrTexts(data);
       const image = ocrImageBase64ToDataUrl(data.image_base64);
-      const nextDebug = textsToStats(
+      const nextDebug = data.vision?.version === 1 ? parseVisionResponse(data.vision, lang) : textsToStats(
         retouchOcrTexts(texts, lang),
         lang,
       ) as OcrDebugData;
@@ -143,6 +153,7 @@ export default function OcrImageInput({
       if (controller.signal.aborted) return;
       setBoaring(false);
       setStatus("Failed");
+      setOcrError(error instanceof Error ? error.message : "OCR 처리에 실패했습니다.");
       setDebug(null);
       onDebugChange(null);
       console.error(error);
@@ -290,6 +301,7 @@ export default function OcrImageInput({
             cost: (debug?.cost as 4 | 3 | 1) ?? 4,
             echoId: debug?.echoId ?? null,
             stats: debug?.echoStats ?? null,
+            setId: debug?.setId ?? null,
           }}
           selectIdx={activeSelectIdx}
           onSelectIdx={handleSelectIdx}
@@ -336,6 +348,7 @@ export default function OcrImageInput({
               </div>
 
               <div className="ocr-request-slot">
+                {ocrError && <span role="alert" className={`${lang}-font ocr-message`}>{ocrError}</span>}
                 {isBoaring && (
                   <span className={`${lang}-font ocr-message`}>
                     {localeText.description3}

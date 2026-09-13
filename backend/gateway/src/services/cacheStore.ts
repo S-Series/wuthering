@@ -46,10 +46,11 @@ export function createOcrCacheKey(input: {
   lang: string;
   mimetype: string;
   buffer: Buffer;
+  preprocessing?: string;
 }) {
   return createMixedBufferCacheKey(
     "ocr",
-    `${input.lang}:${input.mimetype}`,
+    `${input.lang}:${input.mimetype}:${input.preprocessing ?? "legacy"}`,
     input.buffer
   );
 }

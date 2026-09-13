@@ -10,12 +10,14 @@ import BoardEditor from "@/pages/BoardEditor";
 
 import DragDebugPage from "./pages/Debug";
 import OcrServerWatcher from "@/components/features/OcrServerWatcher";
+import OcrCropTest from "@/pages/OcrCropTest";
 
 export default function App() {
   return (
     <>
       <OcrServerWatcher />
       <Routes>
+        <Route path="/test" element={<OcrCropTest />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/characters" element={<Characters />} />

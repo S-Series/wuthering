@@ -4,7 +4,7 @@ import { type StylesConfig } from "react-select";
 import type { LangType } from "@/stores/appStore";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import type { CharacterId } from "@/datas/characterStats";
-import { FixedStats } from "@/datas/stats";
+import { FixedStats, type StatId } from "@/datas/stats";
 import { harmony } from "@/datas/harmonies";
 import { characterMeta } from "@/datas/characters.meta";
 
@@ -503,7 +503,7 @@ export const getEchoOptionBase = (
 export const getStatOptionBase = (
     lang: LangType,
     characterId?: CharacterId,
-): SelectOptionStatOriginal[] => {
+): SelectOptionStatOriginal<StatId>[] => {
     const score = characterId ? characterScoreSheet[characterId] : null;
     const flatRelevantStat = characterId ? characterMeta[characterId]?.statType : null;
     const list = Object.entries(FixedStats).filter(
