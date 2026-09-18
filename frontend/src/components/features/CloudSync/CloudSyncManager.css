@@ -10,7 +10,7 @@
 .cloud-sync-caption {
     margin: 0;
     color: #c7c9cf;
-    font-size: min(2.8vw, 0.95rem);
+    font-size: clamp(0.8125rem, 2.8vw, 0.95rem);
     font-weight: 700;
     line-height: 1.6;
     text-align: center;
@@ -23,7 +23,7 @@
     border: 1px solid rgba(255, 215, 100, 0.46);
     background: rgba(85, 70, 31, 0.22);
     color: #ffe7a1;
-    font-size: min(2.4vw, 0.8rem);
+    font-size: clamp(0.8125rem, 2.4vw, 0.8125rem);
     font-weight: 850;
     line-height: 1.5;
     text-align: center;
@@ -56,7 +56,7 @@
 
 .cloud-sync-data-card > span {
     color: #ffd764;
-    font-size: min(2vw, 0.68rem);
+    font-size: clamp(0.8125rem, 2vw, 0.8125rem);
     font-weight: 900;
     line-height: 1.2;
 }
@@ -65,7 +65,7 @@
     max-width: 100%;
     overflow: hidden;
     color: #fff;
-    font-size: min(3vw, 1rem);
+    font-size: clamp(0.8125rem, 3vw, 1rem);
     font-weight: 900;
     line-height: 1.2;
     text-overflow: ellipsis;
@@ -87,7 +87,7 @@
     align-items: center;
     justify-content: space-between;
     color: #c7c9cf;
-    font-size: min(2vw, 0.68rem);
+    font-size: clamp(0.8125rem, 2vw, 0.8125rem);
     font-weight: 700;
     line-height: 1.35;
 }
@@ -138,14 +138,14 @@
 }
 
 .cloud-sync-action strong {
-    font-size: min(3.2vw, 1.05rem);
+    font-size: clamp(0.8125rem, 3.2vw, 1.05rem);
     font-weight: 900;
     line-height: 1.2;
 }
 
 .cloud-sync-action span {
     color: #c7c9cf;
-    font-size: min(2.4vw, 0.78rem);
+    font-size: clamp(0.8125rem, 2.4vw, 0.8125rem);
     font-weight: 700;
     line-height: 1.5;
     word-break: keep-all;
@@ -167,7 +167,7 @@
 .cloud-sync-confirm p {
     margin: 0;
     color: #f4f7ff;
-    font-size: min(2.7vw, 0.95rem);
+    font-size: clamp(0.8125rem, 2.7vw, 0.95rem);
     font-weight: 800;
     line-height: 1.55;
     word-break: keep-all;
@@ -175,7 +175,7 @@
 
 .cloud-sync-confirm > strong {
     color: #ffd764;
-    font-size: min(2.5vw, 0.86rem);
+    font-size: clamp(0.8125rem, 2.5vw, 0.86rem);
     font-weight: 900;
     line-height: 1.35;
     text-align: center;
@@ -190,7 +190,7 @@
     gap: min(2vw, 0.5rem);
     justify-content: flex-end;
     color: #c7c9cf;
-    font-size: min(2.5vw, 0.86rem);
+    font-size: clamp(0.8125rem, 2.5vw, 0.86rem);
     font-weight: 800;
     line-height: 1.35;
     cursor: pointer;
@@ -233,7 +233,7 @@
     border-radius: 0;
     background: #1b1e25;
     color: #f4f7ff;
-    font-size: min(2.4vw, 0.86rem);
+    font-size: clamp(0.8125rem, 2.4vw, 0.86rem);
     font-weight: 900;
     cursor: pointer;
     box-sizing: border-box;

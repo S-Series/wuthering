@@ -1,11 +1,10 @@
 import Select, { type StylesConfig, type SingleValue } from "react-select";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
-import type { SelectOpt, SelectOptionStatOriginal } from "./EchoSelect.type";
+import type { SelectOpt, SelectOptionStatOriginal } from "../echoOptions.types";
 import type { StatId } from "@/datas/stats";
 import type React from "react";
-import type { EchoStatOption } from "@/runtime/echo.runtime";
-import type { EchoRuntimeWith7Subs } from "./OcrDragSelect";
+import type { EchoRuntime, EchoStatOption } from "@/runtime/echo.runtime";
 import { ResetScrollMenuList } from "@/components/common/ResetScrollMenuList";
 
 type SortableItemProps = {
@@ -17,10 +16,10 @@ type SortableItemProps = {
     StylesConfig<SelectOpt, false>,
   ];
   options: [SelectOptionStatOriginal<StatId>[], SelectOpt[]];
-  onSelectChange: React.Dispatch<React.SetStateAction<EchoRuntimeWith7Subs>>;
+  onSelectChange: React.Dispatch<React.SetStateAction<EchoRuntime>>;
 };
 
-export function OcrDragItem({
+export function EchoOcrSubstatItem({
   item,
   itemId,
   displayIndex,
@@ -49,16 +48,16 @@ export function OcrDragItem({
       ref={setNodeRef}
       style={style}
       className={[
-        "ocr-drag-item",
+        "echo-ocr-substat-item",
         isDragging ? "dragging" : "",
         isSelected ? "selected" : "",
         item.statId === null ? "disable" : "",
       ].join(" ").trim()}
     >
-      <div className="ocr-drag-item__inner">
+      <div className="echo-ocr-substat-item__inner">
         <button
           type="button"
-          className="ocr-drag-item__handle"
+          className="echo-ocr-substat-item__handle"
           {...attributes}
           {...listeners}
         >
@@ -99,8 +98,6 @@ export function OcrDragItem({
             value={options[0].find((opt) => opt.value === item.statId) ?? null}
           />
         </div>
-
-        <div style={{ width: "2.5%" }} />
 
         <div
           className="stat-select-wrap stat"

@@ -87,7 +87,7 @@
 
 .profile-info-field .container .user-info .text-box > span {
     color: #fff;
-    font-size: min(1vw, 0.8rem);
+    font-size: clamp(0.8125rem, 1vw, 0.8125rem);
     font-weight: 500;
 }
 
@@ -123,7 +123,7 @@
     color: #000;
     background-color: #ccc;
     border: 1px solid #444;
-    font-size: min(1.1vw, 0.88rem);
+    font-size: clamp(0.8125rem, 1.1vw, 0.88rem);
     transition: all 0.2s ease-out;
 }
 
@@ -163,7 +163,7 @@
 .profile-info-field .container .game-info h2 {
     margin: 0;
     color: #fff;
-    font-size: min(1.45vw, 1.1rem);
+    font-size: clamp(0.8125rem, 1.45vw, 1.1rem);
     font-weight: 800;
     text-shadow: 0 0 6px #000, 0 2px 4px #000;
 }
@@ -188,7 +188,7 @@
 }
 
 .profile-info-field .container .game-info .profile-display-list .character-slot .character-info-slot .name {
-    font-size: min(1.4vw, 1.1rem);
+    font-size: clamp(0.8125rem, 1.4vw, 1.1rem);
 }
 
 @media (max-width: 780px) {

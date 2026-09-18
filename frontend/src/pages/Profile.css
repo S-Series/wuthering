@@ -65,14 +65,14 @@
 .profile-login-heading h2 {
   margin: 0;
   color: #fff;
-  font-size: min(1.4vw, 1.15rem);
+  font-size: clamp(0.8125rem, 1.4vw, 1.15rem);
   font-weight: 900;
 }
 
 .profile-login-heading p {
   margin: min(1vw, 0.45rem) 0 0;
   color: #bfc2ca;
-  font-size: min(1vw, 0.8rem);
+  font-size: clamp(0.8125rem, 1vw, 0.8125rem);
   line-height: 1.5;
 }
 
@@ -104,7 +104,7 @@
 .profile-info-title {
   margin: 0;
   color: #ffffff;
-  font-size: min(2.1vw, 1.55rem);
+  font-size: clamp(0.8125rem, 2.1vw, 1.55rem);
   line-height: 1.35;
   font-weight: 900;
   letter-spacing: 0;
@@ -156,7 +156,7 @@
   padding: 0 3%;
   border-right: 1px solid #555;
   color: #d8dae0;
-  font-size: min(0.82vw, 0.74rem);
+  font-size: clamp(0.8125rem, 0.82vw, 0.8125rem);
   font-weight: 800;
   word-break: keep-all;
 }
@@ -718,6 +718,6 @@ body[data-theme="light"] .profile-login-message.error {
   .profile-info-list li {
     min-height: 2.7rem;
     padding: 0 2%;
-    font-size: min(2.8vw, 0.78rem);
+    font-size: clamp(0.8125rem, 2.8vw, 0.8125rem);
   }
 }

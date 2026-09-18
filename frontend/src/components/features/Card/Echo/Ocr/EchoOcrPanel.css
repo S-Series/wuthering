@@ -1,74 +1,9 @@
-.ocr-comp-body {
+.ocr-image-input-panel {
 	display: flex;
 	flex-direction: row;
-	width: 100%;
-	height: 100%;
 	min-width: 0;
-	min-height: 0;
-
 	align-items: flex-start;
 	justify-content: space-between;
-}
-
-.ocr-comp-body > .divider {
-	width: 1px;
-	height: 100%;
-	background-color: #fff;
-}
-
-.ocr-comp-body .ocr-slot {
-	display: flex;
-	position: relative;
-	flex-direction: column;
-	min-width: 0;
-	min-height: 0;
-
-	align-items: center;
-
-	gap: 1%;
-	height: 100%;
-}
-
-.ocr-comp-body .ocr-slot.ocr {
-	flex-direction: row;
-	width: 55%;
-}
-
-.ocr-comp-body .ocr-slot.echo {
-	display: flex;
-	width: 100%;
-	height: 100%;
-}
-
-.ocr-comp-body.echo-data-manager {
-	min-height: 0;
-	align-items: center;
-	justify-content: center;
-}
-
-.ocr-comp-body.echo-data-manager .ocr-slot.echo {
-	height: 100%;
-	justify-content: center;
-	overflow: hidden;
-}
-
-.ocr-data-editor {
-	display: flex;
-	width: auto;
-	max-width: 100%;
-	height: 100%;
-	max-height: 100%;
-	aspect-ratio: 4/3;
-	margin: auto;
-	overflow: hidden;
-}
-
-.ocr-data-editor > div {
-	min-width: 0;
-	min-height: 0;
-}
-
-.ocr-image-input-panel {
 	position: relative;
 	width: auto;
 	max-width: 100%;
@@ -110,31 +45,7 @@
 	min-height: 0;
 }
 
-
-.ocr-comp-body .ocr-slot img {
-	width: 100%;
-	max-height: 240px;
-	object-fit: contain;
-}
-
-.ocr-comp-body .ocr-slot span {
-	color: #eee;
-	filter: drop-shadow(0px 2px 4px #000);
-	font-weight: 500;
-	font-size: min(1.5vw, 1.5rem);
-}
-
-.ocr-comp-body .ocr-slot .container {
-	display: flex;
-	flex-direction: column;
-	width: 50%;
-	min-width: 0;
-	min-height: 0;
-	height: 100%;
-	align-items: center;
-}
-
-.ocr-comp-body .ocr-slot .container.checking,
+.ocr-image-input-panel .container.checking,
 .ocr-image-input-panel > .container.checking {
 	display: flex;
 	position: absolute;
@@ -150,22 +61,16 @@
 	z-index: 100;
 }
 
-.ocr-comp-body .ocr-slot .container.checking > img,
+.ocr-image-input-panel .container.checking > img,
 .ocr-image-input-panel > .container.checking > img {
 	width: 50%;
 	height: auto;
 	aspect-ratio: 1/1;
 }
 
-.ocr-comp-body .ocr-slot .container.checking > span,
+.ocr-image-input-panel .container.checking > span,
 .ocr-image-input-panel > .container.checking > span {
 	font-size: min(2vw, 2rem);
-}
-
-.ocr-comp-body .ocr-slot .container.disable {
-	opacity: 0.3;
-	pointer-events: none;
-	cursor: not-allowed
 }
 
 .ocr-image-input-content.disable {
@@ -211,17 +116,17 @@
 	font-size: min(1.2vw, 1.2rem);
 }
 
-.ocr-drag-select__base-fields > .ocr-image-card {
+.echo-ocr-result-editor__base-fields > .ocr-image-card {
 	flex: 0 1 34%;
 	max-height: 34%;
 }
 
-.ocr-drag-select__sub-fields > .ocr-image-card {
+.echo-ocr-result-editor__sub-fields > .ocr-image-card {
 	flex: 0 0 34%;
 	max-height: 34%;
 }
 
-.ocr-comp-body .ocr-slot .file-slot,
+.ocr-image-input-panel .file-slot,
 .ocr-image-card > .file-slot {
 	display: flex;
 	width: calc(95% - 2px);
@@ -241,21 +146,11 @@
 	overflow: hidden;
 }
 
-.ocr-comp-body .ocr-slot .file-slot > img,
+.ocr-image-input-panel .file-slot > img,
 .ocr-image-card > .file-slot > img {
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
-}
-
-.ocr-comp-body .ocr-slot .inner-slot {
-	display: flex;
-	flex-direction: column;
-	
-	width: 100%;
-	height: 50%;
-	
-	align-items: center;
 }
 
 .ocr-image-card--preview > .file-slot {
@@ -268,35 +163,18 @@
 	margin: min(0.7vw, 0.5rem) 0;
 }
 
-.ocr-comp-body .ocr-slot .file-slot.focused,
+.ocr-image-input-panel .file-slot.focused,
 .ocr-image-card > .file-slot.focused {
 	background: #ffcccc44;
 	border: 1px dashed #000;
 }
 
-.ocr-comp-body .ocr-slot .file-slot .image-input,
+.ocr-image-input-panel .file-slot .image-input,
 .ocr-image-card > .file-slot .image-input {
 	display: none;
 }
 
-.ocr-comp-body .ocr-slot .inner-slot .text-box {
-	display: flex;
-	flex-direction: column;
-
-	width: 70%;
-	height: 90%;
-	
-	gap: min(0.1vw, 0.085rem);
-	padding: min(0.2vw, 0.17rem) 10%;
-	align-items: flex-start;
-	justify-content: center;
-
-	white-space: auto;
-	border: 1px solid #ffffff66;
-	background-color: #00000066;
-}
-
-.ocr-comp-body .ocr-slot .ocr-button,
+.ocr-image-input-panel .ocr-button,
 .ocr-image-card .ocr-button {
 	aspect-ratio: 4 / 1;
 	margin: 2.5% auto;
@@ -306,19 +184,20 @@
 	transition: all 0.2s ease-out;
 	cursor: pointer;
 }
-.ocr-comp-body .ocr-slot .ocr-button:disabled,
+
+.ocr-image-input-panel .ocr-button:disabled,
 .ocr-image-card .ocr-button:disabled {
 	opacity: 0.5;
 	cursor:not-allowed;
 }
 
-.ocr-comp-body .ocr-slot .ocr-button:hover,
+.ocr-image-input-panel .ocr-button:hover,
 .ocr-image-card .ocr-button:hover {
 	color: #fff;
 	background-color: #222;
 }
 
-.ocr-comp-body .ocr-slot .ocr-button:disabled:hover,
+.ocr-image-input-panel .ocr-button:disabled:hover,
 .ocr-image-card .ocr-button:disabled:hover {
 	color: #000;
 	background-color: #666;
@@ -326,13 +205,13 @@
 
 body[data-theme="light"] .ocr-image-card > span,
 body[data-theme="light"] .ocr-image-input-bottom > span,
-body[data-theme="light"] .ocr-comp-body .ocr-slot span {
+body[data-theme="light"] .ocr-image-input-panel span {
 	color: #253047;
 	filter: none;
 }
 
 body[data-theme="light"] .ocr-image-card > .file-slot,
-body[data-theme="light"] .ocr-comp-body .ocr-slot .file-slot {
+body[data-theme="light"] .ocr-image-input-panel .file-slot {
 	border-color: #9aa4b2;
 	background: rgba(247, 250, 255, 0.72);
 }
@@ -342,32 +221,32 @@ body[data-theme="light"] .ocr-image-card--preview > .file-slot {
 }
 
 body[data-theme="light"] .ocr-image-card > .file-slot.focused,
-body[data-theme="light"] .ocr-comp-body .ocr-slot .file-slot.focused {
+body[data-theme="light"] .ocr-image-input-panel .file-slot.focused {
 	border-color: #b88a00;
 	background: #fff8de;
 }
 
 body[data-theme="light"] .ocr-image-card .ocr-button,
-body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button {
+body[data-theme="light"] .ocr-image-input-panel .ocr-button {
 	border-color: #aab5c5;
 	background: #eef3fb;
 	color: #172033;
 }
 
 body[data-theme="light"] .ocr-image-card .ocr-button:hover,
-body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:hover {
+body[data-theme="light"] .ocr-image-input-panel .ocr-button:hover {
 	border-color: #b88a00;
 	background: #fff0bf;
 	color: #5f4600;
 }
 
 body[data-theme="light"] .ocr-image-card .ocr-button:disabled:hover,
-body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:disabled:hover {
+body[data-theme="light"] .ocr-image-input-panel .ocr-button:disabled:hover {
 	color: #172033;
 	background: #eef3fb;
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot,
+.ocr-image-input-panel .ocr-loading-slot,
 .ocr-image-card .ocr-loading-slot {
 	display: flex;
 	width: 80%;
@@ -378,13 +257,13 @@ body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:disabled:hover {
 	justify-content: space-around;
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot span,
+.ocr-image-input-panel .ocr-loading-slot span,
 .ocr-image-card .ocr-loading-slot span {
 	white-space: nowrap;
 	font-size: min(1vw, 1rem);
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot .ocr-loading,
+.ocr-image-input-panel .ocr-loading-slot .ocr-loading,
 .ocr-image-card .ocr-loading-slot .ocr-loading {
 	width: 50%;
 	aspect-ratio: 40 / 1;
@@ -395,7 +274,7 @@ body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:disabled:hover {
 
 }
 
-.ocr-comp-body .ocr-slot .ocr-loading-slot .ocr-loading::before,
+.ocr-image-input-panel .ocr-loading-slot .ocr-loading::before,
 .ocr-image-card .ocr-loading-slot .ocr-loading::before {
 	content: "";
 	display: block;
@@ -420,23 +299,12 @@ body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:disabled:hover {
 	}
 }
 
-@media (max-width: 780px) {
-	.ocr-comp-body.echo-data-manager .ocr-slot.echo {
-		gap: 1.5%;
-	}
-}
-
 @media (max-width: 560px) {
-	.ocr-comp-body.ocr-image-input-panel {
+	.ocr-image-input-panel {
 		width: 100%;
 		height: auto;
 		min-height: 62rem;
 		aspect-ratio: auto;
-	}
-
-	.ocr-image-input-content .ocr-drag-select__list,
-	.ocr-drag-select__list {
-		flex-direction: column;
 	}
 
 	.ocr-image-input-top {
@@ -448,7 +316,7 @@ body[data-theme="light"] .ocr-comp-body .ocr-slot .ocr-button:disabled:hover {
 		min-height: 34rem;
 	}
 
-	.ocr-comp-body.ocr-image-input-panel .ocr-slot .file-slot {
+	.ocr-image-input-panel .echo-manager-section .file-slot {
 		max-width: 24rem;
 	}
 }

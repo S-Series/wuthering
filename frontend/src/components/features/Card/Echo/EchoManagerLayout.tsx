@@ -1,36 +1,52 @@
-import EchoSelect from "./EchoSelect";
-import EchoDragSelect from "./EchoDragSelect";
+import EchoEditor from "./EchoEditor";
+import EchoInventoryBoard from "./EchoInventoryBoard";
 
-import "./OcrSelect.css";
+import "./EchoManagerLayout.css";
 import { locale } from "@/locales/locale";
 import { useAppStore } from "@/stores/appStore";
+import type { ReactNode } from "react";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 type Props = {
   selectIdx: EchoIndex;
   setSelectIdx: React.Dispatch<React.SetStateAction<EchoIndex>>;
-  onImageInput: () => void;
+  ocrPanel: ReactNode;
+  onOpenMultiImageInput?: () => void;
 };
-export default function OcrSelect({
+export default function EchoManagerLayout({
   selectIdx,
   setSelectIdx,
-  onImageInput,
+  ocrPanel,
+  onOpenMultiImageInput,
 }: Props) {
 	const { lang } = useAppStore();
   const localeText = locale(lang);
 
   return (
-    <div className="ocr-select-layout">
-      <div className="ocr-select-body">
+    <div className="echo-manager-layout">
+      <div className="echo-manager-layout__body">
         <div className="select-item-slot">
           <div className="item-slot-heading">
             <span className="item-slot-title">{localeText.ocr.echoList}</span>
+            <button
+              type="button"
+              className="echo-manager-layout__multi-image-button"
+              aria-haspopup="dialog"
+              disabled={!onOpenMultiImageInput}
+              onClick={onOpenMultiImageInput}
+            >
+              이미지 여러장 입력
+            </button>
             <span className="item-slot-help">{localeText.ocr.echoOrderHelp}</span>
           </div>
 
           <div className="item-slot-container">
-            <EchoDragSelect num={selectIdx} onClick={setSelectIdx} />
+            <EchoInventoryBoard
+              num={selectIdx}
+              onClick={setSelectIdx}
+              ocrPanel={ocrPanel}
+            />
           </div>
         </div>
 
@@ -38,14 +54,7 @@ export default function OcrSelect({
           <span className="item-slot-title">{localeText.ocr.echoData}</span>
 
           <div className="item-slot-container">
-            <EchoSelect index={selectIdx as EchoIndex} />
-          </div>
-
-          <div className="ocr-select-actions">
-            <button type="button" 
-              onClick={onImageInput}>
-              {localeText.card.imageInput}
-            </button>
+            <EchoEditor index={selectIdx as EchoIndex} />
           </div>
         </div>
       </div>

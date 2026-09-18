@@ -10,6 +10,7 @@ import { OverlayProvider } from "@/contexts/PopupContext";
 import { ElevatedOverlayProvider } from "@/contexts/ElevatedOverlayContext";
 import AuthSessionProvider from "@/components/providers/AuthSessionProvider";
 import "./index.css";
+import "./mobile.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

@@ -4,7 +4,7 @@ import type { OcrApiResponse } from "@/api/ocr.api";
 import { FixedStats, type StatId } from "@/datas/stats";
 import type { LangType } from "@/stores/appStore";
 import { ECHO_CANDIDATES, echoDict, type EchoId } from "@/datas/echos";
-import type { Cost } from "@/components/features/Card/EchoSelect.type";
+import type { Cost } from "@/components/features/Card/Echo/echoOptions.types";
 
 const RETOUCH_LIST:Record<LangType, [RegExp, string][]> = {
   kr: [

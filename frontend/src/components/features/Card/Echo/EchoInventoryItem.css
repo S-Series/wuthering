@@ -1,0 +1,113 @@
+.echo-inventory-item {
+    display: flex;
+    position: relative;
+    box-sizing: border-box;
+    flex-direction: column;
+    width: 95%;
+    height: auto;
+    aspect-ratio: 1 / 1.2;
+
+    align-items: center;
+    justify-content: space-evenly;
+    border: 1px solid #888;
+    background:
+        linear-gradient(180deg, rgba(42, 70, 108, 0.78), rgba(12, 18, 28, 0.86)),
+        rgba(255, 255, 255, 0.14);
+    cursor: grab;
+    user-select: none;
+    overflow: hidden;
+    touch-action: pan-y;
+    contain: layout paint;
+    will-change: transform;
+    color: #f4f7ff;
+    transition: border-color 0.16s ease-out, box-shadow 0.16s ease-out;
+}
+
+.echo-inventory-item:hover {
+    border-color: #dce7f3;
+    box-shadow: inset 0 0 0 1px #dce7f3;
+}
+
+.echo-inventory-item.equipped {
+    border-color: #8296a9;
+    box-shadow: inset 0 -3px 0 #80cbbd;
+}
+
+.echo-inventory-item.selected {
+    border-color: #ffd764;
+    box-shadow: inset 0 0 0 2px #ffd764;
+}
+
+.echo-inventory-item.drag-over {
+    border-color: #80d9ff;
+    box-shadow: inset 0 0 0 2px #80d9ff;
+}
+
+.echo-inventory-item.dragging {
+    z-index: 20;
+    opacity: 0.8;
+    cursor: grabbing;
+    border-color: #80d9ff;
+    box-shadow: inset 0 0 0 2px #80d9ff;
+}
+
+.echo-inventory-item:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -5px;
+}
+
+.echo-drag-image-slot {
+    display: flex;
+    width: 90%;
+    height: auto;
+    aspect-ratio: 1.4 / 1;
+
+    align-items: center;
+
+    overflow: hidden;
+}
+
+.echo-drag-image-slot .echo-img {
+    width: auto;
+    height: 90%;
+    aspect-ratio: 1 / 1;
+    border: 1px solid #000;
+}
+
+.echo-drag-image-slot .echo-drag-icon-slot {
+    display: flex;
+    width: auto;
+    height: 100%;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-around;
+}
+
+.echo-drag-image-slot .echo-drag-icon-slot .rank-img,
+.echo-drag-image-slot .echo-drag-icon-slot .harmony-img {
+    width: 80%;
+}
+
+.echo-drag-image-slot .echo-drag-icon-slot .rank-img {
+    transform: scale(1.2);
+}
+
+.echo-drag-image-slot .echo-drag-icon-slot .harmony-img {
+    transform: scale(0.9);
+}
+
+.echo-inventory-item .span-slot {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    height: auto;
+    white-space: nowrap;
+}
+
+.echo-inventory-item .span-slot > span {
+    font-size: min(1vw, 1rem);
+}
+
+.echo-inventory-item .span-slot > span > em {
+    font-size: min(0.75vw, 0.75rem);
+}

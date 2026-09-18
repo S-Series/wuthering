@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { requestOcrByUrl } from "@/api/ocr.api";
 import {
   checkOcrHealthByLang,
-  normalizeOcrTexts,
-  ocrImageBase64ToDataUrl,
-  retouchOcrTexts,
-  textsToStats,
   wakeOcrByLang,
 } from "@/api/ocr.api.helper";
 import type { EchoId } from "@/datas/echos";
@@ -15,12 +10,15 @@ import { getRandomGif } from "@/lib/randomImg";
 import { useAppStore } from "@/stores/appStore";
 import type { StatId } from "@/datas/stats";
 import type { HarmonyId } from "@/datas/harmonies";
-import { parseVisionResponse } from "@/api/ocr.vision";
 import { prepareOcrImage } from "@/api/ocr.preprocess";
+import { requestOcrBatch } from "@/api/ocr.batch";
+import { matchOcrImages } from "@/api/ocr.match";
+import { resolveBatchOcr } from "@/api/ocr.batch.resolve";
 
-import OcrDragSelect from "./OcrDragSelect";
+import EchoOcrResultEditor from "./EchoOcrResultEditor";
+import "./EchoOcrPanel.css";
 
-export type OcrDebugData = {
+export type EchoOcrResult = {
   echoId: EchoId | null;
   echoName: string | null;
   cost: number;
@@ -32,14 +30,12 @@ type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 type Props = {
   selectIdx: EchoIndex;
-  onSelectIdx: React.Dispatch<React.SetStateAction<EchoIndex>>;
-  initialDebug: OcrDebugData | null | undefined;
-  onDebugChange: (debug: OcrDebugData | null) => void;
+  initialDebug: EchoOcrResult | null | undefined;
+  onDebugChange: (debug: EchoOcrResult | null) => void;
 };
 
-export default function OcrImageInput({
+export default function EchoOcrPanel({
   selectIdx,
-  onSelectIdx,
   initialDebug,
   onDebugChange,
 }: Props) {
@@ -54,30 +50,17 @@ export default function OcrImageInput({
   const [status, setStatus] = useState<
     "Idle" | "Requested" | "Successed" | "Failed"
   >("Idle");
-  const [debug, setDebug] = useState<OcrDebugData | null>(
+  const [debug, setDebug] = useState<EchoOcrResult | null>(
     initialDebug ?? null,
   );
-  const [preview, setPreview] = useState<string | null>(null);
   const [ocrError, setOcrError] = useState<string | null>(null);
-  const [refHeight, setRefHeight] = useState(0);
   const [isHealthy, setHealthy] = useState<boolean | null>(null);
   const [isBoaring, setBoaring] = useState(false);
   const [isFocused, setFocused] = useState(false);
-  const [activeSelectIdx, setActiveSelectIdx] = useState<EchoIndex>(selectIdx);
 
   const localeText = useMemo(() => locale(lang).ocr, [lang]);
-  const endpointUrl = `${import.meta.env.VITE_GATEWAY_URL}/api/ocr`;
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
 
-  const handleSelectIdx: React.Dispatch<React.SetStateAction<EchoIndex>> = (
-    action,
-  ) => {
-    setActiveSelectIdx((current) => {
-      const next = typeof action === "function" ? action(current) : action;
-      onSelectIdx(next);
-      return next;
-    });
-  };
 
   const cancelActiveOcrRequest = useCallback(() => {
     ocrAbortRef.current?.abort();
@@ -101,7 +84,6 @@ export default function OcrImageInput({
     setStatus("Idle");
     setOcrError(null);
     setBoaring(false);
-    setPreview(null);
     setDebug(null);
     onDebugChange(null);
 
@@ -122,35 +104,34 @@ export default function OcrImageInput({
     setOcrError(null);
     setBoaring(false);
     setDebug(null);
-    setPreview(null);
     onDebugChange(null);
 
     try {
-      const prepared = await prepareOcrImage(file, controller.signal);
+      const prepared = await prepareOcrImage(file, controller.signal, { splitHeader: true });
       controller.signal.throwIfAborted();
-      const data = await requestOcrByUrl(endpointUrl, prepared.file, lang, {
-        preprocessing: prepared.metadata,
-        signal: controller.signal,
-        timeoutMs: 180_000,
-      });
+      const [regions, matches] = await Promise.all([
+        requestOcrBatch(prepared.file, prepared.metadata, lang, controller.signal),
+        matchOcrImages(prepared.file, prepared.metadata, lang, controller.signal).catch((error: unknown) => {
+          if (controller.signal.aborted) throw error;
+          console.warn("OCR image comparison failed", error);
+          return null;
+        }),
+      ]);
       if (controller.signal.aborted || ocrRequestIdRef.current !== requestId) {
         return;
       }
+      if (regions.every(region => !region.success)) {
+        throw new Error("모든 영역의 OCR 인식에 실패했습니다.");
+      }
+      const nextDebug = resolveBatchOcr(regions, matches, lang);
 
-      const texts = normalizeOcrTexts(data);
-      const image = ocrImageBase64ToDataUrl(data.image_base64);
-      const nextDebug = data.vision?.version === 1 ? parseVisionResponse(data.vision, lang) : textsToStats(
-        retouchOcrTexts(texts, lang),
-        lang,
-      ) as OcrDebugData;
-
-      if (image) setPreview(image);
       setDebug(nextDebug);
       onDebugChange(nextDebug);
       setBoaring(false);
       setStatus("Successed");
     } catch (error) {
       if (controller.signal.aborted) return;
+      controller.abort();
       setBoaring(false);
       setStatus("Failed");
       setOcrError(error instanceof Error ? error.message : "OCR 처리에 실패했습니다.");
@@ -195,21 +176,6 @@ export default function OcrImageInput({
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
-
-  useEffect(() => {
-    const element = slotRef.current;
-    if (!element) return;
-
-    const updateHeight = () => {
-      setRefHeight(element.getBoundingClientRect().height * 1.8);
-    };
-    updateHeight();
-
-    const observer = new ResizeObserver(updateHeight);
-    observer.observe(element);
-
-    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -287,7 +253,7 @@ export default function OcrImageInput({
   }, [status]);
 
   return (
-    <div className="ocr-comp-body ocr-image-input-panel">
+    <div className="ocr-image-input-panel">
       {isHealthy === null && (
         <div className="container checking">
           <img src={getRandomGif() ?? "/default.webp"} alt="" />
@@ -296,23 +262,21 @@ export default function OcrImageInput({
       )}
 
       <div className="ocr-image-input-content">
-        <OcrDragSelect
+        <EchoOcrResultEditor
           datas={{
             cost: (debug?.cost as 4 | 3 | 1) ?? 4,
             echoId: debug?.echoId ?? null,
             stats: debug?.echoStats ?? null,
             setId: debug?.setId ?? null,
           }}
-          selectIdx={activeSelectIdx}
-          onSelectIdx={handleSelectIdx}
-          height={refHeight}
+          selectIdx={selectIdx}
           resetAction={handleResetDebug}
           inputSlot={
             <section className="ocr-image-card ocr-image-card--input">
               <span className="en-font">
                 {localeText.status}: {status}
               </span>
-
+              
               <div
                 className={`file-slot ${isFocused ? "focused" : ""}`}
                 ref={slotRef}
@@ -370,14 +334,6 @@ export default function OcrImageInput({
                     {localeText.request}
                   </button>
                 )}
-              </div>
-            </section>
-          }
-          resultSlot={
-            <section className="ocr-image-card ocr-image-card--preview">
-              <span className="en-font">{localeText.result}</span>
-              <div className="file-slot">
-                {preview && <img src={preview} alt="" />}
               </div>
             </section>
           }

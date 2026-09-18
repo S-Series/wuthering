@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type { StylesConfig } from "react-select";
 import Select from "react-select";
 
@@ -9,8 +9,8 @@ import { useCharacter } from "@/stores/characterDataStore"
 import { FixedStats } from "@/datas/stats";
 import { echoDict, type EchoData } from "@/datas/echos";
 
-import type { EchoSelectProps, SelectOption, SelectOriginalOption, SelectOptionWithImage, SelectOptionStatOriginal, Cost, SelectOpt } from "./EchoSelect.type";
-import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase } from "./EchoSelect.helper";
+import type { EchoEditorProps, SelectOption, SelectOriginalOption, SelectOptionWithImage, SelectOptionStatOriginal, Cost, SelectOpt } from "./echoOptions.types";
+import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase } from "./echoOptions.helpers";
 
 import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime";
 import { patchEchoAt, setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
@@ -18,7 +18,7 @@ import { locale } from "@/locales/locale";
 import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
 import { ResetScrollMenuList } from "@/components/common/ResetScrollMenuList";
 
-import "./EchoSelect.css"
+import "./EchoEditor.css"
 
 //#endregion ====================================
 
@@ -60,7 +60,7 @@ const PLACEHOLDERS = {
   },
 } as const;
 
-export default function EchoSelect({ index = 0 }: EchoSelectProps) {
+export default function EchoEditor({ index = 0 }: EchoEditorProps) {
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { lang, imgVer } = useAppStore();
   const { baseSelectStyles } = useStyleStore();
@@ -70,7 +70,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const placeholders = PLACEHOLDERS[lang] ?? PLACEHOLDERS.kr;
 
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const [slotHeight, setSlotHeight] = useState(16);
+  const [slotHeight, setSlotHeight] = useState(32);
   const echoData = characterData.echoData[index];
 
   const selectedCost = useMemo<Cost>(() => {
@@ -102,7 +102,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
   const STAT_DROP_STYLE_LARGE = useMemo<StylesConfig<DropStyleOption, false>>(() =>
     getStatDropStyleLarge(baseSelectStyles, slotHeight)
     , [baseSelectStyles, slotHeight])
-
 
   /// const HARMONY_OPTIONS_BASE; <<= imported, unChange data
   const ECHO_ID_OPTION_BASE: SelectOriginalOption[] =
@@ -188,7 +187,9 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
     const update = () => {
       const rect = el.getBoundingClientRect();
-      const h = Math.max(1, Math.round(rect.height)) * 0.8;
+      const h = window.matchMedia("(max-width: 780px)").matches
+        ? 44
+        : Math.round(Math.min(40, Math.max(26, Math.min(rect.height / 11, rect.width / 5))));
       setSlotHeight((prev) => (prev === h ? prev : h));
     };
 
@@ -239,12 +240,18 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
 
   //* =========================================================    
   return (
-    <div className="echo-select-wrapper" ref={wrapRef}>
+    <div
+      className="echo-select-wrapper"
+      ref={wrapRef}
+      style={{ "--echo-control-height": `${slotHeight}px` } as CSSProperties}
+    >
       <div className="echo-select-base-grid">
         <div className="drop-slot large">
           <Select
             options={COST_DROP_OPTION}
             isSearchable={false}
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
             placeholder={placeholders.cost}
             styles={STAT_DROP_STYLE_LARGE}
             components={{ MenuList: ResetScrollMenuList }}
@@ -261,6 +268,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             options={HARMONY_DROP_OPTION}
             isClearable={true}
             isSearchable={false}
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
             placeholder={placeholders.harmony}
             styles={STAT_DROP_STYLE_LARGE}
             components={{ MenuList: ResetScrollMenuList }}
@@ -286,6 +295,8 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
             options={ECHO_ID_DROP_OPTION}
             isClearable={true}
             isSearchable={true}
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
             components={{ MenuList: ResetScrollMenuList }}
             menuShouldScrollIntoView={false}
             placeholder={
@@ -298,7 +309,7 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
                   }}
                   src="/default.webp"
                 />
-                <span style={{whiteSpace: "nowrap", fontSize: "min(1vw, 1rem)"}}>
+                <span style={{whiteSpace: "nowrap", fontSize: "clamp(0.8125rem, 1vw, 1rem)"}}>
                   {localeText.echoSearch}
                 </span>
               </div>
@@ -464,7 +475,6 @@ export default function EchoSelect({ index = 0 }: EchoSelectProps) {
           );
         })}
       </div>
-
       <button
         type="button"
         className={`${lang}-font echo-select-reset-button`}

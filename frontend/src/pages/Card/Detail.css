@@ -41,7 +41,7 @@
   min-width: 0;
   overflow: hidden;
   color: #ffd764;
-  font-size: min(1.5vw, 1.5rem);
+  font-size: clamp(0.8125rem, 1.5vw, 1.5rem);
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -111,7 +111,7 @@
   border-left: 3px solid #ffd764;
   background: #08090cbf;
   color: #fff;
-  font-size: min(1.1vw, 1.1rem);
+  font-size: clamp(0.8125rem, 1.1vw, 1.1rem);
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -186,7 +186,7 @@
   flex: 0 0 auto;
   overflow: hidden;
   color: #d8dae0;
-  font-size: min(0.9vw, 0.9rem);
+  font-size: clamp(0.8125rem, 0.9vw, 0.9rem);
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -256,7 +256,7 @@
   width: 100%;
   overflow: hidden;
   color: #bfc2ca;
-  font-size: min(0.7vw, 0.7rem);
+  font-size: clamp(0.8125rem, 0.7vw, 0.8125rem);
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -324,7 +324,7 @@
 .card-detail-body .echo-data-field > span {
   overflow: hidden;
   color: #fff;
-  font-size: min(1vw, 1rem);
+  font-size: clamp(0.8125rem, 1vw, 1rem);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -351,7 +351,7 @@
 .card-detail-body .harmony-slot > span {
   overflow: hidden;
   color: #bfc2ca;
-  font-size: min(0.7vw, 0.7rem);
+  font-size: clamp(0.8125rem, 0.7vw, 0.8125rem);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -368,7 +368,7 @@
 
 .card-detail-body .stat-list-slot > span {
   color: #ffd764;
-  font-size: min(0.8vw, 0.8rem);
+  font-size: clamp(0.8125rem, 0.8vw, 0.8125rem);
   font-weight: 600;
 }
 
@@ -401,7 +401,7 @@
   min-width: 0;
   overflow: hidden;
   color: #d8dae0;
-  font-size: min(0.8vw, 0.8rem);
+  font-size: clamp(0.8125rem, 0.8vw, 0.8125rem);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -479,7 +479,7 @@
   min-width: 0;
   overflow: hidden;
   color: #fff;
-  font-size: min(0.66vw, 0.66rem);
+  font-size: clamp(0.8125rem, 0.66vw, 0.8125rem);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -487,7 +487,7 @@
 
 .card-detail-body .stat-area .resonance-penalty-item > em {
   color: #ffd764;
-  font-size: min(0.66vw, 0.66rem);
+  font-size: clamp(0.8125rem, 0.66vw, 0.8125rem);
   font-style: normal;
   white-space: nowrap;
 }
@@ -511,7 +511,7 @@
   min-width: 0;
   overflow: hidden;
   color: #fff;
-  font-size: min(0.8vw, 0.8rem);
+  font-size: clamp(0.8125rem, 0.8vw, 0.8125rem);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -519,14 +519,14 @@
 
 .card-detail-body .stat-area .target-option-value {
   color: #ffd764;
-  font-size: min(0.72vw, 0.72rem);
+  font-size: clamp(0.8125rem, 0.72vw, 0.8125rem);
   white-space: nowrap;
 }
 
 .card-detail-body .stat-area .target-option-status {
   min-width: 2.15rem;
   color: #bfc2ca;
-  font-size: min(0.68vw, 0.68rem);
+  font-size: clamp(0.8125rem, 0.68vw, 0.8125rem);
   text-align: right;
   white-space: nowrap;
 }
@@ -681,7 +681,7 @@ body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-row {
 
   .card-detail-body .content-area .inner-slot > span {
     padding-left: 3%;
-    font-size: min(1.7vw, 0.64rem);
+    font-size: clamp(0.8125rem, 1.7vw, 0.8125rem);
   }
 
   .card-detail-body .echo-recommend-slot {
@@ -698,7 +698,7 @@ body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-row {
   }
 
   .card-detail-body .echo-data-field > span {
-    font-size: min(1.35vw, 0.72rem);
+    font-size: clamp(0.8125rem, 1.35vw, 0.8125rem);
   }
 
   .card-detail-body .harmony-slot {
@@ -714,7 +714,7 @@ body[data-theme="light"] .card-detail-body .stat-area .resonance-penalty-row {
   }
 
   .card-detail-body .harmony-slot > span {
-    font-size: min(1.25vw, 0.62rem);
+    font-size: clamp(0.8125rem, 1.25vw, 0.8125rem);
   }
 }
 

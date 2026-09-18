@@ -110,7 +110,7 @@
     display: flex;
     width: 100%;
     min-width: 0;
-    height: min(4.6vw, 2.85rem);
+    height: var(--echo-control-height);
 
     align-items: center;
     justify-content: center;
@@ -118,7 +118,7 @@
 }
 
 .echo-select-wrapper .drop-slot.large {
-    height: min(5vw, 3rem);
+    height: var(--echo-control-height);
 }
 
 .echo-select-wrapper .drop-slot .main-stat-icon {
@@ -128,9 +128,9 @@
 
 .echo-select-wrapper .drop-slot .main-stat-span {
     width: auto;
-    min-width: min(7vw, 4rem);
+    min-width: 2rem;
     margin: 0 2%;
-    font-size: min(1.5vw, 1.5rem);
+    font-size: 0.75rem;
     font-weight: bold;
     color: #fff;
 }
@@ -159,7 +159,7 @@
 
     .echo-select-wrapper .drop-slot,
     .echo-select-wrapper .drop-slot.large {
-        height: min(12vw, 3.2rem);
+        height: var(--echo-control-height);
     }
 
     .echo-select-reset-button {

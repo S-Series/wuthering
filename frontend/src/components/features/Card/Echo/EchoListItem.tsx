@@ -9,7 +9,7 @@ type Props = {
   onClick: (idx: number) => void;
 };
 
-export default function OcrSelectItem({idx, echoData, isLocked, isSelected, onClick}: Props) {
+export default function EchoListItem({idx, echoData, isLocked, isSelected, onClick}: Props) {
   const { lang } = useAppStore();
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
 

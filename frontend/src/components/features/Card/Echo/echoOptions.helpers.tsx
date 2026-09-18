@@ -1,5 +1,5 @@
 import { echoDict } from "@/datas/echos";
-import type { SelectOptionWithImage, SelectOptionStatOriginal, SelectOriginalOption, Cost } from "./EchoSelect.type";
+import type { SelectOptionWithImage, SelectOptionStatOriginal, SelectOriginalOption, Cost } from "./echoOptions.types";
 import { type StylesConfig } from "react-select";
 import type { LangType } from "@/stores/appStore";
 import { characterScoreSheet } from "@/datas/characterScoreSheet";
@@ -50,9 +50,10 @@ export const formatOptionWithImage = <
     T extends SelectOptionWithImage
 >(
     opt: T,
-    lang: string
+    lang: string,
+    fontSize?: string,
 ) => (
-    <div style={{ display: "flex", alignItems: "center", gap: "min(1vw, 0.7rem)", height: "min(2.75vw, 2.75rem)" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "min(1vw, 0.7rem)", height: "clamp(1.75rem, 2.75vw, 2.75rem)" }}>
         {opt.path && (
             <img alt=""
                 src={opt.path}
@@ -64,7 +65,7 @@ export const formatOptionWithImage = <
                 wordBreak: "normal",
                 whiteSpace: "pre",
                 msTextOverflow: "ellipsis",
-                fontSize: "min(1.3vw, 1rem)",
+                fontSize: fontSize ?? "clamp(0.8125rem, 1.3vw, 1rem)",
             }}>
             {(opt.label)
                 .replaceAll("공명의 메아리 · ", "공명의 메아리 · \n")
@@ -78,9 +79,10 @@ export const formatOptionWithImage_Smaller = <
     T extends SelectOptionWithImage
 >(
     opt: T,
-    lang: string
+    lang: string,
+    fontSize?: string,
 ) => (
-    <div style={{ display: "flex", alignItems: "center", gap: "min(0.5vw, 0.27rem)", height: "min(2vw, 2rem)" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "min(0.5vw, 0.27rem)", height: "clamp(1.5rem, 2vw, 2rem)" }}>
         {opt.path && (
             <img alt=""
                 src={opt.path}
@@ -91,7 +93,7 @@ export const formatOptionWithImage_Smaller = <
             style={{
                 wordBreak: "keep-all",
                 whiteSpace: "nowrap",
-                fontSize: "min(1.15vw, 0.85rem)",
+                fontSize: fontSize ?? "clamp(0.8125rem, 1.15vw, 0.85rem)",
             }}>
             {opt.label}
         </span>
@@ -200,9 +202,9 @@ export const getStatDropStyleOptionWide = <Option,>(
             return {
                 ...common,
                 right: 0,
-                minWidth: `${slotHeight / 3.8}px`,
+                minWidth: "100%",
                 width: "max-content",
-                maxWidth: `${slotHeight / 1.8}px`,
+                maxWidth: "min(18rem, 90vw)",
             };
         },
         control: (base, state) => {
@@ -215,9 +217,9 @@ export const getStatDropStyleOptionWide = <Option,>(
                 display: "flex",
                 alignItems: "center",
                 minHeight: 0,
-                height: `${slotHeight / 13}px`,
+                height: `${slotHeight}px`,
                 overflow: "hidden",
-                fontSize: `${slotHeight / 30}px`,
+                fontSize: `${Math.min(14, Math.max(11, slotHeight * 0.35))}px`,
             };
         },
         container: (base, state) => {
@@ -238,8 +240,8 @@ export const getStatDropStyleOptionWide = <Option,>(
             return {
                 ...common,
                 minHeight: 0,
-                height: `${slotHeight / 13}px`,
-                lineHeight: `${slotHeight / 13}px`,
+                height: "auto",
+                lineHeight: 1.2,
                 overflow: "hidden",
                 color: "white",
             };
@@ -252,11 +254,11 @@ export const getStatDropStyleOptionWide = <Option,>(
             return {
                 ...common,
                 minHeight: 0,
-                height: `${slotHeight / 13}px`,
+                height: "auto",
                 paddingTop: 0,
                 paddingBottom: 0,
-                paddingLeft: `${slotHeight / 80}px`,
-                paddingRight: `${slotHeight / 160}px`,
+                paddingLeft: 4,
+                paddingRight: 0,
                 overflow: "hidden",
             };
         },
@@ -269,8 +271,8 @@ export const getStatDropStyleOptionWide = <Option,>(
                 ...common,
                 paddingTop: 0,
                 paddingBottom: 0,
-                paddingLeft: `${slotHeight / 100}px`,
-                paddingRight: `${slotHeight / 100}px`,
+                paddingLeft: 3,
+                paddingRight: 3,
             };
         },
         indicatorsContainer: (base, state) => {
@@ -307,9 +309,9 @@ export const getStatDropStyleOptionWide = <Option,>(
                 margin: 0,
                 paddingTop: 0,
                 paddingBottom: 0,
-                paddingLeft: `${slotHeight / 160}px`,
-                paddingRight: `${slotHeight / 320}px`,
-                lineHeight: `${slotHeight / 13}px`,
+                paddingLeft: 4,
+                paddingRight: 0,
+                lineHeight: 1.2,
             };
         },
     })
@@ -326,9 +328,9 @@ export const getStatDropStyleLarge = <Option,>(
             return {
                 ...common,
                 minHeight: 0,
-                height: `${slotHeight / 10}px`,
+                height: `${slotHeight}px`,
                 overflow: "hidden",
-                fontSize: `${slotHeight / 30}px`,
+                fontSize: `${Math.min(14, Math.max(11, slotHeight * 0.35))}px`,
             };
         },
         container: (base, state) => {
@@ -365,10 +367,12 @@ export const getStatDropStyleLarge = <Option,>(
     })
 
 export const getStatDropStyleDrag = <Option,>(
-    baseSelectStyles: StylesConfig<Option, false>,
-    slotHeight: number): StylesConfig<Option, false> => ({
+    baseSelectStyles: StylesConfig<Option, false>): StylesConfig<Option, false> => ({
         ...baseSelectStyles,
-        option: getRelevantOptionStyle(baseSelectStyles),
+        option: (base, state) => ({
+            ...getRelevantOptionStyle(baseSelectStyles)(base, state),
+            fontSize: "11px",
+        }),
         menu: (base, state) => {
             const common = baseSelectStyles.menu
                 ? baseSelectStyles.menu(base, state)
@@ -376,10 +380,9 @@ export const getStatDropStyleDrag = <Option,>(
 
             return {
                 ...common,
-                right: 0,
-                minWidth: `${slotHeight / 3.8}px`,
+                minWidth: "100%",
                 width: "max-content",
-                maxWidth: `${slotHeight / 1.8}px`,
+                maxWidth: "min(18rem, 90vw)",
             };
         },
         control: (base, state) => {
@@ -394,8 +397,9 @@ export const getStatDropStyleDrag = <Option,>(
                 minHeight: 0,
                 width: "100%",
                 maxWidth: "100%",
-                height: `${slotHeight / 12}px`,
-                overflow: "hidden",
+                height: "100%",
+                boxSizing: "border-box",
+                fontSize: "10px",
             };
         },
         container: (base, state) => {
@@ -408,6 +412,7 @@ export const getStatDropStyleDrag = <Option,>(
                 width: "100%",
                 maxWidth: "100%",
                 minHeight: 0,
+                height: "100%",
             };
         },
         singleValue: (base, state) => {
@@ -418,8 +423,8 @@ export const getStatDropStyleDrag = <Option,>(
             return {
                 ...common,
                 minHeight: 0,
-                height: `${slotHeight / 13}px`,
-                lineHeight: `${slotHeight / 13}px`,
+                height: "auto",
+                lineHeight: 1.2,
                 overflow: "hidden",
                 color: "white",
             };
@@ -432,11 +437,11 @@ export const getStatDropStyleDrag = <Option,>(
             return {
                 ...common,
                 minHeight: 0,
-                height: `${slotHeight / 13}px`,
+                height: "auto",
                 paddingTop: 0,
                 paddingBottom: 0,
-                paddingLeft: `${slotHeight / 80}px`,
-                paddingRight: `${slotHeight / 160}px`,
+                paddingLeft: 4,
+                paddingRight: 0,
                 overflow: "hidden",
             };
         },
@@ -447,10 +452,7 @@ export const getStatDropStyleDrag = <Option,>(
 
             return {
                 ...common,
-                paddingTop: "20%",
-                paddingBottom: "20%",
-                paddingLeft: `${slotHeight / 400}px`,
-                paddingRight: `${slotHeight / 400}px`,
+                padding: 3,
             };
         },
         placeholder: (base, state) => {
@@ -463,9 +465,9 @@ export const getStatDropStyleDrag = <Option,>(
                 margin: 0,
                 paddingTop: 0,
                 paddingBottom: 0,
-                paddingLeft: `${slotHeight / 160}px`,
-                paddingRight: `${slotHeight / 320}px`,
-                lineHeight: `${slotHeight / 13}px`,
+                paddingLeft: 4,
+                paddingRight: 0,
+                lineHeight: 1.2,
             };
         },
     })

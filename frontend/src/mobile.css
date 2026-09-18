@@ -1,0 +1,182 @@
+/* Shared small-screen rules, loaded after component styles. The generated card
+   keeps its export aspect ratio; surrounding controls and editors reflow. */
+@media (max-width: 780px) {
+  html { -webkit-text-size-adjust: 100%; }
+  #main-container { min-height: 100dvh; }
+  #page-slot { min-width: 0; }
+  #navbar-body .item-slot { min-width: 0; gap: 0.25rem; margin: 0 0.5rem; }
+  #navbar-body a.title { min-width: 0; padding: 0 0.25rem; }
+  #navbar-body .navbar-theme-toggle { min-width: 44px; width: 44px; padding: 0; flex-shrink: 0; }
+  #navbar-body .navbar-theme-toggle p { display: none; }
+  #navbar-body .item-slot p.title { overflow: hidden; text-overflow: ellipsis; }
+  #navbar-body .sidebar-toggle-btn { width: 44px; height: 44px; flex-shrink: 0; }
+  #navbar-sidebar {
+    height: calc(100dvh - 1.5rem);
+    max-width: calc(100vw - 1.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: max(0.85rem, env(safe-area-inset-bottom));
+  }
+  #navbar-sidebar > * { flex-shrink: 0; }
+  #navbar-sidebar .sidebar-close-btn { width: 44px; height: 44px; }
+  #navbar-sidebar a, #navbar-sidebar button { min-height: 44px; }
+  #footer-body { box-sizing: border-box; width: 100%; height: auto; min-height: 95px; gap: 0.75rem; padding: 1rem; }
+  #footer-body .item-slot { min-width: 0; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+  /* Dialog headers remain reachable while their contents scroll. */
+  .overlay-backdrop, .elevated-overlay-backdrop {
+    padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right)) max(0.5rem, env(safe-area-inset-bottom)) max(0.5rem, env(safe-area-inset-left));
+  }
+  .overlay-panel, .elevated-overlay-panel,
+  .overlay-panel:has(.echo-manager-content),
+  .elevated-overlay-panel:has(.ocr-image-input-panel) {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100% !important; /* Bound caller-provided inline desktop dimensions. */
+    max-width: 100%;
+    max-height: calc(100dvh - max(0.5rem, env(safe-area-inset-top)) - max(0.5rem, env(safe-area-inset-bottom)));
+    aspect-ratio: auto !important;
+  }
+  .overlay-header, .elevated-overlay-header { flex-shrink: 0; gap: 0.5rem; padding: 0.5rem; }
+  .overlay-header:has(.overlay-header-action) { display: grid; grid-template-columns: minmax(0, 1fr) 44px; }
+  .overlay-header-action { grid-column: 1 / -1; grid-row: 2; margin-left: 0; }
+  .overlay-header:has(.overlay-header-action) .overlay-close-btn { grid-column: 2; grid-row: 1; }
+  .overlay-close-btn, .elevated-overlay-close-btn { width: 44px; height: 44px; flex-basis: 44px; padding: 0; }
+  .overlay-body, .elevated-overlay-body,
+  .overlay-panel:has(.echo-manager-content) .overlay-body,
+  .elevated-overlay-panel:has(.ocr-image-input-panel) .elevated-overlay-body {
+    display: block;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 0.75rem;
+  }
+  .overlay-body > *, .elevated-overlay-body > * { min-width: 0; max-width: 100%; }
+  .overlay-body h1, .elevated-overlay-body h1 { font-size: 1.5rem; overflow-wrap: anywhere; }
+  .overlay-body button, .elevated-overlay-body button { min-height: 44px; }
+  input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 16px !important; }
+  .board-delete-confirm-panel { max-height: calc(100dvh - 2rem); overflow: auto; padding: 1.25rem; }
+
+  /* Home, collection, account, and community. */
+  .banner-slot h1 { font-size: clamp(1.25rem, 4vw, 1.75rem); text-align: center; padding: 0.5rem; }
+  .notice-item { min-height: 44px; }
+  .notice-detail-head { flex-wrap: wrap; gap: 0.5rem; }
+  .notice-detail-body { overflow-wrap: anywhere; }
+  .game-info-slot > .inner-slot > span { font-size: 0.875rem; }
+  .game-info-slot > .inner-slot > span.title { font-size: 1rem; }
+  .characters-search { flex-basis: auto; }
+  .characters-search input, .characters-sort button { min-height: 44px; }
+  .characters-sort { flex-wrap: wrap; }
+  .characters-filter-options { flex: 1; min-width: 0; flex-wrap: wrap; }
+  .characters-filter-options button { width: 44px; height: 44px; }
+  .characters-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.65rem; }
+  .characters-list .character-slot { width: 100%; min-width: 0; height: auto; min-height: 0; aspect-ratio: 3 / 4; }
+  .profile-login-heading h2 { font-size: 1.15rem; }
+  .profile-login-heading p, .profile-info-list li { font-size: 0.8125rem; }
+  .profile-info-title { font-size: 1.4rem; }
+  .profile-page button, .profile-page input:not([type="checkbox"]), .profile-recovery-tabs button { min-height: 44px; }
+  .profile-info-desc, .profile-info-list { overflow-wrap: anywhere; }
+  .game-setting-field input, .game-setting-field select { box-sizing: border-box; min-width: 0; }
+  .game-setting-summary__row { flex-wrap: wrap; gap: 0.5rem; }
+  .game-setting-submit { min-width: 0; }
+  .profile-info-field { aspect-ratio: auto; min-height: 22rem; }
+  .profile-info-field .container { height: auto; gap: 1rem; padding: 1rem; box-sizing: border-box; }
+  .profile-info-field .container .user-info { width: 100%; height: auto; margin: 0; flex-wrap: wrap; gap: 0.75rem; }
+  .profile-info-field .container .user-info .profile-image-wrap { width: 3rem; height: 3rem; }
+  .profile-info-field .container .user-info .text-box { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+  .profile-info-field .container .game-info { height: auto; width: 100%; gap: 0.75rem; }
+  .profile-info-field .container .game-info .profile-display-list { height: auto; flex-wrap: wrap; }
+  .profile-info-field .container .game-info .profile-display-list .character-slot { width: calc((100% - 1.5rem) / 3); height: auto; }
+  .board-page button, .board-crud-page button, .board-crud-page a { min-height: 44px; }
+  .board-hero-actions, .board-detail-topbar, .board-detail-actions { flex-wrap: wrap; }
+  .board-detail-content { overflow-wrap: anywhere; }
+  .board-detail-content img { max-width: 100%; height: auto; }
+
+  /* Character and weapon picker. */
+  .card-character-select { min-width: 0; flex-direction: column; gap: 1rem; }
+  .card-character-select__panel, .card-character-select__panel.weapon { width: 100%; flex: none; box-sizing: border-box; }
+  .card-character-select__header { flex-shrink: 0; }
+  .card-character-select__filters { padding: 0.5rem; box-sizing: border-box; }
+  .card-character-select__filter-row, .card-character-select__filter-row.element { flex-wrap: wrap; justify-content: flex-start; gap: 0.375rem; padding: 0; }
+  .card-character-select__filter-row button { width: 44px; height: 44px; flex: 0 0 44px; }
+  .card-character-select__breakthrough { flex-basis: auto; padding: 0.75rem; }
+  .card-character-select__breakthrough-group { gap: 0.5rem; }
+  .card-character-select__breakthrough-group > span { font-size: 0.875rem; }
+  .card-character-select__breakthrough-buttons { grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); gap: 0.375rem; }
+  .card-character-select__breakthrough-buttons > button { font-size: 0.875rem; }
+  .card-character-select__character-list, .card-character-select__weapon-list { flex: none; max-height: 45dvh; overscroll-behavior: contain; }
+  .card-character-select__weapon { flex-shrink: 0; }
+  .card-character-select__weapon > img { width: 4rem; height: 4rem; flex-shrink: 0; }
+
+  /* Echo inventory preserves five equipped slots followed by five spares. */
+  .ocr-comp-body.echo-data-manager,
+  .echo-manager-content, .echo-manager-content > div,
+  .ocr-comp-body.echo-data-manager .echo-manager-section.echo,
+  .echo-manager-layout, .echo-manager-layout__body {
+    width: 100%; height: auto; max-height: none; aspect-ratio: auto; overflow: visible;
+  }
+  .echo-manager-content { margin: 0; }
+  .ocr-comp-body.echo-data-manager { align-items: flex-start; }
+  .echo-manager-layout__body { flex-direction: column; gap: 1.25rem; }
+  .echo-manager-layout__body .select-item-slot:first-child,
+  .echo-manager-layout__body .select-item-slot:last-child { width: 100%; min-width: 0; min-height: 0; height: auto; flex: none; gap: 0.75rem; }
+  .echo-manager-layout__body .select-item-slot .item-slot-container { height: auto; flex: none; }
+  .echo-manager-layout__body .select-item-slot .item-slot-help { font-size: 0.8125rem; white-space: normal; }
+  .echo-inventory-board { height: auto; gap: 1rem; }
+  .echo-drag-board { height: auto; grid-template-columns: 1.75rem minmax(0, 1fr); gap: 0.375rem; }
+  .echo-drag-row-label { font-size: 0.8125rem; }
+  .echo-drag-list { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(2, auto); gap: 0.375rem; padding: 0.25rem; }
+  .echo-inventory-item { width: 100%; min-height: 80px; }
+  .echo-inventory-item .span-slot { width: 95%; flex-wrap: wrap; justify-content: center; }
+  .echo-inventory-item .span-slot > span { font-size: 0.6875rem; }
+  .echo-inventory-item .span-slot > span > em { display: none; }
+  .echo-ocr-board, .echo-ocr-board > .ocr-image-input-panel { height: auto; min-height: 0; overflow: visible; }
+  .ocr-image-input-content, .ocr-image-input-panel { width: 100%; height: auto; max-height: none; min-height: 0; aspect-ratio: auto; overflow: visible; }
+  .echo-ocr-result-editor, .echo-ocr-result-editor__list { height: auto; min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; gap: 1rem; overflow: visible; }
+  .echo-ocr-result-editor__target-fields, .echo-ocr-result-editor__image-fields, .echo-ocr-result-editor__editor-fields { gap: 0.75rem; overflow: visible; }
+  .echo-ocr-result-editor__target-preview { height: 20rem; flex: none; }
+  .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__header > span,
+  .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > span { font-size: 0.8125rem; }
+  .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score { min-height: 1.75rem; }
+  .echo-ocr-result-editor__image-fields > .ocr-image-card { flex: none; min-height: 12rem; }
+  .ocr-image-card > .file-slot { height: 10rem; flex: none; }
+  .ocr-image-card > span, .ocr-image-input-bottom > span { font-size: 0.875rem; }
+  .ocr-message, .ocr-span-font-sizing { font-size: 0.875rem !important; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .ocr-request-slot { height: auto; gap: 0.5rem; }
+  .echo-ocr-result-editor__base-fields { flex: none; grid-template-rows: repeat(4, minmax(44px, auto)); gap: 0.5rem; }
+  .echo-ocr-result-editor [class$="-control"] { min-height: 44px; height: 44px; }
+  .echo-ocr-result-editor__sub-fields { flex: none; gap: 0.5rem; overflow: visible; }
+  .echo-ocr-substat-item { min-height: 44px; flex: none; }
+  .echo-ocr-substat-item .echo-ocr-substat-item__handle { width: 44px; touch-action: none; }
+  .echo-ocr-result-editor__target-buttons button { font-size: 0.875rem; }
+  .echo-select-wrapper { height: auto; gap: 0.5rem; }
+  .echo-select-base-grid, .echo-select-main-grid, .echo-select-sub-grid { gap: 0.5rem; }
+  .echo-select-reset-button { font-size: 0.875rem; }
+
+  /* Card actions and guide are UI, independent of the exported image. */
+  .card-management-bar { height: auto; min-height: 60px; gap: 0.5rem; padding: 0.5rem; box-sizing: border-box; flex-wrap: wrap; }
+  .card-management-bar > button { min-height: 44px; height: auto; flex: 1; font-size: 0.8125rem; }
+  .card-contents .card-contents-slot.header, .card-contents .card-contents-slot.footer { height: auto !important; min-height: 44px; flex-wrap: wrap; gap: 0.375rem; min-width: 0; }
+  .card-header .item-slot, .card-contents .item-slot { flex-wrap: wrap; height: auto; max-width: 100%; }
+  .card-page-button { min-height: 44px; height: auto !important; font-size: 0.8125rem !important; }
+  .card-page-button img { max-height: 40px; }
+  .card-guide-panel { max-height: calc(100dvh - 1rem); overflow-y: auto; }
+  .card-guide-panel h2 { font-size: 1.1rem; }
+  .card-guide-panel p, .card-guide-progress > span, .card-guide-progress > a, .card-guide-dismiss-option, .card-guide-actions > a { font-size: 0.875rem; }
+  .card-guide-actions > a, .card-guide-dismiss-option { min-height: 44px; }
+  .card-detail-body .content-area { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; padding: 0.75rem; }
+  .card-detail-body .content-area > .inner-slot { grid-column: auto; grid-row: auto; min-height: 17rem; }
+  .card-detail-body .content-area > .weapon-area, .card-detail-body .content-area > .echo-area { min-height: 12rem; }
+  .card-detail-body .content-area > .detail-area, .card-detail-body .content-area > .stat-area { grid-column: 1 / -1; }
+}
+
+@media (max-width: 420px) {
+  .card-management-bar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card-management-bar > button { width: 100%; white-space: normal; overflow: visible; }
+  .card-management-bar > button:first-child { grid-column: 1 / -1; }
+  .characters-filter-group { align-items: flex-start; flex-direction: column; }
+  .characters-filter-options { justify-content: flex-start; }
+  .board-categories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card-detail-body .content-area { grid-template-columns: minmax(0, 1fr); }
+  .card-detail-body .content-area > .inner-slot { grid-column: 1 / -1; }
+  .echo-reset-confirm__actions { flex-wrap: wrap; }
+}

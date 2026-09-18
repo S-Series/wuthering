@@ -77,7 +77,7 @@
   display: block;
   white-space: nowrap;
   color: #fff;
-  font-size: min(1vw, 1rem);
+  font-size: clamp(0.8125rem, 1vw, 1rem);
 }
 
 .game-setting-stat__value.hide {

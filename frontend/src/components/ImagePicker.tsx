@@ -16,6 +16,7 @@ export default function ImagePicker(props: Props) {
 
   const isDraggingRef = useRef(false);
   const lastPosRef = useRef({ x: 0, y: 0 });
+  const pointersRef = useRef(new Map<number, { x: number; y: number }>());
 
   const displaySrc = useMemo(() => {
     return src ?? defaultSrc ?? null;
@@ -83,13 +84,27 @@ export default function ImagePicker(props: Props) {
     ImagePositionClamp(clamped);
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     isDraggingRef.current = true;
     lastPosRef.current = { x: e.clientX, y: e.clientY };
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingRef.current) return;
+    if (!pointersRef.current.has(e.pointerId)) return;
+
+    const previous = [...pointersRef.current.values()];
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const current = [...pointersRef.current.values()];
+    if (previous.length === 2) {
+      const before = Math.hypot(previous[0].x - previous[1].x, previous[0].y - previous[1].y);
+      const after = Math.hypot(current[0].x - current[1].x, current[0].y - current[1].y);
+      if (before > 0) ImageScaleClamp(scale * after / before);
+      return;
+    }
 
     const dx = e.clientX - lastPosRef.current.x;
     const dy = e.clientY - lastPosRef.current.y;
@@ -100,8 +115,11 @@ export default function ImagePicker(props: Props) {
     setY((prev) => prev + dy);
   };
 
-  const handleMouseUp = () => {
-    isDraggingRef.current = false;
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    pointersRef.current.delete(e.pointerId);
+    isDraggingRef.current = pointersRef.current.size > 0;
+    const remaining = pointersRef.current.values().next().value;
+    if (remaining) lastPosRef.current = remaining;
     ImagePositionClamp();
   };
 
@@ -174,10 +192,11 @@ export default function ImagePicker(props: Props) {
     <div className="image-picker-slot"
       ref={wrapperRef}
       onDoubleClick={() => inputRef.current?.click()}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onLostPointerCapture={handlePointerUp}
     >
       {displaySrc && (
         <img

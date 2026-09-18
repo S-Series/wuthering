@@ -8,11 +8,11 @@ import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
 import { useCharacter } from "@/stores/characterDataStore";
 
 import ImagePicker from "@/components/ImagePicker";
-import StatSlot from "@/components/features/Card/StatSlot";
-import EchoSlot from "@/components/features/Card/EchoSlot";
-import OcrPlayground from "@/components/features/Card/OcrSlot";
+import StatSlot from "@/components/features/Card/Stats/StatSlot";
+import EchoSlot from "@/components/features/Card/Echo/EchoSlot";
+import EchoManager from "@/components/features/Card/Echo/EchoManager";
 import CardDetail from "./Detail";
-import CardGuideOverlay from "@/components/features/Card/CardGuideOverlay";
+import CardGuideOverlay from "@/components/features/Card/Guide/CardGuideOverlay";
 
 import { character } from "@/datas/characters"
 import { type Character } from "@/datas/characters"
@@ -640,7 +640,7 @@ export default function Card() {
   };
 
   const openEchoDataManagerOverlay = () => {
-    openOverlay(<OcrPlayground />, {
+    openOverlay(<EchoManager />, {
       title: localeText.oMenu,
       width: "min(90vw, 90rem)",
       height: "min(80vh, 80rem)",
@@ -1346,7 +1346,7 @@ export default function Card() {
                           width: "fit-content",
                           minWidth: "8rem",
                           color: "#fff",
-                          fontSize: "min(1vw, 1rem)",
+                          fontSize: "clamp(0.8125rem, 1vw, 1rem)",
                         }}
                         onClick={() => {
                           try {
