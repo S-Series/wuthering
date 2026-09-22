@@ -251,6 +251,14 @@ export const weapon = {
       zh: "宙算仪轨",
       imgKey: "ico008",
     },
+    broadblade009:{ //* 경연
+			id: "broadblade009",
+      en: "Thousandfold Deliverance",
+      kr: "수많은 인도",
+      jp: "幾千の導き",
+      zh: "千般渡",
+      imgKey: "ico009",
+    },
     //$ 4-Starts
     broadblade101:{
 			id: "broadblade101",

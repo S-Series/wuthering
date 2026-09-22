@@ -15,9 +15,8 @@
 
 .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__header {
     display: flex;
-    width: 100%;
+    width: 80%;
     height: 7.5%;
-    padding: 0;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid rgba(255, 255, 255, 0.24);
@@ -28,7 +27,7 @@
     color: #ffd764;
     min-width: 0;
     overflow: hidden;
-    font-size: 0.58rem;
+    font-size: min(1vw, 1rem);
     font-weight: 900;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -36,8 +35,8 @@
 
 .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__header > .ocr-target-preview-card__rank-icon {
     width: auto;
-    max-width: 24%;
     height: 100%;
+    aspect-ratio: 1 / 1;
     object-fit: contain;
 }
 
@@ -89,10 +88,11 @@
 
 .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__stats > .ocr-target-preview-stat {
     display: flex;
-    width: 90%;
+    width: 85%;
     height: 100%;
     align-items: center;
     justify-content: space-between;
+    font-size: min(1.1vw, 1.1rem);
     overflow: hidden;
 }
 
@@ -117,8 +117,9 @@
 
 .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score {
     display: flex;
+    flex-direction: column;
     width: 100%;
-    min-height: min(2.5vw, 1.55rem);
+    height: auto;
     padding: 0;
     align-items: center;
     justify-content: space-between;
@@ -126,13 +127,21 @@
     box-sizing: border-box;
 }
 
-.echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > span {
+.echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > .textbox {
+    display: flex;
+    width: 80%;
+    height: auto;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > .textbox > span {
     color: #f4f7ff;
-    font-size: 0.55rem;
+    font-size: min(1.2vw, 1.2rem);
     white-space: nowrap;
 }
 
-.echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > span > em {
+.echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > .textbox > span > em {
     text-decoration: underline;
 }
 
@@ -162,7 +171,7 @@ body[data-theme="light"] .echo-ocr-target-preview.ocr-target-preview-card > .ocr
 }
 
 body[data-theme="light"] .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__stats > .ocr-target-preview-stat > span,
-body[data-theme="light"] .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > span {
+body[data-theme="light"] .echo-ocr-target-preview.ocr-target-preview-card > .ocr-target-preview-card__score > .textbox > span {
     color: #172033;
 }
 

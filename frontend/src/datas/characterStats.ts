@@ -36,6 +36,22 @@ export const characterStat = {
   */
 
   // == 3.6 ======================================= //
+  jingran: {
+    baseHp: 15375,
+    baseAtk: 312,
+    baseDef: 0,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 0.0,
+    hpPct: 12.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
   qingxiao: {
     baseHp: 10300,
     baseAtk: 462,

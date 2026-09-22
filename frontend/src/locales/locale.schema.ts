@@ -189,39 +189,32 @@ export type LocaleSchema = {
       priority: string;
       secondary: string;
     };
-    parties: {
-      standard: string;
-      temporary: string;
-      harmonyBreak: string;
-      //=========================
-      fusionAnomaly: string;
-      glacioAnomaly: string;
-      aeroAnomaly: string;
-      spectroAnomaly: string;
-      havocAnomaly: string;
-      //=========================
-      echoDamageAmp: string;
-      basicAttackAmp: string;
-      skillDamageAmp: string;
-      //=========================
-      concertoCluster: string;
-      concertoWave: string;
-      linmoEngine: string;
-      hypercarryMainDps: string;
-      //=========================
-      secondSlotSupport: string;
-      thirdSlotSupport: string;
-      //=========================
-      teamCore: string;
-      teamDps: string;
-      aeroDps: string;
-      //=========================
-      cyberpunk: string;
-      quickswap: string;
-      //=========================
-      alternative: string;
-      budgetAlternatives: string;
-    };
+  };
+  parties: {
+    standard: string;
+    temporary: string;
+    harmonyBreak: string;
+    fusionAnomaly: string;
+    glacioAnomaly: string;
+    aeroAnomaly: string;
+    spectroAnomaly: string;
+    havocAnomaly: string;
+    echoDamageAmp: string;
+    basicAttackAmp: string;
+    skillDamageAmp: string;
+    concertoCluster: string;
+    concertoWave: string;
+    linmoEngine: string;
+    hypercarryMainDps: string;
+    secondSlotSupport: string;
+    thirdSlotSupport: string;
+    teamCore: string;
+    teamDps: string;
+    aeroDps: string;
+    cyberpunk: string;
+    quickswap: string;
+    alternative: string;
+    budgetAlternatives: string;
   };
   profile: {
     signup: {
@@ -309,4 +302,4 @@ export type LocaleSchema = {
   }
 };
 
-export type CardDetailPartyKey = keyof LocaleSchema["cardDetail"]["parties"];
+export type PartyNameKey = keyof LocaleSchema["parties"];

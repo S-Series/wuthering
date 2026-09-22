@@ -46,6 +46,14 @@ FixedStats.atkPct.id],
   },*/
 
   //*== ver 3.6 ===========================//
+  jingran: {
+    ...baseMeta,
+    harmonySets: [harmony.Lamp.id],
+    cost3MainStats: [FixedStats.hpPct.id],
+    statType: "hp",
+    resReq: 120,
+    subResReq: 20,
+  },
   qingxiao: {
     ...baseMeta,
     harmonySets: [harmony.Heart.id],

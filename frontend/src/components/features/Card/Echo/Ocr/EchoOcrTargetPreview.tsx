@@ -67,7 +67,7 @@ export default function EchoOcrTargetPreview({
   return (
     <div className="echo-ocr-target-preview ocr-target-preview-card">
       <div className="ocr-target-preview-card__header">
-        <span>미리보기 · Slot {slotNumber}</span>
+        <span>Slot {slotNumber}</span>
         <img
           className="ocr-target-preview-card__rank-icon"
           src={`/ico/rank/${rank}.png`}
@@ -113,8 +113,20 @@ export default function EchoOcrTargetPreview({
       </div>
 
       <div className="ocr-target-preview-card__score">
-        <span>Cv. <em className="num-font">{score[0].toFixed(1)}</em>pt</span>
-        <span>Tv. <em className="num-font">{score[1].toFixed(1)}</em>pt</span>
+        <div className="textbox">
+          <span>Cv.</span>
+          <span>
+            <em className="num-font">{score[0].toFixed(1)}</em>
+            pt
+          </span>
+        </div>
+        <div className="textbox">
+          <span className="en-font">Av.</span>
+          <span>
+            <em className="num-font">{score[1].toFixed(1)}</em>
+            pt
+          </span>
+        </div>
       </div>
     </div>
   );

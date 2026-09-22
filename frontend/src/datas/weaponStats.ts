@@ -157,6 +157,11 @@ export const weaponStat = {
     value: [77.0, 16],
     statType: [FixedStats.resonanceBns.id, FixedStats.defPct.id]
   },
+  broadblade009: { //* 수많은 인도: 경연 전무
+    atk: 412,
+    value: [72.2, 12],
+    statType: [FixedStats.hpPct.id, FixedStats.typeBns.id],
+  },
   //$ --------------------------------------------------
   broadblade101: {
     atk: 337,

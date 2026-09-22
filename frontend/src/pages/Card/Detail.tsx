@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode } from "react";
 
 import { characterGuideData } from "@/datas/characters.guide";
+import { getRecommendedParties } from "@/datas/characters.parties";
 import { getCharacterMeta } from "@/datas/characters.meta";
 import { character } from "@/datas/characters";
 import { echoDict, type EchoData } from "@/datas/echos";
@@ -227,9 +228,11 @@ export default function CardDetail({ cData }: Props) {
   const { characterFinalStat } = useCharacter();
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const localeText = locale(lang).cardDetail;
+  const partyNames = locale(lang).parties;
 
   const characterData = character[cData.characterId];
   const guide = characterGuideData[cData.characterId];
+  const recommendedParties = getRecommendedParties(cData.characterId);
   const meta = getCharacterMeta(cData.characterId, cData.constell[0]);
   const mainEcho = getEchoData(guide.guideMainEcho);
   const cost1MainStat = `${meta.statType}Pct` as StatId;
@@ -278,14 +281,14 @@ export default function CardDetail({ cData }: Props) {
             />
 
             <div className={`party-detail-slot ${lang}-font`}>
-              {guide.guideParties.map((party, index) => (
+              {recommendedParties.map((party, index) => (
                 <div
                   className={`party-detail-item ${
-                    index < guide.guideParties.length - 1 ? "has-divider" : ""
+                    index < recommendedParties.length - 1 ? "has-divider" : ""
                   }`}
                   key={`${cData.characterId}-party-${index}`}
                 >
-                  <span>{localeText.parties[party.nameKey]}</span>
+                  <span>{partyNames[party.nameKey]}</span>
                   <div className="character-icon-slot">
                     {party.characters.map((partyCharacterId) => (
                       <div
@@ -305,7 +308,7 @@ export default function CardDetail({ cData }: Props) {
                 </div>
               ))}
               {Array.from({
-                length: Math.max(0, 3 - guide.guideParties.length),
+                length: Math.max(0, 3 - recommendedParties.length),
               }).map((_, index) => (
                 <div
                   aria-hidden="true"

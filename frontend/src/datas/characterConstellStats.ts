@@ -272,6 +272,29 @@ export const characterConstellStats: Partial<
       conditional("Maestro 상태에서 본인이 온필드일 때 적용", stat("havocBns", 60)),
     ],
   },
+  jingran: {
+    1: [
+      specific(
+        "침습하는 음, 황천길, 타오르는 양, 인도 효과 배율 증가",
+        stat("skillBns", 80)
+      ),
+    ],
+    2: [
+      specific(
+        "영혼 습격과 성천 유랑의 피해 배율 및 황천의 축복 효과 증가",
+        stat("heavyBns", 46)
+      ),
+    ],
+    3: [fixed("최대 HP 1,000당 공격력 50 증가, 최대 2,500")],
+    4: [team("보호막 획득 시 파티 전속성 피해 증가", stat("typeBns", 20))],
+    5: [fixed("치명적인 피해를 받을 때 최대 HP 50%의 보호막 획득")],
+    6: [
+      specific(
+        "경연이 가하는 강공격 피해 심화 및 이매망량 피해 배율 증가",
+        stat("heavyBns", 40)
+      ),
+    ],
+  },
   qingxiao: {
     1: [self(stat("critRate", 16))],
     3: [

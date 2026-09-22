@@ -9,6 +9,7 @@ import {
   characters,
   card,
   cardDetail,
+  parties,
   profile,
   ocr,
 } from "@/locales/dictionaries";
@@ -21,6 +22,7 @@ const createLocale = (lang: LangType): LocaleSchema => ({
   characters: characters[lang],
   card: card[lang],
   cardDetail: cardDetail[lang],
+  parties: parties[lang],
   profile: profile[lang],
   ocr: ocr[lang],
 });

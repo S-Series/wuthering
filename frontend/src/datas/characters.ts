@@ -19,7 +19,7 @@ export const ElementTypes = [
 ] as const;
 export type ElementType = (typeof ElementTypes)[number];
 
-const AttackTypes = ["basic", "heavy", "skill", "liberation", "heal"] as const;
+export const AttackTypes = ["basic", "heavy", "skill", "liberation", "heal"] as const;
 export type AttackType = (typeof AttackTypes)[number];
 
 export interface Character {
@@ -69,6 +69,20 @@ export const character: Record<CharacterId, Character> = {
   },*/
 
   //*== ver 3.6 ===========================//
+  jingran: {
+    id: "jingran",
+    en: "Jingran",
+    kr: "경연",
+    jp: "景燃",
+    zh: "景燃",
+    hasSkin: false,
+    weapon: "broadblade",
+    element: "fusion",
+    type: "heavy",
+    version: 3.6,
+    isElite: true,
+    region: "Huanglong",
+  },
   qingxiao: {
     id: "qingxiao",
     en: "Qingxiao",
@@ -78,7 +92,7 @@ export const character: Record<CharacterId, Character> = {
     hasSkin: false,
     weapon: "sword",
     element: "aero",
-    type: "basic",
+    type: "liberation",
     version: 3.6,
     isElite: true,
     region: "Huanglong",
