@@ -60,6 +60,15 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
   */
 
   Cost4: {
+    A06: {
+      en: "Reminiscence: Suhsin the Inevitable",
+      kr: "공명의 메아리 · 태초의 여우의 별자리 · 천연",
+      jp: "響き渡る共鳴・天演溯心",
+      zh: "共鸣回响·天演溯心",
+      type: [harmony.Vigil.id, harmony.Reflection.id],
+      // Main-slot 10% plus the 30s Electro Flare/Unison bonus at full activation.
+      getStats: () => [{ statId: FixedStats.electroBns.id, value: 20.0 }],
+    },
     X81: {
       en: "Calamity Effigy",
       kr: "하늘의 기관 인형 · 겁살",
@@ -75,7 +84,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "천괴중루",
       jp: "千傀の重楼",
       zh: "千傀重楼",
-      type: [harmony.Song.id],
+      type: [harmony.Song.id, harmony.Yearning.id],
       getStats: (_) => [
         { statId: FixedStats.havocBns.id, value: 12.0 },
         { statId: FixedStats.heavyBns.id, value: 12.0 },
@@ -390,6 +399,17 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
         { statId: FixedStats.liberationBns.id, value: 12.0 },
       ],
     },
+    W76: {
+      en: "Thundering Mephis",
+      kr: "뇌운의 비늘",
+      jp: "雲閃のウロコ",
+      zh: "云闪之鳞",
+      type: [harmony.Thunder.id],
+      getStats: () => [
+        { statId: FixedStats.electroBns.id, value: 12.0 },
+        { statId: FixedStats.liberationBns.id, value: 12.0 },
+      ],
+    },
     W76N: {
       en: "Nightmare: Thundering Mephis",
       kr: "악몽 · 뇌운의 비늘",
@@ -500,6 +520,31 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
     */
   },
   Cost3: {
+    A02: {
+      en: "Skywatch Lancer",
+      kr: "순소창위(巡霄槍衛)",
+      jp: "霄巡りの槍衛",
+      zh: "巡霄枪卫",
+      type: [harmony.Reflection.id, harmony.Yearning.id],
+      getStats: () => [],
+    },
+    A04: {
+      en: "Formrender",
+      kr: "해형살",
+      jp: "形解きの悪鬼",
+      zh: "解形煞",
+      type: [harmony.Vigil.id, harmony.Yearning.id],
+      getStats: () => [{ statId: FixedStats.resonanceBns.id, value: 10.0 }],
+    },
+    A05: {
+      en: "Soulfrayer",
+      kr: "절식백",
+      jp: "息絶えの亡霊",
+      zh: "绝息魄",
+      type: [harmony.Vigil.id, harmony.Reflection.id],
+      // The 12% Electro bonus applies to the incoming Resonator, not the wearer.
+      getStats: () => [],
+    },
     R69: {
       en: "Fog Lionarch",
       kr: "안개 수존",
@@ -938,12 +983,28 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
     },
   },
   Cost1: {
+    A01: {
+      en: "Jade Nether Serpent",
+      kr: "옥명사(玉冥蛇)",
+      jp: "機玉の冥蛇",
+      zh: "玉冥蛇",
+      type: [harmony.Vigil.id],
+      getStats: () => [],
+    },
+    A03: {
+      en: "Bloomburst Puppet",
+      kr: "기탄괴",
+      jp: "花咲かの奇傀",
+      zh: "奇绽傀",
+      type: [harmony.Vigil.id],
+      getStats: () => [],
+    },
     R13: {
       en: "Porcelain Picket",
       kr: "자정후",
       jp: "磁器の庭候",
       zh: "瓷庭候",
-      type: [harmony.Lamp.id],
+      type: [harmony.Lamp.id, harmony.Reflection.id],
       getStats: (_) => [],
     },
     R14: {
@@ -951,7 +1012,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "석정후",
       jp: "石の庭候",
       zh: "石庭候",
-      type: [harmony.Lamp.id],
+      type: [harmony.Lamp.id, harmony.Reflection.id],
       getStats: (_) => [],
     },
     R15: {
@@ -959,7 +1020,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "금정후",
       jp: "金鉄の庭候",
       zh: "金庭候",
-      type: [harmony.Heart.id],
+      type: [harmony.Heart.id, harmony.Reflection.id],
       getStats: (_) => [],
     },
     R16: {
@@ -967,7 +1028,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 희(喜)",
       jp: "心傀・喜",
       zh: "心傀·喜",
-      type: [harmony.Song.id],
+      type: [harmony.Song.id, harmony.Vigil.id],
       getStats: (_) => [],
     },
     R17: {
@@ -975,7 +1036,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 노(怒)",
       jp: "心傀・怒",
       zh: "心傀·怒",
-      type: [harmony.Heart.id],
+      type: [harmony.Heart.id, harmony.Yearning.id],
       getStats: (_) => [],
     },
     R18: {
@@ -983,7 +1044,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 우(憂)",
       jp: "心傀・憂",
       zh: "心傀·忧",
-      type: [harmony.Heart.id],
+      type: [harmony.Heart.id, harmony.Reflection.id],
       getStats: (_) => [],
     },
     R19: {
@@ -991,7 +1052,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 사(思)",
       jp: "心傀・思",
       zh: "心傀·思",
-      type: [harmony.Heart.id],
+      type: [harmony.Heart.id, harmony.Yearning.id],
       getStats: (_) => [],
     },
     R20: {
@@ -999,7 +1060,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 비(悲)",
       jp: "心傀・悲",
       zh: "心傀·悲",
-      type: [harmony.Lamp.id],
+      type: [harmony.Lamp.id, harmony.Yearning.id],
       getStats: (_) => [],
     },
     R21: {
@@ -1007,7 +1068,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "심월 인형 · 공(恐)",
       jp: "心傀・恐",
       zh: "心傀·恐",
-      type: [harmony.Lamp.id],
+      type: [harmony.Lamp.id, harmony.Yearning.id],
       getStats: (_) => [],
     },
     R22: {
@@ -1015,7 +1076,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "안개 수존 · 몸",
       jp: "霽息の獣尊・胴",
       zh: "霁息兽尊·身",
-      type: [harmony.Song.id],
+      type: [harmony.Song.id, harmony.Vigil.id],
       getStats: (_) => [],
     },
     R23: {
@@ -1023,7 +1084,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       kr: "안개 수존 · 머리",
       jp: "霽息の獣尊・首",
       zh: "霁息兽尊·首",
-      type: [harmony.Song.id],
+      type: [harmony.Song.id, harmony.Vigil.id],
       getStats: (_) => [],
     },
     W40: {
@@ -1514,7 +1575,7 @@ export const echoDict: Record<EchoCostKey, Record<string, Omit<EchoData, "id">>>
       getStats: (_) => [],
     },
     S05: {
-      en: "Young Roseshroom",
+      en: "Baby Roseshroom",
       kr: "가시장미버섯(유체)",
       jp: "トゲバラタケ（幼体）",
       zh: "刺玫菇（稚形）",

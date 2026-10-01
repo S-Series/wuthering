@@ -13,7 +13,7 @@ import type {
 
 import "@/pages/Board.css";
 
-const CATEGORY_OPTIONS = ["general", "question", "guide"] as const;
+const CATEGORY_OPTIONS = ["general", "report", "question", "guide"] as const;
 
 const DATE_LOCALE: Record<LangType, string> = {
   kr: "ko-KR",
@@ -233,6 +233,11 @@ export default function Board() {
                     <span className={"board-category-badge board-category-" + post.category}>
                       {text.categories[post.category]}
                     </span>
+                    {post.category === "report" ? (
+                      <span className={`board-resolution-badge ${post.isResolved ? "resolved" : "unresolved"}`}>
+                        {post.isResolved ? text.resolved : text.unresolved}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="board-post-title-line">
                     <h2>{post.title}</h2>

@@ -54,58 +54,48 @@
 }
 
 .echo-manager-layout__body .select-item-slot .item-slot-heading {
-    display: grid;
+    display: flex;
+    position: relative;
     width: 100%;
     flex: 0 0 auto;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    flex-direction: column;
     align-items: center;
     gap: min(0.5vw, 0.25rem);
 }
 
-.echo-manager-layout__body .select-item-slot .item-slot-heading > .item-slot-title {
-    grid-column: 2;
-}
-
-.echo-manager-layout__multi-image-button {
-    grid-column: 3;
-    justify-self: end;
-    width: 129px;
-    min-height: 2.3rem;
-    margin-right: 7px;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid #777;
+.echo-manager-layout__batch-ocr-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-height: 1.75rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid #697486;
     border-radius: 2px;
-    background: #262a34;
-    color: #eee;
-    font-size: 0.75rem;
-    box-sizing: border-box;
-    white-space: nowrap;
-}
-
-body[data-theme="light"] .echo-manager-layout__multi-image-button {
-    border-color: #aab5c5;
-    background: #e4eaf3;
-    color: #253047;
-}
-
-.echo-manager-layout__multi-image-button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
-.echo-manager-layout__multi-image-button:not(:disabled) {
+    background: #1b1e25;
+    color: #d7dce5;
+    font-size: clamp(0.6875rem, 0.8vw, 0.8125rem);
+    font-weight: 800;
     cursor: pointer;
 }
 
-.echo-manager-layout__multi-image-button:not(:disabled):hover,
-.echo-manager-layout__multi-image-button:not(:disabled):focus-visible {
+.echo-manager-layout__batch-ocr-button:hover,
+.echo-manager-layout__batch-ocr-button:focus-visible {
     border-color: #ffd764;
+    color: #ffd764;
     outline: none;
 }
 
+body[data-theme="light"] .echo-manager-layout__batch-ocr-button {
+    border-color: #9aa4b2;
+    background: #eef3fb;
+    color: #253047;
+}
+
+.echo-manager-layout__body .select-item-slot .item-slot-heading > .item-slot-title {
+    width: 100%;
+}
+
 .echo-manager-layout__body .select-item-slot .item-slot-help {
-    grid-column: 1 / -1;
-    justify-self: center;
     max-width: 100%;
     overflow: hidden;
     color: rgba(244, 247, 255, 0.68);

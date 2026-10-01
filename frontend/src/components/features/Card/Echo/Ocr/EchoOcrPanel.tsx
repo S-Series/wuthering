@@ -10,12 +10,9 @@ import { getRandomGif } from "@/lib/randomImg";
 import { useAppStore } from "@/stores/appStore";
 import type { StatId } from "@/datas/stats";
 import type { HarmonyId } from "@/datas/harmonies";
-import { prepareOcrImage } from "@/api/ocr.preprocess";
-import { requestOcrBatch } from "@/api/ocr.batch";
-import { matchOcrImages } from "@/api/ocr.match";
-import { resolveBatchOcr } from "@/api/ocr.batch.resolve";
 
 import EchoOcrResultEditor from "./EchoOcrResultEditor";
+import { recognizeEchoImage } from "./echoOcr.helpers";
 import "./EchoOcrPanel.css";
 
 export type EchoOcrResult = {
@@ -27,6 +24,17 @@ export type EchoOcrResult = {
 };
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
+type OcrImageStatus = "Queued" | "Requested" | "Successed" | "Failed";
+
+type OcrImageItem = {
+  id: string;
+  file: File;
+  previewUrl: string;
+  status: OcrImageStatus;
+  result: EchoOcrResult | null;
+  error: string | null;
+};
 
 type Props = {
   selectIdx: EchoIndex;
@@ -44,23 +52,23 @@ export default function EchoOcrPanel({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const ocrAbortRef = useRef<AbortController | null>(null);
   const ocrRequestIdRef = useRef(0);
-  const filePreviewUrlRef = useRef<string | null>(null);
+  const previewUrlsRef = useRef<Set<string>>(new Set());
+  const activeImageIdRef = useRef<string | null>(null);
 
-  const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<
-    "Idle" | "Requested" | "Successed" | "Failed"
-  >("Idle");
+  const [images, setImages] = useState<OcrImageItem[]>([]);
+  const [activeImageId, setActiveImageId] = useState<string | null>(null);
   const [debug, setDebug] = useState<EchoOcrResult | null>(
     initialDebug ?? null,
   );
-  const [ocrError, setOcrError] = useState<string | null>(null);
   const [isHealthy, setHealthy] = useState<boolean | null>(null);
-  const [isBoaring, setBoaring] = useState(false);
   const [isFocused, setFocused] = useState(false);
 
   const localeText = useMemo(() => locale(lang).ocr, [lang]);
-  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
-
+  const activeImage = images[0] ?? null;
+  const isProcessing = images.some((image) => image.status === "Requested");
+  const hasPendingImages = images.some(
+    (image) => image.status === "Queued" || image.status === "Failed",
+  );
 
   const cancelActiveOcrRequest = useCallback(() => {
     ocrAbortRef.current?.abort();
@@ -68,93 +76,134 @@ export default function EchoOcrPanel({
     ocrRequestIdRef.current += 1;
   }, []);
 
-  const replaceFile = useCallback((nextFile: File | null) => {
-    cancelActiveOcrRequest();
+  const selectImage = useCallback((image: OcrImageItem | null) => {
+    const nextId = image?.id ?? null;
+    const nextResult = image?.result ?? null;
 
-    if (filePreviewUrlRef.current) {
-      URL.revokeObjectURL(filePreviewUrlRef.current);
-      filePreviewUrlRef.current = null;
-    }
+    activeImageIdRef.current = nextId;
+    setActiveImageId(nextId);
+    setDebug(nextResult);
+    onDebugChange(nextResult);
+  }, [onDebugChange]);
 
-    const nextPreviewUrl = nextFile ? URL.createObjectURL(nextFile) : null;
-    filePreviewUrlRef.current = nextPreviewUrl;
+  const updateImage = useCallback(
+    (id: string, patch: Partial<OcrImageItem>) => {
+      setImages((current) =>
+        current.map((image) =>
+          image.id === id ? { ...image, ...patch } : image,
+        ),
+      );
+    },
+    [],
+  );
 
-    setFile(nextFile);
-    setFilePreviewUrl(nextPreviewUrl);
-    setStatus("Idle");
-    setOcrError(null);
-    setBoaring(false);
-    setDebug(null);
-    onDebugChange(null);
+  const queueFile = useCallback((selectedFiles: File[]) => {
+    const file = selectedFiles.find((item) => item.type.startsWith("image/"));
+    if (!file || ocrAbortRef.current) return;
 
-    if (!nextFile && fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  }, [cancelActiveOcrRequest, onDebugChange]);
+    previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    previewUrlsRef.current.clear();
 
-  const run = async () => {
-    if (!file) return;
+    const previewUrl = URL.createObjectURL(file);
+    previewUrlsRef.current.add(previewUrl);
+    const queuedImage: OcrImageItem = {
+      id: crypto.randomUUID(),
+      file,
+      previewUrl,
+      status: "Queued",
+      result: null,
+      error: null,
+    };
+
+    setImages([queuedImage]);
+    selectImage(queuedImage);
+  }, [selectImage]);
+
+  const runOcr = useCallback(async () => {
+    const pendingImages = images.filter(
+      (image) => image.status === "Queued" || image.status === "Failed",
+    );
+    if (pendingImages.length === 0 || ocrAbortRef.current) return;
 
     cancelActiveOcrRequest();
     const controller = new AbortController();
     ocrAbortRef.current = controller;
     const requestId = ocrRequestIdRef.current;
 
-    setStatus("Requested");
-    setOcrError(null);
-    setBoaring(false);
-    setDebug(null);
-    onDebugChange(null);
-
-    try {
-      const prepared = await prepareOcrImage(file, controller.signal, { splitHeader: true });
-      controller.signal.throwIfAborted();
-      const [regions, matches] = await Promise.all([
-        requestOcrBatch(prepared.file, prepared.metadata, lang, controller.signal),
-        matchOcrImages(prepared.file, prepared.metadata, lang, controller.signal).catch((error: unknown) => {
-          if (controller.signal.aborted) throw error;
-          console.warn("OCR image comparison failed", error);
-          return null;
-        }),
-      ]);
+    for (const image of pendingImages) {
       if (controller.signal.aborted || ocrRequestIdRef.current !== requestId) {
-        return;
+        break;
       }
-      if (regions.every(region => !region.success)) {
-        throw new Error("모든 영역의 OCR 인식에 실패했습니다.");
-      }
-      const nextDebug = resolveBatchOcr(regions, matches, lang);
 
-      setDebug(nextDebug);
-      onDebugChange(nextDebug);
-      setBoaring(false);
-      setStatus("Successed");
-    } catch (error) {
-      if (controller.signal.aborted) return;
-      controller.abort();
-      setBoaring(false);
-      setStatus("Failed");
-      setOcrError(error instanceof Error ? error.message : "OCR 처리에 실패했습니다.");
-      setDebug(null);
-      onDebugChange(null);
-      console.error(error);
-    } finally {
-      if (ocrRequestIdRef.current === requestId) {
-        ocrAbortRef.current = null;
+      updateImage(image.id, { status: "Requested", error: null });
+
+      try {
+        const result = await recognizeEchoImage(
+          image.file,
+          lang,
+          controller.signal,
+        );
+        updateImage(image.id, {
+          status: "Successed",
+          result,
+          error: null,
+        });
+
+        if (activeImageIdRef.current === image.id) {
+          setDebug(result);
+          onDebugChange(result);
+        }
+      } catch (error) {
+        if (controller.signal.aborted) break;
+
+        const message =
+          error instanceof Error ? error.message : "OCR 처리에 실패했습니다.";
+        updateImage(image.id, {
+          status: "Failed",
+          result: null,
+          error: message,
+        });
+
+        if (activeImageIdRef.current === image.id) {
+          setDebug(null);
+          onDebugChange(null);
+        }
+        console.error(error);
       }
     }
-  };
 
-  const handleResetDebug = () => {
-    replaceFile(null);
-  };
+    if (ocrRequestIdRef.current === requestId) {
+      ocrAbortRef.current = null;
+    }
+  }, [cancelActiveOcrRequest, images, lang, onDebugChange, updateImage]);
+
+  const removeImage = useCallback((id: string) => {
+    const targetIndex = images.findIndex((image) => image.id === id);
+    const target = images[targetIndex];
+    if (!target || target.status === "Requested") return;
+
+    URL.revokeObjectURL(target.previewUrl);
+    previewUrlsRef.current.delete(target.previewUrl);
+
+    const nextImages = images.filter((image) => image.id !== id);
+    setImages(nextImages);
+
+    if (activeImageIdRef.current === id) {
+      selectImage(nextImages[targetIndex] ?? nextImages[targetIndex - 1] ?? null);
+    }
+  }, [images, selectImage]);
+
+  const handleAppliedImage = useCallback(() => {
+    if (activeImageIdRef.current) removeImage(activeImageIdRef.current);
+  }, [removeImage]);
 
   useEffect(() => {
+    const previewUrls = previewUrlsRef.current;
+
     return () => {
       ocrAbortRef.current?.abort();
-      if (filePreviewUrlRef.current) {
-        URL.revokeObjectURL(filePreviewUrlRef.current);
-      }
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+      previewUrls.clear();
     };
   }, []);
 
@@ -216,41 +265,32 @@ export default function EchoOcrPanel({
 
   useEffect(() => {
     const onPaste = (event: ClipboardEvent) => {
-      if (!isFocused) return;
+      if (!isFocused || isProcessing) return;
 
-      const imageItem = Array.from(event.clipboardData?.items ?? []).find(
-        (item) => item.type.startsWith("image/"),
-      );
-      const blob = imageItem?.getAsFile();
-      if (!blob) return;
+      const pastedFile = Array.from(event.clipboardData?.items ?? [])
+        .filter((item) => item.type.startsWith("image/"))
+        .map((item) => {
+          const blob = item.getAsFile();
+          if (!blob) return null;
 
-      const extension = blob.type.split("/")[1] || "png";
-      const pastedFile = new File(
-        [blob],
-        `pasted-${Date.now()}.${extension}`,
-        { type: blob.type },
-      );
-      replaceFile(pastedFile);
+          const extension = blob.type.split("/")[1] || "png";
+          return new File(
+            [blob],
+            `pasted-${Date.now()}.${extension}`,
+            { type: blob.type },
+          );
+        })
+        .find((file): file is File => file !== null);
+      if (!pastedFile) return;
 
-      if (fileInputRef.current) {
-        const transfer = new DataTransfer();
-        transfer.items.add(pastedFile);
-        fileInputRef.current.files = transfer.files;
-      }
+      queueFile([pastedFile]);
 
       event.preventDefault();
     };
 
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-  }, [isFocused, replaceFile]);
-
-  useEffect(() => {
-    if (status !== "Requested") return;
-
-    const timer = window.setTimeout(() => setBoaring(true), 10_000);
-    return () => window.clearTimeout(timer);
-  }, [status]);
+  }, [isFocused, isProcessing, queueFile]);
 
   return (
     <div className="ocr-image-input-panel">
@@ -270,70 +310,96 @@ export default function EchoOcrPanel({
             setId: debug?.setId ?? null,
           }}
           selectIdx={selectIdx}
-          resetAction={handleResetDebug}
+          resetAction={handleAppliedImage}
           inputSlot={
             <section className="ocr-image-card ocr-image-card--input">
-              <span className="en-font">
-                {localeText.status}: {status}
-              </span>
-              
               <div
-                className={`file-slot ${isFocused ? "focused" : ""}`}
+                className={`file-slot ocr-file-slot ${isFocused ? "focused" : ""}`}
                 ref={slotRef}
                 tabIndex={0}
-                onClick={() => {
-                  if (isFocused) fileInputRef.current?.click();
-                  else setFocused(true);
-                }}
+                onFocus={() => setFocused(true)}
               >
                 <input
                   className="image-input"
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={(event) =>
-                    replaceFile(event.target.files?.[0] ?? null)
-                  }
+                  disabled={isProcessing}
+                  onChange={(event) => {
+                    const selectedFiles = Array.from(event.target.files ?? []);
+                    event.target.value = "";
+                    queueFile(selectedFiles);
+                  }}
                 />
-                {file ? (
-                  <img src={filePreviewUrl ?? ""} alt="" />
-                ) : !isFocused ? (
-                  <span style={{ textDecoration: "underline" }}>
-                    {localeText.description1}
-                  </span>
-                ) : (
-                  <span
-                    className={`${lang}-font`}
-                    style={{ whiteSpace: "pre", textAlign: "center" }}
+                {!activeImage ? (
+                  <button
+                    type="button"
+                    className="ocr-file-slot__empty"
+                    onClick={() => fileInputRef.current?.click()}
                   >
-                    {localeText.description2}
-                  </span>
-                )}
-              </div>
-
-              <div className="ocr-request-slot">
-                {ocrError && <span role="alert" className={`${lang}-font ocr-message`}>{ocrError}</span>}
-                {isBoaring && (
-                  <span className={`${lang}-font ocr-message`}>
-                    {localeText.description3}
-                  </span>
-                )}
-                {!isHealthy && (
-                  <span className={`${lang}-font ocr-message`}>
-                    {localeText.healthFalse}
-                  </span>
-                )}
-
-                {status === "Requested" ? (
-                  <div className="ocr-loading-slot">
-                    <div className="ocr-loading" />
-                    <span className="en-font">{localeText.loading}</span>
-                  </div>
-                ) : (
-                  <button className="ocr-button" onClick={run} disabled={!file}>
-                    {localeText.request}
+                    <span className={`${lang}-font`}>
+                      {isFocused
+                        ? localeText.description2
+                        : localeText.description1}
+                    </span>
                   </button>
+                ) : (
+                  <article
+                    className={`ocr-single-image ${
+                      activeImageId === activeImage.id ? "selected" : ""
+                    } ${activeImage.status.toLowerCase()}`}
+                  >
+                    <button
+                      type="button"
+                      className="ocr-single-image__select"
+                      onClick={() => fileInputRef.current?.click()}
+                      title={activeImage.error ?? activeImage.file.name}
+                    >
+                      <img
+                        src={activeImage.previewUrl}
+                        alt={activeImage.file.name}
+                      />
+                    </button>
+                    <span
+                      className="ocr-single-image__status"
+                      aria-label={activeImage.status}
+                    >
+                      {activeImage.status === "Requested"
+                        ? ""
+                        : activeImage.status === "Successed"
+                          ? "✓"
+                          : activeImage.status === "Failed"
+                            ? "!"
+                            : "…"}
+                    </span>
+                    <button
+                      type="button"
+                      className="ocr-single-image__remove"
+                      aria-label={`Replace ${activeImage.file.name}`}
+                      disabled={activeImage.status === "Requested"}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      ↻
+                    </button>
+                    <button
+                      type="button"
+                      className="ocr-single-image__delete"
+                      aria-label={`Remove ${activeImage.file.name}`}
+                      disabled={activeImage.status === "Requested"}
+                      onClick={() => removeImage(activeImage.id)}
+                    >
+                      ×
+                    </button>
+                  </article>
                 )}
+                <button
+                  type="button"
+                  className="ocr-file-slot__request"
+                  disabled={!hasPendingImages || isProcessing}
+                  onClick={() => void runOcr()}
+                >
+                  {localeText.request}
+                </button>
               </div>
             </section>
           }

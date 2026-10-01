@@ -45,6 +45,69 @@ export const harmony = {
   },
   */
 
+  //#region Ver3.7 Echos
+  Vigil: {
+    id: "Vigil",
+    en: "Heart of Sworn Vigil",
+    kr: "꿈으로 세상을 비추는 마음",
+    jp: "銜夢照世の心",
+    zh: "衔梦照世之心",
+    option: [
+      {
+        count: 2,
+        options: [
+          { statId: FixedStats.electroBns.id, value: 10.0 },
+        ],
+      },
+      {
+        count: 5,
+        options: [
+          { statId: FixedStats.critRate.id, value: 15.0 },
+          { statId: FixedStats.electroBns.id, value: 22.5 },
+        ],
+      },
+    ],
+    colorCode: "#",
+  },
+  Reflection: {
+    id: "Reflection",
+    en: "Flash of Electric Reflection",
+    kr: "거울 그림자에 번개가 스치는 찰나",
+    jp: "鏡影流電の閃",
+    zh: "镜影流电之瞬",
+    option: [
+      {
+        count: 2,
+        options: [{ statId: FixedStats.electroBns.id, value: 10.0 }],
+      },
+      {
+        count: 5,
+        // The additional 25% Outro bonus belongs to the incoming Resonator.
+        options: [{ statId: FixedStats.electroBns.id, value: 10.0 }],
+      },
+    ],
+    colorCode: "#",
+  },
+  Yearning: {
+    id: "Yearning",
+    en: "Flower of Tinged Yearning",
+    kr: "추억에 붉게 물든 꽃",
+    jp: "フラワー・レミニセンス",
+    zh: "茜染怀想之花",
+    option: [
+      {
+        count: 2,
+        options: [{ statId: FixedStats.healBns.id, value: 10.0 }],
+      },
+      {
+        count: 5,
+        // Healing grants 10%; Unison adds another 15% at full activation.
+        options: [{ statId: FixedStats.atkPct.id, value: 25.0 }],
+      },
+    ],
+    colorCode: "#",
+  },
+
   //#region Ver3.0 Echos
   Song: {
     id: "Song",

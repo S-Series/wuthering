@@ -45,6 +45,22 @@ FixedStats.atkPct.id],
     
   },*/
 
+  //*== ver 3.7 ===========================//
+  hsin: {
+    ...baseMeta,
+    harmonySets: [harmony.Vigil.id, harmony.Thunder.id],
+    cost3MainStats: [FixedStats.electroBns.id, FixedStats.atkPct.id],
+    resReq: 120,
+    subResReq: 20,
+  },
+  suoming: {
+    ...baseMeta,
+    harmonySets: [harmony.Vigil.id, harmony.Thunder.id],
+    cost3MainStats: [FixedStats.electroBns.id, FixedStats.atkPct.id],
+    resReq: 125,
+    subResReq: 25,
+  },
+
   //*== ver 3.6 ===========================//
   jingran: {
     ...baseMeta,

@@ -15,6 +15,14 @@ export interface Weapon {
 export const weapon = {
   sword: { //* 직검
     //$ 5-Starts
+    sword013: { //* 쇄명
+			id: "sword013",
+      en: "Unspoken Rue",
+      kr: "침명",
+      jp: "沈冥",
+      zh: "沉冥",
+      imgKey: "ico013",
+    },
     sword012: { //* 청초
 			id: "sword012",
       en: "Glint of Clouds",
@@ -592,6 +600,14 @@ export const weapon = {
   },
   rectifier: { //* 증폭기
     //$ 5-Starts
+    rectifier012:{ //* 여우의 별자리
+			id: "rectifier012",
+      en: "Blooming Jadehaven",
+      kr: "옥궐에 피는 꽃",
+      jp: "玉殿に咲き満ちる玄華",
+      zh: "玉阙玄华",
+      imgKey: "ico012",
+    },
     rectifier011:{ //* 수수
 			id: "rectifier011",
       en: "Firstlight's Herald",

@@ -35,6 +35,40 @@ export const characterStat = {
   },
   */
 
+  // == 3.7 ======================================= //
+  hsin: {
+    baseHp: 10300,
+    baseAtk: 462,
+    baseDef: 1112,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+  suoming: {
+    baseHp: 10300,
+    baseAtk: 462,
+    baseDef: 1148,
+
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+
+    typeBns: [0, 0.0],
+  },
+
   // == 3.6 ======================================= //
   jingran: {
     baseHp: 15375,

@@ -84,15 +84,16 @@
 
 .echo-ocr-result-editor__image-fields > .ocr-image-card--input > .file-slot {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    flex: 0 0 auto;
+    height: 100%;
+    aspect-ratio: auto;
+    flex: 1 1 auto;
+    margin: 0;
     box-sizing: border-box;
 }
 
 .echo-ocr-result-editor__editor-fields {
     min-width: 0;
-    gap: 1%;
+    gap: 2%;
     justify-content: flex-start;
 }
 
@@ -102,7 +103,7 @@
     min-width: 0;
     min-height: 0;
     grid-template-rows: repeat(4, minmax(0, 1fr));
-    gap: 1%;
+    gap: 3%;
 }
 
 .echo-ocr-result-editor__base-fields > div,
@@ -126,7 +127,7 @@
     min-width: 0;
     min-height: 0;
     flex-direction: column;
-    gap: 1%;
+    gap: 3%;
     overflow: hidden;
 }
 
@@ -293,7 +294,7 @@ body[data-theme="light"] .echo-ocr-result-editor__apply-button:focus-visible {
 
 .echo-ocr-result-editor__main-stat > span {
     flex: 0 0 auto;
-    font-size: 0.7rem;
+    font-size: clamp(0.75rem, 1.15vw, 0.875rem);
     white-space: nowrap;
 }
 

@@ -3,6 +3,7 @@ import type {
   BoardPostDetail,
   BoardPostInput,
   BoardPostListResponse,
+  BoardCommentListResponse,
 } from "@/types/board.type";
 import { auth } from "@/firebase/firebase";
 
@@ -84,11 +85,16 @@ export async function fetchBoardPosts({
 
 export async function fetchBoardPost(
   postId: string,
-  signal?: AbortSignal
+  options: { signal?: AbortSignal; trackView?: boolean } = {},
 ): Promise<BoardPostDetail> {
-  const response = await fetch(
+  const url = new URL(
     getGatewayUrl() + "/api/board/posts/" + encodeURIComponent(postId),
-    { signal }
+  );
+  if (options.trackView) url.searchParams.set("view", "1");
+
+  const response = await fetch(
+    url,
+    { signal: options.signal },
   );
 
   if (!response.ok) {
@@ -150,4 +156,102 @@ export async function deleteBoardPost(postId: string) {
   if (!response.ok) {
     return throwApiError(response, "Failed to delete board post");
   }
+}
+
+export async function fetchBoardComments(
+  postId: string,
+  signal?: AbortSignal,
+): Promise<BoardCommentListResponse> {
+  const response = await fetch(
+    getGatewayUrl() + "/api/board/posts/" + encodeURIComponent(postId) + "/comments",
+    { signal },
+  );
+
+  if (!response.ok) {
+    return throwApiError(response, "Failed to load board comments");
+  }
+
+  return (await response.json()) as BoardCommentListResponse;
+}
+
+export async function createBoardComment(postId: string, content: string) {
+  const authorization = await getAuthorizationHeader();
+  const response = await fetch(
+    getGatewayUrl() + "/api/board/posts/" + encodeURIComponent(postId) + "/comments",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authorization,
+      },
+      body: JSON.stringify({ content }),
+    },
+  );
+
+  if (!response.ok) {
+    return throwApiError(response, "Failed to create board comment");
+  }
+
+  return (await response.json()) as { id: string };
+}
+
+export async function updateBoardComment(
+  postId: string,
+  commentId: string,
+  content: string,
+) {
+  const authorization = await getAuthorizationHeader();
+  const response = await fetch(
+    getGatewayUrl() + "/api/board/posts/" + encodeURIComponent(postId) +
+      "/comments/" + encodeURIComponent(commentId),
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authorization,
+      },
+      body: JSON.stringify({ content }),
+    },
+  );
+
+  if (!response.ok) {
+    return throwApiError(response, "Failed to update board comment");
+  }
+}
+
+export async function deleteBoardComment(postId: string, commentId: string) {
+  const authorization = await getAuthorizationHeader();
+  const response = await fetch(
+    getGatewayUrl() + "/api/board/posts/" + encodeURIComponent(postId) +
+      "/comments/" + encodeURIComponent(commentId),
+    {
+      method: "DELETE",
+      headers: { Authorization: authorization },
+    },
+  );
+
+  if (!response.ok) {
+    return throwApiError(response, "Failed to delete board comment");
+  }
+}
+
+export async function updateBoardResolution(postId: string, isResolved: boolean) {
+  const authorization = await getAuthorizationHeader();
+  const response = await fetch(
+    getGatewayUrl() + "/api/board/posts/" + encodeURIComponent(postId) + "/resolution",
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authorization,
+      },
+      body: JSON.stringify({ isResolved }),
+    },
+  );
+
+  if (!response.ok) {
+    return throwApiError(response, "Failed to update board resolution");
+  }
+
+  return (await response.json()) as { id: string; isResolved: boolean };
 }

@@ -14,7 +14,7 @@ import type { BoardCategory, BoardPostInput } from "@/types/board.type";
 
 import "@/pages/BoardCrud.css";
 
-const CATEGORY_OPTIONS: BoardCategory[] = ["general", "question", "guide"];
+const CATEGORY_OPTIONS: BoardCategory[] = ["general", "report", "question", "guide"];
 
 type EditLoadState = {
   postId: string;
@@ -46,7 +46,7 @@ export default function BoardEditor() {
 
     const controller = new AbortController();
 
-    void fetchBoardPost(postId, controller.signal)
+    void fetchBoardPost(postId, { signal: controller.signal })
       .then((post) => {
         if (post.authorId !== user.supabaseUid) {
           setEditLoadState({ postId, status: "forbidden" });

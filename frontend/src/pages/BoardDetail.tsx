@@ -1,11 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { BoardApiError, deleteBoardPost, fetchBoardPost } from "@/api/board.api";
+import {
+  BoardApiError,
+  deleteBoardPost,
+  fetchBoardPost,
+  updateBoardResolution,
+} from "@/api/board.api";
 import { locale } from "@/locales/locale";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { useAuthStore } from "@/stores/authStore";
 import type { BoardPostDetail as BoardPostDetailType } from "@/types/board.type";
+
+import BoardComments from "@/pages/BoardComments";
 
 import "@/pages/BoardCrud.css";
 
@@ -48,18 +55,38 @@ export default function BoardDetail() {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isUpdatingResolution, setIsUpdatingResolution] = useState(false);
+  const [resolutionError, setResolutionError] = useState<string | null>(null);
+  const requestedPostIdRef = useRef("");
 
   useEffect(() => {
-    if (!postId) return;
+    if (!postId || requestedPostIdRef.current === postId) return;
+    requestedPostIdRef.current = postId;
 
-    const controller = new AbortController();
+    const viewKey = "wuthering.board.viewed." + postId;
+    let trackView = true;
 
-    void fetchBoardPost(postId, controller.signal)
+    try {
+      trackView = sessionStorage.getItem(viewKey) !== "1";
+      if (trackView) sessionStorage.setItem(viewKey, "1");
+    } catch {
+      // A restricted browser can block session storage; the gateway still handles the request.
+    }
+
+    void fetchBoardPost(postId, { trackView })
       .then((post) => {
+        if (requestedPostIdRef.current !== postId) return;
         setRequestState({ postId, post, errorStatus: null });
       })
       .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === "AbortError") return;
+        if (trackView) {
+          try {
+            sessionStorage.removeItem(viewKey);
+          } catch {
+            // Ignore storage access failures.
+          }
+        }
+        if (requestedPostIdRef.current !== postId) return;
         setRequestState({
           postId,
           post: null,
@@ -67,13 +94,15 @@ export default function BoardDetail() {
         });
       });
 
-    return () => controller.abort();
   }, [postId]);
 
   const currentState = requestState?.postId === postId ? requestState : null;
   const post = currentState?.post ?? null;
   const canManage = Boolean(
     user?.supabaseUid && post?.authorId && user.supabaseUid === post.authorId
+  );
+  const canManageResolution = Boolean(
+    post?.category === "report" && user?.role.toLowerCase() === "admin",
   );
 
   const confirmDelete = async () => {
@@ -97,6 +126,28 @@ export default function BoardDetail() {
     }
   };
 
+  const toggleResolution = async () => {
+    if (!post || !canManageResolution) return;
+
+    setIsUpdatingResolution(true);
+    setResolutionError(null);
+
+    try {
+      const result = await updateBoardResolution(post.id, !post.isResolved);
+      setRequestState((current) => {
+        if (!current?.post || current.post.id !== post.id) return current;
+        return {
+          ...current,
+          post: { ...current.post, isResolved: result.isResolved },
+        };
+      });
+    } catch {
+      setResolutionError(detailText.resolutionError);
+    } finally {
+      setIsUpdatingResolution(false);
+    }
+  };
+
   if (!currentState) {
     return <BoardDetailState message={detailText.loading} />;
   }
@@ -113,21 +164,40 @@ export default function BoardDetail() {
     <section className={"board-crud-page " + lang + "-font"}>
       <div className="board-detail-topbar">
         <Link to="/board">← {detailText.back}</Link>
-        {canManage ? (
+        {canManage || canManageResolution ? (
           <div className="board-detail-owner-actions">
-            <Link to={"/board/" + post.id + "/edit"}>{detailText.edit}</Link>
-            <button type="button" onClick={() => setIsDeleteConfirmOpen(true)}>
-              {detailText.delete}
-            </button>
+            {canManageResolution ? (
+              <button
+                type="button"
+                className="board-resolution-action"
+                disabled={isUpdatingResolution}
+                onClick={() => void toggleResolution()}
+              >
+                {post.isResolved ? detailText.markUnresolved : detailText.markResolved}
+              </button>
+            ) : null}
+            {canManage ? <Link to={"/board/" + post.id + "/edit"}>{detailText.edit}</Link> : null}
+            {canManage ? (
+              <button type="button" onClick={() => setIsDeleteConfirmOpen(true)}>
+                {detailText.delete}
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
+
+      {resolutionError ? <p className="board-detail-error" role="alert">{resolutionError}</p> : null}
 
       <article className="board-detail-panel">
         <header className="board-detail-header">
           <div className="board-detail-badges">
             {post.isPinned ? <span>{text.notice}</span> : null}
             <span>{text.categories[post.category]}</span>
+            {post.category === "report" ? (
+              <span className={`board-resolution-badge ${post.isResolved ? "resolved" : "unresolved"}`}>
+                {post.isResolved ? text.resolved : text.unresolved}
+              </span>
+            ) : null}
           </div>
           <h1>{post.title}</h1>
           <dl className="board-detail-meta">
@@ -147,6 +217,23 @@ export default function BoardDetail() {
         </header>
         <div className="board-detail-content">{post.content}</div>
       </article>
+
+      <BoardComments
+        postId={post.id}
+        lang={lang}
+        onCountChange={(delta) => {
+          setRequestState((current) => {
+            if (!current?.post || current.post.id !== post.id) return current;
+            return {
+              ...current,
+              post: {
+                ...current.post,
+                commentCount: Math.max(0, current.post.commentCount + delta),
+              },
+            };
+          });
+        }}
+      />
 
       {isDeleteConfirmOpen ? (
         <div className="board-delete-confirm" role="alertdialog" aria-modal="true">

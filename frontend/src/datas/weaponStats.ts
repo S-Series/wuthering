@@ -8,6 +8,11 @@ export interface WeaponStat {
 
 export const weaponStat = {
   //#region StraightSword
+  sword013: { //* 침명: 쇄명 전무
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.critRate.id, FixedStats.atkPct.id],
+  },
   sword012: {
     atk: 500,
     value: [36.0, 12.0],
@@ -374,6 +379,11 @@ export const weaponStat = {
   //#endregion
 
   //#region Amplifter
+  rectifier012: { //* 옥궐에 피는 꽃 (여우의 별자리)
+    atk: 587,
+    value: [24.3, 12],
+    statType: [FixedStats.critRate.id, FixedStats.typeBns.id],
+  },
   rectifier011: { //* 노을에 깃든 이슬 (수수)
     atk: 412,
     value: [77.0, 12],

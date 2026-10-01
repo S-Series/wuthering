@@ -213,6 +213,44 @@ export const characterConstellStats: Partial<
       ),
     ],
   },
+  hsin: {
+    3: [
+      specific(
+        "합일 모드 공명 해방 치명타 피해 최대 4스택",
+        stat("critDmg", 80)
+      ),
+    ],
+    4: [team("조건 충족 시 파티 전속성 피해 증가", stat("typeBns", 20))],
+    6: [
+      specific(
+        "여우의 별자리가 가하는 공명 스킬 피해 심화",
+        stat("skillBns", 40)
+      ),
+      fixed(
+        "전자기 모드 전도 이상 피해 치명 수치 고정",
+        stat("critRate", 80),
+        stat("critDmg", 230)
+      ),
+    ],
+  },
+  suoming: {
+    2: [
+      self(stat("critDmg", 40)),
+      specific(
+        "종주 스킬 발동 후 다음 등장 캐릭터, 합일 증폭 4스택 기준",
+        stat("critDmg", 34)
+      ),
+    ],
+    3: [conditional("공명 해방 발동 후", stat("basicBns", 30))],
+    4: [self(stat("atkPct", 20))],
+    6: [
+      specific(
+        "특정 강화 일반 공격 피해 배율 증가",
+        stat("basicBns", 50)
+      ),
+      conditional("금쇄의 계약자 효과 보유 중", stat("critDmg", 200)),
+    ],
+  },
   iuno: {
     1: [conditional("Lunar Cycle 중 적용", stat("atkPct", 40))],
   },

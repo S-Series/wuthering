@@ -68,6 +68,36 @@ export const character: Record<CharacterId, Character> = {
     region: ,
   },*/
 
+  //*== ver 3.7 ===========================//
+  hsin: {
+    id: "hsin",
+    en: "Hsin",
+    kr: "여우의 별자리",
+    jp: "心",
+    zh: "心",
+    hasSkin: false,
+    weapon: "rectifier",
+    element: "electro",
+    type: "skill",
+    version: 3.7,
+    isElite: true,
+    region: "Huanglong",
+  },
+  suoming: {
+    id: "suoming",
+    en: "Suoming",
+    kr: "쇄명",
+    jp: "鎖暝",
+    zh: "锁暝",
+    hasSkin: false,
+    weapon: "sword",
+    element: "electro",
+    type: "basic",
+    version: 3.7,
+    isElite: true,
+    region: "Huanglong",
+  },
+
   //*== ver 3.6 ===========================//
   jingran: {
     id: "jingran",

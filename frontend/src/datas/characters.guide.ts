@@ -24,6 +24,24 @@ export type characterGuide = {
 };
 
 export const characterGuideData: Record<CharacterId, characterGuide> = {
+  hsin: {
+    guideMainEcho: "A06",
+    guideWeapons: [
+      weapon.rectifier.rectifier012.id,
+      weapon.rectifier.rectifier007.id,
+      weapon.rectifier.rectifier002.id,
+    ],
+    guideSkillOrder: ["forte", "liberation", "skill", "outro", "basic"],
+  },
+  suoming: {
+    guideMainEcho: "A06",
+    guideWeapons: [
+      weapon.sword.sword013.id,
+      weapon.sword.sword003.id,
+      weapon.sword.sword001.id,
+    ],
+    guideSkillOrder: ["forte", "basic", "skill", "liberation", "outro"],
+  },
   jingran: {
     guideMainEcho: "R71",
     guideWeapons: [

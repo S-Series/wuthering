@@ -20,9 +20,12 @@ export type LocaleSchema = {
     all: string;
     categories: {
       general: string;
+      report: string;
       question: string;
       guide: string;
     };
+    resolved: string;
+    unresolved: string;
     searchPlaceholder: string;
     search: string;
     write: string;
@@ -83,6 +86,22 @@ export type LocaleSchema = {
       deleteConfirm: string;
       deleting: string;
       deleteError: string;
+      markResolved: string;
+      markUnresolved: string;
+      resolutionError: string;
+      commentsTitle: string;
+      commentPlaceholder: string;
+      commentLogin: string;
+      commentSubmit: string;
+      commentSaving: string;
+      commentEmpty: string;
+      commentLoadError: string;
+      commentSaveError: string;
+      commentEdit: string;
+      commentDelete: string;
+      commentCancel: string;
+      commentUpdate: string;
+      commentEdited: string;
     };
   };
   home: {
@@ -299,6 +318,14 @@ export type LocaleSchema = {
     echoOrderHelp: string;
     echoData: string;
     inspectData: string;
+    batchInput: string;
+    batchTitle: string;
+    batchAdd: string;
+    batchEmpty: string;
+    batchStart: string;
+    batchApply: string;
+    batchProgress: string;
+    batchComplete: string;
   }
 };
 

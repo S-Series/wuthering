@@ -371,7 +371,7 @@ export const getStatDropStyleDrag = <Option,>(
         ...baseSelectStyles,
         option: (base, state) => ({
             ...getRelevantOptionStyle(baseSelectStyles)(base, state),
-            fontSize: "11px",
+            fontSize: "0.8125rem",
         }),
         menu: (base, state) => {
             const common = baseSelectStyles.menu
@@ -399,7 +399,7 @@ export const getStatDropStyleDrag = <Option,>(
                 maxWidth: "100%",
                 height: "100%",
                 boxSizing: "border-box",
-                fontSize: "10px",
+                fontSize: "clamp(0.75rem, 1.15vw, 0.875rem)",
             };
         },
         container: (base, state) => {
