@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { fetchDevAnalytics, type DevAnalyticsData } from "@/api/devAnalytics.api";
-import { useAuthStore } from "@/stores/authStore";
 import "./DevAnalystic.css";
 
 const number = new Intl.NumberFormat("ko-KR");
@@ -24,21 +23,18 @@ function MetricList({ rows, labelKey }: {
 }
 
 export default function DevAnalystic() {
-  const isLoadingAuth = useAuthStore((state) => state.isLoading);
-  const user = useAuthStore((state) => state.user);
   const [days, setDays] = useState(7);
   const [refresh, setRefresh] = useState(0);
   const [result, setResult] = useState<{ key: string; data: DevAnalyticsData | null; error: string } | null>(null);
-  const requestKey = `${user?.uid ?? ""}:${days}:${refresh}`;
+  const requestKey = `${days}:${refresh}`;
   const activeResult = result?.key === requestKey ? result : null;
   const data = activeResult?.data ?? null;
-  const error = !isLoadingAuth && !user ? "로그인이 필요합니다." : activeResult?.error ?? "";
-  const loading = !isLoadingAuth && !!user && !activeResult;
+  const error = activeResult?.error ?? "";
+  const loading = !activeResult;
 
   useEffect(() => {
-    if (isLoadingAuth || !user) return;
     const controller = new AbortController();
-    void fetchDevAnalytics(days, controller.signal, refresh > 0)
+    void fetchDevAnalytics(days, controller.signal)
       .then((data) => { if (!controller.signal.aborted) setResult({ key: requestKey, data, error: "" }); })
       .catch((cause: unknown) => {
         if (!controller.signal.aborted) {
@@ -46,7 +42,7 @@ export default function DevAnalystic() {
         }
       });
     return () => controller.abort();
-  }, [days, isLoadingAuth, refresh, requestKey, user]);
+  }, [days, requestKey]);
 
   const maxDaily = Math.max(...(data?.daily.map((row) => row.pageviews) ?? []), 1);
 
@@ -66,7 +62,7 @@ export default function DevAnalystic() {
       </div>
     </div>
 
-    {(isLoadingAuth || loading) && <p className="dev-analytics-state" role="status">통계를 불러오는 중입니다...</p>}
+    {loading && <p className="dev-analytics-state" role="status">통계를 불러오는 중입니다...</p>}
     {error && <p className="dev-analytics-state dev-analytics-error" role="alert">{error}</p>}
 
     {data && !loading && <>

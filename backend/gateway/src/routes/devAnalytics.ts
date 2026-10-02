@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-import { getRequiredSupabaseUser } from "../services/supabaseUsers.js";
 
 type Metrics = { pageviews: number; visitors: number };
 type AggregateRow = Metrics & {
@@ -12,6 +11,7 @@ type VercelResult<T> = { data: T };
 const DAY_MS = 24 * 60 * 60 * 1000;
 const CACHE_MS = 60 * 1000;
 const cache = new Map<number, { expiresAt: number; data: unknown }>();
+const inFlight = new Map<number, Promise<unknown>>();
 
 function metrics(value: unknown): Metrics {
   const row = (value ?? {}) as Partial<Metrics>;
@@ -45,16 +45,6 @@ async function queryVercel<T>(
 
 export function registerDevAnalyticsRoutes(app: FastifyInstance) {
   app.get("/api/dev/analytics", async (req, reply) => {
-    let user;
-    try {
-      user = await getRequiredSupabaseUser(req);
-    } catch {
-      return reply.code(401).send({ error: "unauthorized" });
-    }
-    if (user.role.toLowerCase() !== "admin" || user.status.toLowerCase() !== "active") {
-      return reply.code(403).send({ error: "forbidden" });
-    }
-
     const token = process.env.VERCEL_TOKEN?.trim();
     const projectId = process.env.VERCEL_PROJECT_ID?.trim();
     const teamId = process.env.VERCEL_TEAM_ID?.trim();
@@ -62,40 +52,47 @@ export function registerDevAnalyticsRoutes(app: FastifyInstance) {
       return reply.code(503).send({ error: "Vercel Analytics is not configured" });
     }
 
-    const query = req.query as { days?: string; fresh?: string };
+    const query = req.query as { days?: string };
     const days = Number(query.days ?? 7);
     if (![1, 7, 30].includes(days)) {
       return reply.code(400).send({ error: "days must be 1, 7, or 30" });
     }
 
     const cached = cache.get(days);
-    if (query.fresh !== "1" && cached && cached.expiresAt > Date.now()) {
-      return reply.header("Cache-Control", "private, no-store").send(cached.data);
+    if (cached && cached.expiresAt > Date.now()) {
+      return reply.header("Cache-Control", "public, max-age=30").send(cached.data);
     }
 
-    const until = new Date();
-    const since = new Date(until.getTime() - days * DAY_MS);
-    const range = { since: since.toISOString(), until: until.toISOString() };
-
     try {
-      const [total, daily, pages, countries] = await Promise.all([
-        queryVercel<VercelResult<Metrics>>("count", range, token, projectId, teamId),
-        queryVercel<VercelResult<AggregateRow[]>>("aggregate", { ...range, by: "day", limit: "31" }, token, projectId, teamId),
-        queryVercel<VercelResult<AggregateRow[]>>("aggregate", { ...range, by: "requestPath", limit: "10" }, token, projectId, teamId),
-        queryVercel<VercelResult<AggregateRow[]>>("aggregate", { ...range, by: "country", limit: "10" }, token, projectId, teamId),
-      ]);
-
-      const data = {
-        days,
-        since: range.since,
-        until: range.until,
-        total: metrics(total.data),
-        daily: daily.data.map((row) => ({ date: row.timestamp ?? "", ...metrics(row) })),
-        pages: pages.data.map((row) => ({ path: row.requestPath ?? "", ...metrics(row) })),
-        countries: countries.data.map((row) => ({ country: row.country ?? "", ...metrics(row) })),
-      };
-      cache.set(days, { expiresAt: Date.now() + CACHE_MS, data });
-      return reply.header("Cache-Control", "private, no-store").send(data);
+      let pending = inFlight.get(days);
+      if (!pending) {
+        pending = (async () => {
+          const until = new Date();
+          const since = new Date(until.getTime() - days * DAY_MS);
+          const range = { since: since.toISOString(), until: until.toISOString() };
+          const [total, daily, pages, countries] = await Promise.all([
+            queryVercel<VercelResult<Metrics>>("count", range, token, projectId, teamId),
+            queryVercel<VercelResult<AggregateRow[]>>("aggregate", { ...range, by: "day", limit: "31" }, token, projectId, teamId),
+            queryVercel<VercelResult<AggregateRow[]>>("aggregate", { ...range, by: "requestPath", limit: "10" }, token, projectId, teamId),
+            queryVercel<VercelResult<AggregateRow[]>>("aggregate", { ...range, by: "country", limit: "10" }, token, projectId, teamId),
+          ]);
+          const data = {
+            days,
+            since: range.since,
+            until: range.until,
+            total: metrics(total.data),
+            daily: daily.data.map((row) => ({ date: row.timestamp ?? "", ...metrics(row) })),
+            pages: pages.data.map((row) => ({ path: row.requestPath ?? "", ...metrics(row) })),
+            countries: countries.data.map((row) => ({ country: row.country ?? "", ...metrics(row) })),
+          };
+          cache.set(days, { expiresAt: Date.now() + CACHE_MS, data });
+          return data;
+        })();
+        inFlight.set(days, pending);
+        void pending.finally(() => inFlight.delete(days)).catch(() => undefined);
+      }
+      const data = await pending;
+      return reply.header("Cache-Control", "public, max-age=30").send(data);
     } catch (error) {
       req.log.error({ err: error }, "Vercel Analytics request failed");
       return reply.code(502).send({ error: "Vercel Analytics request failed" });
