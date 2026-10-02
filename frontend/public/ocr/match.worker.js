@@ -6,10 +6,13 @@ self.onmessage = async ({ data }) => {
     importScripts(data.cvUrl);
     const cv = await self.cv;
     const keep = mat => { mats.push(mat); return mat; };
-    function mask(source, box, threshold) {
+    function mask(source, box, threshold, minimumHeight = 64) {
       const [x, y, w, h] = box;
-      const canvas = new OffscreenCanvas(Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+      const scale = Math.min(3, Math.max(1, minimumHeight / h));
+      const canvas = new OffscreenCanvas(Math.max(1, Math.round(w * scale)), Math.max(1, Math.round(h * scale)));
       const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
       context.drawImage(source, x, y, w, h, 0, 0, canvas.width, canvas.height);
       const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
       const values = new Uint8Array(canvas.width * canvas.height);
@@ -25,7 +28,7 @@ self.onmessage = async ({ data }) => {
       const count = cv.countNonZero(raw);
       if (count < 12 || count > raw.rows*raw.cols*0.75) return null;
       const bounds = cv.boundingRect(raw), roi = raw.roi(bounds), normalized = keep(new cv.Mat());
-      try { cv.resize(roi, normalized, new cv.Size(160, 24), 0, 0, cv.INTER_AREA); }
+      try { cv.resize(roi, normalized, new cv.Size(320, 48), 0, 0, cv.INTER_AREA); }
       finally { roi.delete(); }
       return normalized;
     }
@@ -34,6 +37,10 @@ self.onmessage = async ({ data }) => {
       if (!response.ok) throw new Error(`비교 이미지 로드 실패: ${url}`);
       const source = await createImageBitmap(await response.blob());
       try { return transform(source); } finally { source.close(); }
+    }
+    async function loadOptional(url, transform) {
+      try { return await load(url, transform); }
+      catch (error) { console.warn("OCR comparison template unavailable", url, error); return null; }
     }
     const scoreMat = keep(new cv.Mat());
     const score = (query, template) => {
@@ -49,7 +56,7 @@ self.onmessage = async ({ data }) => {
     const { width, bands, icon } = data.metadata;
     const templates = [];
     for (const item of data.stats) {
-      const template = await load(item.url, source => label(source, [Math.round(source.width*0.12), 0, source.width-Math.round(source.width*0.12), source.height]));
+      const template = await loadOptional(item.url, source => label(source, [Math.round(source.width*0.12), 0, source.width-Math.round(source.width*0.12), source.height]));
       if (template) templates.push({ id: item.id, template });
     }
     const rows = bands.filter(band => band.index >= 0).map(band => {
@@ -69,8 +76,8 @@ self.onmessage = async ({ data }) => {
         cv.copyMakeBorder(normalized, query, 16,16,16,16,cv.BORDER_CONSTANT,new cv.Scalar(0));
         const resized = keep(new cv.Mat()), ranked = [];
         for (const item of data.harmonies) {
-          const template = await load(item.url, source => mask(source, [0,0,source.width,source.height], 150));
-          if (cv.countNonZero(template) < 8) continue;
+          const template = await loadOptional(item.url, source => mask(source, [0,0,source.width,source.height], 150));
+          if (!template || cv.countNonZero(template) < 8) continue;
           let similarity = -1;
           for (let size=44; size<=80; size+=4) {
             cv.resize(template,resized,new cv.Size(size,size),0,0,cv.INTER_AREA);

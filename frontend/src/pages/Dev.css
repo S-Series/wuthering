@@ -1,0 +1,12 @@
+.dev-page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; color: var(--app-text); }
+.dev-heading { margin: 0 0 24px; }
+.dev-heading h1 { margin: 4px 0 8px; font-size: clamp(28px, 4vw, 40px); }
+.dev-heading p { margin: 0; color: var(--nav-muted-text); }
+.dev-heading .dev-eyebrow { color: var(--nav-accent); font-size: 12px; font-weight: 700; letter-spacing: .16em; }
+.dev-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--nav-border-muted); padding-bottom: 14px; }
+.dev-nav a { color: var(--app-text); text-decoration: none; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--nav-border-muted); background: var(--nav-control-bg); }
+.dev-nav a.active { color: #151515; background: var(--nav-accent); border-color: var(--nav-accent); }
+.dev-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.dev-links a { display: grid; gap: 10px; min-height: 120px; padding: 22px; border: 1px solid var(--nav-border-muted); border-radius: 12px; background: var(--nav-panel-bg); color: var(--app-text); text-decoration: none; }
+.dev-links a:hover { border-color: var(--nav-accent); }
+.dev-links span { color: var(--nav-muted-text); }

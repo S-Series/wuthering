@@ -22,6 +22,16 @@ def preprocess_image(image: Image.Image):
     return image
 
 
+def preprocess_ocr_region(image: Image.Image):
+    # Thin row crops need enough pixels and border for the text detector.
+    scale = min(3.0, max(1.0, 64 / image.height))
+    width = max(1, round(image.width * scale))
+    height = max(1, round(image.height * scale))
+    with image.resize((width, height), Image.Resampling.LANCZOS) as resized:
+        with preprocess_image(resized) as processed:
+            return ImageOps.expand(processed, border=16, fill=processed.getpixel((0, 0)))
+
+
 def encode_jpeg_base64(image: Image.Image):
     buffered = io.BytesIO()
     image.save(buffered, format="JPEG")

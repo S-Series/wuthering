@@ -8,6 +8,7 @@ from image_processing import (
     encode_jpeg_base64,
     load_rgb_image,
     preprocess_image,
+    preprocess_ocr_region,
     to_ocr_array,
 )
 from ocr_config import normalize_lang
@@ -48,9 +49,10 @@ def analyze_batch(contents, lang):
         for region_id in REGION_IDS:
             try:
                 with load_rgb_image(contents[region_id]) as image:
-                    with preprocess_image(image) as processed:
+                    with preprocess_ocr_region(image) as processed:
                         result = engine.ocr(to_ocr_array(processed), cls=True)
                 tokens = sorted(extract_regions(result), key=lambda token: (round(token["cy"] / 12), token["x"]))
+                logger.info("Batch OCR region=%s lang=%s tokens=%s", region_id, safe_lang, len(tokens))
                 regions.append({"id": region_id, "success": True, "texts": [token["text"] for token in tokens], "tokens": tokens})
             except Exception:
                 logger.exception("OCR failed for region %s", region_id)

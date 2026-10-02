@@ -391,6 +391,15 @@ body[data-theme="light"] .ocr-single-image__delete {
 	font-size: min(1vw, 0.85rem) !important;
 }
 
+.ocr-image-input-panel .ocr-file-slot__error {
+	margin: 0;
+	padding: 6px 8px;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #ffb0aa;
+	overflow-wrap: anywhere;
+}
+
 @media (max-width: 560px) {
 	.ocr-image-input-panel {
 		width: 100%;

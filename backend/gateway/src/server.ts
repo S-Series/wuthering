@@ -13,6 +13,7 @@ import { registerClientEventRoutes } from "./routes/clientEvent.js";
 import { registerUserRoutes } from "./routes/users.js";
 import { registerCharacterDataRoutes } from "./routes/characterData.js";
 import { registerBoardRoutes } from "./routes/board.js";
+import { registerDevAnalyticsRoutes } from "./routes/devAnalytics.js";
 import { getClientIp } from "./lib/getClientIp.js";
 import { safeLogEvent } from "./lib/logEvent.js";
 import { getErrorMessage, isAbortError } from "./lib/errors.js";
@@ -528,6 +529,7 @@ async function main() {
   await registerUserRoutes(app);
   await registerCharacterDataRoutes(app);
   await registerBoardRoutes(app);
+  registerDevAnalyticsRoutes(app);
 
   app.get("/api/youtube/latest", async (req, reply) => {
     const q = req.query as { lang?: string; type?: string };

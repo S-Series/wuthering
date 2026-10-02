@@ -23,10 +23,18 @@ export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: 
     form.append("lang", lang);
     for (const [i, band] of metadata.bands.entries()) {
       controller.signal.throwIfAborted();
-      const canvas = new OffscreenCanvas(metadata.width - 32, band.bottom - band.top);
+      const width = metadata.width - 32;
+      const height = band.bottom - band.top;
+      // Preserve the header; only the thin option rows need upscaling.
+      const scale = i < 2 ? 1 : Math.min(3, Math.max(1, 64 / height));
+      const padding = i < 2 ? 0 : 16;
+      const scaledWidth = Math.round(width * scale), scaledHeight = Math.round(height * scale);
+      const canvas = new OffscreenCanvas(scaledWidth + padding * 2, scaledHeight + padding * 2);
       const context = canvas.getContext("2d");
       if (!context) throw new Error("이미지 분할에 실패했습니다.");
-      context.drawImage(bitmap, 16, band.top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+      context.fillStyle = "#14181e";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(bitmap, 16, band.top, width, height, padding, padding, scaledWidth, scaledHeight);
       form.append("files", await canvas.convertToBlob({ type: "image/png" }), `${OCR_REGION_IDS[i]}.png`);
     }
     bitmap.close();
@@ -36,7 +44,11 @@ export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: 
       method: "POST", body: form, signal: controller.signal,
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     });
-    if (!response.ok) throw new Error(`OCR 서버 오류 (${response.status})`);
+    if (!response.ok) {
+      const detail = await response.text();
+      console.warn("OCR batch request failed", { status: response.status, detail });
+      throw new Error(`OCR 서버 오류 (${response.status}): ${detail.slice(0, 250)}`);
+    }
     const data = await response.json() as { success?: boolean; regions?: OcrRegionResult[]; error?: string };
     if (!data.success || !Array.isArray(data.regions) || data.regions.length !== 9) throw new Error(data.error || "OCR 응답 형식이 올바르지 않습니다.");
     return OCR_REGION_IDS.map(id => {

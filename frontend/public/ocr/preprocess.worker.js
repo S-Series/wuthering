@@ -6,8 +6,21 @@ self.onmessage = async ({ data }) => {
     importScripts(data.cvUrl);
     const cv = await self.cv;
     bitmap = await createImageBitmap(data.file);
+    if (bitmap.width * bitmap.height > 32000000 || Math.min(bitmap.width, bitmap.height) < 60) throw new Error("이미지 크기를 확인해주세요.");
+    if (bitmap.height < 1080) {
+      const width = Math.round(bitmap.width * 1080 / bitmap.height);
+      if (width * 1080 > 32000000) throw new Error("확대 후 이미지 크기가 너무 큽니다.");
+      const resized = new OffscreenCanvas(width, 1080);
+      const context = resized.getContext("2d");
+      if (!context) throw new Error("이미지 확대에 실패했습니다.");
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
+      context.drawImage(bitmap, 0, 0, width, 1080);
+      bitmap.close();
+      bitmap = undefined;
+      bitmap = await createImageBitmap(resized);
+    }
     const w = bitmap.width, h = bitmap.height;
-    if (w * h > 32000000 || Math.min(w, h) < 60) throw new Error("이미지 크기를 확인해주세요.");
     const profilesResponse = await fetch(new URL("profiles.json", data.assetBase));
     if (!profilesResponse.ok) throw new Error("이미지 기준 파일을 불러오지 못했습니다.");
     const profiles = await profilesResponse.json();

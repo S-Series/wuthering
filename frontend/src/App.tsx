@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/_Layout/Layout";
 import Home from "@/pages/Home";
 import Card from "@/pages/Card/index";
@@ -11,13 +11,15 @@ import BoardEditor from "@/pages/BoardEditor";
 import DragDebugPage from "./pages/Debug";
 import OcrServerWatcher from "@/components/features/OcrServerWatcher";
 import OcrCropTest from "@/pages/OcrCropTest";
+import Dev from "@/pages/Dev";
+import DevAnalystic from "@/pages/DevAnalystic";
 
 export default function App() {
   return (
     <>
       <OcrServerWatcher />
       <Routes>
-        <Route path="/test" element={<OcrCropTest />} />
+        <Route path="/test" element={<Navigate to="/dev/test" replace />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/characters" element={<Characters />} />
@@ -30,6 +32,10 @@ export default function App() {
           <Route path="/board/:postId" element={<BoardDetail />} />
 
           <Route path="/debug" element={<DragDebugPage />} />
+          <Route path="/dev" element={<Dev />}>
+            <Route path="test" element={<OcrCropTest />} />
+            <Route path="analystic" element={<DevAnalystic />} />
+          </Route>
         </Route>
       </Routes>
     </>

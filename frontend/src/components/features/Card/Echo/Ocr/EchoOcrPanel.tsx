@@ -400,6 +400,9 @@ export default function EchoOcrPanel({
                 >
                   {localeText.request}
                 </button>
+                {activeImage?.error && (
+                  <p className="ocr-file-slot__error" role="alert">{activeImage.error}</p>
+                )}
               </div>
             </section>
           }

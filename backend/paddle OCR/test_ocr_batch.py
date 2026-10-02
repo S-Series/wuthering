@@ -13,6 +13,18 @@ import echo_vision
 
 
 class BatchTests(unittest.TestCase):
+    def test_small_row_is_enlarged_and_padded(self):
+        with Image.new("RGB", (100, 20), "white") as image:
+            with image_processing.preprocess_ocr_region(image) as processed:
+                self.assertEqual(processed.size, (332, 92))
+                self.assertEqual(processed.getpixel((0, 0)), (255, 255, 255))
+            self.assertEqual(image.size, (100, 20))
+
+    def test_large_row_is_only_padded(self):
+        with Image.new("RGB", (400, 80), "black") as image:
+            with image_processing.preprocess_ocr_region(image) as processed:
+                self.assertEqual(processed.size, (432, 112))
+
     def test_order_empty_and_failure_preserve_slots(self):
         buffer = io.BytesIO()
         Image.new("RGB", (100, 30)).save(buffer, format="PNG")
@@ -37,6 +49,7 @@ class BatchTests(unittest.TestCase):
                 regions = response["regions"]
                 self.assertEqual([r["id"] for r in regions], list(service.REGION_IDS))
                 self.assertEqual(len(calls), 9)
+                self.assertTrue(all(height >= 64 for height, _, _ in calls))
                 self.assertEqual(regions[2]["texts"], [])
                 self.assertTrue(regions[2]["success"])
                 self.assertFalse(regions[4]["success"])

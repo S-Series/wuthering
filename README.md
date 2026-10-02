@@ -230,3 +230,13 @@ WuWa DEV\
 # License
 
 MIT License
+
+------------------------------------------------------------------------
+
+# Developer pages
+
+- `/dev` links to the developer tools.
+- `/dev/test` contains the OCR crop test (the old `/test` URL redirects here).
+- `/dev/analystic` shows Vercel Web Analytics to active admin accounts.
+
+To enable the statistics page, set `VERCEL_TOKEN` and `VERCEL_PROJECT_ID` on the gateway server. Set `VERCEL_TEAM_ID` as well if the Vercel project belongs to a team. The token needs access to that project's Web Analytics data. Keep these server-side; do not use `VITE_` variables for the token. Web Analytics must be enabled for the Vercel project. The dashboard offers 1, 7, and 30 day ranges; Vercel's plan controls how far back aggregate data is available.
