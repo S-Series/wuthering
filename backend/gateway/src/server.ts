@@ -14,6 +14,7 @@ import { registerUserRoutes } from "./routes/users.js";
 import { registerCharacterDataRoutes } from "./routes/characterData.js";
 import { registerBoardRoutes } from "./routes/board.js";
 import { registerDevAnalyticsRoutes } from "./routes/devAnalytics.js";
+import { startDevAnalyticsCollector } from "./services/devAnalyticsDaily.js";
 import { getClientIp } from "./lib/getClientIp.js";
 import { safeLogEvent } from "./lib/logEvent.js";
 import { getErrorMessage, isAbortError } from "./lib/errors.js";
@@ -628,6 +629,7 @@ async function main() {
   });
 
   await app.listen({ port: PORT, host: "0.0.0.0" });
+  startDevAnalyticsCollector(app.log);
 }
 
 main().catch((err) => {

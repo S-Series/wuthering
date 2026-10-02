@@ -17,7 +17,7 @@ function MetricList({ rows, labelKey }: {
         <strong>{number.format(row.pageviews)}</strong>
       </div>
       <div className="dev-analytics-track"><span style={{ width: `${row.pageviews / max * 100}%` }} /></div>
-      <small>방문자 {number.format(row.visitors)}</small>
+      <small>일별 방문자 합계 {number.format(row.visitors)}</small>
     </div>)}
   </div>;
 }
@@ -50,7 +50,7 @@ export default function DevAnalystic() {
     <div className="dev-analytics-toolbar">
       <div>
         <h2>Vercel Web Analytics</h2>
-        <p>프로덕션 방문 통계 · 최근 {days}일</p>
+        <p>프로덕션 방문 통계 · 한국시간 오전 5시 기준 · 최근 완료된 {days}일</p>
       </div>
       <div className="dev-analytics-actions">
         <select aria-label="조회 기간" value={days} onChange={(event) => setDays(Number(event.target.value))}>
@@ -66,18 +66,22 @@ export default function DevAnalystic() {
     {error && <p className="dev-analytics-state dev-analytics-error" role="alert">{error}</p>}
 
     {data && !loading && <>
+      {data.availableDays > 0 && data.availableDays < days && <p className="dev-analytics-state" role="status">
+        {data.firstDay} ~ {data.lastDay} 중 {data.availableDays}일의 통계가 저장되었습니다. 빠진 날짜는 수집 중입니다.
+      </p>}
+      {data.availableDays === 0 ? <p className="dev-analytics-state">아직 저장된 통계가 없습니다. 첫 수집이 완료되면 여기에 표시됩니다.</p> : <>
       <div className="dev-analytics-cards">
         <article><span>페이지 조회수</span><strong>{number.format(data.total.pageviews)}</strong></article>
-        <article><span>방문자</span><strong>{number.format(data.total.visitors)}</strong></article>
-        <article><span>방문당 조회수</span><strong>{data.total.visitors ? (data.total.pageviews / data.total.visitors).toFixed(2) : "0.00"}</strong></article>
+        <article><span>일별 방문자 합계</span><strong>{number.format(data.total.visitors)}</strong></article>
+        <article><span>일평균 조회수</span><strong>{number.format(Math.round(data.total.pageviews / data.availableDays))}</strong></article>
       </div>
       <section className="dev-analytics-panel">
         <h3>일별 조회수</h3>
         {data.daily.length ? <div className="dev-analytics-chart">
-          {data.daily.map((row) => <div className="dev-analytics-day" key={row.date} title={`${row.date.slice(0, 10)} · 조회수 ${number.format(row.pageviews)} · 방문자 ${number.format(row.visitors)}`}>
+          {data.daily.map((row) => <div className="dev-analytics-day" key={row.date} title={`${row.date} 05:00~다음 날 05:00 · 조회수 ${number.format(row.pageviews)} · 방문자 ${number.format(row.visitors)}`}>
             <span>{number.format(row.pageviews)}</span>
             <div className="dev-analytics-column"><span style={{ height: `${Math.max(row.pageviews / maxDaily * 100, 2)}%` }} /></div>
-            <small>{row.date.slice(5, 10)}</small>
+            <small>{row.date.slice(5)}</small>
           </div>)}
         </div> : <p className="dev-analytics-empty">해당 기간에 데이터가 없습니다.</p>}
       </section>
@@ -85,7 +89,8 @@ export default function DevAnalystic() {
         <section className="dev-analytics-panel"><h3>인기 페이지</h3><MetricList rows={data.pages} labelKey="path" /></section>
         <section className="dev-analytics-panel"><h3>국가</h3><MetricList rows={data.countries} labelKey="country" /></section>
       </div>
-      <p className="dev-analytics-note">방문자는 Vercel의 집계 기준을 따릅니다. 기간별 조회 가능 범위는 Vercel 요금제에 따라 달라집니다.</p>
+      <p className="dev-analytics-note">각 날짜는 한국시간 05:00~다음 날 05:00입니다. 방문자 합계는 일별 수치의 합이며 기간 전체의 고유 방문자 수가 아닙니다. 마지막 저장: {data.lastCollectedAt ? new Date(data.lastCollectedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) : "없음"}</p>
+      </>}
     </>}
   </section>;
 }

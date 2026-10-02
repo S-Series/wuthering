@@ -1,7 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "start": "tsx src/server.ts"
+    "start": "tsx src/server.ts",
+    "test:analytics": "tsx src/services/devAnalyticsDaily.test.ts"
   },
   "dependencies": {
     "@fastify/cors": "^9",

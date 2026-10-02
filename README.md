@@ -239,4 +239,8 @@ MIT License
 - `/dev/test` contains the OCR crop test (the old `/test` URL redirects here).
 - `/dev/analystic` shows public, aggregated Vercel Web Analytics statistics.
 
-To enable the statistics page, set `VERCEL_TOKEN` and `VERCEL_PROJECT_ID` on the gateway server. Set `VERCEL_TEAM_ID` as well if the Vercel project belongs to a team. The token needs access to that project's Web Analytics data. Keep these server-side; do not use `VITE_` variables for the token. Web Analytics must be enabled for the Vercel project. The dashboard offers 1, 7, and 30 day ranges; Vercel's plan controls how far back aggregate data is available.
+Apply [`backend/gateway/sql/dev_analytics_daily.sql`](backend/gateway/sql/dev_analytics_daily.sql) in the Supabase SQL editor before deploying the gateway. The gateway's service-role credentials read and write this table; browser clients do not access it directly.
+
+Set `VERCEL_TOKEN` and `VERCEL_PROJECT_ID` on the gateway server. Set `VERCEL_TEAM_ID` when the token needs it to access a team project. Keep the token server-side; do not use a `VITE_` variable. Enable Web Analytics for the Vercel project.
+
+The gateway collects each completed Asia/Seoul 05:00–05:00 day at 05:10 KST and upserts it by date. On startup it fills missing days from the latest 30 completed days. The scheduled run also refreshes the latest two days to incorporate delayed Vercel data. The public `/api/dev/analytics` endpoint reads Supabase only; it never calls Vercel. A multi-day visitor total is the sum of daily visitor counts, not a unique count across the full range. The collector needs a continuously running gateway; if the gateway is down at 05:10, startup fills missing days after it restarts. Historical backfill is limited by the Vercel plan's reporting window.

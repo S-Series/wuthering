@@ -1,8 +1,10 @@
 export type AnalyticsMetrics = { pageviews: number; visitors: number };
 export type DevAnalyticsData = {
   days: number;
-  since: string;
-  until: string;
+  firstDay: string;
+  lastDay: string;
+  availableDays: number;
+  lastCollectedAt: string | null;
   total: AnalyticsMetrics;
   daily: Array<AnalyticsMetrics & { date: string }>;
   pages: Array<AnalyticsMetrics & { path: string }>;
@@ -27,7 +29,7 @@ export async function fetchDevAnalytics(days: number, signal?: AbortSignal): Pro
   const response = await fetch(url, { signal });
   if (!response.ok) {
     const messages: Record<number, string> = {
-      503: "서버에 Vercel 토큰과 프로젝트 ID를 설정해 주세요.",
+      503: "저장된 통계를 읽을 수 없습니다. 서버의 DB 설정을 확인해 주세요.",
     };
     throw new DevAnalyticsError(messages[response.status] ?? "통계를 불러오지 못했습니다.", response.status);
   }
