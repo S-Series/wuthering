@@ -1,7 +1,7 @@
 import type { PartyNameKey } from "@/locales/locale.schema";
 import type { CharacterId } from "./characterStats";
 
-export type PartyCharacterId = CharacterId | "rover_electro";
+export type PartyCharacterId = CharacterId;
 
 export type RecommendedParty = {
   nameKey: PartyNameKey;

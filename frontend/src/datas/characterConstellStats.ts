@@ -367,6 +367,14 @@ export const characterConstellStats: Partial<
     2: [team("본인 포함 파티 인멸 피해 최대 스택", stat("havocBns", 40))],
     3: [self(stat("critRate", 10), stat("critDmg", 30))],
   },
+  rover_electro: {
+    1: [conditional("일반 공격 및 Thrum of All Sounds 시전 중 0.5초간 경직 저항 증가")],
+    2: [specific("공명 해방 Ultimate Tactics 적중 시 전도 이상 효과 5스택 부여")],
+    3: [specific("공명 스킬 Overshock의 피해 배율 20% 증가; 전체 피해 보너스에는 합산하지 않음")],
+    4: [specific("공명 해방 Ultimate Tactics의 피해 배율 20% 증가; 전체 피해 보너스에는 합산하지 않음")],
+    5: [conditional("Apex Resonance 상태에서 적용", stat("critDmg", 20))],
+    6: [specific("Thrum of All Sounds 및 Thunder Bane의 피해 배율 20% 증가; 전체 피해 보너스에는 합산하지 않음")],
+  },
   rover_aero: {
     3: [self(stat("aeroBns", 15))],
   },
@@ -451,16 +459,6 @@ export const characterConstellStats: Partial<
     1: [conditional("27초간 적용", stat("critRate", 10))],
     3: [conditional("최대 3스택 기준", stat("atkPct", 45))],
     4: [team("본인 포함 파티 공격력 30초간 증가", stat("atkPct", 20))],
-  },
-};
-
-// The Electro Rover is not a CharacterId in the current app yet.
-export const pendingCharacterConstellStats: Record<
-  string,
-  CharacterConstellStatTable
-> = {
-  rover_electro: {
-    5: [conditional("Apex Resonance 상태에서 적용", stat("critDmg", 20))],
   },
 };
 

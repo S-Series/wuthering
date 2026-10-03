@@ -29,6 +29,14 @@ const baseMeta: CharacterMetaBase = {
 
 export const characterMeta: Record<CharacterId, CharacterMeta> = {
   //*== ver 3.5 ===========================//
+  rover_electro: {
+    ...baseMeta,
+    harmonySets: [harmony.Reflection.id, harmony.Clouds.id, harmony.Thunder.id],
+    cost3MainStats: [FixedStats.atkPct.id, FixedStats.electroBns.id, FixedStats.resonanceBns.id],
+    // Build targets, not fixed kit stats; adjust for the team's rotation.
+    resReq: 125,
+    subResReq: 25,
+  },
   /* yangyang_secondary: {
     ...baseMeta,
     harmonySets: [harmony..id],

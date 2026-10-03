@@ -73,6 +73,11 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
     guideWeapons: [weapon.sword.sword011.id, weapon.sword.sword001.id],
     guideSkillOrder: ["liberation", "forte", "skill", "basic", "outro"],
   },
+  rover_electro: {
+    guideMainEcho: "A06",
+    guideWeapons: [weapon.sword.sword002.id, weapon.sword.sword003.id, weapon.sword.sword001.id],
+    guideSkillOrder: ["forte", "liberation", "basic", "skill", "outro"],
+  },
   lucilla: {
     guideMainEcho: "Z06",
     guideWeapons: [

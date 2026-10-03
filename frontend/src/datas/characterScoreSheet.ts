@@ -415,6 +415,15 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
   },
+  rover_electro: {
+    ...BaseSheet,
+    [FixedStats.atkPct.id]: 1.5,
+    [FixedStats.skillBns.id]: 1.0,
+    [FixedStats.basicBns.id]: 0.2,
+    [FixedStats.liberationBns.id]: 0.3,
+    [FixedStats.resonanceBns.id]: 1.0,
+    maxResCount: 3,
+  },
   rover_aero: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,

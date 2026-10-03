@@ -688,6 +688,19 @@ export const characterStat = {
 
     typeBns: [0, 12.0],
   },
+  rover_electro: {
+    baseHp: 10775,
+    baseAtk: 437,
+    baseDef: 1136,
+    CritRate: 13.0,
+    CritDmg: 150.0,
+    healBns: 0.0,
+    ResonanceBns: 100.0,
+    atkPct: 12.0,
+    hpPct: 0.0,
+    defPct: 0.0,
+    typeBns: [0, 0.0],
+  },
   rover_aero: {
     baseHp: 10775,
     baseAtk: 437,

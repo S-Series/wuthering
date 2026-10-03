@@ -157,6 +157,20 @@ export const character: Record<CharacterId, Character> = {
     isElite: true,
     region: "Huanglong",
   },
+  rover_electro: {
+    id: "rover_electro",
+    en: "Rover: Electro",
+    kr: "방랑자 (전도)",
+    jp: "漂泊者（電導）",
+    zh: "漂泊者（导电）",
+    hasSkin: false,
+    weapon: "sword",
+    element: "electro",
+    type: "skill",
+    version: 3.5,
+    isElite: true,
+    region: "Unknown",
+  },
   
   //*== ver 3.4 ===========================//
   lucilla: {
