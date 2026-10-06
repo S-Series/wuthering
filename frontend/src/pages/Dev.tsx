@@ -13,12 +13,12 @@ export default function Dev() {
       </div>
       <nav className="dev-nav" aria-label="개발 도구">
         <NavLink to="/dev" end>개요</NavLink>
-        <NavLink to="/dev/test">OCR 테스트</NavLink>
+        <NavLink to="/dev/ocr">OCR 테스트</NavLink>
         <NavLink to="/dev/analystic">통계</NavLink>
       </nav>
       {isIndex ? (
         <div className="dev-links">
-          <NavLink to="/dev/test">
+          <NavLink to="/dev/ocr">
             <strong>OCR 테스트</strong>
             <span>이미지 전처리와 인식 결과를 확인합니다.</span>
           </NavLink>

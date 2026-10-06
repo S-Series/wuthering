@@ -400,6 +400,11 @@ body[data-theme="light"] .ocr-single-image__delete {
 	overflow-wrap: anywhere;
 }
 
+.ocr-file-slot__queue { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 90px; gap: 6px; height: calc(100% - 38px); padding: 6px; overflow: auto; box-sizing: border-box; }
+.ocr-file-slot__queue > article { position: relative; min-width: 0; }
+.ocr-file-slot__queue > article > img { width: 100%; height: 100%; object-fit: contain; }
+.ocr-file-slot__queue > article > button { position: absolute; top: 0; right: 0; width: 24px; height: 24px; padding: 0; border: 1px solid #697486; background: #1b1e25; color: white; cursor: pointer; }
+
 @media (max-width: 560px) {
 	.ocr-image-input-panel {
 		width: 100%;

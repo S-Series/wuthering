@@ -326,6 +326,10 @@ export type LocaleSchema = {
     batchApply: string;
     batchProgress: string;
     batchComplete: string;
+    batchSkip: string;
+    batchFinish: string;
+    batchRetry: string;
+    batchChooseSlot: string;
   }
 };
 

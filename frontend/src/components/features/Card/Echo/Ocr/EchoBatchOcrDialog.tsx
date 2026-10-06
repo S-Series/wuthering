@@ -1,292 +1,93 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
-import { wakeOcrByLang } from "@/api/ocr.api.helper";
+import { useEffect, useRef, useState } from "react";
 import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
+import { useAppStore, type LangType } from "@/stores/appStore";
 import { locale } from "@/locales/locale";
-import { echoOcrResultToRuntime, recognizeEchoImage } from "./echoOcr.helpers";
-import { useAppStore } from "@/stores/appStore";
-import { useCharacter } from "@/stores/characterDataStore";
-import type { CharacterData } from "@/types/character.type";
-
+import EchoOcrResultEditor from "./EchoOcrResultEditor";
 import type { EchoOcrResult } from "./EchoOcrPanel";
+import { recognizeEchoImage } from "./echoOcr.helpers";
 import "./EchoBatchOcrDialog.css";
 
-type BatchStatus = "queued" | "processing" | "success" | "failed";
+type Outcome = { result: EchoOcrResult | null; error: string | null };
+type Props = { files: File[]; first: Outcome; startIndex: number; requestLang: LangType };
 
-type BatchItem = {
-  id: string;
-  file: File;
-  previewUrl: string;
-  status: BatchStatus;
-  result: EchoOcrResult | null;
-  error: string | null;
-};
-
-type Props = {
-  startIndex: number;
-};
-
-export default function EchoBatchOcrDialog({ startIndex }: Props) {
+export default function EchoBatchOcrDialog({ files, first, startIndex, requestLang }: Props) {
   const { lang } = useAppStore();
-  const { characterData, patchCharacterData } = useCharacter();
+  const text = locale(lang).ocr;
   const { closeElevatedOverlay } = useElevatedOverlay();
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
-  const previewUrlsRef = useRef<Set<string>>(new Set());
-  const [items, setItems] = useState<BatchItem[]>([]);
-  const [isProcessing, setProcessing] = useState(false);
-  const [batchError, setBatchError] = useState<string | null>(null);
-
-  const localeText = useMemo(() => locale(lang).ocr, [lang]);
-  const capacity = 10 - startIndex;
-  const completedCount = items.filter(
-    (item) => item.status === "success" || item.status === "failed",
-  ).length;
-  const successCount = items.filter((item) => item.status === "success").length;
-
-  const addFiles = useCallback((files: File[]) => {
-    if (isProcessing) return;
-
-    setItems((current) => {
-      const available = Math.max(0, capacity - current.length);
-      const nextFiles = files
-        .filter((file) => file.type.startsWith("image/"))
-        .slice(0, available);
-      const additions = nextFiles.map<BatchItem>((file) => {
-        const previewUrl = URL.createObjectURL(file);
-        previewUrlsRef.current.add(previewUrl);
-        return {
-          id: crypto.randomUUID(),
-          file,
-          previewUrl,
-          status: "queued",
-          result: null,
-          error: null,
-        };
-      });
-
-      return [...current, ...additions];
-    });
-  }, [capacity, isProcessing]);
-
-  const removeItem = useCallback((id: string) => {
-    if (isProcessing) return;
-
-    setItems((current) => {
-      const target = current.find((item) => item.id === id);
-      if (target) {
-        URL.revokeObjectURL(target.previewUrl);
-        previewUrlsRef.current.delete(target.previewUrl);
-      }
-      return current.filter((item) => item.id !== id);
-    });
-  }, [isProcessing]);
-
-  const updateItem = useCallback(
-    (id: string, patch: Partial<BatchItem>) => {
-      setItems((current) =>
-        current.map((item) =>
-          item.id === id ? { ...item, ...patch } : item,
-        ),
-      );
-    },
-    [],
-  );
-
-  const runBatch = useCallback(async () => {
-    const queuedItems = items.filter(
-      (item) => item.status === "queued" || item.status === "failed",
-    );
-    if (queuedItems.length === 0 || abortRef.current) return;
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-    setProcessing(true);
-    setBatchError(null);
-
-    try {
-      await wakeOcrByLang(lang, {
-        signal: controller.signal,
-        timeoutMs: 180_000,
-      });
-
-      for (const item of queuedItems) {
-        if (controller.signal.aborted) break;
-        updateItem(item.id, {
-          status: "processing",
-          result: null,
-          error: null,
-        });
-
-        try {
-          const result = await recognizeEchoImage(
-            item.file,
-            lang,
-            controller.signal,
-          );
-          updateItem(item.id, { status: "success", result, error: null });
-        } catch (error) {
-          if (controller.signal.aborted) break;
-          updateItem(item.id, {
-            status: "failed",
-            result: null,
-            error:
-              error instanceof Error
-                ? error.message
-                : "OCR 처리에 실패했습니다.",
-          });
-        }
-      }
-    } catch (error) {
-      if (!controller.signal.aborted) {
-        setBatchError(
-          error instanceof Error
-            ? error.message
-            : "OCR 서버에 연결하지 못했습니다.",
-        );
-      }
-    } finally {
-      if (abortRef.current === controller) abortRef.current = null;
-      setProcessing(false);
-    }
-  }, [items, lang, updateItem]);
-
-  const applyResults = useCallback(() => {
-    const nextEchoData = [...characterData.echoData] as CharacterData["echoData"];
-
-    items.forEach((item, index) => {
-      const targetIndex = startIndex + index;
-      if (!item.result || item.status !== "success" || targetIndex >= 10) return;
-      nextEchoData[targetIndex] = echoOcrResultToRuntime(item.result);
-    });
-
-    patchCharacterData({ echoData: nextEchoData });
-    closeElevatedOverlay();
-  }, [characterData.echoData, closeElevatedOverlay, items, patchCharacterData, startIndex]);
+  const [outcomes, setOutcomes] = useState<(Outcome | null)[]>(() => files.map((_, i) => i === 0 ? first : null));
+  const [index, setIndex] = useState(0);
+  const [slot, setSlot] = useState(startIndex);
+  const [retrying, setRetrying] = useState(false);
+  const retryRef = useRef<AbortController | null>(null);
+  const [preview, setPreview] = useState("");
+  const current = outcomes[index];
 
   useEffect(() => {
-    const previewUrls = previewUrlsRef.current;
-    return () => {
-      abortRef.current?.abort();
-      previewUrls.forEach((url) => URL.revokeObjectURL(url));
-      previewUrls.clear();
+    const controller = new AbortController();
+    // The first request completed inline; this dialog owns the remaining queue.
+    const run = async () => {
+      for (let i = 1; i < files.length; i += 1) {
+        let outcome: Outcome;
+        try {
+          const result = await recognizeEchoImage(files[i], requestLang, controller.signal);
+          outcome = { result, error: null };
+        } catch (error) {
+          if (controller.signal.aborted) return;
+          outcome = { result: null, error: error instanceof Error ? error.message : "OCR failed" };
+        }
+        if (controller.signal.aborted) return;
+        setOutcomes(previous => previous.map((item, j) => j === i ? outcome : item));
+      }
     };
-  }, []);
+    void run();
+    return () => { controller.abort(); retryRef.current?.abort(); };
+  }, [files, requestLang]);
 
-  return (
-    <div className="echo-batch-ocr-dialog">
-      <input
-        ref={inputRef}
-        className="echo-batch-ocr-dialog__input"
-        type="file"
-        accept="image/*"
-        multiple
-        disabled={isProcessing || items.length >= capacity}
-        onChange={(event) => {
-          addFiles(Array.from(event.target.files ?? []));
-          event.target.value = "";
-        }}
-      />
+  useEffect(() => {
+    const url = URL.createObjectURL(files[index]);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [files, index]);
 
-      <div className="echo-batch-ocr-dialog__toolbar">
-        <p>
-          Slot {startIndex + 1} - 10 · {items.length}/{capacity}
-        </p>
-        <button
-          type="button"
-          disabled={isProcessing || items.length >= capacity}
-          onClick={() => inputRef.current?.click()}
-        >
-          + {localeText.batchAdd}
-        </button>
-      </div>
+  const next = () => {
+    if (index === files.length - 1) { closeElevatedOverlay(); return; }
+    setIndex(i => i + 1);
+    setSlot(i => i < 9 ? i + 1 : -1);
+  };
+  const retry = async () => {
+    if (retryRef.current) return;
+    const controller = new AbortController();
+    retryRef.current = controller;
+    setRetrying(true);
+    try {
+      const result = await recognizeEchoImage(files[index], requestLang, controller.signal);
+      if (!controller.signal.aborted) setOutcomes(previous => previous.map((item, i) => i === index ? { result, error: null } : item));
+    } catch (error) {
+      if (!controller.signal.aborted) setOutcomes(previous => previous.map((item, i) => i === index ? { result: null, error: error instanceof Error ? error.message : "OCR failed" } : item));
+    } finally {
+      retryRef.current = null;
+      if (!controller.signal.aborted) setRetrying(false);
+    }
+  };
 
-      <div
-        className={`echo-batch-ocr-dialog__queue ${items.length === 0 ? "empty" : ""}`}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={(event) => {
-          event.preventDefault();
-          addFiles(Array.from(event.dataTransfer.files));
-        }}
-      >
-        {items.length === 0 ? (
-          <button type="button" onClick={() => inputRef.current?.click()}>
-            {localeText.batchEmpty}
-          </button>
-        ) : (
-          items.map((item, index) => (
-            <article
-              className={`echo-batch-ocr-item ${item.status}`}
-              key={item.id}
-              title={item.error ?? item.file.name}
-            >
-              <img src={item.previewUrl} alt={item.file.name} />
-              <span className="echo-batch-ocr-item__slot">
-                Slot {startIndex + index + 1}
-              </span>
-              <span
-                className="echo-batch-ocr-item__status"
-                aria-label={item.status}
-              >
-                {item.status === "processing"
-                  ? ""
-                  : item.status === "success"
-                    ? "✓"
-                    : item.status === "failed"
-                      ? "!"
-                      : "…"}
-              </span>
-              <button
-                type="button"
-                aria-label={`Remove ${item.file.name}`}
-                disabled={isProcessing}
-                onClick={() => removeItem(item.id)}
-              >
-                ×
-              </button>
-            </article>
-          ))
-        )}
-      </div>
-
-      <div className="echo-batch-ocr-dialog__progress" aria-live="polite">
-        <span>
-          {isProcessing ? localeText.batchProgress : localeText.batchComplete}
-        </span>
-        <strong>{completedCount} / {items.length}</strong>
-        <div>
-          <i
-            style={{
-              width: items.length === 0
-                ? "0%"
-                : `${(completedCount / items.length) * 100}%`,
-            }}
-          />
-        </div>
-      </div>
-
-      {batchError && (
-        <p className="echo-batch-ocr-dialog__error" role="alert">
-          {batchError}
-        </p>
-      )}
-
-      <div className="echo-batch-ocr-dialog__actions">
-        <button
-          type="button"
-          disabled={items.length === 0 || isProcessing}
-          onClick={() => void runBatch()}
-        >
-          {localeText.batchStart}
-        </button>
-        <button
-          type="button"
-          disabled={isProcessing || successCount === 0}
-          onClick={applyResults}
-        >
-          {localeText.batchApply} ({successCount})
-        </button>
-      </div>
-    </div>
-  );
+  return <div className="echo-batch-review">
+    <header className="echo-batch-review__toolbar">
+      <span aria-live="polite">{index + 1} / {files.length} · {text.batchProgress} {outcomes.filter(Boolean).length} / {files.length}</span>
+      <label>Slot <select aria-label="Slot" value={slot} onChange={event => setSlot(Number(event.target.value))}>
+        <option value={-1} disabled>{text.batchChooseSlot}</option>
+        {Array.from({ length: 10 }, (_, i) => <option key={i} value={i}>{i + 1}</option>)}
+      </select></label>
+      <button type="button" disabled={retrying} onClick={next}>{text.batchSkip}</button>
+      <button type="button" onClick={closeElevatedOverlay}>{text.batchFinish}</button>
+    </header>
+    <p className="echo-batch-review__filename">{files[index].name}</p>
+    {current?.result && slot >= 0 ? <EchoOcrResultEditor key={index} selectIdx={slot} resetAction={next}
+      datas={{ cost: current.result.cost as 1 | 3 | 4, echoId: current.result.echoId, stats: current.result.echoStats, setId: current.result.setId }}
+      inputSlot={<img className="echo-batch-review__image" src={preview} alt={files[index].name} />} />
+      : <div className="echo-batch-review__waiting">
+        <img className="echo-batch-review__image" src={preview} alt={files[index].name} />
+        <div role={current?.error ? "alert" : "status"}>{current?.error ?? (current?.result ? text.batchChooseSlot : text.loading)}</div>
+        {current?.error && <button type="button" disabled={retrying || outcomes.some(item => item === null)} onClick={() => void retry()}>{retrying ? text.loading : text.batchRetry}</button>}
+      </div>}
+  </div>;
 }

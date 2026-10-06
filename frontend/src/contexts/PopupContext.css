@@ -35,12 +35,15 @@
 }
 
 .overlay-panel:has(.echo-manager-content) {
-    width: min(92vw, 70rem, calc((100dvh - 2rem) * 120 / 89));
-    aspect-ratio: 120 / 89;
+    width: min(90vw, 80dvh, 70rem);
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
 }
 
 .overlay-panel:has(.echo-manager-content) .overlay-body {
-    overflow: hidden;
+    overflow: auto;
 }
 
 .overlay-panel .overlay-header-text {

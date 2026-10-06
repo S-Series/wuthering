@@ -1,9 +1,8 @@
 import { auth } from "@/firebase/firebase";
 import type { CropMetadata } from "./ocr.preprocess";
+import { createOcrRegionImages, OCR_REGION_IDS, type OcrRegionResult } from "./ocr.regions";
 
-export const OCR_REGION_IDS = ["name", "cost", "main_1", "main_2", "sub_1", "sub_2", "sub_3", "sub_4", "sub_5"] as const;
-export type OcrRegionId = typeof OCR_REGION_IDS[number];
-export type OcrRegionResult = { id: OcrRegionId; success: boolean; texts: string[]; error?: string };
+export { OCR_REGION_IDS, type OcrRegionId, type OcrRegionResult } from "./ocr.regions";
 
 export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: string, signal: AbortSignal): Promise<OcrRegionResult[]> {
   const gateway = import.meta.env.VITE_GATEWAY_URL;
@@ -16,29 +15,13 @@ export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: 
   signal.throwIfAborted();
   signal.addEventListener("abort", abort, { once: true });
   const timer = window.setTimeout(abort, 190_000);
-  let bitmap: ImageBitmap | undefined;
   try {
-    bitmap = await createImageBitmap(file);
+    const images = await createOcrRegionImages(file, metadata, controller.signal);
     const form = new FormData();
     form.append("lang", lang);
-    for (const [i, band] of metadata.bands.entries()) {
-      controller.signal.throwIfAborted();
-      const width = metadata.width - 32;
-      const height = band.bottom - band.top;
-      // Preserve the header; only the thin option rows need upscaling.
-      const scale = i < 2 ? 1 : Math.min(3, Math.max(1, 64 / height));
-      const padding = i < 2 ? 0 : 16;
-      const scaledWidth = Math.round(width * scale), scaledHeight = Math.round(height * scale);
-      const canvas = new OffscreenCanvas(scaledWidth + padding * 2, scaledHeight + padding * 2);
-      const context = canvas.getContext("2d");
-      if (!context) throw new Error("이미지 분할에 실패했습니다.");
-      context.fillStyle = "#14181e";
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(bitmap, 16, band.top, width, height, padding, padding, scaledWidth, scaledHeight);
-      form.append("files", await canvas.convertToBlob({ type: "image/png" }), `${OCR_REGION_IDS[i]}.png`);
+    for (const image of images) {
+      form.append("files", image.blob, `${image.id}.png`);
     }
-    bitmap.close();
-    bitmap = undefined;
     const token = await auth?.currentUser?.getIdToken();
     const response = await fetch(`${gateway.replace(/\/$/, "")}/api/ocr/batch`, {
       method: "POST", body: form, signal: controller.signal,
@@ -62,7 +45,6 @@ export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: 
     if (controller.signal.aborted && !signal.aborted) throw new Error("OCR 요청 시간이 초과되었습니다.");
     throw error;
   } finally {
-    bitmap?.close();
     clearTimeout(timer);
     signal.removeEventListener("abort", abort);
   }

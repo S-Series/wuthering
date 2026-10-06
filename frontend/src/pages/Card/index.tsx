@@ -642,9 +642,9 @@ export default function Card() {
   const openEchoDataManagerOverlay = () => {
     openOverlay(<EchoManager />, {
       title: localeText.oMenu,
-      width: "min(90vw, 90rem)",
-      height: "min(80vh, 80rem)",
-      ratio: null,
+      width: "min(90vw, 80dvh, 70rem)",
+      height: "auto",
+      ratio: "1 / 1",
     });
   };
 

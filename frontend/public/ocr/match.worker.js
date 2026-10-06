@@ -56,14 +56,20 @@ self.onmessage = async ({ data }) => {
     const { width, bands, icon } = data.metadata;
     const templates = [];
     for (const item of data.stats) {
-      const template = await loadOptional(item.url, source => label(source, [Math.round(source.width*0.12), 0, source.width-Math.round(source.width*0.12), source.height]));
+      const template = await loadOptional(item.url, source => {
+        const left = Math.round(source.width * 0.12);
+        // Reference rows include a numeric value; exclude the rightmost 15%.
+        const right = Math.round(source.width * 0.85);
+        return label(source, [left, 0, right - left, source.height]);
+      });
       if (template) templates.push({ id: item.id, template });
     }
     const rows = bands.filter(band => band.index >= 0).map(band => {
       const w = width-32;
+      // Matching only: exclude the rightmost 15%; keep OCR rows unchanged.
       // Main-stat icons extend farther into the label area on some layouts.
       const queries = (band.index < 2 ? [0.10,0.12,0.14] : [0.10]).map(left =>
-        label(bitmap, [16+w*left, band.top, w*(0.72-left), band.bottom-band.top])).filter(Boolean);
+        label(bitmap, [16+w*left, band.top, w*(0.85-left), band.bottom-band.top])).filter(Boolean);
       const ranked = queries.length ? templates.map(item => ({ id: item.id, score: Math.max(...queries.map(query => score(query, item.template))) })) : [];
       return { index: band.index, match: accept(ranked, 0.75, 0.08) };
     });

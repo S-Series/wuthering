@@ -14,6 +14,8 @@ import type { HarmonyId } from "@/datas/harmonies";
 import EchoOcrResultEditor from "./EchoOcrResultEditor";
 import { recognizeEchoImage } from "./echoOcr.helpers";
 import "./EchoOcrPanel.css";
+import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
+import EchoBatchOcrDialog from "./EchoBatchOcrDialog";
 
 export type EchoOcrResult = {
   echoId: EchoId | null;
@@ -24,6 +26,7 @@ export type EchoOcrResult = {
 };
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+const MAX_OCR_IMAGES = 10;
 
 type OcrImageStatus = "Queued" | "Requested" | "Successed" | "Failed";
 
@@ -48,6 +51,7 @@ export default function EchoOcrPanel({
   onDebugChange,
 }: Props) {
   const { lang } = useAppStore();
+  const { openElevatedOverlay } = useElevatedOverlay();
   const slotRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const ocrAbortRef = useRef<AbortController | null>(null);
@@ -64,7 +68,7 @@ export default function EchoOcrPanel({
   const [isFocused, setFocused] = useState(false);
 
   const localeText = useMemo(() => locale(lang).ocr, [lang]);
-  const activeImage = images[0] ?? null;
+  const activeImage = images.find(image => image.id === activeImageId) ?? null;
   const isProcessing = images.some((image) => image.status === "Requested");
   const hasPendingImages = images.some(
     (image) => image.status === "Queued" || image.status === "Failed",
@@ -98,25 +102,27 @@ export default function EchoOcrPanel({
   );
 
   const queueFile = useCallback((selectedFiles: File[]) => {
-    const file = selectedFiles.find((item) => item.type.startsWith("image/"));
-    if (!file || ocrAbortRef.current) return;
+    const files = selectedFiles
+      .filter((item) => item.type.startsWith("image/"))
+      .slice(0, Math.max(0, MAX_OCR_IMAGES - previewUrlsRef.current.size));
+    if (!files.length || ocrAbortRef.current) return;
 
-    previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-    previewUrlsRef.current.clear();
+    const queuedImages = files.map(file => {
+      const previewUrl = URL.createObjectURL(file);
+      previewUrlsRef.current.add(previewUrl);
+      const queuedImage: OcrImageItem = {
+        id: crypto.randomUUID(),
+        file,
+        previewUrl,
+        status: "Queued",
+        result: null,
+        error: null,
+      };
+      return queuedImage;
+    });
 
-    const previewUrl = URL.createObjectURL(file);
-    previewUrlsRef.current.add(previewUrl);
-    const queuedImage: OcrImageItem = {
-      id: crypto.randomUUID(),
-      file,
-      previewUrl,
-      status: "Queued",
-      result: null,
-      error: null,
-    };
-
-    setImages([queuedImage]);
-    selectImage(queuedImage);
+    setImages(current => [...current, ...queuedImages]);
+    selectImage(queuedImages[0]);
   }, [selectImage]);
 
   const runOcr = useCallback(async () => {
@@ -129,6 +135,30 @@ export default function EchoOcrPanel({
     const controller = new AbortController();
     ocrAbortRef.current = controller;
     const requestId = ocrRequestIdRef.current;
+
+    if (images.length > 1) {
+      const firstImage = images[0];
+      updateImage(firstImage.id, { status: "Requested", error: null });
+      let first: { result: EchoOcrResult | null; error: string | null };
+      try {
+        first = { result: firstImage.result ?? await recognizeEchoImage(firstImage.file, lang, controller.signal), error: null };
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        first = { result: null, error: error instanceof Error ? error.message : "OCR failed" };
+      }
+      if (controller.signal.aborted || requestId !== ocrRequestIdRef.current) return;
+      ocrAbortRef.current = null;
+      setFocused(false);
+      openElevatedOverlay(
+        <EchoBatchOcrDialog files={images.map(image => image.file)} first={first} startIndex={selectIdx} requestLang={lang} />,
+        { title: localeText.batchTitle, width: "min(96vw, 68rem)", height: "min(88vh, 42rem)", ratio: null, closeOnBackdrop: false },
+      );
+      previewUrlsRef.current.forEach(url => URL.revokeObjectURL(url));
+      previewUrlsRef.current.clear();
+      setImages([]);
+      selectImage(null);
+      return;
+    }
 
     for (const image of pendingImages) {
       if (controller.signal.aborted || ocrRequestIdRef.current !== requestId) {
@@ -175,7 +205,7 @@ export default function EchoOcrPanel({
     if (ocrRequestIdRef.current === requestId) {
       ocrAbortRef.current = null;
     }
-  }, [cancelActiveOcrRequest, images, lang, onDebugChange, updateImage]);
+  }, [cancelActiveOcrRequest, images, lang, onDebugChange, updateImage, openElevatedOverlay, selectIdx, localeText.batchTitle, selectImage]);
 
   const removeImage = useCallback((id: string) => {
     const targetIndex = images.findIndex((image) => image.id === id);
@@ -280,10 +310,10 @@ export default function EchoOcrPanel({
             { type: blob.type },
           );
         })
-        .find((file): file is File => file !== null);
-      if (!pastedFile) return;
+        .filter((file): file is File => file !== null);
+      if (!pastedFile.length) return;
 
-      queueFile([pastedFile]);
+      queueFile(pastedFile);
 
       event.preventDefault();
     };
@@ -318,13 +348,16 @@ export default function EchoOcrPanel({
                 ref={slotRef}
                 tabIndex={0}
                 onFocus={() => setFocused(true)}
+                onDragOver={event => event.preventDefault()}
+                onDrop={event => { event.preventDefault(); queueFile(Array.from(event.dataTransfer.files)); }}
               >
                 <input
                   className="image-input"
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  disabled={isProcessing}
+                  multiple
+                  disabled={isProcessing || images.length >= MAX_OCR_IMAGES}
                   onChange={(event) => {
                     const selectedFiles = Array.from(event.target.files ?? []);
                     event.target.value = "";
@@ -343,6 +376,14 @@ export default function EchoOcrPanel({
                         : localeText.description1}
                     </span>
                   </button>
+                ) : images.length > 1 ? (
+                  <div className="ocr-file-slot__queue">
+                    {images.map(image => <article key={image.id}>
+                      <img src={image.previewUrl} alt={image.file.name} />
+                      <button type="button" disabled={isProcessing} aria-label={`Remove ${image.file.name}`} onClick={() => removeImage(image.id)}>×</button>
+                    </article>)}
+                    <button type="button" disabled={isProcessing || images.length >= MAX_OCR_IMAGES} onClick={() => fileInputRef.current?.click()}>{localeText.batchAdd}</button>
+                  </div>
                 ) : (
                   <article
                     className={`ocr-single-image ${
@@ -375,11 +416,11 @@ export default function EchoOcrPanel({
                     <button
                       type="button"
                       className="ocr-single-image__remove"
-                      aria-label={`Replace ${activeImage.file.name}`}
+                      aria-label={localeText.batchAdd}
                       disabled={activeImage.status === "Requested"}
                       onClick={() => fileInputRef.current?.click()}
                     >
-                      ↻
+                      +
                     </button>
                     <button
                       type="button"

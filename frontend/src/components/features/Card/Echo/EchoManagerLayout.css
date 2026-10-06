@@ -63,34 +63,6 @@
     gap: min(0.5vw, 0.25rem);
 }
 
-.echo-manager-layout__batch-ocr-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-height: 1.75rem;
-    padding: 0.25rem 0.6rem;
-    border: 1px solid #697486;
-    border-radius: 2px;
-    background: #1b1e25;
-    color: #d7dce5;
-    font-size: clamp(0.6875rem, 0.8vw, 0.8125rem);
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.echo-manager-layout__batch-ocr-button:hover,
-.echo-manager-layout__batch-ocr-button:focus-visible {
-    border-color: #ffd764;
-    color: #ffd764;
-    outline: none;
-}
-
-body[data-theme="light"] .echo-manager-layout__batch-ocr-button {
-    border-color: #9aa4b2;
-    background: #eef3fb;
-    color: #253047;
-}
-
 .echo-manager-layout__body .select-item-slot .item-slot-heading > .item-slot-title {
     width: 100%;
 }

@@ -19,7 +19,7 @@ export default function App() {
     <>
       <OcrServerWatcher />
       <Routes>
-        <Route path="/test" element={<Navigate to="/dev/test" replace />} />
+        <Route path="/test" element={<Navigate to="/dev/ocr" replace />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/characters" element={<Characters />} />
@@ -33,7 +33,8 @@ export default function App() {
 
           <Route path="/debug" element={<DragDebugPage />} />
           <Route path="/dev" element={<Dev />}>
-            <Route path="test" element={<OcrCropTest />} />
+            <Route path="test" element={<Navigate to="/dev/ocr" replace />} />
+            <Route path="ocr" element={<OcrCropTest />} />
             <Route path="analystic" element={<DevAnalystic />} />
           </Route>
         </Route>

@@ -9,7 +9,26 @@
 .crop-toolbar button { font: inherit; padding: 6px 12px; cursor: pointer; }
 .crop-status { color: #62c9ed; min-height: 24px; }
 .crop-error { color: #f18b8b; overflow-wrap: anywhere; }
+.crop-ocr-results-scroll { max-width: 100%; overflow-x: auto; }
+.crop-ocr-results table { width: 100%; border-collapse: collapse; text-align: left; }
+.crop-ocr-results th, .crop-ocr-results td { padding: 10px 12px; border-bottom: 1px solid #62666e; vertical-align: top; }
+.crop-ocr-results th:first-child { min-width: 120px; }
+.crop-ocr-results td:last-child { white-space: pre-wrap; overflow-wrap: anywhere; }
+.crop-ocr-results td { min-width: 110px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.crop-ocr-results td:nth-child(2), .crop-ocr-results td:nth-child(3) { min-width: 180px; }
+.crop-ocr-results small { display: block; margin-top: 6px; color: var(--nav-muted-text); font-size: 12px; white-space: normal; }
+.crop-browser-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+.crop-browser-progress { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 14px; margin: 12px 0; }
+.crop-browser-progress progress { width: 160px; height: 8px; accent-color: #8bd7b0; }
+.crop-crosscheck { font-size: 13px; white-space: nowrap; }
+.crop-crosscheck--agree { color: #8bd7b0; }
+.crop-crosscheck--conflict { color: #f18b8b; }
+.crop-crosscheck--partial, .crop-crosscheck--missing { color: #ffd764; }
+.crop-ocr-json { margin-top: 16px; }
+.crop-ocr-json summary { cursor: pointer; }
+.crop-ocr-json pre { max-height: 360px; overflow: auto; padding: 12px; background: #08090c; white-space: pre-wrap; overflow-wrap: anywhere; }
 .crop-ocr-text { white-space: pre-wrap; overflow-wrap: anywhere; color: #62c9ed; font-size: 14px; }
+.crop-browser-text { white-space: pre-wrap; overflow-wrap: anywhere; color: #c4a8f5; font-size: 14px; }
 .crop-visual-text, .crop-resolved-text { overflow-wrap: anywhere; font-size: 14px; }
 .crop-visual-text { color: #ffd764; }
 .crop-resolved-text { color: #8bd7b0; }

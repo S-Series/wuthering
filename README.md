@@ -236,7 +236,7 @@ MIT License
 # Developer pages
 
 - `/dev` links to the developer tools.
-- `/dev/test` contains the OCR crop test (the old `/test` URL redirects here).
+- `/dev/ocr` contains the OCR crop test and raw results for all nine regions (the old `/test` and `/dev/test` URLs redirect here).
 - `/dev/analystic` shows public, aggregated Vercel Web Analytics statistics.
 
 Apply [`backend/gateway/sql/dev_analytics_daily.sql`](backend/gateway/sql/dev_analytics_daily.sql) in the Supabase SQL editor before deploying the gateway. The gateway's service-role credentials read and write this table; browser clients do not access it directly.
