@@ -439,11 +439,15 @@ body[data-theme="light"] .ocr-single-image__delete {
 }
 .ocr-image-input-content.ocr-image-input-content--upload {
     display: grid;
-    grid-template-columns: minmax(64px, 19%) minmax(0, 1fr);
-    gap: 2%;
+    grid-template-columns: minmax(0, 1fr);
     min-width: 0;
     height: 100%;
 }
-.ocr-upload-preview { min-width: 0; min-height: 0; overflow: hidden; }
 .ocr-image-input-content--upload > .ocr-image-card--input { min-width: 0; min-height: 0; height: 100%; }
 .ocr-image-input-content--upload > .ocr-image-card--input > .file-slot { width: 100%; height: 100%; aspect-ratio: auto; margin: 0; }
+.ocr-image-input-content--upload .ocr-file-slot { border:1px dashed #66879e; background:#0d171d; }
+.ocr-image-input-content--upload .ocr-file-slot.focused { border-color:#8bc6de; background:#1d3039; }
+.ocr-upload-label { position:absolute; top:10px; left:12px; z-index:3; color:#9bd5e7; font-size:12px; font-weight:700; pointer-events:none; }
+.ocr-image-input-content--upload .ocr-file-slot__empty { padding:36px 12px 40px; box-sizing:border-box; }
+.ocr-image-input-content--upload .ocr-file-slot__empty > span { font-size:12px; line-height:1.5; text-decoration:none; }
+.ocr-image-input-content--upload .ocr-file-slot__request { font-size:11px; }

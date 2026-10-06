@@ -11,7 +11,7 @@ import { getEquipmentRank } from "@/types/character.type";
 import EchoOcrResultEditor from "./EchoOcrResultEditor";
 import type { EchoOcrResult } from "./EchoOcrPanel";
 import { recognizeEchoImage, echoOcrResultToRuntime } from "./echoOcr.helpers";
-import { placeBatchEntry, type BatchLayout } from "./echoBatch.layout";
+import { placeBatchEntry, placeBatchPoolEntry, type BatchLayout } from "./echoBatch.layout";
 import "./EchoBatchOcrDialog.css";
 
 type Outcome = { result: EchoOcrResult | null; error: string | null };
@@ -22,7 +22,7 @@ function BatchTile({ entry, position, selected, name, rank, onSelect }: {
   entry: Entry; position?: number; selected: boolean; name: string; rank: string; onSelect: () => void;
 }) {
   const drag = useDraggable({ id: entry.id });
-  const drop = useDroppable({ id: position === undefined ? `pool:${entry.id}` : `target:${position}`, disabled: position === undefined });
+  const drop = useDroppable({ id: position === undefined ? `pool:${entry.id}` : `target:${position}` });
   return <button type="button" ref={node => { drag.setNodeRef(node); drop.setNodeRef(node); }}
     className={`echo-batch-tile ${entry.fresh ? "fresh" : "existing"} ${selected ? "selected" : ""} ${drop.isOver ? "over" : ""}`}
     style={{ opacity: drag.isDragging ? 0.45 : 1 }} {...drag.attributes} {...drag.listeners}
@@ -86,9 +86,13 @@ export default function EchoBatchOcrDialog({ files, first, startIndex, requestLa
       ...selection.seed.subOptions.map(option => [option.statId, option.statValue])] as EchoOcrResult["echoStats"] }), [selection.seed]);
   const select = (id: string) => setSelection({ id, seed: entries[id].echo });
   const onDrop = ({ active, over }: DragEndEvent) => {
-    if (!over || !String(over.id).startsWith("target:")) return;
-    const id = String(active.id), target = Number(String(over.id).split(":")[1]);
-    setLayout(previous => placeBatchEntry(previous, id, target));
+    if (!over) return;
+    const id = String(active.id), target = String(over.id);
+    if (target.startsWith("target:")) {
+      setLayout(previous => placeBatchEntry(previous, id, Number(target.slice(7))));
+    } else if (target.startsWith("pool:")) {
+      setLayout(previous => placeBatchPoolEntry(previous, id, target.slice(5)));
+    } else return;
     select(id);
   };
   const finish = () => {
@@ -121,9 +125,12 @@ export default function EchoBatchOcrDialog({ files, first, startIndex, requestLa
     <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragEnd={onDrop}>
       <div className="echo-batch-review__layout">
         <section className="echo-batch-review__inventory">
+          <div className="echo-batch-review__existing-area">
           <header><h3>{text.echoList}</h3><span aria-live="polite">{pending ? text.batchProgress : text.batchComplete} {outcomes.filter(Boolean).length} / {files.length}</span></header>
           <div className="echo-batch-review__slots">{layout.slots.map((id, position) => <BatchTile key={`target:${position}`} entry={entries[id]} position={position}
             selected={selection.id === id} name={name(entries[id])} rank={ranks[id]} onSelect={() => select(id)} />)}</div>
+          </div>
+          <div className="echo-batch-review__incoming-area">
           <h3>{text.batchNewResults}</h3>
           <div className="echo-batch-review__pool">{layout.pool.map(id => <BatchTile key={id} entry={entries[id]} selected={selection.id === id}
             name={name(entries[id])} rank={ranks[id]} onSelect={() => select(id)} />)}
@@ -132,16 +139,13 @@ export default function EchoBatchOcrDialog({ files, first, startIndex, requestLa
               {outcome?.error && <button type="button" disabled={pending || retrying !== null} onClick={() => void retry(i)}>{retrying === i ? text.loading : text.batchRetry}</button>}
             </div>)}
           </div>
+          </div>
+          <div className="echo-batch-review__actions"><button type="button" className="echo-batch-review__finish" disabled={pending || retrying !== null} onClick={finish}>{text.batchFinish}</button></div>
         </section>
         <aside className="echo-batch-review__editor"><h3>{text.echoData}</h3>
           <EchoOcrResultEditor key={selection.id} datas={data} selectIdx={startIndex} resetAction={() => {}} draftOnly onDraftChange={edit} />
-          {layout.pool.includes(selection.id) && <label className="echo-batch-review__place">{text.batchChooseSlot}
-            <select value="" onChange={event => { setLayout(previous => placeBatchEntry(previous, selection.id, Number(event.target.value))); }}>
-              <option value="" disabled>{text.batchChooseSlot}</option>{initial.order.map((_, i) => <option key={i} value={i}>Slot {i + 1}</option>)}
-            </select></label>}
         </aside>
       </div>
     </DndContext>
-    <footer><button type="button" className="echo-batch-review__finish" disabled={pending || retrying !== null} onClick={finish}>{text.batchFinish}</button></footer>
   </div>;
 }

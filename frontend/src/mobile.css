@@ -229,13 +229,13 @@
 /* Keep the Echo manager compact on narrow tablets and tall split windows. */
 @media (min-width: 781px) and (max-width: 900px) {
   .overlay-panel:has(.echo-manager-content) {
-    height: auto !important;
+    height: min(88dvh, 70rem) !important;
     max-height: calc(100dvh - 2rem);
     aspect-ratio: auto !important;
   }
   .overlay-panel:has(.echo-manager-content) .overlay-body {
-    display: block;
-    flex: 0 1 auto;
+    display: flex;
+    flex: 1;
     overflow: auto;
   }
   .ocr-comp-body.echo-data-manager,
@@ -245,7 +245,7 @@
   .echo-manager-layout,
   .echo-manager-layout__body {
     width: 100%;
-    height: auto;
+    height: 100%;
     max-height: none;
     aspect-ratio: auto;
     overflow: visible;

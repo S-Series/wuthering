@@ -11,8 +11,6 @@ import { useAppStore } from "@/stores/appStore";
 import type { StatId } from "@/datas/stats";
 import type { HarmonyId } from "@/datas/harmonies";
 
-import EchoOcrTargetPreview from "./EchoOcrTargetPreview";
-import { useCharacter } from "@/stores/characterDataStore";
 import { recognizeEchoImage } from "./echoOcr.helpers";
 import "./EchoOcrPanel.css";
 import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
@@ -48,7 +46,6 @@ export default function EchoOcrPanel({
   selectIdx,
 }: Props) {
   const { lang } = useAppStore();
-  const { characterData, equipmentScore } = useCharacter();
   const { openElevatedOverlay } = useElevatedOverlay();
   const slotRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -275,10 +272,6 @@ export default function EchoOcrPanel({
       )}
 
       <div className="ocr-image-input-content ocr-image-input-content--upload">
-        <div className="ocr-upload-preview">
-          <EchoOcrTargetPreview baseUrl={import.meta.env.VITE_IMAGE_BASE}
-            echoData={characterData.echoData[selectIdx]} score={equipmentScore?.[selectIdx] ?? [0, 0]} slotNumber={selectIdx + 1} />
-        </div>
             <section className="ocr-image-card ocr-image-card--input">
               <div
                 className={`file-slot ocr-file-slot ${isFocused ? "focused" : ""}`}
@@ -288,6 +281,7 @@ export default function EchoOcrPanel({
                 onDragOver={event => event.preventDefault()}
                 onDrop={event => { event.preventDefault(); queueFile(Array.from(event.dataTransfer.files)); }}
               >
+                <span className={`ocr-upload-label ${lang}-font`}>{localeText.inputTitle}</span>
                 <input
                   className="image-input"
                   ref={fileInputRef}

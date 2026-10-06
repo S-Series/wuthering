@@ -310,6 +310,7 @@ export type LocaleSchema = {
     loading: string;
     result: string;
     description1: string,
+    inputTitle: string,
     description2: string,
     description3: string,
     healthCheck: string,

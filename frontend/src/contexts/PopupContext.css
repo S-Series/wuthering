@@ -35,7 +35,7 @@
 }
 
 .overlay-panel:has(.echo-manager-content) {
-    width: min(90vw, 80dvh, 70rem);
+    width: min(92vw, 88dvh, 70rem);
     min-width: 0;
     height: auto;
     aspect-ratio: 1 / 1;
