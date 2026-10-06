@@ -38,5 +38,11 @@ def encode_jpeg_base64(image: Image.Image):
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
 
+def encode_png_base64(image: Image.Image):
+    buffered = io.BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode("ascii")
+
+
 def to_ocr_array(image: Image.Image):
     return np.array(image)

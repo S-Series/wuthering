@@ -6,6 +6,7 @@ from fastapi import UploadFile
 
 from image_processing import (
     encode_jpeg_base64,
+    encode_png_base64,
     load_rgb_image,
     preprocess_image,
     preprocess_ocr_region,
@@ -47,16 +48,20 @@ def analyze_batch(contents, lang):
     with _inference_lock:
         engine = get_ocr(safe_lang)
         for region_id in REGION_IDS:
+            processed_image_base64 = None
             try:
                 with load_rgb_image(contents[region_id]) as image:
                     with preprocess_ocr_region(image) as processed:
+                        processed_image_base64 = encode_png_base64(processed)
                         result = engine.ocr(to_ocr_array(processed), cls=True)
                 tokens = sorted(extract_regions(result), key=lambda token: (round(token["cy"] / 12), token["x"]))
                 logger.info("Batch OCR region=%s lang=%s tokens=%s", region_id, safe_lang, len(tokens))
-                regions.append({"id": region_id, "success": True, "texts": [token["text"] for token in tokens], "tokens": tokens})
+                regions.append({"id": region_id, "success": True, "texts": [token["text"] for token in tokens], "tokens": tokens,
+                                "processed_image_base64": processed_image_base64})
             except Exception:
                 logger.exception("OCR failed for region %s", region_id)
-                regions.append({"id": region_id, "success": False, "texts": [], "tokens": [], "error": "Region OCR failed"})
+                regions.append({"id": region_id, "success": False, "texts": [], "tokens": [], "error": "Region OCR failed",
+                                "processed_image_base64": processed_image_base64})
     return {"success": True, "lang": safe_lang, "regions": regions}
 
 

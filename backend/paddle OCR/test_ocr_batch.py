@@ -1,5 +1,6 @@
 """Batch transport contract tests; the predictor is mocked, not an accuracy test."""
 import asyncio
+import base64
 import importlib
 import io
 import sys
@@ -54,6 +55,9 @@ class BatchTests(unittest.TestCase):
                 self.assertTrue(regions[2]["success"])
                 self.assertFalse(regions[4]["success"])
                 self.assertEqual(regions[5]["texts"], ["ATK 7.1%"])
+                for region in regions:
+                    with Image.open(io.BytesIO(base64.b64decode(region["processed_image_base64"]))) as preview:
+                        self.assertEqual((preview.height, preview.width, 3), calls[0])
                 with self.assertRaises(ValueError):
                     asyncio.run(service.run_ocr_batch(files[:8], "en"))
                 duplicates = [UploadFile(filename="name.png", file=io.BytesIO(buffer.getvalue())) for _ in range(9)]

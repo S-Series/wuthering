@@ -174,18 +174,20 @@ export default function OcrCropTest() {
       </section>}
       {result && <>
         <section className="crop-ocr-results" aria-label="OCR 결과값">
-          <h2>OCR 교차검증 결과</h2>
+          <h2>OCR 통합 판정</h2>
           {report ? <>
             <div className="crop-ocr-results-scroll">
               <table>
-                <thead><tr><th scope="col">영역</th><th scope="col">백엔드 · PaddleOCR</th><th scope="col">브라우저 · Tesseract.js</th><th scope="col">스탯 종류 / 문자</th><th scope="col">수치 / % (참고)</th><th scope="col">교차검증</th></tr></thead>
+                <thead><tr><th scope="col">영역</th><th scope="col">백엔드 · PaddleOCR</th><th scope="col">브라우저 · Tesseract.js</th><th scope="col">스탯 종류 / 문자</th><th scope="col">수치 / % (참고)</th><th scope="col">최종 판정</th></tr></thead>
                 <tbody>{OCR_REGION_IDS.map((id, index) => {
                   const server = ocrResults?.find(region => region.id === id);
                   const client = report.browser.find(region => region.id === id);
                   const check = comparisons[index];
                   return <tr key={id}>
                   <th scope="row">{bandLabel(index - 2)}</th>
-                  <td>{server ? server.success ? server.texts.join("\n") || "인식된 텍스트 없음" : server.error || "인식 실패" : report.cancelled ? "취소" : report.backendDone ? "인식 실패" : "처리 중…"}</td>
+                  <td>{server ? server.success ? server.texts.join("\n") || "인식된 텍스트 없음" : server.error || "인식 실패" : report.cancelled ? "취소" : report.backendDone ? "인식 실패" : "처리 중…"}
+                    {check.backendConfidence !== null && <small>모델 신뢰도 {(check.backendConfidence * 100).toFixed(1)} / 100</small>}
+                  </td>
                   <td>{!report.browserEnabled ? "비활성화" : client ? <>
                     <div>{client.success ? client.texts.join("\n") || "인식된 텍스트 없음" : client.error || "인식 실패"}</div>
                     {client.confidence !== undefined && <small>모델 신뢰도 {client.confidence.toFixed(1)} / 100</small>}
@@ -194,7 +196,11 @@ export default function OcrCropTest() {
                     {index >= 2 && <small>Paddle: {check.backendStatId ? statName(check.backendStatId) : "미확정"}<br />Tesseract: {check.browserStatId ? statName(check.browserStatId) : "미확정"}</small>}
                   </td>
                   <td>{agreementLabel(check.valueAgreement)}</td>
-                  <td><span className={`crop-crosscheck crop-crosscheck--${check.status}`}>{!report.browserEnabled ? "—" : (!server && !report.backendDone) || (!client && !report.browserDone) ? "비교 대기" : comparisonLabels[check.status]}</span></td>
+                  <td><span className={`crop-crosscheck crop-crosscheck--${check.selectedStatId ? "agree" : check.status}`}>{index >= 2
+                    ? check.selectedStatId ? statName(check.selectedStatId) : "미확정"
+                    : comparisonLabels[check.status]}</span>
+                    {index >= 2 && check.selectedSource && <small>{check.selectedSource === "both" ? "양쪽 판정" : check.selectedSource === "backend" ? "PaddleOCR 채택" : "Tesseract 채택"}</small>}
+                  </td>
                 </tr>;
                 })}</tbody>
               </table>
@@ -209,13 +215,21 @@ export default function OcrCropTest() {
           <div className="crop-bands">
             {result.metadata.bands.map((band) => {
               const match = local?.data?.rows.find(row => row.index === band.index)?.match ?? null;
-              const resolved = resolveMatchedStat(match, ocrResults?.[band.index + 2], band.index);
+              const decision = comparisons[band.index + 2];
+              const selectedMatch = decision.selectedStatId ? { id: decision.selectedStatId, score: 1 } : match;
+              const resolved = resolveMatchedStat(selectedMatch, ocrResults?.[band.index + 2], band.index);
               const browserRegion = report?.browser.find(region => region.id === OCR_REGION_IDS[band.index + 2]);
+              const serverRegion = ocrResults?.find(region => region.id === OCR_REGION_IDS[band.index + 2]);
               return <figure key={band.index} style={{ width: "100%", maxWidth: result.metadata.width }}>
               <figcaption>{bandLabel(band.index)}</figcaption>
               <div className="crop-band-image" style={{ aspectRatio: `${result.metadata.width} / ${band.bottom - band.top}` }}>
                 <img src={result.url} alt={bandLabel(band.index)} style={{ transform: `translateY(-${band.top / result.metadata.height * 100}%)` }} />
               </div>
+              {serverRegion?.processed_image_base64 && <div className="crop-server-preview">
+                <p>PaddleOCR 서버 전처리 이미지</p>
+                <img src={`data:image/png;base64,${serverRegion.processed_image_base64}`} alt={`${bandLabel(band.index)} 서버 전처리 결과`} />
+              </div>}
+              {serverRegion && !serverRegion.processed_image_base64 && <p className="crop-ocr-text">서버 전처리 이미지 없음</p>}
               {band.index >= 0 && local?.data && <p className="crop-visual-text">이미지: {match ? `${statName(match.id)} (유사도 ${Math.round(match.score * 100)}%)` : "미확정"}</p>}
               {ocrResults && <p className="crop-ocr-text">PaddleOCR: {ocrResults[band.index + 2].success
                 ? ocrResults[band.index + 2].texts.join(" · ") || "인식된 텍스트 없음"
@@ -223,6 +237,7 @@ export default function OcrCropTest() {
               {report?.browserEnabled && <p className="crop-browser-text">Tesseract.js: {browserRegion
                 ? browserRegion.success ? browserRegion.texts.join(" · ") || "인식된 텍스트 없음" : browserRegion.error || "인식 실패"
                 : report.cancelled ? "취소" : report.browserDone ? "인식 실패" : "처리 중…"}</p>}
+              {band.index >= 0 && decision.selectedStatId && <p className="crop-resolved-text">스탯 판정: {statName(decision.selectedStatId)} · {decision.selectedSource === "both" ? "양쪽 판정" : decision.selectedSource === "backend" ? "PaddleOCR 채택" : "Tesseract 채택"}</p>}
               {resolved && <p className="crop-resolved-text">판정: {statName(resolved.id)} {resolved.value}{!["hp", "atk", "def"].includes(resolved.id) ? "%" : ""}{resolved.corrected ? " · 소수점 보정" : ""}</p>}
             </figure>;
             })}

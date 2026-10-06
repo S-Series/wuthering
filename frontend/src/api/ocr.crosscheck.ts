@@ -10,6 +10,10 @@ export type OcrCrosscheck = {
   valueAgreement: boolean | null;
   backendStatId: string | null;
   browserStatId: string | null;
+  selectedStatId: string | null;
+  selectedSource: "backend" | "browser" | "both" | null;
+  backendConfidence: number | null;
+  browserConfidence: number | null;
 };
 const normalize = (text: string) => text.normalize("NFKC").toLowerCase().replace(/\s+/g, "").replace(/[·]/g, "");
 const content = (region?: OcrRegionResult) => region?.success ? region.texts.join(" ").trim() : "";
@@ -52,14 +56,42 @@ function costValue(text: string) {
     ?? normalized.match(/^\s*([134])\s*$/)?.[1] ?? null;
 }
 
+function confidence(region: OcrRegionResult | undefined, browser: boolean): number | null {
+  if (!region?.success) return null;
+  if (browser) return Number.isFinite(region.confidence) && region.confidence! >= 0 && region.confidence! <= 100
+    ? region.confidence! / 100 : null;
+  // Prefer label tokens: numerical recognition is not the stat-kind signal.
+  const tokens = region.tokens?.filter(token => normalizeLabel(token.text)
+    && Number.isFinite(token.confidence) && token.confidence >= 0 && token.confidence <= 1) ?? [];
+  return tokens.length ? tokens.reduce((sum, token) => sum + token.confidence, 0) / tokens.length : null;
+}
+
+function selectStat(backendStatId: string | null, browserStatId: string | null,
+  backendConfidence: number | null, browserConfidence: number | null) {
+  if (backendStatId && !browserStatId) return { selectedStatId: backendStatId, selectedSource: "backend" as const };
+  if (browserStatId && !backendStatId) return { selectedStatId: browserStatId, selectedSource: "browser" as const };
+  if (backendStatId && backendStatId === browserStatId) return { selectedStatId: backendStatId, selectedSource: "both" as const };
+  if (backendStatId && browserStatId && backendConfidence !== null && browserConfidence !== null && backendConfidence !== browserConfidence) {
+    return backendConfidence > browserConfidence
+      ? { selectedStatId: backendStatId, selectedSource: "backend" as const }
+      : { selectedStatId: browserStatId, selectedSource: "browser" as const };
+  }
+  return { selectedStatId: null, selectedSource: null };
+}
+
 export function crosscheckOcrRegions(backend: OcrRegionResult[], browser: OcrRegionResult[]): OcrCrosscheck[] {
   return OCR_REGION_IDS.map(id => {
-    const server = content(backend.find(region => region.id === id));
-    const client = content(browser.find(region => region.id === id));
+    const serverRegion = backend.find(region => region.id === id);
+    const clientRegion = browser.find(region => region.id === id);
+    const server = content(serverRegion);
+    const client = content(clientRegion);
     const isStat = id !== "name" && id !== "cost";
     const backendStatId = isStat ? statKind(server, id) : null;
     const browserStatId = isStat ? statKind(client, id) : null;
-    if (!server || !client) return { id, status: server || client ? "partial" : "missing", textAgreement: null, valueAgreement: null, backendStatId, browserStatId };
+    const backendConfidence = confidence(serverRegion, false);
+    const browserConfidence = confidence(clientRegion, true);
+    const selection = { ...selectStat(backendStatId, browserStatId, backendConfidence, browserConfidence), backendConfidence, browserConfidence };
+    if (!server || !client) return { id, status: server || client ? "partial" : "missing", textAgreement: null, valueAgreement: null, backendStatId, browserStatId, ...selection };
     let textAgreement: boolean | null = null;
     let valueAgreement: boolean | null = null;
     if (id === "name") {
@@ -78,6 +110,6 @@ export function crosscheckOcrRegions(backend: OcrRegionResult[], browser: OcrReg
     const comparisons = id === "cost" ? [valueAgreement] : [textAgreement];
     const status = comparisons.some(value => value === false) ? "conflict"
       : comparisons.every(value => value === true) ? "agree" : "partial";
-    return { id, status, textAgreement, valueAgreement, backendStatId, browserStatId };
+    return { id, status, textAgreement, valueAgreement, backendStatId, browserStatId, ...selection };
   });
 }

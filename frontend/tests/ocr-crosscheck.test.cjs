@@ -61,6 +61,18 @@ test("stat kinds are recognized without numbers and through label aliases", () =
 test("unknown labels are not confirmed even if their text and numbers are identical", () => {
   assert.equal(check(region("sub_1", "unknown 10%"), region("sub_1", "unknown 10%")).status, "partial");
 });
+test("a single recognized stat survives a failed or unrecognized peer", () => {
+  assert.equal(check(region("sub_1", "", false), region("sub_1", "ATK")).selectedStatId, "atk");
+  assert.equal(check(region("sub_1", "HP"), region("sub_1", "unknown")).selectedSource, "backend");
+});
+test("conflicting stat types select the higher model confidence on a common scale", () => {
+  const server = { ...region("sub_1", "ATK 9.4%"), tokens: [{ text: "ATK", confidence: 0.81 }, { text: "9.4%", confidence: 0.99 }] };
+  const client = { ...region("sub_1", "DEF"), confidence: 90 };
+  assert.equal(check(server, client).selectedStatId, "def");
+  assert.equal(check(server, { ...client, confidence: 70 }).selectedStatId, "atk");
+  assert.equal(check(server, { ...client, confidence: 81 }).selectedStatId, null);
+  assert.equal(check(region("sub_1", "ATK"), client).selectedStatId, null);
+});
 test("matching numbers with conflicting labels are not confirmed", () => {
   const result = check(region("sub_1", "공격력 9.4%"), region("sub_1", "방어력 9.4%"));
   assert.equal(result.status, "conflict");

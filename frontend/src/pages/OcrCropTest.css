@@ -40,6 +40,8 @@
 .crop-bands figcaption { margin-bottom: 8px; font-size: 14px; }
 .crop-band-image { position: relative; overflow: hidden; background: #08090c; }
 .crop-band-image img { position: absolute; top: 0; left: 0; display: block; width: 100%; height: auto; }
+.crop-server-preview p { margin: 10px 0 6px; font-size: 13px; }
+.crop-server-preview img { display: block; width: 100%; height: auto; }
 .crop-atlas > img { display: block; width: 100%; max-width: 700px; height: auto; margin-top: 16px; }
 @media (max-width: 600px) {
   .ocr-crop-test { padding: 16px; }
