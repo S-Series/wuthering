@@ -11,7 +11,8 @@ import { useAppStore } from "@/stores/appStore";
 import type { StatId } from "@/datas/stats";
 import type { HarmonyId } from "@/datas/harmonies";
 
-import EchoOcrResultEditor from "./EchoOcrResultEditor";
+import EchoOcrTargetPreview from "./EchoOcrTargetPreview";
+import { useCharacter } from "@/stores/characterDataStore";
 import { recognizeEchoImage } from "./echoOcr.helpers";
 import "./EchoOcrPanel.css";
 import { useElevatedOverlay } from "@/contexts/useElevatedOverlay";
@@ -41,16 +42,13 @@ type OcrImageItem = {
 
 type Props = {
   selectIdx: EchoIndex;
-  initialDebug: EchoOcrResult | null | undefined;
-  onDebugChange: (debug: EchoOcrResult | null) => void;
 };
 
 export default function EchoOcrPanel({
   selectIdx,
-  initialDebug,
-  onDebugChange,
 }: Props) {
   const { lang } = useAppStore();
+  const { characterData, equipmentScore } = useCharacter();
   const { openElevatedOverlay } = useElevatedOverlay();
   const slotRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -61,9 +59,6 @@ export default function EchoOcrPanel({
 
   const [images, setImages] = useState<OcrImageItem[]>([]);
   const [activeImageId, setActiveImageId] = useState<string | null>(null);
-  const [debug, setDebug] = useState<EchoOcrResult | null>(
-    initialDebug ?? null,
-  );
   const [isHealthy, setHealthy] = useState<boolean | null>(null);
   const [isFocused, setFocused] = useState(false);
 
@@ -82,13 +77,10 @@ export default function EchoOcrPanel({
 
   const selectImage = useCallback((image: OcrImageItem | null) => {
     const nextId = image?.id ?? null;
-    const nextResult = image?.result ?? null;
 
     activeImageIdRef.current = nextId;
     setActiveImageId(nextId);
-    setDebug(nextResult);
-    onDebugChange(nextResult);
-  }, [onDebugChange]);
+  }, []);
 
   const updateImage = useCallback(
     (id: string, patch: Partial<OcrImageItem>) => {
@@ -136,7 +128,7 @@ export default function EchoOcrPanel({
     ocrAbortRef.current = controller;
     const requestId = ocrRequestIdRef.current;
 
-    if (images.length > 1) {
+    {
       const firstImage = images[0];
       updateImage(firstImage.id, { status: "Requested", error: null });
       let first: { result: EchoOcrResult | null; error: string | null };
@@ -160,52 +152,7 @@ export default function EchoOcrPanel({
       return;
     }
 
-    for (const image of pendingImages) {
-      if (controller.signal.aborted || ocrRequestIdRef.current !== requestId) {
-        break;
-      }
-
-      updateImage(image.id, { status: "Requested", error: null });
-
-      try {
-        const result = await recognizeEchoImage(
-          image.file,
-          lang,
-          controller.signal,
-        );
-        updateImage(image.id, {
-          status: "Successed",
-          result,
-          error: null,
-        });
-
-        if (activeImageIdRef.current === image.id) {
-          setDebug(result);
-          onDebugChange(result);
-        }
-      } catch (error) {
-        if (controller.signal.aborted) break;
-
-        const message =
-          error instanceof Error ? error.message : "OCR 처리에 실패했습니다.";
-        updateImage(image.id, {
-          status: "Failed",
-          result: null,
-          error: message,
-        });
-
-        if (activeImageIdRef.current === image.id) {
-          setDebug(null);
-          onDebugChange(null);
-        }
-        console.error(error);
-      }
-    }
-
-    if (ocrRequestIdRef.current === requestId) {
-      ocrAbortRef.current = null;
-    }
-  }, [cancelActiveOcrRequest, images, lang, onDebugChange, updateImage, openElevatedOverlay, selectIdx, localeText.batchTitle, selectImage]);
+  }, [cancelActiveOcrRequest, images, lang, updateImage, openElevatedOverlay, selectIdx, localeText.batchTitle, selectImage]);
 
   const removeImage = useCallback((id: string) => {
     const targetIndex = images.findIndex((image) => image.id === id);
@@ -222,10 +169,6 @@ export default function EchoOcrPanel({
       selectImage(nextImages[targetIndex] ?? nextImages[targetIndex - 1] ?? null);
     }
   }, [images, selectImage]);
-
-  const handleAppliedImage = useCallback(() => {
-    if (activeImageIdRef.current) removeImage(activeImageIdRef.current);
-  }, [removeImage]);
 
   useEffect(() => {
     const previewUrls = previewUrlsRef.current;
@@ -331,17 +274,11 @@ export default function EchoOcrPanel({
         </div>
       )}
 
-      <div className="ocr-image-input-content">
-        <EchoOcrResultEditor
-          datas={{
-            cost: (debug?.cost as 4 | 3 | 1) ?? 4,
-            echoId: debug?.echoId ?? null,
-            stats: debug?.echoStats ?? null,
-            setId: debug?.setId ?? null,
-          }}
-          selectIdx={selectIdx}
-          resetAction={handleAppliedImage}
-          inputSlot={
+      <div className="ocr-image-input-content ocr-image-input-content--upload">
+        <div className="ocr-upload-preview">
+          <EchoOcrTargetPreview baseUrl={import.meta.env.VITE_IMAGE_BASE}
+            echoData={characterData.echoData[selectIdx]} score={equipmentScore?.[selectIdx] ?? [0, 0]} slotNumber={selectIdx + 1} />
+        </div>
             <section className="ocr-image-card ocr-image-card--input">
               <div
                 className={`file-slot ocr-file-slot ${isFocused ? "focused" : ""}`}
@@ -446,8 +383,6 @@ export default function EchoOcrPanel({
                 )}
               </div>
             </section>
-          }
-        />
       </div>
     </div>
   );

@@ -145,6 +145,20 @@
     min-width: 0;
 }
 
+.echo-select-wrapper .echo-sub-option-handle {
+    flex: 0 0 18px;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #aab5c5;
+    cursor: grab;
+    touch-action: none;
+}
+.echo-select-wrapper .echo-sub-option-row .sub-stat-select { flex: 1; width: auto; }
+.echo-select-wrapper .echo-sub-option-row .sub-value-select { flex: 0 0 34%; width: auto; }
+.echo-select-wrapper .echo-sub-option-row.dragging { z-index: 2; background: #1b1e25; }
+
 @media (max-width: 780px) {
     .echo-select-wrapper .drop-slot .main-stat-span {
         font-size: min(2.5vw, 1.2rem);

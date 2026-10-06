@@ -1,4 +1,7 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { DndContext, PointerSensor, KeyboardSensor, closestCenter, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { StylesConfig } from "react-select";
 import Select from "react-select";
 
@@ -60,6 +63,17 @@ const PLACEHOLDERS = {
   },
 } as const;
 
+const SUB_OPTION_IDS = [0, 1, 2, 3, 4];
+
+function SortableSubOption({ id, children, label }: { id: number; children: ReactNode; label: string }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  return <div ref={setNodeRef} className={`drop-slot echo-sub-option-row${isDragging ? " dragging" : ""}`}
+    style={{ transform: CSS.Transform.toString(transform), transition }}>
+    <button type="button" className="echo-sub-option-handle" aria-label={label} title={label} {...attributes} {...listeners}>☰</button>
+    {children}
+  </div>;
+}
+
 export default function EchoEditor({ index = 0 }: EchoEditorProps) {
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { lang, imgVer } = useAppStore();
@@ -72,6 +86,15 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [slotHeight, setSlotHeight] = useState(32);
   const echoData = characterData.echoData[index];
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const reorderSubOptions = ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return;
+    const from = SUB_OPTION_IDS.indexOf(Number(active.id)), to = SUB_OPTION_IDS.indexOf(Number(over.id));
+    if (from < 0 || to < 0) return;
+    patchCharacterData(patchEchoAt(characterData, index, { ...echoData,
+      subOptions: arrayMove(echoData.subOptions, from, to) as EchoRuntime["subOptions"] }));
+  };
 
   const selectedCost = useMemo<Cost>(() => {
     return echoData?.cost || 4
@@ -402,10 +425,12 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
         </div>
       </div>
 
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={reorderSubOptions}>
+      <SortableContext items={SUB_OPTION_IDS} strategy={verticalListSortingStrategy}>
       <div className="echo-select-sub-grid">
-        {[0, 1, 2, 3, 4].map((idx) => {
+        {SUB_OPTION_IDS.map((idx) => {
           return (
-            <div key={`echo-stat-drop-${idx}`} className="drop-slot">
+            <SortableSubOption key={`echo-stat-drop-${idx}`} id={idx} label={`${placeholders.subStat} ${idx + 1}`}>
               <div className="sub-stat-select">
                 <Select
                   options={STAT_OPTION_SUB}
@@ -471,10 +496,12 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
                   }}
                 />
               </div>
-            </div>
+            </SortableSubOption>
           );
         })}
       </div>
+      </SortableContext>
+      </DndContext>
       <button
         type="button"
         className={`${lang}-font echo-select-reset-button`}

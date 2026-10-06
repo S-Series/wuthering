@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import EchoOcrPanel, { type EchoOcrResult } from "./Ocr/EchoOcrPanel";
+import EchoOcrPanel from "./Ocr/EchoOcrPanel";
 import EchoManagerLayout from "./EchoManagerLayout";
 
 import "./EchoManager.css";
@@ -8,7 +8,6 @@ import "./EchoManager.css";
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export default function EchoManager() {
-  const [debug, setDebug] = useState<EchoOcrResult | null>();
   const [selectIdx, setSelectIdx] = useState<EchoIndex>(0);
 
   return (
@@ -21,8 +20,6 @@ export default function EchoManager() {
             ocrPanel={
               <EchoOcrPanel
                 selectIdx={selectIdx}
-                initialDebug={debug}
-                onDebugChange={setDebug}
               />
             }
           />
