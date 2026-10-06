@@ -17,6 +17,7 @@ type OcrReport = {
   progress: BrowserOcrProgress | null;
 };
 const comparisonLabels = { agree: "일치", conflict: "불일치", partial: "검증 불충분", missing: "인식 결과 없음" };
+const sourceLabel = (source: string | null) => source === "both" ? "복수 결과 일치" : source === "backend_raw" ? "PaddleOCR 원본 채택" : source === "backend" ? "PaddleOCR 전처리 채택" : "Tesseract 채택";
 const agreementLabel = (value: boolean | null) => value === null ? "—" : value ? "일치" : "불일치";
 const bandLabel = (index: number) => index === -2 ? "에코 이름 / 하모니" : index === -1
   ? "COST"
@@ -113,7 +114,7 @@ export default function OcrCropTest() {
       }
     };
     try {
-      const backendTask = requestOcrBatch(target.file, target.metadata, lang, current.signal)
+      const backendTask = requestOcrBatch(target.file, target.metadata, lang, current.signal, { compareRaw: true })
         .then(regions => update({ backend: regions }))
         .catch((cause: unknown) => update({ backendError: cause instanceof Error ? cause.message : "백엔드 OCR 실패" }))
         .finally(() => update({ backendDone: true }));
@@ -178,13 +179,16 @@ export default function OcrCropTest() {
           {report ? <>
             <div className="crop-ocr-results-scroll">
               <table>
-                <thead><tr><th scope="col">영역</th><th scope="col">백엔드 · PaddleOCR</th><th scope="col">브라우저 · Tesseract.js</th><th scope="col">스탯 종류 / 문자</th><th scope="col">수치 / % (참고)</th><th scope="col">최종 판정</th></tr></thead>
+                <thead><tr><th scope="col">영역</th><th scope="col">PaddleOCR · 전처리 전</th><th scope="col">PaddleOCR · 전처리 후</th><th scope="col">브라우저 · Tesseract.js</th><th scope="col">스탯 종류 / 문자</th><th scope="col">수치 / % (참고)</th><th scope="col">최종 판정</th></tr></thead>
                 <tbody>{OCR_REGION_IDS.map((id, index) => {
                   const server = ocrResults?.find(region => region.id === id);
                   const client = report.browser.find(region => region.id === id);
                   const check = comparisons[index];
                   return <tr key={id}>
                   <th scope="row">{bandLabel(index - 2)}</th>
+                  <td>{server?.raw ? server.raw.success ? server.raw.texts.join("\n") || "인식된 텍스트 없음" : server.raw.error || "인식 실패" : report.backendDone ? "원본 OCR 결과 없음" : "처리 중…"}
+                    {check.rawConfidence !== null && <small>모델 신뢰도 {(check.rawConfidence * 100).toFixed(1)} / 100</small>}
+                  </td>
                   <td>{server ? server.success ? server.texts.join("\n") || "인식된 텍스트 없음" : server.error || "인식 실패" : report.cancelled ? "취소" : report.backendDone ? "인식 실패" : "처리 중…"}
                     {check.backendConfidence !== null && <small>모델 신뢰도 {(check.backendConfidence * 100).toFixed(1)} / 100</small>}
                   </td>
@@ -193,13 +197,13 @@ export default function OcrCropTest() {
                     {client.confidence !== undefined && <small>모델 신뢰도 {client.confidence.toFixed(1)} / 100</small>}
                   </> : report.cancelled ? "취소" : report.browserDone ? "인식 실패" : "처리 중…"}</td>
                   <td>{agreementLabel(check.textAgreement)}
-                    {index >= 2 && <small>Paddle: {check.backendStatId ? statName(check.backendStatId) : "미확정"}<br />Tesseract: {check.browserStatId ? statName(check.browserStatId) : "미확정"}</small>}
+                    {index >= 2 && <small>Paddle 원본: {check.rawStatId ? statName(check.rawStatId) : "미확정"}<br />Paddle 전처리: {check.backendStatId ? statName(check.backendStatId) : "미확정"}<br />Tesseract: {check.browserStatId ? statName(check.browserStatId) : "미확정"}</small>}
                   </td>
                   <td>{agreementLabel(check.valueAgreement)}</td>
                   <td><span className={`crop-crosscheck crop-crosscheck--${check.selectedStatId ? "agree" : check.status}`}>{index >= 2
                     ? check.selectedStatId ? statName(check.selectedStatId) : "미확정"
                     : comparisonLabels[check.status]}</span>
-                    {index >= 2 && check.selectedSource && <small>{check.selectedSource === "both" ? "양쪽 판정" : check.selectedSource === "backend" ? "PaddleOCR 채택" : "Tesseract 채택"}</small>}
+                    {index >= 2 && check.selectedSource && <small>{sourceLabel(check.selectedSource)}</small>}
                   </td>
                 </tr>;
                 })}</tbody>
@@ -217,7 +221,9 @@ export default function OcrCropTest() {
               const match = local?.data?.rows.find(row => row.index === band.index)?.match ?? null;
               const decision = comparisons[band.index + 2];
               const selectedMatch = decision.selectedStatId ? { id: decision.selectedStatId, score: 1 } : match;
-              const resolved = resolveMatchedStat(selectedMatch, ocrResults?.[band.index + 2], band.index);
+              const selectedOcr = decision.selectedSource === "backend_raw" ? ocrResults?.[band.index + 2].raw ?? undefined
+                : decision.selectedSource === "browser" ? report?.browser.find(region => region.id === decision.id) : ocrResults?.[band.index + 2];
+              const resolved = resolveMatchedStat(selectedMatch, selectedOcr, band.index);
               const browserRegion = report?.browser.find(region => region.id === OCR_REGION_IDS[band.index + 2]);
               const serverRegion = ocrResults?.find(region => region.id === OCR_REGION_IDS[band.index + 2]);
               return <figure key={band.index} style={{ width: "100%", maxWidth: result.metadata.width }}>
@@ -225,19 +231,22 @@ export default function OcrCropTest() {
               <div className="crop-band-image" style={{ aspectRatio: `${result.metadata.width} / ${band.bottom - band.top}` }}>
                 <img src={result.url} alt={bandLabel(band.index)} style={{ transform: `translateY(-${band.top / result.metadata.height * 100}%)` }} />
               </div>
+              {serverRegion && <p className="crop-ocr-text">PaddleOCR 전처리 전: {serverRegion.raw
+                ? serverRegion.raw.success ? serverRegion.raw.texts.join(" · ") || "인식된 텍스트 없음" : serverRegion.raw.error || "인식 실패"
+                : "원본 OCR 결과 없음"}</p>}
               {serverRegion?.processed_image_base64 && <div className="crop-server-preview">
                 <p>PaddleOCR 서버 전처리 이미지</p>
                 <img src={`data:image/png;base64,${serverRegion.processed_image_base64}`} alt={`${bandLabel(band.index)} 서버 전처리 결과`} />
               </div>}
               {serverRegion && !serverRegion.processed_image_base64 && <p className="crop-ocr-text">서버 전처리 이미지 없음</p>}
               {band.index >= 0 && local?.data && <p className="crop-visual-text">이미지: {match ? `${statName(match.id)} (유사도 ${Math.round(match.score * 100)}%)` : "미확정"}</p>}
-              {ocrResults && <p className="crop-ocr-text">PaddleOCR: {ocrResults[band.index + 2].success
+              {ocrResults && <p className="crop-ocr-text">PaddleOCR 전처리 후: {ocrResults[band.index + 2].success
                 ? ocrResults[band.index + 2].texts.join(" · ") || "인식된 텍스트 없음"
                 : "인식 실패"}</p>}
               {report?.browserEnabled && <p className="crop-browser-text">Tesseract.js: {browserRegion
                 ? browserRegion.success ? browserRegion.texts.join(" · ") || "인식된 텍스트 없음" : browserRegion.error || "인식 실패"
                 : report.cancelled ? "취소" : report.browserDone ? "인식 실패" : "처리 중…"}</p>}
-              {band.index >= 0 && decision.selectedStatId && <p className="crop-resolved-text">스탯 판정: {statName(decision.selectedStatId)} · {decision.selectedSource === "both" ? "양쪽 판정" : decision.selectedSource === "backend" ? "PaddleOCR 채택" : "Tesseract 채택"}</p>}
+              {band.index >= 0 && decision.selectedStatId && <p className="crop-resolved-text">스탯 판정: {statName(decision.selectedStatId)} · {sourceLabel(decision.selectedSource)}</p>}
               {resolved && <p className="crop-resolved-text">판정: {statName(resolved.id)} {resolved.value}{!["hp", "atk", "def"].includes(resolved.id) ? "%" : ""}{resolved.corrected ? " · 소수점 보정" : ""}</p>}
             </figure>;
             })}

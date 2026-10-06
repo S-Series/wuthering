@@ -11,18 +11,21 @@ registerOcrBatchRoute(app, pLimit(1));
 const ids = ["name", "cost", "main_1", "main_2", "sub_1", "sub_2", "sub_3", "sub_4", "sub_5"];
 const originalFetch = globalThis.fetch;
 let forwarded = 0;
+let expectedCompareRaw: string | null = null;
 globalThis.fetch = async (url, options) => {
   assert.equal(String(url), "http://ocr.invalid/ocr/batch");
   const form = options!.body as FormData;
   assert.equal(form.get("lang"), "en");
+  assert.equal(form.get("compare_raw"), expectedCompareRaw);
   assert.deepEqual(form.getAll("files").map(file => (file as File).name), ids.map(id => `${id}.png`));
   forwarded++;
   return Response.json({ success: true, regions: ids.map(id => ({ id, success: true, texts: [] })) });
 };
-async function send(names: string[]) {
+async function send(names: string[], compareRaw?: string) {
   const form = new FormData();
   for (const id of names) form.append("files", new Blob(["image"], { type: "image/png" }), `${id}.png`);
   form.set("lang", "en");
+  if (compareRaw !== undefined) form.set("compare_raw", compareRaw);
   const request = new Request("http://test", { method: "POST", body: form });
   return app.inject({ method: "POST", url: "/api/ocr/batch", headers: { "content-type": request.headers.get("content-type")! }, payload: Buffer.from(await request.arrayBuffer()) });
 }
@@ -34,6 +37,10 @@ try {
   assert.equal((await send([...ids.slice(1), "cost"])).statusCode, 400);
   assert.equal((await send([...ids, "extra"])).statusCode, 413);
   assert.equal(forwarded, 1);
+  expectedCompareRaw = "true";
+  assert.equal((await send(ids, "true")).statusCode, 200);
+  assert.equal((await send(ids, "invalid")).statusCode, 400);
+  assert.equal(forwarded, 2);
   console.log("PASS: nine-file multipart forwarding, canonical order, missing/duplicate/extra rejection");
 } finally {
   globalThis.fetch = originalFetch;

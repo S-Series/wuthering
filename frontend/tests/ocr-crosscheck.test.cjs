@@ -73,6 +73,20 @@ test("conflicting stat types select the higher model confidence on a common scal
   assert.equal(check(server, { ...client, confidence: 81 }).selectedStatId, null);
   assert.equal(check(region("sub_1", "ATK"), client).selectedStatId, null);
 });
+test("raw PaddleOCR participates in arbitration and survives processed failure", () => {
+  const raw = { ...region("sub_1", "DEF"), tokens: [{ text: "DEF", confidence: 0.95 }] };
+  const server = { ...region("sub_1", "ATK"), tokens: [{ text: "ATK", confidence: 0.8 }], raw };
+  const client = { ...region("sub_1", "HP"), confidence: 90 };
+  const result = check(server, client);
+  assert.equal(result.selectedStatId, "def");
+  assert.equal(result.selectedSource, "backend_raw");
+  assert.equal(check({ ...region("sub_1", "", false), raw }, region("sub_1", "", false)).selectedStatId, "def");
+});
+test("three-way conflicts with tied top confidence remain unresolved", () => {
+  const server = { ...region("sub_1", "ATK"), tokens: [{ text: "ATK", confidence: 0.8 }],
+    raw: { ...region("sub_1", "DEF"), tokens: [{ text: "DEF", confidence: 0.9 }] } };
+  assert.equal(check(server, { ...region("sub_1", "HP"), confidence: 90 }).selectedStatId, null);
+});
 test("matching numbers with conflicting labels are not confirmed", () => {
   const result = check(region("sub_1", "공격력 9.4%"), region("sub_1", "방어력 9.4%"));
   assert.equal(result.status, "conflict");

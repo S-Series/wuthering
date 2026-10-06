@@ -58,6 +58,14 @@ class BatchTests(unittest.TestCase):
                 for region in regions:
                     with Image.open(io.BytesIO(base64.b64decode(region["processed_image_base64"]))) as preview:
                         self.assertEqual((preview.height, preview.width, 3), calls[0])
+                self.assertTrue(all(region["raw"] is None for region in regions))
+                calls.clear()
+                compared = service.analyze_batch({id: buffer.getvalue() for id in service.REGION_IDS}, "en", True)
+                self.assertEqual(len(calls), 18)
+                self.assertEqual(calls[0], (30, 100, 3))
+                self.assertGreater(calls[1][0], calls[0][0])
+                self.assertFalse(compared["regions"][2]["raw"]["success"])
+                self.assertTrue(compared["regions"][2]["success"])
                 with self.assertRaises(ValueError):
                     asyncio.run(service.run_ocr_batch(files[:8], "en"))
                 duplicates = [UploadFile(filename="name.png", file=io.BytesIO(buffer.getvalue())) for _ in range(9)]

@@ -4,7 +4,7 @@ import { createOcrRegionImages, OCR_REGION_IDS, type OcrRegionResult } from "./o
 
 export { OCR_REGION_IDS, type OcrRegionId, type OcrRegionResult } from "./ocr.regions";
 
-export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: string, signal: AbortSignal): Promise<OcrRegionResult[]> {
+export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: string, signal: AbortSignal, options: { compareRaw?: boolean } = {}): Promise<OcrRegionResult[]> {
   const gateway = import.meta.env.VITE_GATEWAY_URL;
   if (!gateway) throw new Error("OCR 서버 주소가 설정되지 않았습니다.");
   if (metadata.bands.length !== 9 || metadata.bands.some((band, i) => band.index !== i - 2)) {
@@ -19,6 +19,7 @@ export async function requestOcrBatch(file: File, metadata: CropMetadata, lang: 
     const images = await createOcrRegionImages(file, metadata, controller.signal);
     const form = new FormData();
     form.append("lang", lang);
+    if (options.compareRaw) form.append("compare_raw", "true");
     for (const image of images) {
       form.append("files", image.blob, `${image.id}.png`);
     }

@@ -10,8 +10,10 @@ export type OcrCrosscheck = {
   valueAgreement: boolean | null;
   backendStatId: string | null;
   browserStatId: string | null;
+  rawStatId: string | null;
+  rawConfidence: number | null;
   selectedStatId: string | null;
-  selectedSource: "backend" | "browser" | "both" | null;
+  selectedSource: "backend" | "backend_raw" | "browser" | "both" | null;
   backendConfidence: number | null;
   browserConfidence: number | null;
 };
@@ -66,15 +68,17 @@ function confidence(region: OcrRegionResult | undefined, browser: boolean): numb
   return tokens.length ? tokens.reduce((sum, token) => sum + token.confidence, 0) / tokens.length : null;
 }
 
-function selectStat(backendStatId: string | null, browserStatId: string | null,
-  backendConfidence: number | null, browserConfidence: number | null) {
-  if (backendStatId && !browserStatId) return { selectedStatId: backendStatId, selectedSource: "backend" as const };
-  if (browserStatId && !backendStatId) return { selectedStatId: browserStatId, selectedSource: "browser" as const };
-  if (backendStatId && backendStatId === browserStatId) return { selectedStatId: backendStatId, selectedSource: "both" as const };
-  if (backendStatId && browserStatId && backendConfidence !== null && browserConfidence !== null && backendConfidence !== browserConfidence) {
-    return backendConfidence > browserConfidence
-      ? { selectedStatId: backendStatId, selectedSource: "backend" as const }
-      : { selectedStatId: browserStatId, selectedSource: "browser" as const };
+function selectStat(candidates: { id: string | null; source: "backend" | "backend_raw" | "browser"; confidence: number | null }[]) {
+  const valid = candidates.filter(candidate => candidate.id !== null);
+  if (valid.length && valid.every(candidate => candidate.id === valid[0].id)) {
+    return { selectedStatId: valid[0].id, selectedSource: valid.length > 1 ? "both" as const : valid[0].source };
+  }
+  if (valid.length && valid.every(candidate => candidate.confidence !== null)) {
+    valid.sort((a, b) => b.confidence! - a.confidence!);
+    const best = valid[0];
+    if (!valid.some(candidate => candidate.confidence === best.confidence && candidate.id !== best.id)) {
+      return { selectedStatId: best.id, selectedSource: best.source };
+    }
   }
   return { selectedStatId: null, selectedSource: null };
 }
@@ -90,7 +94,13 @@ export function crosscheckOcrRegions(backend: OcrRegionResult[], browser: OcrReg
     const browserStatId = isStat ? statKind(client, id) : null;
     const backendConfidence = confidence(serverRegion, false);
     const browserConfidence = confidence(clientRegion, true);
-    const selection = { ...selectStat(backendStatId, browserStatId, backendConfidence, browserConfidence), backendConfidence, browserConfidence };
+    const rawStatId = isStat ? statKind(content(serverRegion?.raw ?? undefined), id) : null;
+    const rawConfidence = confidence(serverRegion?.raw ?? undefined, false);
+    const selection = { ...selectStat([
+      { id: backendStatId, source: "backend", confidence: backendConfidence },
+      { id: rawStatId, source: "backend_raw", confidence: rawConfidence },
+      { id: browserStatId, source: "browser", confidence: browserConfidence },
+    ]), backendConfidence, browserConfidence, rawStatId, rawConfidence };
     if (!server || !client) return { id, status: server || client ? "partial" : "missing", textAgreement: null, valueAgreement: null, backendStatId, browserStatId, ...selection };
     let textAgreement: boolean | null = null;
     let valueAgreement: boolean | null = null;

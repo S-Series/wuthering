@@ -75,10 +75,10 @@ def wake(lang: str = Query("kr")):
 
 
 @app.post("/ocr/batch")
-async def ocr_batch(files: list[UploadFile] = File(...), lang: str = Form("kr")):
+async def ocr_batch(files: list[UploadFile] = File(...), lang: str = Form("kr"), compare_raw: bool = Form(False)):
     from fastapi import HTTPException
     try:
-        return await run_ocr_batch(files, lang)
+        return await run_ocr_batch(files, lang, compare_raw)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
     finally:

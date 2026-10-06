@@ -7,9 +7,14 @@ const IDS = ["name", "cost", "main_1", "main_2", "sub_1", "sub_2", "sub_3", "sub
 export function registerOcrBatchRoute(app: FastifyInstance, limitOcr: LimitFunction) {
   app.post("/api/ocr/batch", async (req, reply) => {
     const files = new Map<string, { buffer: Buffer; type: string }>();
-    let lang = "kr", total = 0;
-    for await (const part of req.parts({ limits: { files: 9, fields: 1, parts: 10, fileSize: MAX_BYTES } })) {
+    let lang = "kr", total = 0, compareRaw = false;
+    for await (const part of req.parts({ limits: { files: 9, fields: 2, parts: 11, fileSize: MAX_BYTES } })) {
       if (part.type === "field") {
+        if (part.fieldname === "compare_raw") {
+          if (!["true", "false"].includes(String(part.value))) return reply.code(400).send({ error: "Invalid raw comparison flag" });
+          compareRaw = String(part.value) === "true";
+          continue;
+        }
         if (part.fieldname !== "lang") return reply.code(400).send({ error: "Unexpected field" });
         lang = String(part.value);
         continue;
@@ -27,6 +32,7 @@ export function registerOcrBatchRoute(app: FastifyInstance, limitOcr: LimitFunct
     const safeLang = normalizeLang(lang);
     const form = new FormData();
     form.set("lang", safeLang);
+    if (compareRaw) form.set("compare_raw", "true");
     for (const id of IDS) {
       const file = files.get(id)!;
       form.append("files", new File([new Uint8Array(file.buffer)], `${id}.png`, { type: file.type }));

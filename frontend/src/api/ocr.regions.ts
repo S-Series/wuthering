@@ -4,7 +4,7 @@ export const OCR_REGION_IDS = ["name", "cost", "main_1", "main_2", "sub_1", "sub
 export type OcrRegionId = typeof OCR_REGION_IDS[number];
 export type OcrRegionResult = { id: OcrRegionId; success: boolean; texts: string[]; error?: string;
   confidence?: number; tokens?: { text: string; confidence: number }[];
-  processed_image_base64?: string | null };
+  processed_image_base64?: string | null; raw?: OcrRegionResult | null };
 export type OcrRegionImage = { id: OcrRegionId; blob: Blob };
 
 export async function createOcrRegionImages(file: File, metadata: CropMetadata, signal: AbortSignal): Promise<OcrRegionImage[]> {

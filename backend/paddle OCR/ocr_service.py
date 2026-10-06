@@ -21,7 +21,7 @@ _inference_lock = threading.Lock()
 REGION_IDS = ("name", "cost", "main_1", "main_2", "sub_1", "sub_2", "sub_3", "sub_4", "sub_5")
 
 
-async def run_ocr_batch(files, lang):
+async def run_ocr_batch(files, lang, compare_raw=False):
     from starlette.concurrency import run_in_threadpool
     if len(files) != len(REGION_IDS):
         raise ValueError("Expected nine OCR regions")
@@ -36,10 +36,10 @@ async def run_ocr_batch(files, lang):
         if not data or total > 15 * 1024 * 1024:
             raise ValueError("Invalid batch size")
         contents[region_id] = data
-    return await run_in_threadpool(analyze_batch, contents, lang)
+    return await run_in_threadpool(analyze_batch, contents, lang, compare_raw)
 
 
-def analyze_batch(contents, lang):
+def analyze_batch(contents, lang, compare_raw=False):
     if set(contents) != set(REGION_IDS):
         raise ValueError("Expected nine unique OCR regions")
     safe_lang = normalize_lang(lang)
@@ -49,19 +49,28 @@ def analyze_batch(contents, lang):
         engine = get_ocr(safe_lang)
         for region_id in REGION_IDS:
             processed_image_base64 = None
+            raw = None
             try:
                 with load_rgb_image(contents[region_id]) as image:
+                    if compare_raw:
+                        try:
+                            raw_tokens = sorted(extract_regions(engine.ocr(to_ocr_array(image), cls=True)),
+                                                key=lambda token: (round(token["cy"] / 12), token["x"]))
+                            raw = {"id": region_id, "success": True, "texts": [token["text"] for token in raw_tokens], "tokens": raw_tokens}
+                        except Exception:
+                            logger.exception("Raw OCR failed for region %s", region_id)
+                            raw = {"id": region_id, "success": False, "texts": [], "tokens": [], "error": "Raw region OCR failed"}
                     with preprocess_ocr_region(image) as processed:
                         processed_image_base64 = encode_png_base64(processed)
                         result = engine.ocr(to_ocr_array(processed), cls=True)
                 tokens = sorted(extract_regions(result), key=lambda token: (round(token["cy"] / 12), token["x"]))
                 logger.info("Batch OCR region=%s lang=%s tokens=%s", region_id, safe_lang, len(tokens))
                 regions.append({"id": region_id, "success": True, "texts": [token["text"] for token in tokens], "tokens": tokens,
-                                "processed_image_base64": processed_image_base64})
+                                "processed_image_base64": processed_image_base64, "raw": raw})
             except Exception:
                 logger.exception("OCR failed for region %s", region_id)
                 regions.append({"id": region_id, "success": False, "texts": [], "tokens": [], "error": "Region OCR failed",
-                                "processed_image_base64": processed_image_base64})
+                                "processed_image_base64": processed_image_base64, "raw": raw})
     return {"success": True, "lang": safe_lang, "regions": regions}
 
 
