@@ -17,7 +17,7 @@ type OcrReport = {
   progress: BrowserOcrProgress | null;
 };
 const comparisonLabels = { agree: "일치", conflict: "불일치", partial: "검증 불충분", missing: "인식 결과 없음" };
-const sourceLabel = (source: string | null) => source === "both" ? "복수 결과 일치" : source === "backend_raw" ? "PaddleOCR 원본 채택" : source === "backend" ? "PaddleOCR 전처리 채택" : "Tesseract 채택";
+const sourceLabel = (source: string | null) => source === "both" ? "다수결 채택" : source === "image" ? "이미지 비교 채택" : source === "backend_raw" ? "PaddleOCR 원본 채택" : source === "backend" ? "PaddleOCR 전처리 채택" : "Tesseract 채택";
 const agreementLabel = (value: boolean | null) => value === null ? "—" : value ? "일치" : "불일치";
 const bandLabel = (index: number) => index === -2 ? "에코 이름 / 하모니" : index === -1
   ? "COST"
@@ -32,9 +32,9 @@ export default function OcrCropTest() {
   const report = ocrReport?.source === result && ocrReport?.lang === lang ? ocrReport : null;
   const ocrResults = report?.backend ?? null;
   const ocrBusy = report?.running ?? false;
-  const comparisons = crosscheckOcrRegions(ocrResults ?? [], report?.browser ?? []);
   const [matchReport, setMatchReport] = useState<{ source: Result; lang: string; data?: LocalMatches; error?: string } | null>(null);
   const local = matchReport?.source === result && matchReport?.lang === lang ? matchReport : null;
+  const comparisons = crosscheckOcrRegions(ocrResults ?? [], report?.browser ?? [], local?.data ?? null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
@@ -197,13 +197,13 @@ export default function OcrCropTest() {
                     {client.confidence !== undefined && <small>모델 신뢰도 {client.confidence.toFixed(1)} / 100</small>}
                   </> : report.cancelled ? "취소" : report.browserDone ? "인식 실패" : "처리 중…"}</td>
                   <td>{agreementLabel(check.textAgreement)}
-                    {index >= 2 && <small>Paddle 원본: {check.rawStatId ? statName(check.rawStatId) : "미확정"}<br />Paddle 전처리: {check.backendStatId ? statName(check.backendStatId) : "미확정"}<br />Tesseract: {check.browserStatId ? statName(check.browserStatId) : "미확정"}</small>}
+                    {index >= 2 && <small>Paddle 원본: {check.rawStatId ? statName(check.rawStatId) : "미확정"}<br />Paddle 전처리: {check.backendStatId ? statName(check.backendStatId) : "미확정"}<br />Tesseract: {check.browserStatId ? statName(check.browserStatId) : "미확정"}<br />이미지: {check.imageStatId ? `${statName(check.imageStatId)} (${Math.round(check.imageConfidence! * 100)}%)` : "미확정"}</small>}
                   </td>
                   <td>{agreementLabel(check.valueAgreement)}</td>
                   <td><span className={`crop-crosscheck crop-crosscheck--${check.selectedStatId ? "agree" : check.status}`}>{index >= 2
                     ? check.selectedStatId ? statName(check.selectedStatId) : "미확정"
                     : comparisonLabels[check.status]}</span>
-                    {index >= 2 && check.selectedSource && <small>{sourceLabel(check.selectedSource)}</small>}
+                    {index >= 2 && check.selectedSource && <small>{sourceLabel(check.selectedSource)} · {check.votes}표</small>}
                   </td>
                 </tr>;
                 })}</tbody>

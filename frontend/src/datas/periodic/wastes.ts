@@ -2,6 +2,16 @@ import type { SeasonInfo, PeriodicContent } from "./types";
 
 export const wastesSeasons: SeasonInfo[] = [
   {
+    season: 23,
+    startDate: "2026-10-26",
+    endDate: "2026-11-23",
+  },
+  {
+    season: 22,
+    startDate: "2026-09-27",
+    endDate: "2026-10-26",
+  },
+  {
     season: 21,
     startDate: "2026-08-30",
     endDate: "2026-09-27",
@@ -18,13 +28,13 @@ export const wastesSeasons: SeasonInfo[] = [
   },
   {
     season: 18,
-    startDate: "2026-06-08",
+    startDate: "2026-06-07",
     endDate: "2026-07-05",
   },
   {
     season: 17,
     startDate: "2026-05-10",
-    endDate: "2026-06-08",
+    endDate: "2026-06-07",
   },
 ];
 

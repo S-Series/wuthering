@@ -7,7 +7,7 @@ const ts = require("typescript");
 
 function loadApi(name, globals = {}, dependencies = {}) {
   const filename = path.join(__dirname, "../src/api", name + ".ts");
-  const source = fs.readFileSync(filename, "utf8");
+  const source = fs.readFileSync(filename, "utf8").replaceAll("import.meta.env", "({ BASE_URL: '/' })");
   const code = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
@@ -86,6 +86,73 @@ test("three-way conflicts with tied top confidence remain unresolved", () => {
   const server = { ...region("sub_1", "ATK"), tokens: [{ text: "ATK", confidence: 0.8 }],
     raw: { ...region("sub_1", "DEF"), tokens: [{ text: "DEF", confidence: 0.9 }] } };
   assert.equal(check(server, { ...region("sub_1", "HP"), confidence: 90 }).selectedStatId, null);
+});
+test("four-source majority beats a higher-confidence minority", () => {
+  const server = { ...region("sub_1", "ATK"), tokens: [{ text: "ATK", confidence: 0.7 }],
+    raw: { ...region("sub_1", "ATK"), tokens: [{ text: "ATK", confidence: 0.65 }] } };
+  const result = crosscheckOcrRegions([server], [{ ...region("sub_1", "ATK"), confidence: 60 }],
+    { rows: [{ index: 2, match: { id: "def", score: 0.99 } }], harmony: null }).find(item => item.id === "sub_1");
+  assert.equal(result.selectedStatId, "atk");
+  assert.equal(result.votes, 3);
+});
+test("two-to-two ties use the strongest confidence, not a confidence sum", () => {
+  const server = { ...region("sub_1", "ATK"), tokens: [{ text: "ATK", confidence: 0.8 }],
+    raw: { ...region("sub_1", "ATK"), tokens: [{ text: "ATK", confidence: 0.8 }] } };
+  const result = crosscheckOcrRegions([server], [{ ...region("sub_1", "DEF"), confidence: 70 }],
+    { rows: [{ index: 2, match: { id: "def", score: 0.95 } }], harmony: null }).find(item => item.id === "sub_1");
+  assert.equal(result.selectedStatId, "def");
+  assert.equal(result.votes, 2);
+  assert.equal(result.selectedConfidence, 0.95);
+});
+test("an image-only result is retained and invalid image IDs are excluded", () => {
+  const run = id => crosscheckOcrRegions([], [], { rows: [{ index: 2, match: { id, score: 0.9 } }], harmony: null })[4];
+  assert.equal(run("atkPct").selectedStatId, "atk");
+  assert.equal(run("dummy").selectedStatId, null);
+  assert.equal(run("unknown").selectedStatId, null);
+});
+
+const actualMatch = loadApi("ocr.match", {}, {
+  "@techstark/opencv-js/dist/opencv.js?url": { default: "/opencv.js" },
+  "@/datas/harmonies": { harmony: {} },
+});
+const resolverDeps = {
+  "./ocr.match": actualMatch,
+  "@/datas/echos": { ECHO_CANDIDATES: { en: [{ echoId: "testEcho", text: "Test Echo" }] }, echoDict: { Cost1: {}, Cost3: { testEcho: { type: [] } }, Cost4: {} } },
+  "@/datas/harmonies": { harmony: {} },
+};
+const { resolveBatchOcr } = loadApi("ocr.batch.resolve", {}, resolverDeps);
+test("production resolver uses browser headers and keeps image-only stat kinds", () => {
+  const result = resolveBatchOcr([], { rows: [{ index: 2, match: { id: "critDmg", score: 0.9 } }], harmony: null }, "en",
+    [region("name", "Test Echo"), region("cost", "COST 3")]);
+  assert.equal(result.echoId, "testEcho");
+  assert.equal(result.cost, 3);
+  assert.equal(result.echoStats[2][0], "critDmg");
+  assert.equal(result.echoStats[2][1], 0);
+});
+test("production resolver uses majority stat kinds and validates numeric values separately", () => {
+  const server = { ...region("sub_1", "ATK 9.4%"), raw: region("sub_1", "ATK 9.4%") };
+  const result = resolveBatchOcr([server], { rows: [{ index: 2, match: { id: "def", score: 0.99 } }], harmony: null }, "en",
+    [region("sub_1", "ATK 94%")]);
+  assert.equal(result.echoStats[2][0], "atkPct");
+  assert.equal(result.echoStats[2][1], 9.4);
+});
+test("production pipeline requests raw comparison and retains browser/vision after backend failure", async () => {
+  let rawRequested = false, received;
+  const { recognizeEchoImage } = loadApi("../components/features/Card/Echo/Ocr/echoOcr.helpers", {}, {
+    "@/api/ocr.preprocess": { prepareOcrImage: async () => ({ file: {}, metadata: {} }) },
+    "@/api/ocr.batch": { requestOcrBatch: async (_file, _meta, _lang, _signal, options) => { rawRequested = options.compareRaw; throw new Error("offline"); } },
+    "@/api/ocr.browser": { recognizeBrowserOcr: async () => [region("sub_1", "ATK")] },
+    "@/api/ocr.match": { matchOcrImages: async () => ({ rows: [{ index: 2, match: { id: "atk", score: 0.9 } }], harmony: null }) },
+    "@/api/ocr.batch.resolve": { resolveBatchOcr: (server, images, lang, browser) => {
+      received = { server, images, lang, browser };
+      return { echoId: null, echoStats: [["atk", 0]] };
+    } },
+  });
+  await recognizeEchoImage({}, "en", new AbortController().signal);
+  assert.equal(rawRequested, true);
+  assert.equal(received.server.length, 0);
+  assert.equal(received.browser.length, 1);
+  assert.equal(received.images.rows.length, 1);
 });
 test("matching numbers with conflicting labels are not confirmed", () => {
   const result = check(region("sub_1", "공격력 9.4%"), region("sub_1", "방어력 9.4%"));
