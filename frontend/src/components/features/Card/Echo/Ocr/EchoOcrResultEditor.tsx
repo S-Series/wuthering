@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   DndContext,
   closestCenter,
@@ -50,6 +50,8 @@ type Props = {
   resetAction: () => void;
   inputSlot?: ReactNode;
   resultSlot?: ReactNode;
+  draftOnly?: boolean;
+  onDraftChange?: (echo: EchoRuntime) => void;
 };
 
 const DEFAULT_ORDER = [0, 1, 2, 3, 4];
@@ -101,6 +103,8 @@ export default function EchoOcrResultEditor({
   resetAction,
   inputSlot,
   resultSlot,
+  draftOnly = false,
+  onDraftChange,
 }: Props) {
   const baseUrl = import.meta.env.VITE_IMAGE_BASE;
   const { cost, echoId, stats, setId } = datas;
@@ -113,6 +117,7 @@ export default function EchoOcrResultEditor({
   const [itemOrder, setItemOrder] = useState<number[]>(DEFAULT_ORDER);
 
   const [tempEcho, setTempEcho] = useState<EchoRuntime>(() => createEmptyEchoRuntime(4));
+  const skipInitialDraft = useRef(true);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -149,6 +154,11 @@ export default function EchoOcrResultEditor({
     setSourceItems(createItems(nextStats, lang));
     setItemOrder(DEFAULT_ORDER);
   }, [echoId, cost, stats, setId, lang]);
+
+  useEffect(() => {
+    if (skipInitialDraft.current) { skipInitialDraft.current = false; return; }
+    onDraftChange?.({ ...tempEcho, subOptions: itemOrder.map(index => tempEcho.subOptions[index]) as EchoRuntime["subOptions"] });
+  }, [tempEcho, itemOrder, onDraftChange]);
 
   const displayItems = useMemo(() => {
     return itemOrder
@@ -288,20 +298,20 @@ export default function EchoOcrResultEditor({
   };
 
   return (
-    <div className="echo-ocr-result-editor">
-      <div className="echo-ocr-result-editor__target-preview">
+    <div className={`echo-ocr-result-editor${draftOnly ? " echo-ocr-result-editor--draft" : ""}`}>
+      {!draftOnly && <div className="echo-ocr-result-editor__target-preview">
         <EchoOcrTargetPreview
           baseUrl={baseUrl}
           echoData={characterData.echoData[selectIdx]}
           score={equipmentScore?.[selectIdx] ?? [0, 0]}
           slotNumber={selectIdx + 1}
         />
-      </div>
+      </div>}
 
-      <div className="echo-ocr-result-editor__image-fields">
+      {!draftOnly && <div className="echo-ocr-result-editor__image-fields">
         {inputSlot}
         {resultSlot}
-      </div>
+      </div>}
 
       <div className="echo-ocr-result-editor__editor-fields">
         <div className="echo-ocr-result-editor__base-fields">
@@ -394,14 +404,14 @@ export default function EchoOcrResultEditor({
           </SortableContext>
         </DndContext>
 
-        <button
+        {!draftOnly && <button
           type="button"
           className="echo-ocr-result-editor__apply-button"
           onClick={handleApplyData}
           disabled={!tempEcho.echoId || !tempEcho.setId || tempEcho.mainOption.statId === "dummy"}
         >
           데이터 적용
-        </button>
+        </button>}
       </div>
     </div>
   )
