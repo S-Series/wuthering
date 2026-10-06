@@ -136,6 +136,9 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
     getStatOptionBase(lang, characterData.characterId)
     , [lang, characterData.characterId])
 
+  const MAIN_STAT_OPTION_BASE = useMemo(() => getStatOptionBase(lang, characterData.characterId, selectedCost, characterData.constell[0]),
+    [lang, characterData.characterId, selectedCost, characterData.constell]);
+
 
   const COST_DROP_OPTION: SelectOption<Cost>[] = [
     { value: 4, label: "Cost 4" },
@@ -171,13 +174,13 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
       }));
   }, [ECHO_ID_OPTION_BASE, lang, echoData.setId, imgVer]);
 
-  const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
+  const STAT_OPTION_MAIN_COST4 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[0] !== 0
   )
-  const STAT_OPTION_MAIN_COST3 = STAT_OPTION_BASE.filter(
+  const STAT_OPTION_MAIN_COST3 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[1] !== 0
   )
-  const STAT_OPTION_MAIN_COST1 = STAT_OPTION_BASE.filter(
+  const STAT_OPTION_MAIN_COST1 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[2] !== 0
   )
   const STAT_OPTION_SUB = STAT_OPTION_BASE.filter(
@@ -383,7 +386,7 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
             }
             menuPortalTarget={document.body}
             value={
-              STAT_OPTION_BASE.find(
+              MAIN_STAT_OPTION_BASE.find(
                 (e) => e.value === characterData.echoData[index].mainOption.statId
               ) ?? null
             }

@@ -10,6 +10,7 @@ import { echoDict, getEchoCostKey, type EchoCostKey, type EchoData, type EchoId 
 import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { characterScoreSheet, getCharacterScore, type CharacterScore } from "@/datas/characterScoreSheet";
 import { characterMeta, getCharacterMeta, type CharacterMeta } from "@/datas/characters.meta";
+import { isValidEchoMainOption } from "./echoMainOption.helpers";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;
@@ -440,20 +441,7 @@ export const calcEchoScore = (
   }
 
   // 주옵 무효 2랭크 다운
-  if (echo.cost === 4) {
-    if (
-      !metaData.cost4MainStats.some((item) => item === echo.mainOption.statId)
-    ) { av = av - 10; }
-  }
-  if (echo.cost === 3) {
-    if (
-      !metaData.cost3MainStats.some((item) => item === echo.mainOption.statId)
-    ) { av = av - 10; }
-  }
-  if (echo.cost === 1) {
-    const statKey : StatId = `${metaData.statType}Pct`
-    if (!(echo.mainOption.statId === statKey)) av = av - 10; 
-  }
+  if (!isValidEchoMainOption(metaData, echo.cost, echo.mainOption.statId)) av -= 10;
 
   return[cv, av];
 };

@@ -253,13 +253,16 @@ export default function EchoOcrResultEditor({
     getStatOptionBase(lang, characterData.characterId)
     , [lang, characterData.characterId])
 
-  const STAT_OPTION_MAIN_COST4 = STAT_OPTION_BASE.filter(
+  const MAIN_STAT_OPTION_BASE = useMemo(() => getStatOptionBase(lang, characterData.characterId, tempEcho.cost, characterData.constell[0]),
+    [lang, characterData.characterId, tempEcho.cost, characterData.constell]);
+
+  const STAT_OPTION_MAIN_COST4 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[0] !== 0
   )
-  const STAT_OPTION_MAIN_COST3 = STAT_OPTION_BASE.filter(
+  const STAT_OPTION_MAIN_COST3 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[1] !== 0
   )
-  const STAT_OPTION_MAIN_COST1 = STAT_OPTION_BASE.filter(
+  const STAT_OPTION_MAIN_COST1 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[2] !== 0
   )
   const STAT_OPTION_SUB = STAT_OPTION_BASE.filter(
@@ -373,7 +376,7 @@ export default function EchoOcrResultEditor({
               menuShouldScrollIntoView={false}
               isSearchable={false}
               placeholder="주옵션"
-              value={STAT_OPTION_BASE.find((option) => option.value === tempEcho.mainOption.statId) ?? null}
+              value={MAIN_STAT_OPTION_BASE.find((option) => option.value === tempEcho.mainOption.statId) ?? null}
               onChange={(option) => {
                 if (!option) return;
                 setTempEcho((prev) => ({

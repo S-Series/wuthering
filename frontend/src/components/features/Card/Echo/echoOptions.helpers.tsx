@@ -6,7 +6,8 @@ import { characterScoreSheet } from "@/datas/characterScoreSheet";
 import type { CharacterId } from "@/datas/characterStats";
 import { FixedStats, type StatId } from "@/datas/stats";
 import { harmony } from "@/datas/harmonies";
-import { characterMeta } from "@/datas/characters.meta";
+import { characterMeta, getCharacterMeta } from "@/datas/characters.meta";
+import { isValidEchoMainOption } from "@/runtime/echoMainOption.helpers";
 
 type RelevantOptionData = Pick<SelectOptionStatOriginal, "scoreWeight" | "isRelevant" | "relevanceTier">;
 
@@ -505,8 +506,11 @@ export const getEchoOptionBase = (
 export const getStatOptionBase = (
     lang: LangType,
     characterId?: CharacterId,
+    mainCost?: Cost,
+    constell = 0,
 ): SelectOptionStatOriginal<StatId>[] => {
     const score = characterId ? characterScoreSheet[characterId] : null;
+    const mainMeta = characterId && mainCost ? getCharacterMeta(characterId, constell) : null;
     const flatRelevantStat = characterId ? characterMeta[characterId]?.statType : null;
     const list = Object.entries(FixedStats).filter(
       (v) => v[1].id !== "dummy").map(([, stat]) => {
@@ -516,7 +520,8 @@ export const getStatOptionBase = (
             ? (score?.atkPct ?? 0) >= 1
             : statId === flatRelevantStat;
         const relevanceTier: NonNullable<SelectOptionStatOriginal["relevanceTier"]> =
-            scoreWeight >= 1 ? "valid"
+            mainMeta && mainCost ? (isValidEchoMainOption(mainMeta, mainCost, statId) ? "valid" : "invalid")
+                : scoreWeight >= 1 ? "valid"
                 : scoreWeight > 0 || isFlatRelevant ? "partial" : "invalid";
         const isRelevant = relevanceTier !== "invalid";
 

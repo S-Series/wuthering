@@ -13,6 +13,7 @@ import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { locale } from "@/locales/locale";
 import { useAppStore, type LangType } from "@/stores/appStore";
 import type { CharacterData, CharacterStat } from "@/types/character.type";
+import { countInvalidEquippedMainOptions } from "@/runtime/echoMainOption.helpers";
 
 import "./Detail.css";
 import { characterStat } from "@/datas/characterStats";
@@ -152,8 +153,9 @@ function getFinalStatValue(stat: CharacterStat | null, statId: StatId) {
 function getResonancePenalty(cData: CharacterData, resonanceValue: number) {
   const meta = getCharacterMeta(cData.characterId, cData.constell[0]);
   const shortage = Math.max(0, meta.resReq - resonanceValue);
+  const invalidMainOptionCount = countInvalidEquippedMainOptions(cData.echoData, cData.echoDataIndex, meta);
   if (shortage <= 0) {
-    return { shortage, penalty: 0, invalidMainOptionCount: 0 };
+    return { shortage, penalty: 0, invalidMainOptionCount };
   }
 
   const indexed = cData.echoDataIndex.slice(0, 5);
@@ -190,7 +192,7 @@ function getResonancePenalty(cData: CharacterData, resonanceValue: number) {
   return {
     shortage,
     penalty: Math.round(penalty * 10) / 10,
-    invalidMainOptionCount: Math.ceil(shortage / 32),
+    invalidMainOptionCount,
   };
 }
 
