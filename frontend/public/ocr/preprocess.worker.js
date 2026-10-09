@@ -3,6 +3,7 @@ self.onmessage = async ({ data }) => {
   let bitmap;
   const mats = [];
   try {
+    importScripts(new URL("row-geometry.js", data.assetBase).href);
     importScripts(data.cvUrl);
     const cv = await self.cv;
     bitmap = await createImageBitmap(data.file);
@@ -67,9 +68,17 @@ self.onmessage = async ({ data }) => {
     }
     const clamp = (box) => [Math.max(0, Math.min(w-1, Math.floor(box[0]))), Math.max(0, Math.min(h-1, Math.floor(box[1]))),
       Math.max(1, Math.min(w, Math.ceil(box[2]))), Math.max(1, Math.min(h, Math.ceil(box[3])))];
-    const half = profile.half_row*best.unit;
-    const rows = best.centers.map(cy => clamp([best.x1, cy-half, best.x2, cy+half]));
-    const box = clamp([best.x1, best.y+profile.top*best.unit, best.x2, best.centers[6]+half]);
+    const probeBox = clamp([best.x1, best.y, best.x2, best.y + best.unit * 6.5]);
+    const probe = new OffscreenCanvas(probeBox[2]-probeBox[0], probeBox[3]-probeBox[1]);
+    const probeContext = probe.getContext("2d", { willReadFrequently: true });
+    probeContext.drawImage(bitmap, probeBox[0], probeBox[1], probe.width, probe.height, 0, 0, probe.width, probe.height);
+    const detected = findStatRows(probeContext.getImageData(0, 0, probe.width, probe.height).data, probe.width, probe.height, best.unit);
+    // Incomplete/low-contrast option lists retain the existing geometry fallback.
+    const geometry = detected
+      ? detected.map(row => ({ center: probeBox[1] + row.center, half: row.half }))
+      : best.centers.map(center => ({ center, half: profile.half_row * best.unit }));
+    const rows = geometry.map(row => clamp([best.x1, row.center-row.half, best.x2, row.center+row.half]));
+    const box = clamp([best.x1, best.y+profile.top*best.unit, best.x2, rows[6][3]]);
     const header = [box[0], box[1], box[2], rows[0][1]];
     const splitY = Math.round(best.y - 0.12*best.unit);
     const headers = data.splitHeader

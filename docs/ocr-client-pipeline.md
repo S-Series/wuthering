@@ -5,8 +5,11 @@
 1. `OcrImageInput` starts `prepareOcrImage` before making an OCR request.
 2. A disposable classic Web Worker loads pinned OpenCV.js 4.11 on demand. It searches
    a bounded grayscale region for COST using the supplied screenshot templates.
-3. Aspect ratio selects the reference geometry, and detected COST position/scale
-   restores original-image coordinates. Full screenshots and cropped panels are supported.
+3. Aspect ratio selects the COST template, and detected COST position/scale
+   restores image coordinates. The browser measures seven actual option text bands
+   and their spacing independently of the template's language-specific row offsets.
+   Incomplete or low-contrast lists retain the reference geometry fallback.
+   Full screenshots and cropped panels are supported.
 4. The browser extracts the header, two main rows and five substat rows. It arranges
    those regions with gaps in a PNG and sends that image plus versioned band metadata.
 5. The Railway gateway forwards the metadata and includes it in its OCR cache key.
@@ -38,6 +41,12 @@ included in the generated runtime assets.
 
 ## Validation and deployment
 
+- `node scripts/test-ocr-adaptive-crop.cjs <screenshot.png>` checks the full screenshot
+  at three resolutions and a cropped right panel in headless Edge. All nine regions
+  must be present and option text must have clearance from the crop boundaries.
+  `PLAYWRIGHT_PATH` can select an externally installed Playwright package.
+- `npm run test:ocr` includes synthetic text-band geometry tests across row spacings,
+  resolutions, and incomplete/blank lists.
 - `node scripts/test-ocr-browser.mjs` in the frontend runs 12 real screenshots through
   a headless Edge worker and tests cancellation. It needs Playwright and the local
   reference files. Results are written to the OS temp directory.
