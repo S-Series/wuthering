@@ -4,6 +4,19 @@ import "./DevAnalystic.css";
 
 const number = new Intl.NumberFormat("ko-KR");
 
+function DailyChart({ rows, metric }: { rows: DevAnalyticsData["daily"]; metric: "visitors" | "pageviews" }) {
+  if (!rows.length) return <p className="dev-analytics-empty">해당 기간에 데이터가 없습니다.</p>;
+  const max = Math.max(...rows.map((row) => row[metric]), 1);
+  return <div className={`dev-analytics-chart dev-analytics-chart--${metric}`}>
+    {rows.map((row) => <div className="dev-analytics-day" key={row.date}
+      title={`${row.date} 05:00~다음 날 05:00 · 조회수 ${number.format(row.pageviews)} · 방문자 ${number.format(row.visitors)}`}>
+      <span>{number.format(row[metric])}</span>
+      <div className="dev-analytics-column"><span style={{ height: `${Math.max(row[metric] / max * 100, 2)}%` }} /></div>
+      <small>{row.date.slice(5)}</small>
+    </div>)}
+  </div>;
+}
+
 function MetricList({ rows, labelKey }: {
   rows: Array<{ pageviews: number; visitors: number } & Record<string, string | number>>;
   labelKey: string;
@@ -44,8 +57,6 @@ export default function DevAnalystic() {
     return () => controller.abort();
   }, [days, requestKey]);
 
-  const maxDaily = Math.max(...(data?.daily.map((row) => row.pageviews) ?? []), 1);
-
   return <section className="dev-analytics">
     <div className="dev-analytics-toolbar">
       <div>
@@ -57,6 +68,8 @@ export default function DevAnalystic() {
           <option value={1}>최근 1일</option>
           <option value={7}>최근 7일</option>
           <option value={30}>최근 30일</option>
+          <option value={60}>최근 60일</option>
+          <option value={90}>최근 90일</option>
         </select>
         <button type="button" onClick={() => setRefresh((value) => value + 1)} disabled={loading}>새로고침</button>
       </div>
@@ -67,23 +80,21 @@ export default function DevAnalystic() {
 
     {data && !loading && <>
       {data.availableDays > 0 && data.availableDays < days && <p className="dev-analytics-state" role="status">
-        {data.firstDay} ~ {data.lastDay} 중 {data.availableDays}일의 통계가 저장되었습니다. 빠진 날짜는 수집 중입니다.
+        {data.firstDay} ~ {data.lastDay} 중 {data.availableDays}일의 통계가 저장되었습니다. 저장된 날짜만 합산했으며, 과거 데이터는 Vercel 보관 기간에 따라 복구되지 않을 수 있습니다.
       </p>}
       {data.availableDays === 0 ? <p className="dev-analytics-state">아직 저장된 통계가 없습니다. 첫 수집이 완료되면 여기에 표시됩니다.</p> : <>
       <div className="dev-analytics-cards">
-        <article><span>페이지 조회수</span><strong>{number.format(data.total.pageviews)}</strong></article>
         <article><span>일별 방문자 합계</span><strong>{number.format(data.total.visitors)}</strong></article>
+        <article><span>페이지 조회수</span><strong>{number.format(data.total.pageviews)}</strong></article>
         <article><span>일평균 조회수</span><strong>{number.format(Math.round(data.total.pageviews / data.availableDays))}</strong></article>
       </div>
       <section className="dev-analytics-panel">
+        <h3>일별 방문자 수</h3>
+        <DailyChart rows={data.daily} metric="visitors" />
+      </section>
+      <section className="dev-analytics-panel">
         <h3>일별 조회수</h3>
-        {data.daily.length ? <div className="dev-analytics-chart">
-          {data.daily.map((row) => <div className="dev-analytics-day" key={row.date} title={`${row.date} 05:00~다음 날 05:00 · 조회수 ${number.format(row.pageviews)} · 방문자 ${number.format(row.visitors)}`}>
-            <span>{number.format(row.pageviews)}</span>
-            <div className="dev-analytics-column"><span style={{ height: `${Math.max(row.pageviews / maxDaily * 100, 2)}%` }} /></div>
-            <small>{row.date.slice(5)}</small>
-          </div>)}
-        </div> : <p className="dev-analytics-empty">해당 기간에 데이터가 없습니다.</p>}
+        <DailyChart rows={data.daily} metric="pageviews" />
       </section>
       <div className="dev-analytics-breakdowns">
         <section className="dev-analytics-panel"><h3>인기 페이지</h3><MetricList rows={data.pages} labelKey="path" /></section>

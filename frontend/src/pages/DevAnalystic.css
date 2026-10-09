@@ -19,6 +19,7 @@
 .dev-analytics-day > span { font-size: 11px; color: var(--nav-muted-text); }
 .dev-analytics-column { display: flex; align-items: flex-end; width: 100%; height: 165px; background: var(--nav-control-bg); border-radius: 5px 5px 0 0; overflow: hidden; }
 .dev-analytics-column span { display: block; width: 100%; background: var(--nav-accent); border-radius: 5px 5px 0 0; }
+.dev-analytics-chart--visitors .dev-analytics-column span { background: #8bd7b0; }
 .dev-analytics-day small { color: var(--nav-muted-text); white-space: nowrap; font-size: 10px; }
 .dev-analytics-breakdowns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .dev-analytics-row { margin-bottom: 18px; }
