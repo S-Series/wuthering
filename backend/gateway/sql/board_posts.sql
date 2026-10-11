@@ -41,6 +41,7 @@ create index if not exists board_posts_author_id_idx
   on public.board_posts (author_id, created_at desc);
 
 alter table public.board_posts enable row level security;
+grant select, insert, update on table public.board_posts to service_role;
 
 create table if not exists public.board_comments (
   id uuid primary key default gen_random_uuid(),
@@ -62,6 +63,7 @@ create index if not exists board_comments_author_id_idx
   on public.board_comments (author_id, created_at desc);
 
 alter table public.board_comments enable row level security;
+grant select, insert, update on table public.board_comments to service_role;
 
 create or replace function public.refresh_board_post_comment_count()
 returns trigger

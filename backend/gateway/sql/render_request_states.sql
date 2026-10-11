@@ -13,6 +13,7 @@ create index if not exists render_request_states_cooldown_expires_at_idx
   on public.render_request_states (cooldown_expires_at);
 
 alter table public.render_request_states enable row level security;
+grant select, insert, update on table public.render_request_states to service_role;
 
 comment on table public.render_request_states is
   'Shared render lock/cooldown state for gateway instances. Accessed by the gateway service role.';

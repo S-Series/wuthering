@@ -11,6 +11,7 @@ create table if not exists public.dev_analytics_daily (
 );
 
 alter table public.dev_analytics_daily enable row level security;
+grant select, insert, update on table public.dev_analytics_daily to service_role;
 
 comment on table public.dev_analytics_daily is
   'Vercel Web Analytics snapshots for 05:00 to 05:00 Asia/Seoul days. Read and written by the gateway service role.';
