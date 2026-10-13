@@ -142,7 +142,7 @@ export const harmony = {
       {
         count: 2,
         options: [
-          { statId: FixedStats.resonanceBns.id, value: 10.0 },
+          { statId: FixedStats.aeroBns.id, value: 10.0 },
         ],
       },
       {
