@@ -57,7 +57,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
-    [FixedStats.liberationBns.id]: 1.5,
+    [FixedStats.basicBns.id]: 1.0,
+    [FixedStats.heavyBns.id]: 1.0,
+    [FixedStats.liberationBns.id]: 1.0,
     [FixedStats.resonanceBns.id]: 1,
     maxResCount: 3,
   },
