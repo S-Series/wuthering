@@ -235,6 +235,24 @@ MIT License
 
 # Developer pages
 
+## Board read performance
+
+For the October 2026 traffic audit, implemented request reductions, the required cloud-sync SQL migration, and the proposed multi-instance architecture, see [gateway scaling notes](backend/gateway/SCALING.md). Apply `backend/gateway/sql/character_data_atomic_sync.sql` before deploying the new single-character cloud-save route.
+
+The gateway caches public board lists, post details, and comments in process memory for 10 seconds, with a shared capacity of 256 responses. Concurrent identical reads share one DB load. Successful board writes clear the local cache, including in-flight reads, so an older query cannot repopulate it after a write. User syncs do not globally evict the public board cache; nickname updates become visible within its TTL. Failures and missing posts are not cached. Browsers receive `Cache-Control: no-store`; only the gateway holds these responses.
+
+Author nicknames are embedded through the existing `board_posts/board_comments → users → memberships` foreign keys, removing separate nickname requests. Detail reads run alongside the atomic view-count increment; every tracked view still performs its own increment. Comment reads check that the parent post is published in parallel with loading comments. Public response fields and authorization rules remain the same.
+
+Inspect `X-Cache: MISS/HIT/COALESCED` and `Server-Timing: board_read` in browser network tools. Tracked detail requests also include `board_total`, which includes waiting for the view increment. Run `npm run test:board` and `npx tsc --noEmit` in `backend/gateway` to verify the changes.
+
+These caches are local to each gateway process. Other replicas and direct DB edits may remain stale until the 10-second TTL expires. A deployment needing immediate invalidation across replicas should use shared cache invalidation. No external cache service is required for the current implementation.
+
+Only title searches use `ILIKE '%term%'`; ordinary list reads do not. The existing B-tree list indexes do not provide a trigram title search index. To add one while preserving case-insensitive substring matching, apply [`backend/gateway/sql/board_search_index.sql`](backend/gateway/sql/board_search_index.sql) separately in the Supabase SQL editor. This optional migration is not applied automatically by gateway startup. Very short substrings may not benefit from trigram indexing; see the [PostgreSQL pg_trgm documentation](https://www.postgresql.org/docs/current/pgtrgm.html). For a large table, schedule a concurrent index build as described in the SQL file.
+
+Read-only measurements on 2026-10-16 found five published posts and a live list response of approximately 1.2–2.3 seconds. With both old and new routes running locally against the same remote DB, a repeated uncached list took 386 ms with the old route and 147 ms with the joined route; cache hits took under 1 ms for lists/details and approximately 1 ms for comments. These are small-sample gateway measurements, exclude browser-to-gateway latency, and are not post-deployment guarantees. One-character/three-character title searches and unfiltered DB reads measured approximately 90–270 ms without a consistent search penalty at this dataset size. Production query-plan inspection was unavailable, so actual production index selection has not been verified.
+
+## Developer tools
+
 - `/dev` links to the developer tools.
 - `/dev/ocr` contains the OCR crop test and raw results for all nine regions (the old `/test` and `/dev/test` URLs redirect here).
 - `/dev/analystic` shows public, aggregated Vercel Web Analytics statistics.

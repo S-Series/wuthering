@@ -2,7 +2,9 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/server.ts",
-    "test:analytics": "tsx src/services/devAnalyticsDaily.test.ts"
+    "test:analytics": "tsx src/services/devAnalyticsDaily.test.ts",
+    "test:board": "tsx src/services/readThroughCache.test.ts && tsx src/routes/board.test.ts",
+    "test:traffic": "tsx src/lib/supabaseAdmin.test.ts && tsx src/services/ocrAdmission.test.ts && tsx src/services/eventBuffer.test.ts && tsx src/routes/ocrBatch.test.ts && tsx src/services/traffic.test.ts"
   },
   "dependencies": {
     "@fastify/cors": "^9",

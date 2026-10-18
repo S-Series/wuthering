@@ -90,7 +90,7 @@ export async function uploadCharacterCloudData(
   };
 }
 
-export async function downloadCharacterCloudData(
+async function requestCharacterCloudData(
   characterId?: CharacterId
 ): Promise<CloudDownloadResult> {
   const gatewayUrl = import.meta.env.VITE_GATEWAY_URL;
@@ -164,4 +164,19 @@ export async function downloadCharacterCloudData(
         : {},
     updatedAt: body.updatedAt ?? null,
   };
+}
+
+// Coalesce only identical in-flight reads, scoped to the authenticated user.
+const cloudDownloads = new Map<string, Promise<CloudDownloadResult>>();
+export function downloadCharacterCloudData(characterId?: CharacterId): Promise<CloudDownloadResult> {
+  const uid = auth?.currentUser?.uid;
+  if (!uid) return requestCharacterCloudData(characterId);
+  const key = JSON.stringify([uid, characterId ?? null]);
+  const existing = cloudDownloads.get(key);
+  if (existing) return existing;
+  const request = requestCharacterCloudData(characterId).finally(() => {
+    if (cloudDownloads.get(key) === request) cloudDownloads.delete(key);
+  });
+  cloudDownloads.set(key, request);
+  return request;
 }

@@ -59,6 +59,7 @@ export const RENDER_UPSTREAM = (process.env.RENDER_UPSTREAM ?? "").trim();
 
 export const PORT = Number(process.env.PORT ?? 8080);
 export const OCR_CONCURRENCY = Number(process.env.OCR_CONCURRENCY ?? 2);
+export const OCR_MAX_PENDING = Number(process.env.OCR_MAX_PENDING ?? 2);
 export const RENDER_CARD_CACHE_TTL_MS = Number(
   process.env.RENDER_CARD_CACHE_TTL_MS ?? 30 * 60 * 1000
 );
@@ -81,6 +82,10 @@ export const MAX_BYTES = 15 * 1024 * 1024;
 export const ALLOWED_MIME = new Set(["image/png", "image/jpeg", "image/webp"]);
 
 export function validateEnv() {
+  if (!Number.isSafeInteger(OCR_CONCURRENCY) || OCR_CONCURRENCY < 1 ||
+      !Number.isSafeInteger(OCR_MAX_PENDING) || OCR_MAX_PENDING < 0) {
+    throw new Error("OCR_CONCURRENCY must be positive and OCR_MAX_PENDING non-negative integers");
+  }
   if (!OCR_URL) {
     throw new Error("OCR_URL is missing in .env");
   }

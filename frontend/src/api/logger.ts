@@ -48,6 +48,7 @@ export async function logClientEvent(input: LogClientEventInput) {
         meta: input.meta ?? {},
       }),
       keepalive: true,
+      signal: AbortSignal.timeout(3000),
     });
   } catch (error) {
     console.warn("[logClientEvent failed]", error);

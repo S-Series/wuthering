@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "test:ocr": "node --test tests/ocr*.test.cjs",
+    "test:cloud": "node --test tests/cloud-cache.test.cjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { supabaseAdmin } from "./supabaseAdmin.js";
+import { EventBuffer } from "../services/eventBuffer.js";
 
 type LogResult = "success" | "fail";
 
@@ -31,39 +32,29 @@ function hashIp(ip: string | null | undefined) {
     .digest("hex");
 }
 
-export async function logEvent(input: LogEventInput) {
-  const { data, error } = await supabaseAdmin
-    .from("event_logs")
-    .insert({
-      service: input.service,
-      feature: input.feature,
-      event_name: input.eventName,
-      result: input.result,
-      message: input.message ?? null,
-      status_code: input.statusCode ?? null,
-      duration_ms: input.durationMs ?? null,
-      user_id: input.userId ?? null,
-      ip_hash: hashIp(input.ip),
-      meta: input.meta ?? {},
-    })
-    .select("id")
-    .single();
-
-  if (error) {
-    console.error("[logEvent failed]", error.message);
-    return null;
-  }
-
-  return data;
+function toLogRow(input: LogEventInput) {
+  return {
+    service: input.service,
+    feature: input.feature,
+    event_name: input.eventName,
+    result: input.result,
+    message: input.message ?? null,
+    status_code: input.statusCode ?? null,
+    duration_ms: input.durationMs ?? null,
+    user_id: input.userId ?? null,
+    ip_hash: hashIp(input.ip),
+    meta: input.meta ?? {},
+  };
 }
 
-export function safeLogEvent(input: LogEventInput, reporter?: LogErrorReporter) {
-  void logEvent(input).catch((error: unknown) => {
-    if (reporter) {
-      reporter.warn({ error, eventName: input.eventName }, "log write failed");
-      return;
-    }
+const events = new EventBuffer<ReturnType<typeof toLogRow>>(async batch => {
+  const { error } = await supabaseAdmin.from("event_logs").insert(batch)
+    .abortSignal(AbortSignal.timeout(5000));
+  if (error) throw error;
+}, (message, count) => console.warn(`[logEvent] ${message}`, { count }));
 
-    console.warn("[logEvent failed]", error);
-  });
+export function flushEventLogs() { return events.flush(); }
+
+export function safeLogEvent(input: LogEventInput, _reporter?: LogErrorReporter) {
+  events.enqueue(toLogRow(input));
 }

@@ -1,6 +1,7 @@
 import type { FastifyRequest } from "fastify";
 import { adminAuth } from "../lib/firebaseAdmin.js";
 import { supabaseAdmin } from "../lib/supabaseAdmin.js";
+import { ReadThroughCache } from "./readThroughCache.js";
 
 type FirebaseToken = {
   uid: string;
@@ -28,6 +29,7 @@ type SupabaseUserRow = {
   last_login_at: string | null;
   created_at: string;
   updated_at: string;
+  membership?: SupabaseMembershipRow | null;
 };
 
 type SupabaseMembershipRow = {
@@ -59,6 +61,15 @@ export type SupabaseMembershipUser = Pick<
   SupabaseUserRow,
   "id" | "firebase_uid" | "role" | "status"
 >;
+
+// Share work only within a request. Role/status checks remain fresh per request.
+const verifiedRequests = new WeakMap<FastifyRequest, Promise<FirebaseToken>>();
+const requiredRequests = new WeakMap<FastifyRequest, Promise<SupabaseMembershipUser>>();
+// Telemetry needs only an identifier; this cache never authorizes an operation.
+const telemetryIdentities = new ReadThroughCache(60_000, 10_000);
+const USER_COLUMNS = "id, firebase_uid, email, email_verified, provider, role, status, last_login_at, created_at, updated_at";
+const MEMBERSHIP_COLUMNS = "membership:memberships(user_id, membership_level, started_at, expires_at, nickname, created_at, updated_at)";
+const LOGIN_TOUCH_INTERVAL_MS = 5 * 60_000;
 
 function getBearerToken(req: FastifyRequest) {
   const authHeader = req.headers.authorization;
@@ -115,10 +126,10 @@ function toGatewayUserProfile(
   };
 }
 
-async function findSupabaseUser(firebaseUid: string) {
+async function findSupabaseUser(firebaseUid: string, includeMembership = false) {
   const { data, error } = await supabaseAdmin
     .from("users")
-    .select("*")
+    .select(includeMembership ? USER_COLUMNS + ", " + MEMBERSHIP_COLUMNS : USER_COLUMNS)
     .eq("firebase_uid", firebaseUid)
     .limit(1)
     .maybeSingle();
@@ -127,13 +138,13 @@ async function findSupabaseUser(firebaseUid: string) {
     throw new Error(`Failed to fetch Supabase user: ${error.message}`);
   }
 
-  return data as SupabaseUserRow | null;
+  return data as unknown as SupabaseUserRow | null;
 }
 
 async function createInitialMembership(
   userId: string,
   displayName?: string | null
-) {
+): Promise<SupabaseMembershipRow> {
   const now = new Date().toISOString();
   const nickname = displayName?.trim() || null;
 
@@ -152,6 +163,8 @@ async function createInitialMembership(
     .single();
 
   if (error) {
+    // Another tab or gateway replica may have provisioned the same membership.
+    if (error.code === "23505") return findSupabaseMembership(userId, displayName);
     throw new Error(`Failed to create Supabase membership: ${error.message}`);
   }
 
@@ -161,7 +174,7 @@ async function createInitialMembership(
 async function findSupabaseMembership(
   userId: string,
   displayName?: string | null
-) {
+): Promise<SupabaseMembershipRow> {
   const { data, error } = await supabaseAdmin
     .from("memberships")
     .select("*")
@@ -233,6 +246,10 @@ async function insertSupabaseUser(decoded: FirebaseToken, input?: SyncUserInput)
     .single();
 
   if (error) {
+    if (error.code === "23505") {
+      const existing = await findSupabaseUser(decoded.uid);
+      if (existing) return existing;
+    }
     throw new Error(`Failed to create Supabase user: ${error.message}`);
   }
 
@@ -266,61 +283,71 @@ async function updateSupabaseUser(
   return data as SupabaseUserRow;
 }
 
-export async function verifyFirebaseRequest(req: FastifyRequest) {
-  const token = getBearerToken(req);
-  if (!token) {
-    throw new Error("Missing Firebase ID token");
-  }
-
-  return (await adminAuth.verifyIdToken(token)) as FirebaseToken;
+export function verifyFirebaseRequest(req: FastifyRequest) {
+  const existing = verifiedRequests.get(req);
+  if (existing) return existing;
+  const verification = (async () => {
+    const token = getBearerToken(req);
+    if (!token) throw new Error("Missing Firebase ID token");
+    return await adminAuth.verifyIdToken(token) as FirebaseToken;
+  })();
+  verifiedRequests.set(req, verification);
+  return verification;
 }
 
 export async function syncSupabaseUser(
   decoded: FirebaseToken,
   input?: SyncUserInput
 ) {
-  const existing = await findSupabaseUser(decoded.uid);
+  const existing = await findSupabaseUser(decoded.uid, true);
+  const needsUpdate = existing && (
+    existing.email !== (decoded.email ?? existing.email) ||
+    existing.email_verified !== Boolean(decoded.email_verified) ||
+    existing.provider !== getProvider(decoded, input) ||
+    !existing.last_login_at ||
+    Date.now() - Date.parse(existing.last_login_at) >= LOGIN_TOUCH_INTERVAL_MS
+  );
   const row = existing
-    ? await updateSupabaseUser(existing, decoded, input)
+    ? needsUpdate ? await updateSupabaseUser(existing, decoded, input) : existing
     : await insertSupabaseUser(decoded, input);
-  const membership = await findSupabaseMembership(row.id, input?.displayName);
+  let membership = existing?.membership ?? await findSupabaseMembership(row.id, input?.displayName);
+  const nickname = input?.displayName?.trim();
+  if (nickname && !membership.nickname) {
+    await updateMembershipNickname(row.id, nickname);
+    membership = { ...membership, nickname: nickname.slice(0, 200) };
+  }
 
   return toGatewayUserProfile(row, membership, input);
 }
 
 export async function getOptionalSupabaseUserId(req: FastifyRequest) {
-  const token = getBearerToken(req);
-  if (!token) return null;
-
+  if (!getBearerToken(req)) return null;
   try {
-    const decoded = (await adminAuth.verifyIdToken(token)) as FirebaseToken;
-    const existing = await findSupabaseUser(decoded.uid);
-
-    if (existing) {
-      return existing.id;
-    }
-
-    const created = await insertSupabaseUser(decoded);
-    await findSupabaseMembership(created.id);
-    return created.id;
+    const required = requiredRequests.get(req);
+    if (required) return (await required).id;
+    const decoded = await verifyFirebaseRequest(req);
+    return (await telemetryIdentities.getOrLoad(decoded.uid, async () => {
+      const { data, error } = await supabaseAdmin.from("users").select("id")
+        .eq("firebase_uid", decoded.uid).maybeSingle();
+      if (error) throw error;
+      return typeof data?.id === "string" ? data.id : null;
+    })).value;
   } catch {
     return null;
   }
 }
 
-export async function getRequiredSupabaseUser(req: FastifyRequest) {
-  const decoded = await verifyFirebaseRequest(req);
-  const existing = await findSupabaseUser(decoded.uid);
-
-  if (existing) {
-    await findSupabaseMembership(existing.id);
-    return existing as SupabaseMembershipUser;
-  }
-
-  const created = await insertSupabaseUser(decoded);
-  await findSupabaseMembership(created.id);
-
-  return created as SupabaseMembershipUser;
+export function getRequiredSupabaseUser(req: FastifyRequest) {
+  const existingRequest = requiredRequests.get(req);
+  if (existingRequest) return existingRequest;
+  const request = (async () => {
+    const decoded = await verifyFirebaseRequest(req);
+    const existing = await findSupabaseUser(decoded.uid);
+    // Provision membership only on user sync or when a membership feature needs it.
+    return (existing ?? await insertSupabaseUser(decoded)) as SupabaseMembershipUser;
+  })();
+  requiredRequests.set(req, request);
+  return request;
 }
 
 export async function getActiveSupabaseMembership(userId: string) {

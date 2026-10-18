@@ -1,11 +1,12 @@
 import type { FastifyInstance } from "fastify";
 import type { LimitFunction } from "p-limit";
 import { ALLOWED_MIME, MAX_BYTES, OCR_UPSTREAM, normalizeLang } from "../config/env.js";
+import { OcrAdmission } from "../services/ocrAdmission.js";
 
 const IDS = ["name", "cost", "main_1", "main_2", "sub_1", "sub_2", "sub_3", "sub_4", "sub_5"];
 
-export function registerOcrBatchRoute(app: FastifyInstance, limitOcr: LimitFunction) {
-  app.post("/api/ocr/batch", async (req, reply) => {
+export function registerOcrBatchRoute(app: FastifyInstance, limitOcr: LimitFunction, admission = new OcrAdmission(4)) {
+  app.post("/api/ocr/batch", admission.wrap(async (req, reply, signal) => {
     const files = new Map<string, { buffer: Buffer; type: string }>();
     let lang = "kr", total = 0, compareRaw = false;
     for await (const part of req.parts({ limits: { files: 9, fields: 2, parts: 11, fileSize: MAX_BYTES } })) {
@@ -37,21 +38,18 @@ export function registerOcrBatchRoute(app: FastifyInstance, limitOcr: LimitFunct
       const file = files.get(id)!;
       form.append("files", new File([new Uint8Array(file.buffer)], `${id}.png`, { type: file.type }));
     }
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 180_000);
     try {
       return await limitOcr(async () => {
+        signal.throwIfAborted();
         const response = await fetch(new URL("/ocr/batch", OCR_UPSTREAM[safeLang] ?? OCR_UPSTREAM.kr), {
-          method: "POST", body: form, signal: controller.signal,
+          method: "POST", body: form, signal,
         });
         const body = await response.text();
         return reply.code(response.status).type("application/json").send(body);
       });
     } catch (error) {
       req.log.error({ err: error }, "Batch OCR upstream failed");
-      return reply.code(controller.signal.aborted ? 504 : 502).send({ error: "OCR upstream unavailable" });
-    } finally {
-      clearTimeout(timer);
+      return reply.code(signal.aborted ? 504 : 502).send({ error: "OCR upstream unavailable" });
     }
-  });
+  }));
 }

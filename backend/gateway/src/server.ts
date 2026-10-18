@@ -5,6 +5,7 @@ import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import pLimit from "p-limit";
+import { OcrAdmission } from "./services/ocrAdmission.js";
 
 import { getClientKey } from "./utils/clientKey.js";
 import { registerRenderRoutes } from "./routes/render.js";
@@ -16,7 +17,7 @@ import { registerBoardRoutes } from "./routes/board.js";
 import { registerDevAnalyticsRoutes } from "./routes/devAnalytics.js";
 import { startDevAnalyticsCollector } from "./services/devAnalyticsDaily.js";
 import { getClientIp } from "./lib/getClientIp.js";
-import { safeLogEvent } from "./lib/logEvent.js";
+import { safeLogEvent, flushEventLogs } from "./lib/logEvent.js";
 import { getErrorMessage, isAbortError } from "./lib/errors.js";
 import { getOptionalSupabaseUserId } from "./services/supabaseUsers.js";
 
@@ -25,6 +26,7 @@ import {
   CORS_ORIGINS,
   MAX_BYTES,
   OCR_CONCURRENCY,
+  OCR_MAX_PENDING,
   OCR_UPSTREAM,
   PORT,
   RENDER_UPSTREAM,
@@ -62,8 +64,10 @@ type YoutubePlaylistItemsResponse = {
 async function main() {
   validateEnv();
 
-  const app = Fastify({ logger: true });
+  const app = Fastify({ logger: true, requestTimeout: 180_000 });
+  app.addHook("onClose", async () => { await flushEventLogs(); });
   const limitOcr = pLimit(OCR_CONCURRENCY);
+  const ocrAdmission = new OcrAdmission(OCR_CONCURRENCY + OCR_MAX_PENDING);
 
   app.addHook("onRequest", async (req, reply) => {
     reply.header("x-request-id", req.id);
@@ -72,7 +76,7 @@ async function main() {
   await app.register(multipart, {
     limits: {
       files: 1,
-      fileSize: 50 * 1024 * 1024,
+      fileSize: MAX_BYTES,
     },
   });
 
@@ -90,6 +94,8 @@ async function main() {
       cb(null, CORS_ORIGINS.includes(origin));
     },
     credentials: true,
+    maxAge: 600,
+    exposedHeaders: ["x-request-id", "x-cache", "server-timing", "etag", "retry-after"],
   });
 
   app.get("/health", async () => ({
@@ -235,9 +241,9 @@ async function main() {
     }
   });
 
-  registerOcrBatchRoute(app, limitOcr);
+  registerOcrBatchRoute(app, limitOcr, ocrAdmission);
 
-  app.post("/api/ocr", async (req, reply) => {
+  app.post("/api/ocr", ocrAdmission.wrap(async (req, reply, signal) => {
     const startedAt = Date.now();
     const supabaseUserId = await getOptionalSupabaseUserId(req);
     const part = await req.file();
@@ -410,20 +416,18 @@ async function main() {
       OCR_UPSTREAM[langValue] ?? OCR_UPSTREAM.kr
     ).toString();
 
-    const controller = new AbortController();
-    const timeoutMs = 180_000;
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
     let upstreamRes: Response;
+    let text: string;
 
     try {
-      upstreamRes = await limitOcr(() =>
-        fetch(upstreamUrl, {
-          method: "POST",
-          body: form,
-          signal: controller.signal,
-        })
-      );
+      const result = await limitOcr(async () => {
+        signal.throwIfAborted();
+        const response = await fetch(upstreamUrl, { method: "POST", body: form, signal });
+        // Hold both the concurrency slot and timeout through body consumption.
+        return { response, text: await response.text() };
+      });
+      upstreamRes = result.response;
+      text = result.text;
     } catch (e: unknown) {
       const msg = isAbortError(e)
         ? "upstream timeout"
@@ -450,11 +454,8 @@ async function main() {
       return reply
         .code(504)
         .send({ error: msg, detail: getErrorMessage(e) });
-    } finally {
-      clearTimeout(timeoutId);
     }
 
-    const text = await upstreamRes.text();
     const contentType = upstreamRes.headers.get("content-type") ?? "";
 
     if (!upstreamRes.ok) {
@@ -523,7 +524,7 @@ async function main() {
       .header("content-type", safeContentType)
       .header("x-cache", "MISS")
       .send(text);
-  });
+  }));
 
   await registerRenderRoutes(app);
   await registerClientEventRoutes(app);

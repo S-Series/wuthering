@@ -499,18 +499,20 @@ function CloudSyncPanel({
 
     const hasCloudData =
       cloudCache.status === "success" &&
-      Boolean(cloudCache.updatedAt) &&
-      (isAllCharactersMode || Boolean(cloudCache.data[selectedCharacterId]));
+      (cloudCache.loadedAll || Boolean(
+        selectedCharacterId && cloudCache.loadedCharacterIds.includes(selectedCharacterId)
+      ));
 
     if (hasCloudData) return;
 
     cloudRetryAttemptedRef.current = true;
     void refreshCloudCharacterData({
-      force: true,
       characterId: selectedCharacterId,
     });
   }, [
     cloudCache.data,
+    cloudCache.loadedAll,
+    cloudCache.loadedCharacterIds,
     cloudCache.status,
     cloudCache.updatedAt,
     isAllCharactersMode,
@@ -647,7 +649,8 @@ export default function CloudSyncManager() {
         ...cloudCharacterData.data,
         [selectedCharacterId]: characterData,
       },
-      result.updatedAt
+      result.updatedAt,
+      selectedCharacterId,
     );
   }, [
     characterData,
@@ -709,7 +712,8 @@ export default function CloudSyncManager() {
         ...cloudCharacterData.data,
         [selectedCharacterId]: targetData,
       },
-      result.updatedAt
+      result.updatedAt,
+      selectedCharacterId,
     );
     alert(localeText.cloudSyncDownloadSuccess);
   }, [

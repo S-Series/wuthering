@@ -18,18 +18,16 @@ import type { CharacterId } from "@/datas/characterStats";
 
 import { type UserProfile, type GameProfile } from "@/firebase/firebase"
 
-export type CloudCharacterDataCache = {
-  status: "idle" | "loading" | "success" | "error";
-  data: CharacterDataSnapshot;
-  updatedAt: string | null;
-  fetchedForUid: string | null;
-};
+import { hasCloudSnapshot, mergeCloudSnapshot, type CloudCharacterDataCache } from "@/stores/cloudCharacterCache";
+export type { CloudCharacterDataCache } from "@/stores/cloudCharacterCache";
 
 const EMPTY_CLOUD_CHARACTER_DATA: CloudCharacterDataCache = {
   status: "idle",
   data: {},
   updatedAt: null,
   fetchedForUid: null,
+  loadedAll: false,
+  loadedCharacterIds: [],
 };
 
 const AUTH_USER_CACHE_KEY = "wuthering.auth.user";
@@ -37,6 +35,7 @@ const AUTH_GAME_PROFILE_CACHE_KEY = "wuthering.auth.gameProfile";
 
 let authUnsubscribe: (() => void) | null = null;
 let authHydrationSeq = 0;
+let cloudRequestSeq = 0;
 
 function createFallbackUserProfile(firebaseUser: FirebaseUser): UserProfile {
   const provider = firebaseUser.providerData[0];
@@ -104,6 +103,7 @@ function writeCache(key: string, value: unknown) {
 }
 
 function clearAuthCache() {
+  cloudRequestSeq++;
   localStorage.removeItem(AUTH_USER_CACHE_KEY);
   localStorage.removeItem(AUTH_GAME_PROFILE_CACHE_KEY);
 }
@@ -131,6 +131,7 @@ type AuthState = {
   setCloudCharacterDataSnapshot: (
     data: CharacterDataSnapshot,
     updatedAt: string | null,
+    characterId?: CharacterId,
   ) => void;
   initAuth: () => void;
   signupAction: (email: string, password: string, nickname: string) => Promise<void>;
@@ -164,22 +165,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const characterId = options?.characterId;
     const { user, cloudCharacterData } = get();
 
-    if (!user) {
+    if (!user || auth?.currentUser?.uid !== user.uid) {
       set({ cloudCharacterData: EMPTY_CLOUD_CHARACTER_DATA });
       return;
     }
 
-    if (
-      !force &&
-      cloudCharacterData.fetchedForUid === user.uid &&
-      (cloudCharacterData.status === "loading" ||
-        cloudCharacterData.status === "success")
-    ) {
-      return;
-    }
+    if (!force && hasCloudSnapshot(cloudCharacterData, user.uid, characterId)) return;
+    const requestSeq = ++cloudRequestSeq;
 
     set({
       cloudCharacterData: {
+        ...EMPTY_CLOUD_CHARACTER_DATA,
+        ...(cloudCharacterData.fetchedForUid === user.uid ? cloudCharacterData : {}),
         status: "loading",
         data: cloudCharacterData.fetchedForUid === user.uid
           ? cloudCharacterData.data
@@ -193,10 +190,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     try {
       const result = await downloadCharacterCloudData(characterId);
+      if (requestSeq !== cloudRequestSeq || get().user?.uid !== user.uid || auth?.currentUser?.uid !== user.uid) return;
 
       if (!result.ok) {
         set({
           cloudCharacterData: {
+            ...EMPTY_CLOUD_CHARACTER_DATA,
             status: "error",
             data: {},
             updatedAt: null,
@@ -206,32 +205,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      const nextData = (() => {
-        if (!characterId) return result.data;
-
-        const merged = { ...cloudCharacterData.data };
-
-        if (result.data[characterId]) {
-          merged[characterId] = result.data[characterId];
-        } else {
-          delete merged[characterId];
-        }
-
-        return merged;
-      })();
-
-      set({
-        cloudCharacterData: {
-          status: "success",
-          data: nextData,
-          updatedAt: result.updatedAt,
-          fetchedForUid: user.uid,
-        },
-      });
+      set({ cloudCharacterData: mergeCloudSnapshot(
+        get().cloudCharacterData, user.uid, result.data, result.updatedAt, characterId,
+      ) });
     } catch (error) {
+      if (requestSeq !== cloudRequestSeq || get().user?.uid !== user.uid || auth?.currentUser?.uid !== user.uid) return;
       console.error(error);
       set({
         cloudCharacterData: {
+          ...EMPTY_CLOUD_CHARACTER_DATA,
           status: "error",
           data: {},
           updatedAt: null,
@@ -241,17 +223,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  setCloudCharacterDataSnapshot: (data, updatedAt) => {
-    const uid = get().user?.uid ?? null;
-
-    set({
-      cloudCharacterData: {
-        status: "success",
-        data,
-        updatedAt,
-        fetchedForUid: uid,
-      },
-    });
+  setCloudCharacterDataSnapshot: (data, updatedAt, characterId) => {
+    cloudRequestSeq++;
+    const uid = get().user?.uid;
+    if (!uid) return;
+    set({ cloudCharacterData: mergeCloudSnapshot(
+      get().cloudCharacterData, uid, data, updatedAt, characterId,
+    ) });
   },
 
   initAuth: () => {
@@ -293,9 +271,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (isSameHydratedUser) {
         set({ isLoading: false });
 
-        if (current.cloudCharacterData.fetchedForUid !== firebaseUser.uid) {
-          void get().refreshCloudCharacterData();
-        }
         return;
       }
 
@@ -311,7 +286,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         });
         writeAuthCache(user, gameProfile);
 
-        void get().refreshCloudCharacterData();
       } catch (error) {
         if (seq !== authHydrationSeq) return;
 
@@ -345,7 +319,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: true });
       await signup(email, password, nickname);
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_signup",
         result: "success",
@@ -355,7 +329,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error) {
       set({ isLoading: false });
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_signup",
         result: "fail",
@@ -375,7 +349,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: true });
       await login(email, password);
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_login",
         result: "success",
@@ -385,7 +359,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error) {
       set({ isLoading: false });
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_login",
         result: "fail",
@@ -405,7 +379,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: true });
       await loginWithGoogle();
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_login",
         result: "success",
@@ -415,7 +389,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error) {
       set({ isLoading: false });
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_login",
         result: "fail",
@@ -434,7 +408,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       await resetPassword(email);
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_password_reset",
         result: "success",
@@ -442,7 +416,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         meta: { method: "email" },
       });
     } catch (error) {
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_password_reset",
         result: "fail",
@@ -462,7 +436,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: true });
       clearAuthCache();
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_logout",
         result: "success",
@@ -473,7 +447,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error) {
       set({ isLoading: false });
 
-      await logClientEvent({
+      void logClientEvent({
         feature: "auth",
         eventName: "auth_logout",
         result: "fail",
