@@ -95,7 +95,7 @@ async function main() {
     },
     credentials: true,
     maxAge: 600,
-    exposedHeaders: ["x-request-id", "x-cache", "server-timing", "etag", "retry-after"],
+    exposedHeaders: ["x-request-id", "x-cache", "x-cache-store", "server-timing", "etag", "retry-after"],
   });
 
   app.get("/health", async () => ({

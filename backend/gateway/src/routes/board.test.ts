@@ -3,12 +3,14 @@ import Fastify from "fastify";
 import admin from "firebase-admin";
 
 // All DB/auth traffic is stubbed; these tests never use local credentials.
+delete process.env.REDIS_URL;
 process.env.SUPABASE_URL = "https://board-test.invalid";
 process.env.SUPABASE_SECRET_KEY = "test-key";
 admin.initializeApp({ projectId: "board-test" });
 const { adminAuth } = await import("../lib/firebaseAdmin.js");
 Object.defineProperty(adminAuth, "verifyIdToken", { value: async () => ({ uid: "firebase-test" }) });
 const { registerBoardRoutes } = await import("./board.js");
+const { createBoardCache } = await import("../services/boardCache.js");
 
 const id = "11111111-1111-4111-8111-111111111111";
 const authorId = "22222222-2222-4222-8222-222222222222";
@@ -67,7 +69,12 @@ globalThis.fetch = async (input, options) => {
 
 const app = Fastify();
 app.post("/api/users/sync", async () => ({ ok: true }));
-await registerBoardRoutes(app);
+const cache = createBoardCache(app.log);
+const invalidations: string[][] = [];
+await registerBoardRoutes(app, { ...cache, async invalidate(scopes) {
+  invalidations.push(scopes);
+  await cache.invalidate(scopes);
+} });
 const listUrl = "/api/board/posts";
 const detailUrl = listUrl + "/" + id;
 const headers = { authorization: "Bearer test" };
@@ -78,6 +85,7 @@ try {
   assert.equal(list.json().items[0].authorName, "Writer");
   assert.equal(list.json().items[0].content, undefined);
   assert.equal(list.headers["x-cache"], "MISS");
+  assert.equal(list.headers["x-cache-store"], "memory");
   assert.equal(list.headers["cache-control"], "no-store");
   assert.match(String(list.headers["server-timing"]), /board_read;dur=/);
   assert.equal(requests.length, 1, "list and nickname require a single DB call");
@@ -87,6 +95,7 @@ try {
   assert.equal((await app.inject(listUrl)).headers["x-cache"], "HIT", "login traffic must not evict the shared public board cache");
   assert.equal((await app.inject({ method: "DELETE", url: detailUrl })).statusCode, 401);
   assert.equal((await app.inject(listUrl)).headers["x-cache"], "HIT", "failed writes preserve the cache");
+  assert.deepEqual(invalidations, [], "non-board and unsuccessful writes never invalidate");
   assert.equal((await app.inject(listUrl + "?category=report")).headers["x-cache"], "MISS");
   assert.equal((await app.inject(listUrl + "?search=Original")).headers["x-cache"], "MISS");
   assert.equal((await app.inject(listUrl + "?page=2")).headers["x-cache"], "MISS");
@@ -115,6 +124,7 @@ try {
   assert.equal(comments.json().items[0].authorName, "Writer");
   assert.equal((await app.inject(detailUrl + "/comments")).headers["x-cache"], "HIT");
   assert.equal((await app.inject({ method: "POST", url: detailUrl + "/comments", headers, payload: { content: "New" } })).statusCode, 201);
+  assert.deepEqual(invalidations.at(-1), ["lists", "post:" + id]);
   assert.equal((await app.inject(detailUrl)).headers["x-cache"], "MISS");
   assert.equal((await app.inject(listUrl)).json().items[0].commentCount, 2);
   assert.equal((await app.inject(detailUrl + "/comments")).headers["x-cache"], "MISS");
@@ -125,6 +135,7 @@ try {
   assert.equal((await app.inject(listUrl)).json().items[0].title, "Updated");
 
   assert.equal((await app.inject({ method: "POST", url: listUrl, headers, payload: { category: "general", title: "New", content: "Body" } })).statusCode, 201);
+  assert.deepEqual(invalidations.at(-1), ["lists"], "new posts invalidate every list variant");
   failNext = true;
   assert.equal((await app.inject(listUrl)).statusCode, 500);
   assert.equal((await app.inject(listUrl)).statusCode, 200, "DB failures are not cached");

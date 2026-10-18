@@ -1,7 +1,8 @@
 import type { FastifyInstance, FastifyReply } from "fastify";
 import { supabaseAdmin } from "../lib/supabaseAdmin.js";
 import { getRequiredSupabaseUser } from "../services/supabaseUsers.js";
-import { ReadThroughCache } from "../services/readThroughCache.js";
+import { createBoardCache } from "../services/boardCache.js";
+import type { BoardReadCache } from "../services/redisBoardCache.js";
 
 const BOARD_CATEGORIES = ["general", "report", "question", "guide"] as const;
 const DEFAULT_PAGE_SIZE = 20;
@@ -168,10 +169,10 @@ async function getActiveUser(req: Parameters<typeof getRequiredSupabaseUser>[0])
   return user;
 }
 
-export async function registerBoardRoutes(app: FastifyInstance) {
+export async function registerBoardRoutes(app: FastifyInstance, reads: BoardReadCache = createBoardCache(app.log)) {
   // Server-side only: browsers must revalidate so writes immediately become visible.
   // TTL also bounds staleness from other gateway replicas and direct DB changes.
-  const reads = new ReadThroughCache(10_000, 256);
+  app.addHook("onClose", async () => { await reads.close(); });
   app.addHook("onSend", async (req, reply, payload) => {
     const route = req.routeOptions.url ?? "";
     if (route.startsWith("/api/board/posts")) {
@@ -180,15 +181,20 @@ export async function registerBoardRoutes(app: FastifyInstance) {
     if (req.method !== "GET" && req.method !== "HEAD" &&
         reply.statusCode >= 200 && reply.statusCode < 300 &&
         route.startsWith("/api/board/posts")) {
-      reads.clear();
+      const postId = validatePostId((req.params as BoardPostParams)?.postId);
+      await reads.invalidate(postId ? ["lists", "post:" + postId] : ["lists"]);
     }
     return payload;
   });
 
   async function read<T>(reply: FastifyReply, key: string, load: () => Promise<T>) {
     const start = performance.now();
-    const result = await reads.getOrLoad(key, load);
+    const scope = key.startsWith("post:") || key.startsWith("comments:")
+      ? "post:" + key.slice(key.indexOf(":") + 1)
+      : "lists";
+    const result = await reads.getOrLoad(key, scope, load);
     reply.header("x-cache", result.status);
+    reply.header("x-cache-store", result.store);
     reply.header("server-timing", `board_read;dur=${(performance.now() - start).toFixed(1)}`);
     return result.value;
   }

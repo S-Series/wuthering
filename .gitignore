@@ -36,6 +36,7 @@ out/
 # package manager
 
 package-lock.json
+!backend/gateway/package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
