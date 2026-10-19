@@ -48,4 +48,5 @@ export const wastesContent: PeriodicContent = {
     zh: "冥歌海墟",
   },
   seasons: wastesSeasons,
+  fallbackDays: 28,
 };

@@ -16,6 +16,11 @@ export type RemainingTime = {
 };
 
 const parseDateOnly = (date: string): Date => new Date(`${date}T00:00:00`);
+const getResetTime = (date: string): number => {
+  const reset = parseDateOnly(date);
+  reset.setHours(SEASON_RESET_HOUR);
+  return reset.getTime();
+};
 
 const addDays = (date: Date, days: number): Date => {
   const nextDate = new Date(date);
@@ -79,11 +84,35 @@ const getCurrentStaticSeason = (
   const nowTime = now.getTime();
 
   return seasons.find((season) => {
-    const startTime = new Date(`${season.startDate}T00:00:00`).getTime();
-    const endTime = new Date(`${season.endDate}T00:00:00`).getTime();
+    const startTime = getResetTime(season.startDate);
+    const endTime = getResetTime(season.endDate);
 
     return startTime <= nowTime && nowTime < endTime;
   });
+};
+
+const getFallbackSeason = (
+  seasons: SeasonInfo[],
+  days: number | undefined,
+  now: Date,
+): SeasonInfo | undefined => {
+  if (!days || !Number.isInteger(days) || days <= 0) return undefined;
+  const latest = seasons.reduce<SeasonInfo | undefined>((last, season) =>
+    !last || season.endDate > last.endDate ? season : last, undefined);
+  if (!latest || now.getTime() < getResetTime(latest.endDate)) return undefined;
+
+  const anchor = parseDateOnly(latest.endDate);
+  if (Number.isNaN(anchor.getTime())) return undefined;
+  const adjustedNow = new Date(now);
+  adjustedNow.setHours(adjustedNow.getHours() - SEASON_RESET_HOUR);
+  const elapsed = getCalendarDayNumber(adjustedNow) - getCalendarDayNumber(anchor);
+  const cycle = Math.floor(elapsed / days);
+  const start = addDays(anchor, cycle * days);
+  return {
+    season: latest.season + cycle + 1,
+    startDate: formatDateOnly(start),
+    endDate: formatDateOnly(addDays(start, days)),
+  };
 };
 
 export const getCurrentSeason = (
@@ -94,14 +123,15 @@ export const getCurrentSeason = (
     return getCurrentWeeklySeason(source.seasonSource.seasonZeroStart, now);
   }
 
-  return getCurrentStaticSeason(source.seasons, now);
+  return getCurrentStaticSeason(source.seasons, now)
+    ?? getFallbackSeason(source.seasons, source.fallbackDays, now);
 };
 
 export const getRemainingTime = (
   endDate: string,
   now: Date = new Date()
 ): RemainingTime => {
-  const endTime = new Date(`${endDate}T00:00:00`).getTime() + 4 * 60 * 60 * 1000;
+  const endTime = getResetTime(endDate);
   const totalMs = Math.max(endTime - now.getTime(), 0);
 
   const totalSeconds = Math.floor(totalMs / 1000);

@@ -1,6 +1,17 @@
 import type { SeasonInfo, PeriodicContent } from "./types";
 
 export const towerSeasons: SeasonInfo[] = [
+  // Verified against https://encore.moe/toa?lang=ko on 2026-10-19.
+  {
+    season: 42,
+    startDate: "2026-11-09",
+    endDate: "2026-12-07",
+  },
+  {
+    season: 41,
+    startDate: "2026-10-12",
+    endDate: "2026-11-09",
+  },
   {
     season: 40,
     startDate: "2026-09-14",
@@ -38,4 +49,5 @@ export const towerContent: PeriodicContent = {
     zh: "逆境深塔",
   },
   seasons: towerSeasons,
+  fallbackDays: 28,
 };

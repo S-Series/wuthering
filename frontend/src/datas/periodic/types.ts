@@ -14,10 +14,12 @@ type WeeklySeasonSource = {
 export type PeriodicSeasonSource =
   | {
       seasons: SeasonInfo[];
+      fallbackDays?: number;
       seasonSource?: never;
     }
   | {
       seasons?: never;
+      fallbackDays?: never;
       seasonSource: WeeklySeasonSource;
     };
 
