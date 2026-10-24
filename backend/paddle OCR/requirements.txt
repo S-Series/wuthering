@@ -1,14 +1,15 @@
 # --- Core server ---
-fastapi==0.104.1
+fastapi==0.156.7
+starlette==1.7.0
 uvicorn[standard]==0.24.0
-python-multipart==0.0.6
+python-multipart==0.0.32
 
 # --- PaddleOCR ---
 paddleocr==2.7.0.3
 paddlepaddle==2.6.2
 
 # --- Image processing ---
-Pillow==10.1.0
+Pillow==12.2.0
 opencv-python-headless==4.8.1.78
 
 # --- Basic dependencies ---

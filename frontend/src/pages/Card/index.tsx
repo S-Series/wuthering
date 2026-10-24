@@ -9,6 +9,8 @@ import { useCharacter } from "@/stores/characterDataStore";
 
 import ImagePicker from "@/components/ImagePicker";
 import StatSlot from "@/components/features/Card/Stats/StatSlot";
+import CardStatGauges from "@/components/features/Card/Stats/CardStatGauges";
+import BuildTargetPanel from "@/components/features/Card/Stats/BuildTargetPanel";
 import EchoSlot from "@/components/features/Card/Echo/EchoSlot";
 import EchoManager from "@/components/features/Card/Echo/EchoManager";
 import CardDetail from "./Detail";
@@ -41,7 +43,6 @@ import {
   uploadCharacterCloudData,
 } from "@/api/characterCloudSync.api";
 import { useAuthStore } from "@/stores/authStore";
-import type { CloudCharacterDataCache } from "@/stores/authStore";
 import Select, { type StylesConfig } from "react-select";
 import { useStyleStore, type SelectOption } from "@/stores/styleStore";
 import { useRenderStore } from "@/stores/renderStore";
@@ -451,7 +452,6 @@ function CloudSyncPanel({
   characterId,
   characterName,
   currentData,
-  cloudCache,
   refreshCloudCharacterData,
   onUpload,
   onDownload,
@@ -461,7 +461,6 @@ function CloudSyncPanel({
   characterId: CharacterId;
   characterName: string;
   currentData: CloudSyncDataSummary;
-  cloudCache: CloudCharacterDataCache;
   refreshCloudCharacterData: (options?: {
     force?: boolean;
     characterId?: CharacterId;
@@ -469,6 +468,8 @@ function CloudSyncPanel({
   onUpload: () => Promise<void>;
   onDownload: (options?: { downloadAllCharacters: boolean }) => Promise<void>;
 }) {
+  // Overlay content retains its original props; subscribe to completed reads here.
+  const cloudCache = useAuthStore((state) => state.cloudCharacterData);
   const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
   const { closeOverlay } = useOverlay();
   const [runningAction, setRunningAction] = useState<CloudSyncAction | null>(null);
@@ -1134,7 +1135,6 @@ export default function Card() {
         characterId={characterId}
         characterName={cloudSyncCurrentData.characterName}
         currentData={cloudSyncCurrentData}
-        cloudCache={cloudCharacterData}
         refreshCloudCharacterData={refreshCloudCharacterData}
         onUpload={handleCloudUpload}
         onDownload={handleCloudDownload}
@@ -1435,6 +1435,8 @@ export default function Card() {
                       return (
                         <button
                           key={`character-constell-button${idx}`}
+                          data-info-kind="chain" data-info-id={idx + 1}
+                          aria-label={`C${idx + 1}`}
                           className={`constell-button ${
                             characterData.constell[0] > idx ? "active" : ""
                           }`}
@@ -1498,6 +1500,7 @@ export default function Card() {
 
             <div
               className="main-item-slot weapon"
+              data-info-kind="weapon" data-info-id={characterData.weaponId ?? undefined}
               data-card-guide="card-weapon"
               role="button"
               tabIndex={0}
@@ -1522,10 +1525,12 @@ export default function Card() {
 
               <div
                 className="weapon-constell-select en-font"
+                data-info-kind="refinement" data-info-id={Math.max(1, characterData.constell[1])}
                 onClick={(event) => event.stopPropagation()}
                 onKeyDown={(event) => event.stopPropagation()}
               >
                 <Select
+                  aria-label={localeText.wMenu}
                   isSearchable={false}
                   styles={dropStyle}
                   options={weaponConstellOption}
@@ -1600,6 +1605,7 @@ export default function Card() {
                     <div
                       className={`container ${className}`.trim()}
                       key={harmonyId}
+                      data-info-kind="harmony" data-info-id={harmonyId}
                       tabIndex={0}
                       onMouseEnter={() => handleHoverHarmony(harmonyId, number)}
                       onMouseLeave={clearHighlightedStats}
@@ -1639,14 +1645,14 @@ export default function Card() {
                 <span
                   className="en-font score-help"
                   tabIndex={0}
-                  data-tooltip="Critical Value · 크리티컬 점수"
+                  data-info-kind="score" data-info-id="cv"
                 >
                   Cv. <em className="num-font">{finalScore[0].toFixed(1)}</em>pt
                 </span>
                 <span
                   className="en-font score-help"
                   tabIndex={0}
-                  data-tooltip="All Value · 종합점수"
+                  data-info-kind="score" data-info-id="tv" data-score-scope="build"
                 >
                   Tv. <em className="num-font">{finalScore[1].toFixed(1)}</em>pt
                 </span>
@@ -1735,6 +1741,9 @@ export default function Card() {
             </div>
           </div>
         </div>
+
+        <CardStatGauges />
+        <BuildTargetPanel key={characterData.characterId} data={characterData} />
 
         <div className="card-detail-guide-target" data-card-guide="detail">
           <CardDetail cData={characterData}/>

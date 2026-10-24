@@ -23,7 +23,7 @@ function load(relative) {
   } });
   return result;
 }
-const { characterMeta, getCharacterMeta } = load('datas/characters.meta.ts');
+const { characterMeta } = load('datas/characters.meta.ts');
 const { FixedStats } = load('datas/stats.ts');
 const { isValidEchoMainOption, countInvalidEquippedMainOptions } = load('runtime/echoMainOption.helpers.ts');
 const { getStatOptionBase } = load('components/features/Card/Echo/echoOptions.helpers.tsx');
@@ -53,18 +53,15 @@ test('invalid count follows equipped order and ignores spare echoes', () => {
   assert.equal(countInvalidEquippedMainOptions(echoes, [0, 1, 2, 3, 4, 5], characterMeta.hsin), 2);
 });
 test('resonance shortage and penalty remain separate from actual invalid main count', () => {
-  const filename = path.join(root, 'pages/Card/Detail.tsx');
-  const source = ts.createSourceFile(filename, fs.readFileSync(filename, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-  const fn = source.statements.find(node => ts.isFunctionDeclaration(node) && node.name.text === 'getResonancePenalty');
-  const result = {};
-  const code = ts.transpileModule('export ' + fn.getText(source), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
-  vm.runInNewContext(code, { exports: result, getCharacterMeta, countInvalidEquippedMainOptions, getCharacterScore: () => ({ resonanceBns: 1 }) });
-  const cData = { characterId: 'hsin', constell: [0], echoData: [echo(4, 'critRate'), echo(3, 'electroBns'), echo(3, 'atkPct'), echo(1, 'atkPct'), echo(1, 'hpPct')], echoDataIndex: [0, 1, 2, 3, 4] };
-  const low = result.getResonancePenalty(cData, 100);
-  assert.equal(low.shortage, 20);
-  assert.equal(low.penalty, 45);
-  assert.equal(low.invalidMainOptionCount, 1);
-  const enough = result.getResonancePenalty(cData, 120);
-  assert.equal(enough.penalty, 0);
-  assert.equal(enough.invalidMainOptionCount, 1);
+  const { calcFinalScore } = load('runtime/characterData.helpers.ts');
+  const { getCharacterScore } = load('datas/characterScoreSheet.ts');
+  const cData = { characterId: 'hsin', weaponId: null, constell: [0, 1], echoData: [echo(4, 'critRate'), echo(3, 'electroBns'), echo(3, 'atkPct'), echo(1, 'atkPct'), echo(1, 'hpPct')], echoDataIndex: [0, 1, 2, 3, 4] };
+  const scores = Array.from({ length: 5 }, () => [0, 80]);
+  const enough = calcFinalScore(cData, { critRate: 13, resonanceBns: 120 }, null, scores)[1];
+  const invalidBefore = countInvalidEquippedMainOptions(cData.echoData, cData.echoDataIndex, characterMeta.hsin);
+  const low = calcFinalScore(cData, { critRate: 13, resonanceBns: 100 }, null, scores)[1];
+  const weight = getCharacterScore('hsin', null, 0, cData.echoData).resonanceBns;
+  assert.equal(enough - low, Math.round((40 + 5 * weight) * 10) / 10);
+  assert.equal(invalidBefore, 1);
+  assert.equal(countInvalidEquippedMainOptions(cData.echoData, cData.echoDataIndex, characterMeta.hsin), invalidBefore);
 });

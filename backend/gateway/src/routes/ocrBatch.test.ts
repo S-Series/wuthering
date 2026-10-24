@@ -4,6 +4,7 @@ import multipart from "@fastify/multipart";
 import pLimit from "p-limit";
 
 process.env.OCR_URL = "http://ocr.invalid";
+process.env.OCR_INTERNAL_SECRET = "test-ocr-secret-01234567890123456789";
 const { registerOcrBatchRoute } = await import("./ocrBatch.js");
 const app = Fastify();
 await app.register(multipart, { limits: { files: 1 } });
@@ -14,6 +15,8 @@ let forwarded = 0;
 let expectedCompareRaw: string | null = null;
 globalThis.fetch = async (url, options) => {
   assert.equal(String(url), "http://ocr.invalid/ocr/batch");
+  assert.equal(new Headers(options?.headers).get("x-internal-secret"), process.env.OCR_INTERNAL_SECRET);
+  assert.equal(options?.redirect, "error");
   const form = options!.body as FormData;
   assert.equal(form.get("lang"), "en");
   assert.equal(form.get("compare_raw"), expectedCompareRaw);

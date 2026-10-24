@@ -4,8 +4,11 @@ export type CropMetadata = {
   version: 1;
   width: number;
   height: number;
-  bands: { index: number; top: number; bottom: number }[];
+  bands: { index: number; top: number; bottom: number; left?: number; right?: number;
+    source?: [number, number, number, number]; method?: "detected" | "profile" }[];
   icon: number[];
+  sourceWidth?: number;
+  sourceHeight?: number;
 };
 
 export async function prepareOcrImage(file: File, signal: AbortSignal, options: { splitHeader?: boolean } = {}): Promise<{ file: File; metadata: CropMetadata }> {

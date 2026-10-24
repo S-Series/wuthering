@@ -54,9 +54,19 @@ def test_health_returns_supported_languages(monkeypatch):
     assert set(response.json()["supported_langs"]) == {"kr", "en", "jp", "zh"}
 
 
-def test_wake_loads_requested_language(monkeypatch):
+def test_actual_ocr_app_rejects_requests_before_parsing(monkeypatch):
+    monkeypatch.setenv("INTERNAL_API_SECRET", "test-ocr-secret-01234567890123456789")
     main = load_app(monkeypatch)
     client = TestClient(main.app)
+    for path in ("/ocr", "/ocr/batch"):
+        assert client.post(path, content=b"not multipart").status_code == 401
+    assert client.get("/wake").status_code == 401
+
+
+def test_wake_loads_requested_language(monkeypatch):
+    monkeypatch.setenv("INTERNAL_API_SECRET", "test-ocr-secret-01234567890123456789")
+    main = load_app(monkeypatch)
+    client = TestClient(main.app, headers={"X-Internal-Secret": "test-ocr-secret-01234567890123456789"})
 
     response = client.get("/wake?lang=en")
 

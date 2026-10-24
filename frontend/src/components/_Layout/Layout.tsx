@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -6,11 +6,14 @@ import Navbar from "@/components/_Layout/Navbar";
 import Footer from "@/components/_Layout/Footer";
 import CloudSyncManager from "@/components/features/CloudSync/CloudSyncManager";
 import GlobalNoticePopup from "@/components/features/Home/GlobalNoticePopup";
+import { usePageEntryAnimations } from "@/components/common/usePageEntryAnimations";
 
 import "@/components/_Layout/Layout.css";
 
 export default function Layout() {
   const location = useLocation();
+  const main = useRef<HTMLElement>(null);
+  usePageEntryAnimations(main, location.pathname);
 
   useEffect(() => {
     document.body.classList.remove(
@@ -64,7 +67,7 @@ export default function Layout() {
         <Navbar />
       </header>
 
-      <main id="main-container">
+      <main id="main-container" ref={main}>
         <Outlet />
       </main>
 

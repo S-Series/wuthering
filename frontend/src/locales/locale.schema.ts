@@ -127,6 +127,10 @@ export type LocaleSchema = {
     sortScore: string;
     sortRelease: string;
     configured: string;
+    favoritesOnly: string;
+    addFavorite: string;
+    removeFavorite: string;
+    favoritesStorageHint: string;
     filterWeapon: string;
     filterElement: string;
     noResults: string;

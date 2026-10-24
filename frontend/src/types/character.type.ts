@@ -18,6 +18,8 @@ export type ScoreList = [
 export type CharacterRank = "Empty" | "B" | "A" | "S" | "SS" | "SSS" | "T" | "TT";
 
 export type CharacterData = {
+  /** Optional for compatibility with cloud snapshots saved before favorites existed. */
+  isFavorite?: boolean;
   characterId: CharacterId;
   weaponId: WeaponId | null;
   constell: [number, number];

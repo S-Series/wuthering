@@ -1,4 +1,5 @@
 import { RENDER_UPSTREAM } from "../config/env.js";
+import { internalHeaders } from "../lib/internalAuth.js";
 import { getErrorMessage, isAbortError } from "../lib/errors.js";
 
 export type RenderUpstreamSuccess = {
@@ -31,8 +32,10 @@ export async function requestRenderUpstream(
     upstreamRes = await fetch(upstreamUrl, {
       method: "POST",
       headers: {
+        ...internalHeaders("render"),
         "Content-Type": "application/json",
       },
+      redirect: "error",
       body: JSON.stringify(body),
       signal: controller.signal,
     });

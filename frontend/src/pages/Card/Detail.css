@@ -56,8 +56,7 @@
     minmax(0, 1.45fr)
     minmax(0, 1.05fr)
     minmax(0, 0.72fr)
-    minmax(0, 0.72fr)
-    minmax(0, 1.1fr);
+    minmax(0, 0.72fr);
   grid-template-rows: minmax(0, 0.44fr) minmax(0, 0.56fr);
   gap: 0.8%;
   padding: 1.1%;

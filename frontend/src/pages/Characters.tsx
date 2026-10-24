@@ -19,6 +19,7 @@ import {
   type WeaponType,
 } from "@/datas/characters"
 import CharacterSlot from "@/components/features/Characters/CharacterSlot";
+import { useCharacter } from "@/stores/characterDataStore";
 
 import "@/pages/_Page.css"
 import "@/pages/Characters.css"
@@ -35,6 +36,7 @@ interface StoredCharactersFilters {
   orderBy: OrderByOption;
   sortDirections: Record<OrderByOption, SortDirection>;
   configuredOnly: boolean;
+  favoritesOnly: boolean;
 }
 
 function isOrderByOption(value: unknown): value is OrderByOption {
@@ -53,6 +55,7 @@ function loadStoredCharactersFilters(): StoredCharactersFilters {
       version: "desc",
     },
     configuredOnly: false,
+    favoritesOnly: false,
   };
 
   const raw = localStorage.getItem(CHARACTERS_FILTER_STORAGE_KEY);
@@ -77,6 +80,7 @@ function loadStoredCharactersFilters(): StoredCharactersFilters {
         typeof parsed.configuredOnly === "boolean"
           ? parsed.configuredOnly
           : fallback.configuredOnly,
+      favoritesOnly: parsed.favoritesOnly === true,
     };
   } catch {
     return fallback;
@@ -85,6 +89,7 @@ function loadStoredCharactersFilters(): StoredCharactersFilters {
 
 export default function Characters() {
   const { lang } = useAppStore();
+  const { favoriteCharacterIds: favorites, toggleFavoriteCharacter: toggleFavorite } = useCharacter();
   const localeText = locale(lang).characters;
   const initialFilters = useMemo(() => loadStoredCharactersFilters(), []);
 
@@ -93,6 +98,7 @@ export default function Characters() {
     Record<OrderByOption, SortDirection>
   >(initialFilters.sortDirections);
   const [configuredOnly, setConfiguredOnly] = useState(initialFilters.configuredOnly);
+  const [favoritesOnly, setFavoritesOnly] = useState(initialFilters.favoritesOnly);
   const [searchQuery, setSearchQuery] = useState("");
   const [weaponFilters, setWeaponFilters] = useState<WeaponType[]>([]);
   const [elementFilters, setElementFilters] = useState<ElementType[]>([]);
@@ -120,10 +126,11 @@ export default function Characters() {
       orderBy,
       sortDirections,
       configuredOnly,
+      favoritesOnly,
     };
 
     localStorage.setItem(CHARACTERS_FILTER_STORAGE_KEY, JSON.stringify(payload));
-  }, [configuredOnly, orderBy, sortDirections]);
+  }, [configuredOnly, favoritesOnly, orderBy, sortDirections]);
 
   const toggleFilter = <T extends string>(
     value: T,
@@ -154,6 +161,7 @@ export default function Characters() {
 
   const filteredCharacters = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLocaleLowerCase();
+    const favoriteIds = new Set(favorites);
 
     return characterList
       .map((item) => {
@@ -174,11 +182,15 @@ export default function Characters() {
         return (
           matchesSearch &&
           (!configuredOnly || item.score > 0) &&
+          (!favoritesOnly || favoriteIds.has(item.id)) &&
           (weaponFilters.length === 0 || weaponFilters.includes(item.weapon)) &&
           (elementFilters.length === 0 || elementFilters.includes(item.element))
         );
       })
       .sort((a, b) => {
+        const favoriteDifference = Number(favoriteIds.has(b.id)) - Number(favoriteIds.has(a.id));
+        if (favoriteDifference) return favoriteDifference;
+
         if (orderBy === "score") {
           const scoreDifference =
             sortDirections.score === "asc"
@@ -197,6 +209,8 @@ export default function Characters() {
       });
   }, [
     configuredOnly,
+    favorites,
+    favoritesOnly,
     elementFilters,
     orderBy,
     searchQuery,
@@ -238,6 +252,14 @@ export default function Characters() {
             onClick={toggleSettingFilter}
           >
             {localeText.configured}
+          </button>
+          <button
+            type="button"
+            className={favoritesOnly ? "active" : ""}
+            aria-pressed={favoritesOnly}
+            onClick={() => setFavoritesOnly(current => !current)}
+          >
+            <span aria-hidden="true">★</span> {localeText.favoritesOnly}
           </button>
         </div>
 
@@ -364,6 +386,8 @@ export default function Characters() {
             isGrid
             key={item.id}
             prop={item}
+            isFavorite={favorites.includes(item.id)}
+            onToggleFavorite={() => toggleFavorite(item.id)}
           />
         ))}
 

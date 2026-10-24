@@ -2,6 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { LimitFunction } from "p-limit";
 import { ALLOWED_MIME, MAX_BYTES, OCR_UPSTREAM, normalizeLang } from "../config/env.js";
 import { OcrAdmission } from "../services/ocrAdmission.js";
+import { internalHeaders } from "../lib/internalAuth.js";
 
 const IDS = ["name", "cost", "main_1", "main_2", "sub_1", "sub_2", "sub_3", "sub_4", "sub_5"];
 
@@ -42,7 +43,7 @@ export function registerOcrBatchRoute(app: FastifyInstance, limitOcr: LimitFunct
       return await limitOcr(async () => {
         signal.throwIfAborted();
         const response = await fetch(new URL("/ocr/batch", OCR_UPSTREAM[safeLang] ?? OCR_UPSTREAM.kr), {
-          method: "POST", body: form, signal,
+          method: "POST", body: form, signal, headers: internalHeaders("ocr"), redirect: "error",
         });
         const body = await response.text();
         return reply.code(response.status).type("application/json").send(body);

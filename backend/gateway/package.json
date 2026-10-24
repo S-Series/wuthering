@@ -1,6 +1,7 @@
 {
   "type": "module",
   "scripts": {
+    "test:security": "tsx src/services/security.test.ts && tsx src/routes/ocrBatch.test.ts",
     "start": "tsx src/server.ts",
     "test:analytics": "tsx src/services/devAnalyticsDaily.test.ts",
     "test:board": "tsx src/services/readThroughCache.test.ts && tsx src/routes/board.test.ts",

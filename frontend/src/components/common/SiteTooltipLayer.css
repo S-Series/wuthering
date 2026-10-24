@@ -1,0 +1,27 @@
+.site-tooltip {
+  position: fixed;
+  z-index: 12000;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(340px, calc(100vw - 16px));
+  padding: 11px 13px;
+  border: 1px solid #68758b;
+  border-left: 3px solid #ffd764;
+  border-radius: 5px;
+  background: #111822;
+  color: #f4f6fa;
+  box-shadow: 0 6px 22px #0008;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.65;
+  text-align: left;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  user-select: text;
+}
+.site-tooltip strong { display: block; color: #ffe08b; font-size: 13px; font-weight: 700; }
+.site-tooltip p { margin: 5px 0 0; }
+.site-tooltip ul { margin: 6px 0 0; padding: 0; list-style: none; }
+.site-tooltip li + li { margin-top: 3px; }
+.site-tooltip li { padding-left: 10px; position: relative; }
+.site-tooltip li::before { content: "·"; position: absolute; left: 0; color: #a6bedc; }

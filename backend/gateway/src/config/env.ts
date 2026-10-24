@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { internalHeaders } from "../lib/internalAuth.js";
 
 export const YOUTUBE_PLAYLISTS = {
   kr: {
@@ -82,6 +83,11 @@ export const MAX_BYTES = 15 * 1024 * 1024;
 export const ALLOWED_MIME = new Set(["image/png", "image/jpeg", "image/webp"]);
 
 export function validateEnv() {
+  internalHeaders("ocr");
+  internalHeaders("render");
+  if (!["socket", "railway"].includes(process.env.CLIENT_IP_SOURCE ?? "socket")) {
+    throw new Error("CLIENT_IP_SOURCE must be socket or railway");
+  }
   if (!Number.isSafeInteger(OCR_CONCURRENCY) || OCR_CONCURRENCY < 1 ||
       !Number.isSafeInteger(OCR_MAX_PENDING) || OCR_MAX_PENDING < 0) {
     throw new Error("OCR_CONCURRENCY must be positive and OCR_MAX_PENDING non-negative integers");

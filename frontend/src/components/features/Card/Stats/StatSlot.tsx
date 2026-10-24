@@ -28,6 +28,9 @@ export default function StatSlot({
     return (
         <div
             className={`stat-slot-body ${highlighted ? "highlighted" : ""}`}
+            data-info-kind="stat"
+            data-info-id={statId}
+            data-info-value={statValue}
             onMouseEnter={() => onHoverStat?.(statId)}
             onMouseLeave={() => onHoverStat?.(null)}
             onFocus={() => onHoverStat?.(statId)}

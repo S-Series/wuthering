@@ -3,6 +3,7 @@ import logging
 
 from fastapi import FastAPI, File, Form, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from internal_auth import InternalAuthMiddleware
 
 from ocr_config import PRELOAD_LANG, normalize_lang
 from ocr_engine import get_ocr, is_lang_loaded, loaded_langs, supported_langs
@@ -37,6 +38,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(InternalAuthMiddleware)
 
 
 @app.get("/")

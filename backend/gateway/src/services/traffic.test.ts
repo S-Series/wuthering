@@ -18,7 +18,7 @@ const userId = "11111111-1111-4111-8111-111111111111";
 const membership = { user_id: userId, membership_level: 0, nickname: "Tester", started_at: null, expires_at: null };
 const user = { id: userId, firebase_uid: "known", role: "user", status: "active", email: "test@example.invalid",
   email_verified: true, provider: "email", last_login_at: new Date().toISOString(), created_at: new Date().toISOString(), membership };
-const snapshot: Record<string, unknown> = { rover_spectro: { level: 90 }, aemeath: { level: 80 } };
+let snapshot: Record<string, unknown> = { rover_spectro: { level: 90 }, aemeath: { level: 80 } };
 const requests: { table: string; method: string; url: URL; body: Record<string, unknown> }[] = [];
 let rpcError: string | undefined;
 let raceUser = false;
@@ -52,7 +52,10 @@ globalThis.fetch = async (input, options) => {
       const select = url.searchParams.get("select")!;
       const key = select.startsWith("data:data->") ? select.split("->")[1].split(",")[0] : null;
       data = [{ data: key ? snapshot[key] ?? null : snapshot, updated_at: "2026-10-18T00:00:00Z" }];
-    } else data = { updated_at: "2026-10-18T00:00:01Z" };
+    } else {
+      snapshot = body.data;
+      data = { updated_at: "2026-10-18T00:00:01Z" };
+    }
   } else if (table === "merge_character_cloud_data") {
     if (rpcError) return Response.json({ code: rpcError, message: "RPC failed" }, { status: 400 });
     assert.equal(body.target_user_id, userId);
@@ -126,6 +129,13 @@ try {
   rpcError = "PGRST202";
   assert.equal((await app.inject({ method: "PUT", url: "/api/character-data", headers, payload: { characterId: "aemeath", data: {} } })).statusCode, 500, "missing migration must not fall back to unsafe read-modify-write");
   rpcError = undefined;
+  const favorites = { rover_spectro: { level: 99, isFavorite: false }, aemeath: { level: 80, isFavorite: true } };
+  assert.equal((await app.inject({ method: "PUT", url: "/api/character-data", headers, payload: { data: favorites } })).statusCode, 200);
+  assert.deepEqual((await app.inject({ url: "/api/character-data", headers })).json().data, favorites, "full snapshots round-trip both favorite and unfavorite states");
+  assert.equal((await app.inject({ method: "PUT", url: "/api/character-data", headers, payload: { characterId: "aemeath", data: { level: 80, isFavorite: false } } })).statusCode, 200);
+  const favoriteDownload = await app.inject({ url: "/api/character-data?characterId=aemeath", headers });
+  assert.deepEqual(favoriteDownload.json().data, { aemeath: { level: 80, isFavorite: false } }, "single-character favorites use the existing atomic merge and projection");
+  assert.deepEqual(snapshot.rover_spectro, favorites.rover_spectro, "single-character save preserves other favorite states");
   assert.equal((await app.inject({ method: "PUT", url: "/api/character-data", headers, payload: { data: { test: "x".repeat(1100000) } } })).statusCode, 200, "payloads within the documented 2 MiB limit pass the JSON parser");
   assert.equal((await app.inject({ method: "PUT", url: "/api/character-data", headers, payload: { data: { test: "x".repeat(2100000) } } })).statusCode, 413);
   console.log("PASS: request auth coalescing, fresh roles, telemetry isolation, login writes, provisioning races, projected/conditional reads and atomic sync routing");

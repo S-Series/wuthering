@@ -7,6 +7,7 @@ self.onmessage = async ({ data }) => {
     importScripts(data.cvUrl);
     const cv = await self.cv;
     bitmap = await createImageBitmap(data.file);
+    const originalWidth = bitmap.width, originalHeight = bitmap.height;
     if (bitmap.width * bitmap.height > 32000000 || Math.min(bitmap.width, bitmap.height) < 60) throw new Error("이미지 크기를 확인해주세요.");
     if (bitmap.height < 1080) {
       const width = Math.round(bitmap.width * 1080 / bitmap.height);
@@ -72,36 +73,57 @@ self.onmessage = async ({ data }) => {
     const probe = new OffscreenCanvas(probeBox[2]-probeBox[0], probeBox[3]-probeBox[1]);
     const probeContext = probe.getContext("2d", { willReadFrequently: true });
     probeContext.drawImage(bitmap, probeBox[0], probeBox[1], probe.width, probe.height, 0, 0, probe.width, probe.height);
-    const detected = findStatRows(probeContext.getImageData(0, 0, probe.width, probe.height).data, probe.width, probe.height, best.unit);
-    // Incomplete/low-contrast option lists retain the existing geometry fallback.
-    const geometry = detected
-      ? detected.map(row => ({ center: probeBox[1] + row.center, half: row.half }))
-      : best.centers.map(center => ({ center, half: profile.half_row * best.unit }));
-    const rows = geometry.map(row => clamp([best.x1, row.center-row.half, best.x2, row.center+row.half]));
-    const box = clamp([best.x1, best.y+profile.top*best.unit, best.x2, rows[6][3]]);
-    const header = [box[0], box[1], box[2], rows[0][1]];
+    const detected = findStatRows(probeContext.getImageData(0, 0, probe.width, probe.height).data,
+      probe.width, probe.height, best.unit, best.centers.map(center => center - probeBox[1]));
+    const rows = detected.map((row, index) => row
+      ? clamp([probeBox[0]+row.left, probeBox[1]+row.top, probeBox[0]+row.right, probeBox[1]+row.bottom])
+      : clamp([best.x1, best.centers[index]-profile.half_row*best.unit,
+        best.x2, best.centers[index]+profile.half_row*best.unit]));
+    const header = clamp([best.x1, best.y+profile.top*best.unit, best.x2, rows[0][1]]);
     const splitY = Math.round(best.y - 0.12*best.unit);
-    const headers = data.splitHeader
-      ? [[header[0], header[1], header[2], splitY], [header[0], splitY, header[2], header[3]]]
-      : [header];
+    const [ix,iy,r] = profile.icon;
+    const iconSource = clamp([best.x+(ix-r)*best.unit, best.y+(iy-r)*best.unit, best.x+(ix+r)*best.unit, best.y+(iy+r)*best.unit]);
+    function locateHeader(searchBox, includeIcon = false) {
+      const b = clamp(searchBox), canvas = new OffscreenCanvas(b[2]-b[0], b[3]-b[1]);
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.drawImage(bitmap, b[0], b[1], canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+      const found = findRegionBounds(context.getImageData(0, 0, canvas.width, canvas.height).data,
+        canvas.width, canvas.height, best.unit, true);
+      let box = found ? [b[0]+found.left, b[1]+found.top, b[0]+found.right, b[1]+found.bottom] : b;
+      if (includeIcon) box = [Math.min(box[0], iconSource[0]), Math.min(box[1], iconSource[1]),
+        Math.max(box[2], iconSource[2]), Math.max(box[3], iconSource[3])];
+      return { box: clamp(box), method: found ? "detected" : "profile" };
+    }
+    const name = locateHeader([header[0], header[1], header[2], splitY], true);
+    // Restrict COST to the left text block, excluding the action-key icons on the right.
+    const cost = locateHeader([header[0], splitY, header[0]+(header[2]-header[0])*0.38, header[3]]);
+    const headers = data.splitHeader ? [name.box, cost.box] : [header];
     const crops = [...headers, ...rows];
+    const methods = [...(data.splitHeader ? [name.method, cost.method] : ["profile"]),
+      ...detected.map(row => row ? "detected" : "profile")];
     if (crops.some(b => b[2] <= b[0] || b[3] <= b[1])) throw new Error("에코 영역이 잘려 있습니다.");
-    // Crop from the original bitmap; only reduce oversized output, never upscale.
-    const factor = Math.min(1, 800/Math.max(...crops.map(b => b[2]-b[0])));
+    // Preserve panel-relative X alignment for stat/icon image matching, while OCR
+    // reads each band's own left/right bounds.
+    const atlasLeft = Math.min(probeBox[0], ...crops.map(b => b[0]));
+    const atlasRight = Math.max(probeBox[2], ...crops.map(b => b[2]));
+    const factor = Math.min(1, 800/(atlasRight-atlasLeft));
     const sizes = crops.map(b => [Math.round((b[2]-b[0])*factor), Math.round((b[3]-b[1])*factor)]);
-    const atlas = new OffscreenCanvas(Math.max(...sizes.map(s => s[0]))+32, sizes.reduce((sum,s) => sum+s[1]+32, 0));
+    const atlas = new OffscreenCanvas(Math.ceil((atlasRight-atlasLeft)*factor)+32, sizes.reduce((sum,s) => sum+s[1]+32, 0));
     const out = atlas.getContext("2d"); out.fillStyle = "#14181e"; out.fillRect(0, 0, atlas.width, atlas.height);
     const bands = []; let y = 16;
     crops.forEach((b,index) => {
-      out.drawImage(bitmap, b[0], b[1], b[2]-b[0], b[3]-b[1], 16, y, sizes[index][0], sizes[index][1]);
-      bands.push({ index: index-headers.length, top: y, bottom: y+sizes[index][1] }); y += sizes[index][1]+32;
+      const left = 16+Math.round((b[0]-atlasLeft)*factor);
+      out.drawImage(bitmap, b[0], b[1], b[2]-b[0], b[3]-b[1], left, y, sizes[index][0], sizes[index][1]);
+      const source = [Math.floor(b[0]*originalWidth/w), Math.floor(b[1]*originalHeight/h),
+        Math.ceil(b[2]*originalWidth/w), Math.ceil(b[3]*originalHeight/h)];
+      bands.push({ index: index-headers.length, left, right: left+sizes[index][0], top: y,
+        bottom: y+sizes[index][1], source, method: methods[index] }); y += sizes[index][1]+32;
     });
-    const [ix,iy,r] = profile.icon;
-    const iconSource = clamp([best.x+(ix-r)*best.unit, best.y+(iy-r)*best.unit, best.x+(ix+r)*best.unit, best.y+(iy+r)*best.unit]);
-    const icon = [16+(iconSource[0]-box[0])*factor, 16+(iconSource[1]-box[1])*factor,
-      16+(iconSource[2]-box[0])*factor, 16+(iconSource[3]-box[1])*factor].map(Math.round);
+    const icon = [16+(iconSource[0]-atlasLeft)*factor, 16+(iconSource[1]-headers[0][1])*factor,
+      16+(iconSource[2]-atlasLeft)*factor, 16+(iconSource[3]-headers[0][1])*factor].map(Math.round);
     const blob = await atlas.convertToBlob({ type: "image/png" });
-    self.postMessage({ blob, metadata: { version: 1, width: atlas.width, height: atlas.height, bands, icon } });
+    self.postMessage({ blob, metadata: { version: 1, width: atlas.width, height: atlas.height, bands, icon,
+      sourceWidth: originalWidth, sourceHeight: originalHeight } });
   } catch (error) {
     self.postMessage({ error: error instanceof Error ? error.message : "이미지 전처리에 실패했습니다." });
   } finally {

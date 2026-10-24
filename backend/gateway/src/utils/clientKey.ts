@@ -1,10 +1,6 @@
 import type { FastifyRequest } from "fastify";
+import { getClientIp } from "../lib/getClientIp.js";
 
 export function getClientKey(req: FastifyRequest): string {
-  const xfwd = req.headers["x-forwarded-for"];
-  if (typeof xfwd === "string" && xfwd.length > 0) {
-    return xfwd.split(",")[0].trim();
-  }
-
-  return req.ip;
+  return getClientIp(req) ?? "unknown";
 }
