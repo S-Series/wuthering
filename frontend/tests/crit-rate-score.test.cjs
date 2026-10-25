@@ -82,15 +82,31 @@ test('weapon, set, main option and refinement alter the budget through the actua
   assert.ok(r5.fixed > r1.fixed);
 });
 
-test('surplus crit earns no total-score points or paired-crit bonus; raw CV stays raw', () => {
+test('surplus crit earns no extra points and never reduces paired-crit bonuses; raw CV stays raw', () => {
   const low = build(6.3), high = build(10.5);
   const lower = score(low, 80), higher = score(high, 80);
-  // Both already exceed the 20% useful budget; only the pair bonus can fall.
-  assert.ok(higher[1] <= lower[1]);
+  // Both exceed the useful budget: extra rate leaves the score unchanged.
+  close(higher[1], lower[1]);
   assert.ok(higher[0] > lower[0]);
   const full = score(high, 100), fullLow = score(low, 100);
   close(full[1], fullLow[1]);
   assert.ok(full[1] >= 0 && full[1] <= 500);
+});
+
+test('raising crit rolls is monotonic across 100% and plateaus above the cap', () => {
+  for (const fixed of [50, 58, 60, 80, 99, 100, 110]) {
+    let previous = -Infinity;
+    let capped;
+    for (const roll of [6.3, 6.9, 7.5, 8.1, 8.7, 9.3, 9.9, 10.5]) {
+      const result = score(build(roll), fixed)[1];
+      assert.ok(result >= previous, `fixed ${fixed}, roll ${roll}: ${result} < ${previous}`);
+      if (fixed + roll * 5 >= 100) {
+        if (capped !== undefined) close(result, capped);
+        capped = result;
+      }
+      previous = result;
+    }
+  }
 });
 
 test('uncapped builds retain legacy total-score weighting and equipped order is irrelevant', () => {
@@ -113,6 +129,9 @@ test('500-point normalization uses legal rolls and reuses unnecessary crit slots
   const input = { available: 0, critWeight: 4, damageWeight: 2, otherMaxScores: [30, 20, 10, 5, 1], resonanceSlots: 0, needsCrit: true };
   // Best Echo: CD 21*2, four distinct others 30+20+10+5, plus ten-point CD bonus.
   close(getCritCappedScoreMultiplier(input) * 5 * (42 + 65) + 50, 500);
+  // Five paired Echoes keep all 50 bonus points even when their CR exceeds the cap.
+  const paired = { ...input, available: 20, otherMaxScores: [0, 0, 0, 0, 0] };
+  close(getCritCappedScoreMultiplier(paired) * (20 * 4 + 5 * 21 * 2) + 50, 500);
   // Only CR is useful: five max rolls overshoot the useful cap but still define 500.
   close(getCritCappedScoreMultiplier({ ...input, available: 42, damageWeight: 0, otherMaxScores: [0, 0, 0, 0, 0], needsCrit: false }) * 42 * 4 + 50, 500);
   const empty = createEmptyCharacterData('aemeath');

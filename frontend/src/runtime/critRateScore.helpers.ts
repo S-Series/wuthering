@@ -34,7 +34,7 @@ type ScoreCeilingInput = {
 
 /** Find the multiplier whose best legal five-Echo configuration scores exactly 500.
  * Crit rolls occupy real substat slots. Freed slots can use the next best distinct stat;
- * rate above the cap and its share of the paired-crit bonus have no value.
+ * only rate above the cap loses value; paired-crit bonuses remain unchanged.
  */
 export function getCritCappedScoreMultiplier(input: ScoreCeilingInput): number {
   const bestOther = [...input.otherMaxScores].sort((a,b) => b-a);
@@ -65,9 +65,8 @@ export function getCritCappedScoreMultiplier(input: ScoreCeilingInput): number {
   for (const state of states) for (const tenths of rollSums[state.rateCount]) {
     const total = tenths/10;
     const useful = Math.min(total,input.available);
-    const ratio = total>0 ? useful/total : 1;
     const raw = state.raw+useful*input.critWeight;
-    const bonus = !input.needsCrit ? 50 : input.available<=0 ? state.damageOnly*10 : state.pairs*10*ratio;
+    const bonus = !input.needsCrit ? 50 : input.available<=0 ? state.damageOnly*10 : state.pairs*10;
     if (raw>0) multiplier = Math.min(multiplier,(500-bonus)/raw);
   }
   return Number.isFinite(multiplier) ? multiplier : 0;

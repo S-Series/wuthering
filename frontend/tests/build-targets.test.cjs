@@ -118,7 +118,7 @@ test('higher stages require every target, rather than promoting from crit alone'
   assert.equal(evaluateBuildTargets(data,variant,{...tiers.wellBuilt,critRate:tiers.final.critRate}).tier,'wellBuilt');
 });
 
-test('comparison removes Chain, refinement, main-Echo and all set bonuses', () => {
+test('comparison removes Chain, refinement and all set bonuses', () => {
   const variant = getBuildTargetProfile('aemeath').variants.find(v => v.label === '속공');
   const data = build('aemeath',variant);
   const first = getBuildComparisonStats(data);
@@ -128,6 +128,34 @@ test('comparison removes Chain, refinement, main-Echo and all set bonuses', () =
   assert.equal(second.critDmg, first.critDmg); assert.equal(second.resonanceBns, first.resonanceBns);
   // Star's 5-piece crit buff must not raise the compared chance.
   assert.ok(second.critRate < 50);
+});
+
+test('Lucy comparison includes the main Echo crit effect and still excludes set bonuses', () => {
+  const variant = getBuildTargetProfile('lucy').variants.find(v => v.label === '속공');
+  const data = build('lucy', variant);
+  data.echoData[0].echoId = 'X80';
+  [6.9, 7.5, 7.5, 8.7, 6.9].forEach((statValue, index) => {
+    data.echoData[index].subOptions[0] = { statId: 'critRate', statValue };
+  });
+  assert.equal(getBuildComparisonStats(data).critRate, 87.5);
+  data.echoData.forEach(echo => { echo.setId = 'Radiance'; });
+  assert.equal(getBuildComparisonStats(data).critRate, 87.5);
+  assert.equal(calcFinalStat(data, data.echoDataIndex, { Radiance: 5 }).critRate, 107.5);
+  data.echoData[0].echoId = null;
+  assert.equal(getBuildComparisonStats(data).critRate, 72.5);
+});
+
+test('projected final targets include the selected main Echo effect', () => {
+  const variant = getBuildTargetProfile('lucy').variants.find(v => v.label === '속공');
+  const data = build('lucy', variant);
+  data.echoData[0].echoId = 'R56'; // Mech Abomination grants 12% ATK.
+  const withMain = getTierTargets('lucy', variant, data);
+  data.echoData[0].echoId = 'X80';
+  const withoutMain = getTierTargets('lucy', variant, data);
+  assert.equal(withMain.final.atk, 2747);
+  assert.equal(withoutMain.final.atk, 2626);
+  assert.equal(withMain.wellBuilt.atk, 2500);
+  assert.equal(withMain.nearFinal.atk, 2623.5);
 });
 
 test('all Sonata sets leave table values unchanged while combat stats still include their effects', () => {

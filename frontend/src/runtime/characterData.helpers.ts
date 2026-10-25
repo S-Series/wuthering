@@ -497,7 +497,7 @@ export const calcEchoScore = (
       options.some((item) => item.statId === FixedStats.critRate.id) &&
       options.some((item) => item.statId === FixedStats.critDmg.id)
     )
-      av += 10 * (critScoring?.ratio ?? 1);
+      av += 10;
   } else {
     av += 10;
   }
@@ -567,8 +567,7 @@ export function getCritRateScoreAdjustment(cData: CharacterData, cStat: Characte
     available:budget.available, critWeight:sheet.critRate ?? 0, damageWeight:sheet.critDmg ?? 0,
     otherMaxScores:others, resonanceSlots:Math.min(5,Math.max(0,Math.ceil(meta.subResReq/12.4))), needsCrit:meta.isNeedCrit,
   });
-  const pairs = meta.isNeedCrit ? equipped.filter(echo => echo.subOptions.some(option=>option.statId==='critRate' && option.statValue>0) && echo.subOptions.some(option=>option.statId==='critDmg' && option.statValue>0)).length : 0;
-  const penalty = budget.wasted*(sheet.critRate ?? 0)*multiplier+(budget.available>0 ? pairs*10*(1-budget.ratio) : 0);
+  const penalty = budget.wasted*(sheet.critRate ?? 0)*multiplier;
   return { ...budget, active:true, multiplier, penalty };
 }
 

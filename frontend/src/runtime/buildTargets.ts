@@ -1,6 +1,7 @@
 import { buildTargetBaselines } from '@/datas/buildTargets/baselines';
 import type { BuildTargetBaseline, BuildTargetVariant, BuildTier, TargetStatId, TargetStats } from '@/datas/buildTargets/types';
 import { characterStat, type CharacterId } from '@/datas/characterStats';
+import { characterGuideData } from '@/datas/characters.guide';
 import type { HarmonyId } from '@/datas/harmonies';
 import { FixedStats } from '@/datas/stats';
 import { weaponStat } from '@/datas/weaponStats';
@@ -46,7 +47,7 @@ export function getTierTargets(id: CharacterId, variant: BuildTargetVariant, dat
   return { wellBuilt: { ...variant.baseline }, nearFinal, final };
 }
 
-/** Reference gear has no substats or set effects. Valid equipped main-stat choices may select
+/** Reference gear includes its main-Echo effect, without substats or set effects. Valid equipped main-stat choices may select
  * a permitted alternative, but equipment rolls, Chain and refinement cannot move the target. */
 function createTargetReference(id: CharacterId, variant: BuildTargetVariant, data?: CharacterData): CharacterData {
   const profile = getBuildTargetProfile(id);
@@ -59,6 +60,7 @@ function createTargetReference(id: CharacterId, variant: BuildTargetVariant, dat
     const echoCost = cost as 4 | 3 | 1;
     const position = positions[echoCost]++;
     const echo = createEmptyEchoRuntime(echoCost);
+    if (index === 0) echo.echoId = variant.mainEchoId ?? equipped?.[0].echoId ?? characterGuideData[id].guideMainEcho;
     const statId = equipped?.filter(item => item.cost === cost)[position].mainOption.statId ?? (cost === 4
       ? variant.main4Exact?.[position] ?? variant.main4[0]
       : cost === 3 ? mains3?.[position] ?? variant.allowed3[0] : variant.main1);
@@ -107,7 +109,7 @@ export function getTargetConditions(data: CharacterData, variant: BuildTargetVar
   };
 }
 
-/** Same Echoes and weapon, normalized to C0/R1 without any set or main-Echo buffs. */
+/** Same Echoes and weapon, including the main-Echo effect, normalized to C0/R1 without set buffs. */
 export function getBuildComparisonStats(data: CharacterData): TargetStats {
   return getNormalizedBuildStats(data);
 }
@@ -117,7 +119,7 @@ function getNormalizedBuildStats(data: CharacterData, extraSubstats?: { atkPct: 
   const { contributions } = calcCharacterStatDetails(normalized, normalized.echoDataIndex, {});
   const stats: TargetStats = {};
   for (const source of contributions) {
-    if (source.kind === 'harmony' || source.kind === 'mainEcho' || source.kind === 'rounding') continue;
+    if (source.kind === 'harmony' || source.kind === 'rounding') continue;
     stats[source.statId] = (stats[source.statId] ?? 0) + source.value;
   }
   if (extraSubstats) {
