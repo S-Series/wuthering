@@ -35,6 +35,7 @@
 .build-target-panel td.current { font-weight: 700; color: var(--target-ink); }
 .build-target-panel td.reached { color: #6edcc0; background: #2fc69b0c; }
 .build-target-panel td.pending { color: var(--target-accent); }
+.build-target-panel td.unregistered { color: var(--target-muted); font-size: 11px; }
 .build-target-panel td span { margin-left: 8px; font-size: 10px; }
 .build-target-panel thead .reached { box-shadow: inset 0 2px #6edcc0; }
 .build-target-panel__footnote { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; color: var(--target-muted); font-size: 11px; }

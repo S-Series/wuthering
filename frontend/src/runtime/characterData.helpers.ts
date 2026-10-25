@@ -11,7 +11,7 @@ import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { characterScoreSheet, getCharacterScore, type CharacterScore } from "@/datas/characterScoreSheet";
 import { characterMeta, getCharacterMeta, type CharacterMeta } from "@/datas/characters.meta";
 import { isValidEchoMainOption } from "./echoMainOption.helpers";
-import { getCritRateBudget, getCritCappedScoreMultiplier } from "./critRateScore.helpers";
+import { getCritRateBudget } from "./critRateScore.helpers";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;
@@ -457,7 +457,6 @@ export const calcEchoScore = (
   echo: EchoRuntime,
   magicNumber: number,
   metaData: CharacterMeta,
-  critScoring?: { ratio: number; notNeeded: boolean },
 ): [number, number] => {
   const options = echo.subOptions;
 
@@ -472,7 +471,7 @@ export const calcEchoScore = (
     if (statId === FixedStats.critDmg.id) {cv += value * 1}
     if (statId !== FixedStats.resonanceBns.id) {
       const weight = sheet[statId] ?? 0;
-      av += value * weight * (statId === "critRate" ? critScoring?.ratio ?? 1 : 1);
+      av += value * weight;
     }
     if (statId === FixedStats[metaData.statType].id) {
       const statType = metaData.statType;
@@ -492,8 +491,7 @@ export const calcEchoScore = (
   av *= magicNumber;
 
   if (metaData.isNeedCrit) {
-    if (critScoring?.notNeeded && options.some(item => item.statId === "critDmg" && item.statValue > 0)) av += 10;
-    else if (
+    if (
       options.some((item) => item.statId === FixedStats.critRate.id) &&
       options.some((item) => item.statId === FixedStats.critDmg.id)
     )
@@ -508,20 +506,10 @@ export const calcEchoScore = (
   return[cv, av];
 };
 
-export const calcAllEchoScore = (
-  character: CharacterData
-): ScoreList => {
-  const fallback: ScoreList = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
-
-  const cId = character.characterId;
-  if (!cId) return fallback;
-
+/** Keep the original whole-score multiplier independent of the equipped crit budget. */
+function getEchoScoreMultiplier(cId: CharacterId): number {
   const sheet = characterScoreSheet[cId];
-  if (!sheet) return fallback;
-
   const cMeta = characterMeta[cId];
-  if (!cMeta) return fallback;
-
   const resCount = Math.ceil(cMeta.subResReq / 12.4);
   const scoreList = [
     // higest value * score value = maxScore
@@ -540,7 +528,19 @@ export const calcAllEchoScore = (
   const scoreLarge = sorted.slice(0, 5).reduce((sum, value) => sum + value, 0);
   const scoreSmall = sorted.slice(0, 4).reduce((sum, value) => sum + value, 0);
 
-  const magicNumber = 90 / ((scoreLarge * (5 - resCount) + scoreSmall * resCount) / 5);
+  return 90 / ((scoreLarge * (5 - resCount) + scoreSmall * resCount) / 5);
+}
+
+export const calcAllEchoScore = (
+  character: CharacterData
+): ScoreList => {
+  const fallback: ScoreList = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]];
+  const cId = character.characterId;
+  if (!cId) return fallback;
+  const sheet = characterScoreSheet[cId];
+  const cMeta = characterMeta[cId];
+  if (!sheet || !cMeta) return fallback;
+  const magicNumber = getEchoScoreMultiplier(cId);
 
   const ret: ScoreList = [...fallback];
   for (let i = 0; i < 10; i++) {
@@ -553,22 +553,13 @@ export const calcAllEchoScore = (
 export function getCritRateScoreAdjustment(cData: CharacterData, cStat: CharacterStat) {
   const equipped = cData.echoDataIndex.slice(0,5).map(index => cData.echoData[index]);
   const budget = getCritRateBudget(cStat.critRate,equipped);
-  const sheet = characterScoreSheet[cData.characterId];
-  const meta = characterMeta[cData.characterId];
-  const active = budget.available < budget.maximum && (sheet.critRate ?? 0)>0;
-  if (!active) return { ...budget, active:false, multiplier:0, penalty:0 };
-  const base = characterStat[cData.characterId];
-  const primaryBase = meta.statType === 'hp' ? base.baseHp : meta.statType === 'def' ? base.baseDef : base.baseAtk+500;
-  const others = Object.values(FixedStats).filter(stat => stat.ValueSub.length && !['critRate','critDmg','resonanceBns'].includes(stat.id)).map(stat => {
-    const value = Math.max(...stat.ValueSub);
-    return value*(sheet[stat.id as StatId] ?? 0)+(stat.id===meta.statType ? value/(primaryBase/100) : 0);
-  });
-  const multiplier = getCritCappedScoreMultiplier({
-    available:budget.available, critWeight:sheet.critRate ?? 0, damageWeight:sheet.critDmg ?? 0,
-    otherMaxScores:others, resonanceSlots:Math.min(5,Math.max(0,Math.ceil(meta.subResReq/12.4))), needsCrit:meta.isNeedCrit,
-  });
-  const penalty = budget.wasted*(sheet.critRate ?? 0)*multiplier;
-  return { ...budget, active:true, multiplier, penalty };
+  const weight = characterScoreSheet[cData.characterId].critRate ?? 0;
+  const active = (budget.available < budget.maximum || budget.wasted > 0) && weight > 0;
+  // Replace only the CR contribution: min(value, useful cap) * t * whole multiplier * (52.5 / useful cap).
+  const scoreDelta = active
+    ? (budget.effective * budget.scoreMultiplier - budget.substats) * weight * getEchoScoreMultiplier(cData.characterId)
+    : 0;
+  return { ...budget, active, scoreDelta };
 }
 
 export const calcFinalScore = (
@@ -598,13 +589,7 @@ export const calcFinalScore = (
   }
 
   const critAdjustment = getCritRateScoreAdjustment(cData,cStat);
-  if (critAdjustment.active) {
-    const sheet = characterScoreSheet[cId];
-    const meta = characterMeta[cId];
-    av = indexed.reduce((total,index) => total+calcEchoScore(cId,sheet,cData.echoData[index],critAdjustment.multiplier,meta,{
-      ratio:critAdjustment.ratio, notNeeded:critAdjustment.available===0,
-    })[1],0);
-  }
+  av += critAdjustment.scoreDelta;
 
   const eData: [
     EchoRuntime,

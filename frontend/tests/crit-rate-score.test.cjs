@@ -20,7 +20,7 @@ function load(filename) {
   } });
   return result;
 }
-const { getCritRateBudget, getCritCappedScoreMultiplier } = load(path.join(root, 'runtime/critRateScore.helpers.ts'));
+const { getCritRateBudget } = load(path.join(root, 'runtime/critRateScore.helpers.ts'));
 const { calcFinalStat, calcAllEchoScore, calcFinalScore, getCritRateScoreAdjustment } = load(path.join(root, 'runtime/characterData.helpers.ts'));
 const { createEmptyCharacterData } = load(path.join(root, 'types/character.type.ts'));
 const { characterGuideData } = load(path.join(root, 'datas/characters.guide.ts'));
@@ -125,19 +125,58 @@ test('uncapped builds retain legacy total-score weighting and equipped order is 
   close(after[1], before[1]);
 });
 
-test('500-point normalization uses legal rolls and reuses unnecessary crit slots', () => {
-  const input = { available: 0, critWeight: 4, damageWeight: 2, otherMaxScores: [30, 20, 10, 5, 1], resonanceSlots: 0, needsCrit: true };
-  // Best Echo: CD 21*2, four distinct others 30+20+10+5, plus ten-point CD bonus.
-  close(getCritCappedScoreMultiplier(input) * 5 * (42 + 65) + 50, 500);
-  // Five paired Echoes keep all 50 bonus points even when their CR exceeds the cap.
-  const paired = { ...input, available: 20, otherMaxScores: [0, 0, 0, 0, 0] };
-  close(getCritCappedScoreMultiplier(paired) * (20 * 4 + 5 * 21 * 2) + 50, 500);
-  // Only CR is useful: five max rolls overshoot the useful cap but still define 500.
-  close(getCritCappedScoreMultiplier({ ...input, available: 42, damageWeight: 0, otherMaxScores: [0, 0, 0, 0, 0], needsCrit: false }) * 42 * 4 + 50, 500);
+test('crit-only multipliers use 52.5 / min(52.5, needed) and safely handle zero need', () => {
+  const data = build(6.3);
+  for (const [fixed, expected] of [[0, 1], [13, 1], [47.5, 1], [50, 1.05], [58, 1.25], [80, 2.625], [100, 0], [110, 0]]) {
+    const budget = getCritRateBudget(fixed + 31.5, equipped(data));
+    close(budget.scoreMultiplier, expected);
+  }
   const empty = createEmptyCharacterData('aemeath');
   const budget = getCritRateBudget(13, equipped(empty));
   assert.equal(budget.ratio, 1);
   assert.ok(Number.isFinite(score(empty, 100)[1]));
+});
+
+test('only crit points are replaced by the requested formula; all other points and pair bonuses stay at legacy weights', () => {
+  const data = build(6.3);
+  for (const echo of data.echoData) {
+    echo.subOptions[1].statValue = 12.6;
+    echo.subOptions[2].statValue = 6.4;
+    echo.subOptions[3].statValue = 6.4;
+  }
+  const legacy = data => calcAllEchoScore(data).slice(0, 5).reduce((sum, values) => sum + values[1], 0);
+  const withoutCrit = structuredClone(data);
+  withoutCrit.echoData.forEach(echo => { echo.subOptions[0].statValue = 0; });
+  // Keeping both option kinds retains the exact same pair bonus in the isolated score.
+  const otherPoints = legacy(withoutCrit);
+  const critPointsPerPercent = (legacy(data) - otherPoints) / 31.5;
+  for (const fixed of [13, 47.5, 50, 58, 80, 99, 100, 110]) {
+    const cap = Math.min(52.5, Math.max(0, 100 - fixed));
+    const expectedCrit = cap > 0 ? Math.min(31.5, cap) * critPointsPerPercent * (52.5 / cap) : 0;
+    const expected = Math.round(Math.min(500, otherPoints + expectedCrit) * 10) / 10;
+    close(score(data, fixed)[1], expected);
+  }
+});
+
+test('Lucy uses a 1.05 crit-only multiplier without lowering the legacy whole-score coefficient', () => {
+  const data = createEmptyCharacterData('lucy');
+  data.weaponId = 'pistol007';
+  const slots = [
+    ['X80', 'Adam', 4, 'critRate', 22, [['critRate',6.9],['def',50],['critDmg',15],['hpPct',7.9],['atk',40]]],
+    ['W69', 'Radiance', 3, 'atkPct', 30, [['critRate',7.5],['critDmg',17.4],['skillBns',8.6],['heavyBns',6.4],['resonanceBns',10.8]]],
+    ['R59', 'Memories', 3, 'spectroBns', 30, [['resonanceBns',9.2],['critDmg',21],['atkPct',7.9],['hpPct',9.4],['critRate',7.5]]],
+    ['W33', 'Radiance', 1, 'atkPct', 18, [['atkPct',6.4],['critRate',8.7],['critDmg',13.8],['def',60],['resonanceBns',10.8]]],
+    ['R11', 'Memories', 1, 'atkPct', 18, [['critDmg',16.2],['atk',50],['skillBns',7.9],['critRate',6.9],['def',60]]],
+  ];
+  slots.forEach(([echoId,setId,cost,statId,statValue,subs],index) => {
+    data.echoData[index] = { ...data.echoData[index], echoId, setId, cost, mainOption: {statId,statValue}, subOptions: subs.map(([statId,statValue])=>({statId,statValue})) };
+  });
+  const stats = calcFinalStat(data, data.echoDataIndex, { Adam:1, Radiance:2, Memories:2 });
+  const legacy = calcAllEchoScore(data);
+  close(stats.critRate, 87.5);
+  close(getCritRateScoreAdjustment(data, stats).scoreMultiplier, 1.05);
+  close(Math.round(legacy.slice(0,5).reduce((sum,value)=>sum+value[1],0)*10)/10, 350.9);
+  close(calcFinalScore(data, stats, data.weaponId, legacy)[1], 357.2);
 });
 
 test('total-score tooltip explains the useful and wasted portions in all site languages', () => {

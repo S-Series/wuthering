@@ -173,7 +173,7 @@ export default function CardStatGauges() {
 
   const text = messages[lang];
   const meta = getCharacterMeta(characterData.characterId, characterData.constell[0]);
-  const energyTarget = getSuggestedVariant(characterData).baseline.resonanceBns;
+  const energyTarget = getSuggestedVariant(characterData)?.baseline.resonanceBns;
   const gauges: { id: GaugeStatId; target?: number; targetLabel?: string; status?: string }[] = [
     { id: meta.statType },
     {
@@ -218,7 +218,7 @@ export default function CardStatGauges() {
         const sources = statContributions.filter((source) => source.statId === id);
         const groups = groupSources(sources);
         const minimum = id === "resonanceBns" ? 90 : id === "critDmg" ? 100 : 0;
-        const scale = target ?? Math.max(minimum + 1, current);
+        const scale = target !== undefined && target > minimum ? target : Math.max(minimum + 1, current);
         const range = scale - minimum;
         const filled = Math.min(scale, Math.max(minimum, current));
         const base = sources.filter((source) => source.kind === "base" || source.kind === "weaponBase").reduce((sum, source) => sum + source.value, 0);

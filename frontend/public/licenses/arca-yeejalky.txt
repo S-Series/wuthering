@@ -1,0 +1,14 @@
+Source: 이정도면 잘키웠다표 - 명조 채널 위키
+Contributors: the authors and contributors of the Arca Wuthering Waves channel wiki article.
+https://arca.live/w/wutheringwaves/이정도면%20잘키웠다표
+
+Source page last modified: 2026-10-09 19:13:37 KST.
+User-supplied HTML extracted: 2026-10-25.
+
+The source page footer identifies CC BY-SA 4.0, excluding separately licensed material.
+https://creativecommons.org/licenses/by-sa/4.0/
+
+The extracted table snapshot and its table-data adaptations retain that attribution and license.
+Changes: extracted source cells, mapped character and asset identifiers, and separated source
+targets from this site's calculated Near-final and Final milestones. No wiki images are included.
+Site source code and game assets are separate from this table-data attribution.

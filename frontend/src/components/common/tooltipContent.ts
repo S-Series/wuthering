@@ -20,11 +20,12 @@ export const formatInfoStat = (id: string, value: number) => `${Number(value.toF
 
 export function critScoreTooltipLines(budget: CritRateBudget, lang: LangType): string[] {
   const pct = (value: number) => `${Number(value.toFixed(2))}%`;
+  const factor = Number(budget.scoreMultiplier.toFixed(4));
   return [
     tr(lang, `부옵 외 크리티컬: ${pct(budget.fixed)}`, `Crit rate outside substats: ${pct(budget.fixed)}`, `サブ以外の会心率: ${pct(budget.fixed)}`, `副词条以外的暴击率: ${pct(budget.fixed)}`),
     tr(lang, `유효 부옵 상한: ${pct(budget.available)} / 최대 ${pct(budget.maximum)}`, `Useful substat cap: ${pct(budget.available)} / maximum ${pct(budget.maximum)}`, `有効サブ上限: ${pct(budget.available)} / 最大 ${pct(budget.maximum)}`, `有效副词条上限: ${pct(budget.available)} / 最高 ${pct(budget.maximum)}`),
     tr(lang, `장착 부옵 ${pct(budget.substats)} → 유효 ${pct(budget.effective)} · 초과 ${pct(budget.wasted)}`, `Equipped subs ${pct(budget.substats)} → effective ${pct(budget.effective)} · wasted ${pct(budget.wasted)}`, `装備サブ ${pct(budget.substats)} → 有効 ${pct(budget.effective)} · 超過 ${pct(budget.wasted)}`, `已装备副词条 ${pct(budget.substats)} → 有效 ${pct(budget.effective)} · 溢出 ${pct(budget.wasted)}`),
-    tr(lang, "100% 초과 크리티컬 부옵만 점수에서 제외하고 쌍크리 보너스는 유지합니다. 가능한 유효 옵션을 기준으로 500점 환산합니다. 개별 에코 점수는 단독 평가입니다.", "Only substat crit above 100% is excluded; paired-crit bonuses are preserved. The best usable rolls define 500 points; individual Echo scores are standalone ratings.", "100%を超えるサブ会心率のみを除外し、会心ペア加点は維持します。有効な構成を500点に換算します。個別エコーは単独評価です。", "仅排除超过100%的副词条暴击率，保留双暴加分，以有效配置折算500分。单个声骸为独立评分。"),
+    tr(lang, `유효 크리 부옵 × 크리 배점 × 기존 전체보정 × ${factor}. 계수는 최대 부옵 ÷ 유효 부옵 상한이며, 이미 100%면 크리 부옵은 0점입니다. 다른 옵션과 쌍크리 보너스는 유지하고 총점 상한은 500점입니다. 개별 에코는 단독 평가입니다.`, `Effective crit subs × crit weight × original whole-score multiplier × ${factor}. The factor is maximum subs / useful cap; crit subs score zero if already at 100%. Other stats and paired-crit bonuses stay unchanged, with a 500-point cap. Individual Echoes are rated separately.`, `有効会心サブ × 会心配点 × 元の全体係数 × ${factor}。係数は最大サブ÷有効上限、既に100%なら会心サブは0点です。他の属性と会心ペア加点を維持し、上限は500点です。個別エコーは単独評価です。`, `有效暴击副词条 × 暴击权重 × 原整体系数 × ${factor}。系数为副词条最大值÷有效上限，已达100%时暴击副词条记0分。其他属性与双暴加分不变，总分上限500。单个声骸独立评分。`),
   ];
 }
 
