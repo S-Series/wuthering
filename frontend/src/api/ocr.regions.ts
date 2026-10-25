@@ -10,7 +10,10 @@ export type OcrRegionImage = { id: OcrRegionId; blob: Blob };
 export async function createOcrRegionImages(file: File, metadata: CropMetadata, signal: AbortSignal): Promise<OcrRegionImage[]> {
   signal.throwIfAborted();
   if (metadata.width <= 32 || metadata.bands.length !== 9
-    || metadata.bands.some((band, i) => band.index !== i - 2 || band.bottom <= band.top)) {
+    || metadata.bands.some((band, i) => band.index !== i - 2 || band.bottom <= band.top
+      || band.top < 0 || band.bottom > metadata.height
+      || (band.left ?? 16) < 0 || (band.right ?? metadata.width - 16) > metadata.width
+      || (band.right ?? metadata.width - 16) <= (band.left ?? 16))) {
     throw new Error("9개 영역으로 자른 이미지가 필요합니다.");
   }
   const bitmap = await createImageBitmap(file);
@@ -19,7 +22,8 @@ export async function createOcrRegionImages(file: File, metadata: CropMetadata, 
     for (const [i, band] of metadata.bands.entries()) {
       signal.throwIfAborted();
       // OCR keeps the complete row, including its numeric value and percent sign.
-      const width = metadata.width - 32;
+      const left = band.left ?? 16;
+      const width = (band.right ?? metadata.width - 16) - left;
       const height = band.bottom - band.top;
       const scale = i < 2 ? 1 : Math.min(3, Math.max(1, 64 / height));
       const padding = i < 2 ? 0 : 16;
@@ -29,7 +33,7 @@ export async function createOcrRegionImages(file: File, metadata: CropMetadata, 
       if (!context) throw new Error("이미지 분할에 실패했습니다.");
       context.fillStyle = "#14181e";
       context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(bitmap, 16, band.top, width, height, padding, padding, scaledWidth, scaledHeight);
+      context.drawImage(bitmap, left, band.top, width, height, padding, padding, scaledWidth, scaledHeight);
       images.push({ id: OCR_REGION_IDS[i], blob: await canvas.convertToBlob({ type: "image/png" }) });
     }
     signal.throwIfAborted();

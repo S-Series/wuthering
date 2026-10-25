@@ -4,13 +4,14 @@ import type { EchoRuntime, EchoStatOption } from "@/runtime/echo.runtime";
 import { characterStat, type CharacterId } from "@/datas/characterStats";
 import { getCharacterConstellStatBonuses } from "@/datas/characterConstellStats";
 import { weaponStat } from "@/datas/weaponStats";
-import type { WeaponId } from "@/datas/weapon";
+import { weaponDict, type WeaponId } from "@/datas/weapon";
 import { FixedStats, type StatId } from "@/datas/stats";
 import { echoDict, getEchoCostKey, type EchoCostKey, type EchoData, type EchoId } from "@/datas/echos";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { characterScoreSheet, getCharacterScore, type CharacterScore } from "@/datas/characterScoreSheet";
 import { characterMeta, getCharacterMeta, type CharacterMeta } from "@/datas/characters.meta";
 import { isValidEchoMainOption } from "./echoMainOption.helpers";
+import { getCritRateBudget, getCritCappedScoreMultiplier } from "./critRateScore.helpers";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;
@@ -168,7 +169,19 @@ export const calcBaseStat = (data: CharacterData) => {
   return stats;
 };
 
-export const calcFinalStat = (
+export type GaugeStatId = "hp" | "atk" | "def" | "resonanceBns" | "critRate" | "critDmg";
+export type StatContribution = {
+  kind: "base" | "nodes" | "chain" | "weaponBase" | "weaponPrimary" | "weaponEffect" | "echoFixed" | "echoMain" | "echoSub" | "mainEcho" | "harmony" | "rounding";
+  statId: GaugeStatId;
+  value: number;
+  percent?: number;
+  multiplierBase?: number;
+  name?: { kr: string; en: string; jp: string; zh: string };
+  slot?: number;
+  level?: number;
+};
+
+export const calcCharacterStatDetails = (
   data: CharacterData,
   echoIdx: number[],
   harmonySet: Partial<Record<HarmonyId, number>>
@@ -178,6 +191,27 @@ export const calcFinalStat = (
   const characterEchoData = data.echoData;
   const C_baseStat = characterStat[id];
   const W_baseStat = weaponStat[data?.weaponId || "dummy"];
+  const contributions: StatContribution[] = [];
+  const record = (statId: StatId, value: number, source: Omit<StatContribution, "statId" | "value">) => {
+    if (value === 0) return;
+    const percentStat = statId === "hpPct" ? "hp" : statId === "atkPct" ? "atk" : statId === "defPct" ? "def" : null;
+    if (percentStat) {
+      const multiplierBase = percentStat === "hp" ? C_baseStat.baseHp : percentStat === "atk" ? C_baseStat.baseAtk + W_baseStat.atk : C_baseStat.baseDef;
+      contributions.push({ ...source, statId: percentStat, value: multiplierBase * value / 100, percent: value, multiplierBase });
+    } else if (statId === "resonanceBns" || statId === "critRate" || statId === "critDmg" || statId === "hp" || statId === "atk" || statId === "def") {
+      contributions.push({ ...source, statId, value });
+    }
+  };
+  record("hp", C_baseStat.baseHp, { kind: "base" });
+  record("atk", C_baseStat.baseAtk, { kind: "base" });
+  record("def", C_baseStat.baseDef, { kind: "base" });
+  record("atk", W_baseStat.atk, { kind: "weaponBase", name: data.weaponId ? weaponDict[data.weaponId] : undefined });
+  record("resonanceBns", C_baseStat.ResonanceBns, { kind: "base" });
+  // The table stores innate 5% crit rate together with unlocked skill nodes.
+  record("critRate", 5, { kind: "base" });
+  record("critRate", C_baseStat.CritRate - 5, { kind: "nodes" });
+  record("critDmg", 150, { kind: "base" });
+  record("critDmg", C_baseStat.CritDmg - 150, { kind: "nodes" });
   const stats: CharacterStat = {
     hp: 0,
     atk: 0,
@@ -233,6 +267,9 @@ export const calcFinalStat = (
   equipmentStats.hpPct += C_baseStat.hpPct;
   equipmentStats.atkPct += C_baseStat.atkPct;
   equipmentStats.defPct += C_baseStat.defPct;
+  record("hpPct", C_baseStat.hpPct, { kind: "nodes" });
+  record("atkPct", C_baseStat.atkPct, { kind: "nodes" });
+  record("defPct", C_baseStat.defPct, { kind: "nodes" });
 
   equipmentStats[`${characterData.element}Bns`] += C_baseStat.typeBns[0];
   equipmentStats[`${characterData.type}Bns`] += C_baseStat.typeBns[1];
@@ -244,11 +281,15 @@ export const calcFinalStat = (
 
   for (const bonus of constellStatBonuses) {
     equipmentStats[bonus.statId] += bonus.value;
+    record(bonus.statId, bonus.value, { kind: "chain", level: data.constell[0] });
   }
 
+  const weaponName = data.weaponId ? weaponDict[data.weaponId] : undefined;
   equipmentStats[W_baseStat.statType[0]] += W_baseStat.value[0];
-  equipmentStats[W_baseStat.statType[1]] +=
-    W_baseStat.value[1] * (1 + (Math.max(1, data.constell[1]) - 1) * 0.25);
+  record(W_baseStat.statType[0], W_baseStat.value[0], { kind: "weaponPrimary", name: weaponName });
+  const weaponEffectValue = W_baseStat.value[1] * (1 + (Math.max(1, data.constell[1]) - 1) * 0.25);
+  equipmentStats[W_baseStat.statType[1]] += weaponEffectValue;
+  record(W_baseStat.statType[1], weaponEffectValue, { kind: "weaponEffect", name: weaponName, level: Math.max(1, data.constell[1]) });
   
   // Should i remove magic number 5?
   for (let i = 0; i < 5; i++) {
@@ -257,20 +298,26 @@ export const calcFinalStat = (
     if (loopData.cost === 4) equipmentStats.atk += 150;
     if (loopData.cost === 3) equipmentStats.atk += 100;
     if (loopData.cost === 1) equipmentStats.hp += 2280;
+    if (loopData.cost === 4) record("atk", 150, { kind: "echoFixed", slot: i + 1 });
+    if (loopData.cost === 3) record("atk", 100, { kind: "echoFixed", slot: i + 1 });
+    if (loopData.cost === 1) record("hp", 2280, { kind: "echoFixed", slot: i + 1 });
 
     equipmentStats[loopData.mainOption.statId] +=
       loopData.mainOption.statValue !== -1 ? loopData.mainOption.statValue : 0;
+    record(loopData.mainOption.statId, loopData.mainOption.statValue !== -1 ? loopData.mainOption.statValue : 0, { kind: "echoMain", slot: i + 1 });
 
     for (let j = 0; j < 5; j++) {
       equipmentStats[loopData.subOptions[j].statId] +=
         loopData.subOptions[j].statValue !== -1
           ? loopData.subOptions[j].statValue
           : 0;
+      record(loopData.subOptions[j].statId, loopData.subOptions[j].statValue !== -1 ? loopData.subOptions[j].statValue : 0, { kind: "echoSub", slot: i + 1 });
     }
   }
 
-  const cost = data.echoData[0].cost;
-  const mainEchoId = data.echoData[0].echoId;
+  const mainSlot = characterEchoData[echoIdx[0]];
+  const cost = mainSlot.cost;
+  const mainEchoId = mainSlot.echoId;
 
   console.log(mainEchoId);
 
@@ -283,6 +330,7 @@ export const calcFinalStat = (
         const mainEchoStats = mainEcho.getStats(id);
         for (const stat of mainEchoStats) {
           equipmentStats[stat.statId] += stat.value;
+          record(stat.statId, stat.value, { kind: "mainEcho", name: mainEcho });
         }
       }
     }
@@ -332,6 +380,7 @@ export const calcFinalStat = (
     for (const option of activeOptions) {
       for (const stat of option.options) {
         harmonyStats[stat.statId] += stat.value;
+        record(stat.statId, stat.value, { kind: "harmony", name: harmonyData, level: option.count });
       }
     }
   }
@@ -388,8 +437,19 @@ export const calcFinalStat = (
     equipmentStats[`${characterData.type}Bns`] +
     harmonyStats[`${characterData.type}Bns`];
 
-  return stats;
+  for (const statId of ["hp", "atk", "def"] as const) {
+    const rawTotal = contributions.filter((source) => source.statId === statId).reduce((sum, source) => sum + source.value, 0);
+    const adjustment = stats[statId] - rawTotal;
+    if (Math.abs(adjustment) > 1e-9) record(statId, adjustment, { kind: "rounding" });
+  }
+  return { stats, contributions };
 };
+
+export const calcFinalStat = (
+  data: CharacterData,
+  echoIdx: number[],
+  harmonySet: Partial<Record<HarmonyId, number>>,
+) => calcCharacterStatDetails(data, echoIdx, harmonySet).stats;
 
 export const calcEchoScore = (
   cId: CharacterId,
@@ -397,6 +457,7 @@ export const calcEchoScore = (
   echo: EchoRuntime,
   magicNumber: number,
   metaData: CharacterMeta,
+  critScoring?: { ratio: number; notNeeded: boolean },
 ): [number, number] => {
   const options = echo.subOptions;
 
@@ -411,7 +472,7 @@ export const calcEchoScore = (
     if (statId === FixedStats.critDmg.id) {cv += value * 1}
     if (statId !== FixedStats.resonanceBns.id) {
       const weight = sheet[statId] ?? 0;
-      av += value * weight;
+      av += value * weight * (statId === "critRate" ? critScoring?.ratio ?? 1 : 1);
     }
     if (statId === FixedStats[metaData.statType].id) {
       const statType = metaData.statType;
@@ -431,11 +492,12 @@ export const calcEchoScore = (
   av *= magicNumber;
 
   if (metaData.isNeedCrit) {
-    if (
+    if (critScoring?.notNeeded && options.some(item => item.statId === "critDmg" && item.statValue > 0)) av += 10;
+    else if (
       options.some((item) => item.statId === FixedStats.critRate.id) &&
       options.some((item) => item.statId === FixedStats.critDmg.id)
     )
-      av += 10;
+      av += 10 * (critScoring?.ratio ?? 1);
   } else {
     av += 10;
   }
@@ -488,6 +550,28 @@ export const calcAllEchoScore = (
   return ret;
 };
 
+export function getCritRateScoreAdjustment(cData: CharacterData, cStat: CharacterStat) {
+  const equipped = cData.echoDataIndex.slice(0,5).map(index => cData.echoData[index]);
+  const budget = getCritRateBudget(cStat.critRate,equipped);
+  const sheet = characterScoreSheet[cData.characterId];
+  const meta = characterMeta[cData.characterId];
+  const active = budget.available < budget.maximum && (sheet.critRate ?? 0)>0;
+  if (!active) return { ...budget, active:false, multiplier:0, penalty:0 };
+  const base = characterStat[cData.characterId];
+  const primaryBase = meta.statType === 'hp' ? base.baseHp : meta.statType === 'def' ? base.baseDef : base.baseAtk+500;
+  const others = Object.values(FixedStats).filter(stat => stat.ValueSub.length && !['critRate','critDmg','resonanceBns'].includes(stat.id)).map(stat => {
+    const value = Math.max(...stat.ValueSub);
+    return value*(sheet[stat.id as StatId] ?? 0)+(stat.id===meta.statType ? value/(primaryBase/100) : 0);
+  });
+  const multiplier = getCritCappedScoreMultiplier({
+    available:budget.available, critWeight:sheet.critRate ?? 0, damageWeight:sheet.critDmg ?? 0,
+    otherMaxScores:others, resonanceSlots:Math.min(5,Math.max(0,Math.ceil(meta.subResReq/12.4))), needsCrit:meta.isNeedCrit,
+  });
+  const pairs = meta.isNeedCrit ? equipped.filter(echo => echo.subOptions.some(option=>option.statId==='critRate' && option.statValue>0) && echo.subOptions.some(option=>option.statId==='critDmg' && option.statValue>0)).length : 0;
+  const penalty = budget.wasted*(sheet.critRate ?? 0)*multiplier+(budget.available>0 ? pairs*10*(1-budget.ratio) : 0);
+  return { ...budget, active:true, multiplier, penalty };
+}
+
 export const calcFinalScore = (
   cData: CharacterData,
   cStat: CharacterStat,
@@ -512,6 +596,15 @@ export const calcFinalScore = (
     const target = sData[idx];
     cv += target[0];
     av += target[1];
+  }
+
+  const critAdjustment = getCritRateScoreAdjustment(cData,cStat);
+  if (critAdjustment.active) {
+    const sheet = characterScoreSheet[cId];
+    const meta = characterMeta[cId];
+    av = indexed.reduce((total,index) => total+calcEchoScore(cId,sheet,cData.echoData[index],critAdjustment.multiplier,meta,{
+      ratio:critAdjustment.ratio, notNeeded:critAdjustment.available===0,
+    })[1],0);
   }
 
   const eData: [
@@ -559,7 +652,7 @@ export const calcFinalScore = (
   console.log("Score Comp.", cSheet.scoreComp ?? 0);
   av += cSheet.scoreComp ?? 0;
 
-  av = Math.max(av , 0);
+  av = Math.min(500, Math.max(av , 0));
 
   cv = Math.round(cv * 10) / 10;
   av = Math.round(av * 10) / 10;

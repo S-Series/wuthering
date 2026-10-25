@@ -18,7 +18,7 @@ const PERCENT_STAT_KEYS = ["crit", "Pct", "Bns"];
 function MakeStatSlot({ StatId = "", StatValue = 0, color = "#666" }
   : { StatId: string; StatValue: number | string; color: string}) {
   return (
-    <div className="echo-stat-slot">
+    <div className="echo-stat-slot" data-info-kind="stat" data-info-id={StatId} data-info-value={StatValue}>
       <img alt="stat icon" src={`/ico/stats/${StatId}.webp`}
         onError={(e) => {
           e.currentTarget.onerror = null;
@@ -165,11 +165,11 @@ export default function EchoSlot({index = 0, highlightedStatIds = [] }: StatSlot
 
       <div className="score-container">
         <img alt="rank icon" src={`/ico/rank/${getEquipmentRank(equipmentScore?.[Math.abs(index)][1] ?? 0)}.png?v=${imgVer}`} />
-        <div className="slot">
+        <div className="slot" data-info-kind="score" data-info-id="cv" tabIndex={0}>
           <span className="en-font">Cv.</span>
           <span className="en-font"> <em className="num-font">{equipmentScore[Math.abs(index)][0].toFixed(1)}</em>pt</span>
         </div>
-        <div className="slot">
+        <div className="slot" data-info-kind="score" data-info-id="tv" tabIndex={0}>
           <span className="en-font">Tv.</span>
           <span className="en-font"> <em className="num-font">{equipmentScore[Math.abs(index)][1].toFixed(1)}</em>pt</span>
         </div>

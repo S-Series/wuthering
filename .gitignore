@@ -3,6 +3,7 @@
 
 .DS_Store
 Thumbs.db
+/.tmp/
 .env
 .env.*
 *.log
@@ -18,6 +19,7 @@ Thumbs.db
 
 venv/
 .venv/
+.venv-security/
 env/
 
 .pytest_cache/

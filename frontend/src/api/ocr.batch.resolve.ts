@@ -7,6 +7,7 @@ import type { LangType } from "@/stores/appStore";
 import type { OcrRegionResult } from "./ocr.batch";
 import { resolveMatchedStat, type LocalMatches } from "./ocr.match";
 import { confidence, costValue, crosscheckOcrRegions, statKind, voteOcrCandidates, type OcrSource } from "./ocr.crosscheck";
+import { resolveEchoCost } from "./ocr.cost";
 
 const normalize = (text: string) => text.normalize("NFKC").replace(/[\s·.%+]/g, "").toLowerCase();
 
@@ -34,21 +35,6 @@ export function resolveBatchOcr(regions: OcrRegionResult[], matches: LocalMatche
   };
   const costVote = voteOcrCandidates(sources("cost").map(item => ({ ...item, id: costValue(item.region.texts.join(" ")) })));
   const recognizedCost = costVote.selectedStatId ? Number(costVote.selectedStatId) as 1 | 3 | 4 : null;
-  const echoCandidates = sources("name").map(item => ({ ...item, echo: matchEchoName(item.region.texts.join(" "), lang, recognizedCost) }));
-  const echoVote = voteOcrCandidates(echoCandidates.map(item => ({ ...item, id: item.echo?.echoId ?? null })));
-  const echo = echoCandidates.find(item => item.echo?.echoId === echoVote.selectedStatId)?.echo;
-  const echoId: EchoId | null = echo?.echoId ?? null;
-  const cost: 1 | 3 | 4 = recognizedCost
-    ?? (echoId && Object.hasOwn(echoDict.Cost1, echoId) ? 1
-      : echoId && Object.hasOwn(echoDict.Cost3, echoId) ? 3 : 4);
-  const matchedHarmony = matches?.harmony;
-  const candidateSet = matchedHarmony && Object.hasOwn(harmony, matchedHarmony.id)
-    ? matchedHarmony.id as HarmonyId : null;
-  const echoesForCost = echoDict[`Cost${cost}`] as Partial<Record<EchoId, { type: readonly string[] }>>;
-  const echoData = echoId ? echoesForCost[echoId] : null;
-  const setId = candidateSet && (!echoData || (echoData.type as readonly string[]).includes(candidateSet))
-    ? candidateSet : null;
-
   const decisions = crosscheckOcrRegions(regions, browser, matches);
   const echoStats = Array.from({ length: 7 }, (_, index): [StatId, number] => {
     const decision = decisions[index + 2];
@@ -57,11 +43,14 @@ export function resolveBatchOcr(regions: OcrRegionResult[], matches: LocalMatche
     const numericCandidates = sources(decision.id).flatMap(item => {
       const label = statKind(item.region.texts.join(" "), decision.id);
       if (label && label !== kind) return [];
-      const resolved = resolveMatchedStat({ id: kind, score: 1 }, item.region, index);
+      let resolved = resolveMatchedStat({ id: kind, score: 1 }, item.region, index);
       if (!resolved) return [];
-      if (index === 0 && !["atk", "hp", "def"].includes(resolved.id)) {
-        const expected = FixedStats[resolved.id as StatId].ValueMain[cost === 4 ? 0 : cost === 3 ? 1 : 2];
-        if (!expected || Math.abs(expected - resolved.value) >= 0.001) return [];
+      if (index === 0 && ["atk", "hp", "def"].includes(resolved.id)) {
+        const percentId = `${resolved.id}Pct` as StatId;
+        const resolvedValue = resolved.value;
+        if (FixedStats[percentId].ValueMain.some(value => value > 0 && Math.abs(value - resolvedValue) < 0.001)) {
+          resolved = { ...resolved, id: percentId };
+        }
       }
       return [{ ...item, id: `${resolved.id}:${resolved.value}`, resolved }];
     });
@@ -71,5 +60,33 @@ export function resolveBatchOcr(regions: OcrRegionResult[], matches: LocalMatche
     return resolved ? [resolved.id as StatId, resolved.value] : [kind, 0];
   });
 
-  return { echoId, echoName: echo?.text ?? null, cost, setId, echoStats };
+  // Match the name across all COSTs first, so a bad digit cannot remove the
+  // correct echo before the main and fixed option rows have been checked.
+  const nameCandidates = sources("name").map(item => ({ ...item, echo: matchEchoName(item.region.texts.join(" "), lang, null) }));
+  const nameVote = voteOcrCandidates(nameCandidates.map(item => ({ ...item, id: item.echo?.echoId ?? null })));
+  const nameEcho = nameCandidates.find(item => item.echo?.echoId === nameVote.selectedStatId)?.echo;
+  const nameCost = nameEcho ? Object.hasOwn(echoDict.Cost1, nameEcho.echoId) ? 1
+    : Object.hasOwn(echoDict.Cost3, nameEcho.echoId) ? 3 : 4 : null;
+  const costCheck = resolveEchoCost(recognizedCost, echoStats[0], echoStats[1], nameCost);
+  // Keep the editor's required COST type, while exposing unresolved evidence in
+  // diagnostics. No echo is selected from this UI default alone.
+  const cost = costCheck.selected ?? 4;
+  const echoCandidates = sources("name").map(item => ({ ...item,
+    echo: matchEchoName(item.region.texts.join(" "), lang, costCheck.selected) }));
+  const echoVote = voteOcrCandidates(echoCandidates.map(item => ({ ...item, id: item.echo?.echoId ?? null })));
+  const echo = echoCandidates.find(item => item.echo?.echoId === echoVote.selectedStatId)?.echo;
+  const echoId: EchoId | null = costCheck.selected ? echo?.echoId ?? null : null;
+  const matchedHarmony = matches?.harmony;
+  const candidateSet = matchedHarmony && Object.hasOwn(harmony, matchedHarmony.id)
+    ? matchedHarmony.id as HarmonyId : null;
+  const echoesForCost = echoDict[`Cost${cost}`] as Partial<Record<EchoId, { type: readonly string[] }>>;
+  const echoData = echoId ? echoesForCost[echoId] : null;
+  const setId = candidateSet && (!echoData || (echoData.type as readonly string[]).includes(candidateSet))
+    ? candidateSet : null;
+  if (costCheck.selected && echoStats[0][1] > 0) {
+    const [id, value] = echoStats[0];
+    const expected = FixedStats[id].ValueMain[cost === 4 ? 0 : cost === 3 ? 1 : 2];
+    if (!expected || Math.abs(expected - value) >= 0.001) echoStats[0] = [id, 0];
+  }
+  return { echoId, echoName: echoId ? echo?.text ?? null : null, cost, setId, echoStats, costCheck };
 }

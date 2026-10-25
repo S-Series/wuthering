@@ -64,6 +64,7 @@ export default function EchoInventoryItem({ item, baseUrl, index, onSelect }: Pr
       {...listeners}
       aria-pressed={isActivated}
       aria-label={`${item.echoName ?? "Empty Slot"} · Slot ${index + 1}`}
+      data-info-kind="echo" data-info-id={echoData?.echoId}
       onKeyDown={(event) => {
         listeners?.onKeyDown?.(event);
         if (event.key === "Enter" || event.key === " ") {
@@ -101,12 +102,12 @@ export default function EchoInventoryItem({ item, baseUrl, index, onSelect }: Pr
         </div>
       </div>
 
-      <div className="span-slot">
+      <div className="span-slot" data-info-kind="score" data-info-id="cv">
         <span className={`${lang}-font`}> Cv.</span>
         <span className="num-font">{item.cvScore.toFixed(1)} <em>pts</em></span>
       </div>
 
-      <div className="span-slot">
+      <div className="span-slot" data-info-kind="score" data-info-id="tv">
         <span className={`${lang}-font`}> Av.</span>
         <span className="num-font">{item.avScore.toFixed(1)} <em>pts</em></span>
       </div>

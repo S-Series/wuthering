@@ -1066,29 +1066,6 @@ body[data-theme="light"] .card-management-bar > button:disabled:hover {
     color: #8b96a8;
 }
 
-body[data-theme="light"] .card-page-button {
-    border-color: #aab5c5;
-    background: linear-gradient(0deg, #dce5f3, #f7faff, #dce5f3);
-    color: #172033;
-    box-shadow: 0 0.2rem 0.65rem rgba(74, 92, 119, 0.14);
-}
-
-body[data-theme="light"] .card-page-button:hover {
-    border-color: #b88a00;
-    background: linear-gradient(0deg, #fff0bf, #fff9e6, #fff0bf);
-    color: #5f4600;
-}
-
-body[data-theme="light"] .card-page-button:disabled,
-body[data-theme="light"] .card-page-button:disabled:hover {
-    color: #8b96a8;
-    background: linear-gradient(0deg, #d9dee8, #eef3fb, #d9dee8);
-}
-
-body[data-theme="light"] .card-page-button.active::after {
-    opacity: 0.28;
-}
-
 body[data-theme="light"] .card-guide-panel {
     border-color: rgba(184, 138, 0, 0.72);
     background:

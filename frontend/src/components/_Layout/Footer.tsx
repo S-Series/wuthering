@@ -10,17 +10,17 @@ export default function Footer() {
             <div className="item-slot">
                 <a target="blank" href="https://ko-fi.com/sseries">
                     <img className="footer-icon"
-                        alt="title"
+                        alt="Ko-fi"
                         src="/kofi.png" />
                 </a>
                 <a target="blank" href="https://github.com/S-Series">
                     <img className="footer-icon"
-                        alt="title"
+                        alt="GitHub"
                         src="/github.png" />
                 </a>
                 <a target="blank" href="https://sseries.dev">
                     <img className="footer-icon"
-                        alt="title"
+                        alt="SSeries"
                         src="/sseries.png" />
                 </a>
             </div>

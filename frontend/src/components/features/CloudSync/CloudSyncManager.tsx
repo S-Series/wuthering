@@ -19,7 +19,7 @@ import {
   saveCharacterScores,
 } from "@/summaryData/storage";
 import { useAppStore, type LangType } from "@/stores/appStore";
-import { useAuthStore, type CloudCharacterDataCache } from "@/stores/authStore";
+import { useAuthStore } from "@/stores/authStore";
 import { readCharacterDataSnapshot } from "@/stores/characterDataStorage";
 import { useCharacter } from "@/stores/characterDataStore";
 import type { CharacterData } from "@/types/character.type";
@@ -388,7 +388,6 @@ function CloudSyncPanel({
   selectedCharacterId,
   characterName,
   currentData,
-  cloudCache,
   refreshCloudCharacterData,
   onUpload,
   onDownload,
@@ -398,7 +397,6 @@ function CloudSyncPanel({
   selectedCharacterId?: CharacterId;
   characterName: string;
   currentData: CloudSyncDataSummary;
-  cloudCache: CloudCharacterDataCache;
   refreshCloudCharacterData: (options?: {
     force?: boolean;
     characterId?: CharacterId;
@@ -406,6 +404,8 @@ function CloudSyncPanel({
   onUpload: (options?: CloudSyncConfirmOptions) => Promise<void>;
   onDownload: (options?: CloudSyncConfirmOptions) => Promise<void>;
 }) {
+  // Overlay content retains its original props; subscribe to completed reads here.
+  const cloudCache = useAuthStore((state) => state.cloudCharacterData);
   const { openElevatedOverlay, closeElevatedOverlay } = useElevatedOverlay();
   const { closeOverlay } = useOverlay();
   const [runningAction, setRunningAction] = useState<CloudSyncAction | null>(null);
@@ -734,7 +734,6 @@ export default function CloudSyncManager() {
         selectedCharacterId={selectedCharacterId}
         characterName={currentData.characterName}
         currentData={currentData}
-        cloudCache={cloudCharacterData}
         refreshCloudCharacterData={refreshCloudCharacterData}
         onUpload={handleCloudUpload}
         onDownload={handleCloudDownload}

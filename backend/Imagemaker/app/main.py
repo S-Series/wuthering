@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.render import router as render_router
+from app.internal_auth import InternalAuthMiddleware
 
 app = FastAPI()
 
@@ -11,6 +12,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(InternalAuthMiddleware)
 
 app.include_router(render_router)
 

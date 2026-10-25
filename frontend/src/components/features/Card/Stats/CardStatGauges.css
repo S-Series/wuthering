@@ -1,0 +1,258 @@
+.card-stat-gauges {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+  margin: 1rem 0;
+  border: 1px solid #666;
+  background: #101216e6;
+  color: #f4f7ff;
+  box-shadow: 0 0.375rem 1rem #00000030;
+  box-sizing: border-box;
+}
+
+.card-stat-gauge {
+  min-width: 0;
+  padding: 0.625rem 0.875rem;
+  cursor: help;
+  outline-offset: -2px;
+}
+
+.card-stat-gauge:focus-visible {
+  outline: 2px solid #ffd764;
+}
+
+.card-stat-gauge + .card-stat-gauge {
+  border-left: 1px solid #444953;
+}
+
+.card-stat-gauge__header,
+.card-stat-gauge__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.card-stat-gauge__header {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.card-stat-gauge__header > span {
+  color: #c7c9cf;
+}
+
+.card-stat-gauge__header strong {
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.card-stat-gauge__header strong > span {
+  color: #bfc2ca;
+  font-size: 0.6875rem;
+}
+
+.card-stat-gauge__track {
+  display: flex;
+  height: 0.25rem;
+  margin: 0.5rem 0 0.375rem;
+  overflow: hidden;
+  border-radius: 1px;
+  background: #24262b;
+}
+
+.card-stat-gauge__segment {
+  flex-shrink: 0;
+  background: var(--source-color);
+  box-shadow: inset -1px 0 #101216;
+}
+.card-stat-gauges .source-base { --source-color: #ffffff; }
+.card-stat-gauges .source-weaponOptions { --source-color: #31d5fa; }
+.card-stat-gauges .source-weaponEffect { --source-color: #27c995; }
+.card-stat-gauges .source-nodes { --source-color: #ff9b32; }
+.card-stat-gauges .source-chain { --source-color: #f65fc7; }
+.card-stat-gauges .source-echoFixed { --source-color: #638dff; }
+.card-stat-gauges .source-echoMain { --source-color: #b26aff; }
+.card-stat-gauges .source-echoSub { --source-color: #ffe04d; }
+.card-stat-gauges .source-mainEcho { --source-color: #ff6262; }
+.card-stat-gauges .source-harmony { --source-color: #a3e635; }
+.card-stat-gauges .source-rounding { --source-color: #9aa2b1; }
+
+.card-stat-gauge__footer {
+  flex-wrap: wrap;
+  color: #c7c9cf;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+}
+
+.card-stat-gauge__footer b {
+  color: #f4f7ff;
+  font-weight: 500;
+}
+
+.card-stat-gauge__footer .is-short {
+  color: #ffd764;
+}
+
+.card-stat-gauge__sources {
+  position: fixed;
+  z-index: 1000;
+  box-sizing: border-box;
+  padding: 0.875rem;
+  border: 1px solid #777f90;
+  background: #101216;
+  box-shadow: 0 0.5rem 1.5rem #0009;
+  cursor: default;
+}
+
+.card-stat-gauge__sources[hidden] { display: none; }
+
+.card-stat-gauge__sources-title {
+  display: block;
+  padding-bottom: 0.625rem;
+  color: #ffd764;
+  font-size: 0.8125rem;
+}
+
+.card-stat-gauge__sources ul {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.375rem 0 0 0.875rem;
+  padding: 0 0 0 0.625rem;
+  border-left: 1px solid var(--source-color);
+  list-style: none;
+}
+
+.card-stat-gauge__sources li,
+.card-stat-gauge__group-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.card-stat-gauge__source-groups {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.card-stat-gauge__group-header {
+  color: var(--source-label-color, var(--source-color));
+}
+
+.card-stat-gauge__dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  flex: 0 0 0.375rem;
+  border-radius: 1px;
+  background: var(--source-color);
+}
+
+.card-stat-gauge__source-label {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.card-stat-gauge__source-label > span {
+  margin-right: 0.45rem;
+}
+
+.card-stat-gauge__source-label small {
+  color: #9fa8ba;
+  font-size: 0.6875rem;
+}
+
+.card-stat-gauge__source-label small + small {
+  margin-left: 0.35rem;
+}
+
+.card-stat-gauge__sources b {
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+body[data-theme="light"] .card-stat-gauges {
+  border-color: #aab5c5;
+  background: #f8fafd;
+  color: #172033;
+  box-shadow: 0 0.375rem 1rem #52678220;
+}
+
+body[data-theme="light"] .card-stat-gauge + .card-stat-gauge {
+  border-color: #c1cbda;
+}
+
+body[data-theme="light"] .card-stat-gauge:focus-visible {
+  outline-color: #8e6500;
+}
+
+body[data-theme="light"] .card-stat-gauge__header > span,
+body[data-theme="light"] .card-stat-gauge__footer {
+  color: #48566b;
+}
+
+body[data-theme="light"] .card-stat-gauge__header strong > span,
+body[data-theme="light"] .card-stat-gauge__source-label small {
+  color: #526278;
+}
+
+body[data-theme="light"] .card-stat-gauge__footer b {
+  color: #172033;
+}
+
+body[data-theme="light"] .card-stat-gauge__footer .is-short,
+body[data-theme="light"] .card-stat-gauge__sources-title {
+  color: #8e6500;
+}
+
+body[data-theme="light"] .card-stat-gauge__sources {
+  border-color: #aab5c5;
+  background: #fff;
+  color: #172033;
+  box-shadow: 0 0.5rem 1.5rem #52678240;
+}
+
+/* Keep source swatches (including white base stats) consistent across themes.
+   Their text labels need darker counterparts against the light popup. */
+body[data-theme="light"] .card-stat-gauges .source-base { --source-label-color: #172033; }
+body[data-theme="light"] .card-stat-gauges .source-weaponOptions { --source-label-color: #006b84; }
+body[data-theme="light"] .card-stat-gauges .source-weaponEffect { --source-label-color: #087452; }
+body[data-theme="light"] .card-stat-gauges .source-nodes { --source-label-color: #9b4b00; }
+body[data-theme="light"] .card-stat-gauges .source-chain { --source-label-color: #ac237c; }
+body[data-theme="light"] .card-stat-gauges .source-echoFixed { --source-label-color: #315bc1; }
+body[data-theme="light"] .card-stat-gauges .source-echoMain { --source-label-color: #7535b8; }
+body[data-theme="light"] .card-stat-gauges .source-echoSub { --source-label-color: #866300; }
+body[data-theme="light"] .card-stat-gauges .source-mainEcho { --source-label-color: #b92f2f; }
+body[data-theme="light"] .card-stat-gauges .source-harmony { --source-label-color: #47720b; }
+body[data-theme="light"] .card-stat-gauges .source-rounding { --source-label-color: #526278; }
+body[data-theme="light"] .card-stat-gauge__dot { box-shadow: 0 0 0 1px #65738b; }
+
+@media (max-width: 900px) {
+  .card-stat-gauges {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card-stat-gauge:nth-child(3) { border-left: 0; }
+  .card-stat-gauge:nth-child(n+3) { border-top: 1px solid #444953; }
+}
+
+@media (max-width: 480px) {
+  .card-stat-gauge {
+    padding: 0.625rem;
+  }
+
+  .card-stat-gauge__header {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card-stat-gauge__segment {
+    transition: width 0.2s ease;
+  }
+}

@@ -35,6 +35,14 @@
 .ocr-crop-test section { border-top: 1px solid #62666e; padding: 20px 0; }
 .crop-source p { overflow-wrap: anywhere; font-size: 14px; }
 .crop-source img { display: block; max-width: 100%; max-height: 440px; object-fit: contain; }
+.crop-source-boxes { display: block; width: 100%; height: auto; background: #08090c; }
+.crop-source-boxes rect { fill: none; stroke: currentColor; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.crop-source-boxes text { fill: currentColor; stroke: #08090c; stroke-width: 3px; paint-order: stroke; }
+.crop-box-detected { color: #8bd7b0; }
+.crop-box-profile { color: #ffd764; }
+.crop-box-profile rect { stroke-dasharray: 6 4; }
+.crop-coordinates { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+.crop-coordinates th, .crop-coordinates td { padding: 8px 12px; border-bottom: 1px solid #62666e; white-space: nowrap; }
 .crop-bands { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .crop-bands figure { margin: 0; min-width: 0; }
 .crop-bands figcaption { margin-bottom: 8px; font-size: 14px; }
@@ -42,9 +50,19 @@
 .crop-band-image img { position: absolute; top: 0; left: 0; display: block; width: 100%; height: auto; }
 .crop-server-preview p { margin: 10px 0 6px; font-size: 13px; }
 .crop-server-preview img { display: block; width: 100%; height: auto; }
-.crop-atlas > img { display: block; width: 100%; max-width: 700px; height: auto; margin-top: 16px; }
+.crop-atlas-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 24px; margin-top: 16px; }
+.crop-atlas-layout > img { display: block; height: auto; }
+.crop-result-panel { min-width: 0; }
+.crop-result-panel h3 { margin: 0 0 12px; font-size: 16px; }
+.crop-result-note { margin: 0 0 12px; font-size: 13px; color: var(--nav-muted-text); }
+.crop-result-panel .echo-ocr-result-editor--draft { display: block; height: auto; overflow: visible; }
+.crop-result-panel .echo-ocr-result-editor__editor-fields { height: auto; gap: 12px; overflow: visible; }
+.crop-result-panel .echo-ocr-result-editor__base-fields { flex: none; grid-template-rows: repeat(4, auto); gap: 8px; }
+.crop-result-panel .echo-ocr-result-editor__sub-fields { flex: none; gap: 8px; overflow: visible; }
+.crop-result-panel .echo-ocr-substat-item { flex: 0 0 36px; min-height: 36px; }
 @media (max-width: 600px) {
   .ocr-crop-test { padding: 16px; }
   .ocr-crop-test h1 { font-size: 20px; }
   .crop-bands { grid-template-columns: minmax(0, 1fr); }
+  .crop-atlas-layout { grid-template-columns: minmax(0, 1fr); }
 }

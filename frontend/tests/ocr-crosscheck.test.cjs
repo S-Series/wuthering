@@ -136,6 +136,96 @@ test("production resolver uses majority stat kinds and validates numeric values 
   assert.equal(result.echoStats[2][0], "atkPct");
   assert.equal(result.echoStats[2][1], 9.4);
 });
+
+test("missing COST is recovered from the primary and fixed options for all three COSTs", () => {
+  const cases = [
+    { cost: 1, main: 'ATK 18.0%', fixed: 'HP 2280', id: 'atkPct', value: 18 },
+    { cost: 3, main: 'Glacio DMG Bonus 30.0%', fixed: 'ATK 100', id: 'glacioBns', value: 30 },
+    { cost: 4, main: 'Critical Damage 44.0%', fixed: 'ATK 150', id: 'critDmg', value: 44 },
+  ];
+  for (const item of cases) {
+    const result = resolveBatchOcr([region('main_1', item.main), region('main_2', item.fixed)], null, 'en');
+    assert.equal(result.cost, item.cost);
+    assert.equal(result.costCheck.selected, item.cost);
+    assert.equal(result.echoStats[0][0], item.id);
+    assert.equal(result.echoStats[0][1], item.value);
+  }
+});
+
+test("two agreeing option rows correct a unanimously wrong COST digit before echo-name filtering", () => {
+  const dependencies = { ...resolverDeps, '@/datas/echos': {
+    ECHO_CANDIDATES: { en: [{ echoId: 'cost1Echo', text: 'Cost One Echo' }] },
+    echoDict: { Cost1: { cost1Echo: { type: [] } }, Cost3: {}, Cost4: {} },
+  } };
+  const resolve = loadApi('ocr.batch.resolve', {}, dependencies).resolveBatchOcr;
+  const backend = [region('name', 'Cost One Echo'), { ...region('cost', 'COST 4'), raw: region('cost', 'COST 4') },
+    region('main_1', 'ATK 18.0%'), region('main_2', 'HP 2280')];
+  const result = resolve(backend, null, 'en', [region('cost', 'COST 4')]);
+  assert.equal(result.cost, 1);
+  assert.equal(result.echoId, 'cost1Echo');
+  assert.equal(result.costCheck.direct, 4);
+  assert.equal(result.costCheck.status, 'conflict');
+});
+
+test("COST 3 and 4 are distinguished by the combination of a shared primary kind and fixed ATK", () => {
+  for (const [cost, primary, fixed] of [[3, 30, 100], [4, 33, 150]]) {
+    const result = resolveBatchOcr([region('cost', `COST ${cost === 3 ? 4 : 3}`), region('main_1', `ATK ${primary}%`), region('main_2', `ATK ${fixed}`)], null, 'en');
+    assert.equal(result.cost, cost);
+    assert.equal(result.echoStats[0][1], primary);
+  }
+});
+
+test("missing decimals and percent signs on a primary option still allow COST recovery", () => {
+  for (const primary of ['ATK 180%', 'ATK 18']) {
+    const result = resolveBatchOcr([region('main_1', primary), region('main_2', 'HP 2280')], null, 'en');
+    assert.equal(result.cost, 1);
+    assert.equal(result.echoStats[0][0], 'atkPct');
+    assert.equal(result.echoStats[0][1], 18);
+  }
+});
+
+test("a partially upgraded echo is not changed to COST 3 by its fixed ATK value alone", () => {
+  const result = resolveBatchOcr([region('main_1', 'Critical Rate 10%'), region('main_2', 'ATK 100')], null, 'en');
+  assert.equal(result.cost, 4);
+  assert.equal(result.echoStats[0][0], 'critRate');
+  assert.equal(result.echoStats[0][1], 0);
+});
+
+test("raw and browser option evidence survives failed processed OCR and missing COST", () => {
+  const result = resolveBatchOcr([{ ...region('main_1', '', false), raw: region('main_1', 'Energy Regen 32%') }], null, 'en',
+    [region('main_2', 'ATK 100')]);
+  assert.equal(result.cost, 3);
+  assert.equal(result.echoStats[0][0], 'resonanceBns');
+});
+
+test("contradictory or absent option evidence stays unresolved instead of establishing COST 4", () => {
+  const result = resolveBatchOcr([region('main_1', 'Critical Damage 44%'), region('main_2', 'HP 2280')], null, 'en');
+  assert.equal(result.costCheck.selected, null);
+  assert.equal(result.costCheck.status, 'conflict');
+  assert.equal(result.echoId, null);
+  const empty = resolveBatchOcr([], null, 'en');
+  assert.equal(empty.costCheck.selected, null);
+  assert.equal(empty.costCheck.status, 'unresolved');
+});
+
+test("fixed option numerical evidence can recover COST when the primary value is missing", () => {
+  for (const [cost, fixed] of [[1, 'HP 2280'], [3, 'ATK 100'], [4, 'ATK 150']]) {
+    const result = resolveBatchOcr([region('main_2', fixed)], null, 'en');
+    assert.equal(result.costCheck.selected, cost);
+  }
+});
+
+test("a recognized echo name remains a fallback when both COST and option rows are unreadable", () => {
+  const result = resolveBatchOcr([region('name', 'Test Echo')], null, 'en');
+  assert.equal(result.cost, 3);
+  assert.equal(result.echoId, 'testEcho');
+});
+
+test("conflicting main and fixed numbers without a tie-breaker are explicitly unresolved", () => {
+  const result = resolveBatchOcr([region('main_1', 'ATK 33%'), region('main_2', 'ATK 100')], null, 'en');
+  assert.equal(result.costCheck.selected, null);
+  assert.equal(result.costCheck.status, 'conflict');
+});
 test("production pipeline requests raw comparison and retains browser/vision after backend failure", async () => {
   let rawRequested = false, received;
   const { recognizeEchoImage } = loadApi("../components/features/Card/Echo/Ocr/echoOcr.helpers", {}, {
@@ -189,6 +279,20 @@ test("shared OCR regions retain the full row width and release the bitmap", asyn
   assert.equal(images.length, 9);
   assert.ok(crops.every(crop => crop[0] === 16 && crop[2] === 200));
   assert.equal(closed.length, 1);
+});
+
+test("OCR extracts every region using its measured horizontal bounds", async () => {
+  const crops = [], closed = [];
+  const { createOcrRegionImages } = loadApi("ocr.regions", imageGlobals(crops, closed));
+  const measured = { ...metadata, height: 270, bands: metadata.bands.map((band, i) => ({
+    ...band, left: 20+i, right: 210-i*2,
+  })) };
+  await createOcrRegionImages({}, measured, new AbortController().signal);
+  measured.bands.forEach((band, i) => assert.deepEqual(crops[i], [band.left, band.top, band.right-band.left, band.bottom-band.top]));
+  assert.equal(closed.length, 1);
+  await assert.rejects(createOcrRegionImages({}, { ...measured,
+    bands: measured.bands.map((band, i) => i === 3 ? { ...band, right: band.left } : band),
+  }, new AbortController().signal), /9개 영역/);
 });
 test("browser OCR uses a different engine, runs nine full rows, and terminates it", async () => {
   let recognized = 0, terminated = 0, selectedLanguage = "";

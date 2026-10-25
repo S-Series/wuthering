@@ -45,6 +45,8 @@ function BreakthroughButtons({
           return (
           <button
             key={`${prefix}-${optionValue}`}
+            data-info-kind={prefix === "C" ? "chain" : "refinement"}
+            data-info-id={optionValue}
             type="button"
             className={value === optionValue ? "active" : ""}
             onClick={() => onChange(optionValue)}
@@ -197,6 +199,7 @@ export default function CardCharacterSection() {
               <button
                 key={item.id}
                 type="button"
+                data-info-kind="character" data-info-id={item.id}
                 className={`card-character-select__character ${item.element} ${
                   item.id === selectedCharacter.id ? "selected" : ""
                 }`}
@@ -253,6 +256,7 @@ export default function CardCharacterSection() {
             return (
               <button
                 key={weaponId}
+                data-info-kind="weapon" data-info-id={weaponId}
                 type="button"
                 className={`card-character-select__weapon rarity-${rarity} ${
                   isRecommended ? "recommended" : ""

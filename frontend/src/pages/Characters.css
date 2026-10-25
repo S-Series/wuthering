@@ -23,6 +23,7 @@
 
 .characters-sort {
   display: flex;
+  flex-wrap: wrap;
   flex: 0 0 auto;
   min-width: 0;
   gap: 0.3rem;

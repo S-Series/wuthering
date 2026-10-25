@@ -1,15 +1,11 @@
 import type { FastifyRequest } from "fastify";
+import { isIP } from "node:net";
 
 export function getClientIp(req: FastifyRequest) {
-  const forwardedFor = req.headers["x-forwarded-for"];
-
-  if (typeof forwardedFor === "string") {
-    return forwardedFor.split(",")[0]?.trim() ?? null;
+  // Enable only behind Railway's edge, never on a directly reachable listener.
+  if (process.env.CLIENT_IP_SOURCE === "railway") {
+    const realIp = req.headers["x-real-ip"];
+    if (typeof realIp === "string" && isIP(realIp)) return realIp;
   }
-
-  if (Array.isArray(forwardedFor)) {
-    return forwardedFor[0]?.split(",")[0]?.trim() ?? null;
-  }
-
   return req.socket.remoteAddress ?? null;
 }

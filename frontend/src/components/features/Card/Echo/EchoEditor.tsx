@@ -272,8 +272,9 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
       style={{ "--echo-control-height": `${slotHeight}px` } as CSSProperties}
     >
       <div className="echo-select-base-grid">
-        <div className="drop-slot large">
+        <div className="drop-slot large" data-tooltip={placeholders.cost} data-info-control="select">
           <Select
+            aria-label={placeholders.cost}
             options={COST_DROP_OPTION}
             isSearchable={false}
             menuPortalTarget={document.body}
@@ -289,8 +290,10 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
           />
         </div>
 
-        <div className="drop-slot large">
+        <div className="drop-slot large" data-tooltip={placeholders.harmony} data-info-control="select"
+          data-info-kind="harmony" data-info-id={characterData.echoData[index].setId ?? undefined}>
           <Select
+            aria-label={placeholders.harmony}
             options={HARMONY_DROP_OPTION}
             isClearable={true}
             isSearchable={false}
@@ -316,8 +319,10 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
           />
         </div>
 
-        <div className="drop-slot large echo-select-echo-field">
+        <div className="drop-slot large echo-select-echo-field" data-tooltip={localeText.echoSearch} data-info-control="select"
+          data-info-kind="echo" data-info-id={characterData.echoData[index].echoId ?? undefined}>
           <Select
+            aria-label={localeText.echoSearch}
             options={ECHO_ID_DROP_OPTION}
             isClearable={true}
             isSearchable={true}
@@ -363,8 +368,11 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
       </div>
 
       <div className="echo-select-main-grid">
-        <div className="drop-slot">
+        <div className="drop-slot" data-tooltip={placeholders.mainStat} data-info-control="select"
+          data-info-kind="stat" data-info-id={characterData.echoData[index].mainOption.statId}
+          data-info-value={characterData.echoData[index].mainOption.statValue}>
           <Select
+            aria-label={placeholders.mainStat}
             options={(() => {
               switch (characterData.echoData[index].cost) {
                 case 4:
@@ -434,8 +442,10 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
         {SUB_OPTION_IDS.map((idx) => {
           return (
             <SortableSubOption key={`echo-stat-drop-${idx}`} id={idx} label={`${placeholders.subStat} ${idx + 1}`}>
-              <div className="sub-stat-select">
+              <div className="sub-stat-select" data-tooltip={`${placeholders.subStat} ${idx + 1}`} data-info-control="select"
+                data-info-kind="stat" data-info-id={characterData.echoData[index].subOptions[idx].statId}>
                 <Select
+                  aria-label={`${placeholders.subStat} ${idx + 1}`}
                   options={STAT_OPTION_SUB}
                   placeholder={placeholders.subStat}
                   styles={STAT_DROP_STYLE_OPTION_WIDE}
@@ -468,8 +478,9 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
                 />
               </div>
 
-              <div className="sub-value-select">
+              <div className="sub-value-select" data-tooltip={`${placeholders.subValue} ${idx + 1}`} data-info-control="select">
                 <Select
+                  aria-label={`${placeholders.subValue} ${idx + 1}`}
                   options={STAT_OPTION_VALUE_SUBS[idx]}
                   placeholder={placeholders.subValue}
                   styles={STAT_DROP_STYLE_OPTION_WIDE}

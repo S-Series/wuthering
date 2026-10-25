@@ -33,6 +33,64 @@
     background: linear-gradient(45deg, #a47a1e, #d3a84c, #ffec94, #e6be69, #ffd87c, #b58f3e, #956d13);
 }
 
+.character-slot__link {
+    position: absolute;
+    inset: 0;
+    color: inherit;
+}
+
+.character-slot__link:focus-visible {
+    outline: 3px solid #ffd764;
+    outline-offset: -3px;
+    border-radius: inherit;
+}
+
+.character-favorite {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    z-index: 12;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    border-top-left-radius: inherit;
+    background: transparent;
+    color: #ffe08b;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.character-favorite svg {
+    width: 100%;
+    height: 100%;
+    fill: transparent;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 1px 2px #000b);
+}
+
+.character-favorite[aria-pressed="true"] svg { fill: currentColor; }
+.character-favorite:hover { background: transparent; color: #fff0b5; }
+.character-favorite:hover,
+.character-favorite:active,
+.character-favorite:focus,
+.character-favorite:focus-visible,
+.character-favorite[aria-pressed="true"] {
+    border: 0;
+    outline: none;
+    box-shadow: none;
+}
+.character-favorite:focus-visible { color: #fff0b5; }
+
+@media (max-width: 420px) {
+    .character-favorite { width: 35.2px; height: 35.2px; }
+}
+
 .character-slot .character-image-slot {
     display: flex;
     position: absolute;

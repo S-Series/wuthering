@@ -8,6 +8,7 @@ import pLimit from "p-limit";
 import { OcrAdmission } from "./services/ocrAdmission.js";
 
 import { getClientKey } from "./utils/clientKey.js";
+import { internalHeaders } from "./lib/internalAuth.js";
 import { registerRenderRoutes } from "./routes/render.js";
 import { registerOcrBatchRoute } from "./routes/ocrBatch.js";
 import { registerClientEventRoutes } from "./routes/clientEvent.js";
@@ -125,6 +126,7 @@ async function main() {
 
           const res = await fetch(upstreamUrl, {
             method: "GET",
+            headers: internalHeaders("ocr"), redirect: "error",
             signal: controller.signal,
           });
 
@@ -179,6 +181,7 @@ async function main() {
     try {
       const res = await fetch(upstreamUrl, {
         method: "GET",
+        headers: internalHeaders("ocr"), redirect: "error",
         signal: controller.signal,
       });
       const contentType = res.headers.get("content-type") ?? "";
@@ -223,7 +226,7 @@ async function main() {
     try {
       const res = await fetch(
         new URL("/render/test", RENDER_UPSTREAM).toString(),
-        { method: "GET" }
+        { method: "GET", headers: internalHeaders("render"), redirect: "error" }
       );
 
       return {
@@ -422,7 +425,7 @@ async function main() {
     try {
       const result = await limitOcr(async () => {
         signal.throwIfAborted();
-        const response = await fetch(upstreamUrl, { method: "POST", body: form, signal });
+        const response = await fetch(upstreamUrl, { method: "POST", body: form, signal, headers: internalHeaders("ocr"), redirect: "error" });
         // Hold both the concurrency slot and timeout through body consumption.
         return { response, text: await response.text() };
       });

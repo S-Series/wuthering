@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { characterIds } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
 import { createEmptyCharacterData, type CharacterData, type CharacterStat, type ScoreList } from "@/types/character.type";
-import { calcAllEchoScore, calcBaseStat, calcFinalScore, calcFinalStat, setEchoDataIndexes } from "@/runtime/characterData.helpers";
+import { calcAllEchoScore, calcBaseStat, calcFinalScore, calcCharacterStatDetails, type StatContribution, setEchoDataIndexes } from "@/runtime/characterData.helpers";
 import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
@@ -13,16 +13,25 @@ import {
   type CharacterDataSnapshot,
   readCharacterDataSnapshot,
 } from "@/stores/characterDataStorage";
+import {
+  CHARACTER_FAVORITES_STORAGE_KEY,
+  readFavoriteCharacters,
+  writeFavoriteCharacters,
+  resolveCharacterFavorite,
+} from "@/stores/characterFavoritesStorage";
 
 type ContextType = {
   characterId: CharacterId;
   setCharacterId: React.Dispatch<React.SetStateAction<CharacterId>>;
   characterData: CharacterData;
+  favoriteCharacterIds: CharacterId[];
+  toggleFavoriteCharacter: (id: CharacterId) => void;
   patchCharacterData: (patch: Partial<CharacterData>) => void;
   replaceCharacterDataSnapshot: (snapshot: CharacterDataSnapshot) => void;
   replaceCharacterData: (id: CharacterId, data: CharacterData) => void;
   characterBaseStat: CharacterStat | null;
   characterFinalStat: CharacterStat | null;
+  statContributions: StatContribution[];
   equipmentScore: ScoreList;
   finalScore: [number, number];
   harmonySet: Partial<Record<HarmonyId, number>>;
@@ -34,11 +43,12 @@ const CharacterContext = createContext<ContextType | null>(null);
 
 const normalizeCharacterData = (
   id: CharacterId,
-  savedData?: Partial<CharacterData>
+  savedData?: Partial<CharacterData>,
+  fallbackFavorite = false,
 ): CharacterData => {
   const base = createEmptyCharacterData(id);
 
-  if (!savedData) return base;
+  if (!savedData) return { ...base, isFavorite: fallbackFavorite };
 
   const safeEchoData = Array.from({ length: 10 }, (_, index) => {
     const baseEcho = base.echoData[index];
@@ -110,6 +120,7 @@ const normalizeCharacterData = (
   return {
     ...base,
     ...savedData,
+    isFavorite: resolveCharacterFavorite(savedData.isFavorite, fallbackFavorite),
     weaponId: savedData.weaponId ?? base.weaponId,
     constell: safeConstell,
     echoData: safeEchoData,
@@ -119,11 +130,11 @@ const normalizeCharacterData = (
 
 export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const ALL_IDS = useMemo(() => characterIds, []);
-  const createCharacterDataMap = (snapshot: CharacterDataSnapshot) => {
+  const createCharacterDataMap = (snapshot: CharacterDataSnapshot, fallbackFavorites = new Set(readFavoriteCharacters())) => {
     return Object.fromEntries(
       ALL_IDS.map((id) => [
         id,
-        normalizeCharacterData(id, snapshot[id]),
+        normalizeCharacterData(id, snapshot[id], fallbackFavorites.has(id)),
       ])
     ) as Record<CharacterId, CharacterData>;
   };
@@ -131,6 +142,14 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const [ALL_CHARACTERS, setALL_CHARACTERS] = useState<Record<CharacterId, CharacterData>>(() =>
     createCharacterDataMap(readCharacterDataSnapshot())
   );
+
+  const favoriteCharacterIds = useMemo(() => ALL_IDS.filter(id => ALL_CHARACTERS[id].isFavorite === true), [ALL_IDS, ALL_CHARACTERS]);
+  const toggleFavoriteCharacter = (id: CharacterId) => {
+    setALL_CHARACTERS(prev => ({
+      ...prev,
+      [id]: { ...prev[id], isFavorite: prev[id].isFavorite !== true },
+    }));
+  };
 
   const patchCharacterData = (patch: Partial<CharacterData>) => {
     setALL_CHARACTERS((prev) => ({
@@ -143,19 +162,32 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   };
 
   const replaceCharacterDataSnapshot = (snapshot: CharacterDataSnapshot) => {
-    setALL_CHARACTERS(createCharacterDataMap(snapshot));
+    setALL_CHARACTERS(prev => createCharacterDataMap(snapshot, new Set(ALL_IDS.filter(id => prev[id].isFavorite === true))));
   };
 
   const replaceCharacterData = (id: CharacterId, data: CharacterData) => {
     setALL_CHARACTERS((prev) => ({
       ...prev,
-      [id]: normalizeCharacterData(id, data),
+      [id]: normalizeCharacterData(id, data, prev[id].isFavorite === true),
     }));
   };
 
   useEffect(() => {
     localStorage.setItem(CHARACTER_DATA_STORAGE_KEY, JSON.stringify(ALL_CHARACTERS));
-  }, [ALL_CHARACTERS]);
+    writeFavoriteCharacters(favoriteCharacterIds);
+  }, [ALL_CHARACTERS, favoriteCharacterIds]);
+
+  useEffect(() => {
+    const syncFavorites = (event: StorageEvent) => {
+      if (event.key !== CHARACTER_FAVORITES_STORAGE_KEY && event.key !== null) return;
+      const favorites = new Set(readFavoriteCharacters());
+      setALL_CHARACTERS(prev => Object.fromEntries(ALL_IDS.map(id => [
+        id, prev[id].isFavorite === favorites.has(id) ? prev[id] : { ...prev[id], isFavorite: favorites.has(id) },
+      ])) as Record<CharacterId, CharacterData>);
+    };
+    window.addEventListener("storage", syncFavorites);
+    return () => window.removeEventListener("storage", syncFavorites);
+  }, [ALL_IDS]);
 
   const [characterId, setCharacterId] = useState<CharacterId>("rover_spectro");
   const characterData = useMemo<CharacterData>(() => {
@@ -200,9 +232,9 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     return calcBaseStat(characterData);
   }, [characterData]);
 
-  const characterFinalStat = useMemo<CharacterStat>(() => {
-    return calcFinalStat(characterData, characterData.echoDataIndex, harmonySet ?? {});
-  }, [characterData]);
+  const { stats: characterFinalStat, contributions: statContributions } = useMemo(() => {
+    return calcCharacterStatDetails(characterData, characterData.echoDataIndex, harmonySet);
+  }, [characterData, harmonySet]);
 
   const [compensation, setCompensation] = useState(0);
   /*
@@ -324,11 +356,14 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     characterId,
     setCharacterId,
     characterData,
+    favoriteCharacterIds,
+    toggleFavoriteCharacter,
     patchCharacterData,
     replaceCharacterDataSnapshot,
     replaceCharacterData,
     characterBaseStat,
     characterFinalStat,
+    statContributions,
     equipmentScore,
     finalScore,
     harmonySet,

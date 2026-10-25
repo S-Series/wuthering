@@ -43,6 +43,9 @@ export function normalizeGameProfile(raw: unknown, uid: string): GameProfile {
 }
 
 export async function getGameProfile(uid: string): Promise<GameProfile> {
+  if (requireAuth().currentUser?.uid !== uid) {
+    throw new Error("Current Firebase user does not match requested uid");
+  }
   const db = requireDb();
   const ref = doc(db, "gameProfiles", uid);
   const snap = await getDoc(ref);
@@ -69,6 +72,9 @@ export async function saveGameProfile(
   uid: string,
   next: Partial<Omit<GameProfile, "uid">>
 ): Promise<GameProfile> {
+  if (requireAuth().currentUser?.uid !== uid) {
+    throw new Error("Current Firebase user does not match requested uid");
+  }
   const db = requireDb();
   const ref = doc(db, "gameProfiles", uid);
   const prev = await getGameProfile(uid);

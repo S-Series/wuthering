@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { prepareOcrImage, type CropMetadata } from "@/api/ocr.preprocess";
 import "./OcrCropTest.css";
 import { requestOcrBatch, type OcrRegionResult } from "@/api/ocr.batch";
@@ -7,6 +7,8 @@ import { matchOcrImages, resolveMatchedStat, statName, harmonyName, type LocalMa
 import { recognizeBrowserOcr, type BrowserOcrProgress, type BrowserOcrRegion } from "@/api/ocr.browser";
 import { crosscheckOcrRegions } from "@/api/ocr.crosscheck";
 import { OCR_REGION_IDS } from "@/api/ocr.regions";
+import { resolveBatchOcr } from "@/api/ocr.batch.resolve";
+import EchoOcrResultEditor from "@/components/features/Card/Echo/Ocr/EchoOcrResultEditor";
 
 type Result = { url: string; file: File; metadata: CropMetadata; elapsed: number };
 type OcrReport = {
@@ -21,7 +23,7 @@ const sourceLabel = (source: string | null) => source === "both" ? "다수결 �
 const agreementLabel = (value: boolean | null) => value === null ? "—" : value ? "일치" : "불일치";
 const bandLabel = (index: number) => index === -2 ? "에코 이름 / 하모니" : index === -1
   ? "COST"
-  : index < 2 ? `주옵션 ${index + 1}` : `부옵션 ${index - 1}`;
+  : index === 0 ? "주옵션" : index === 1 ? "고정옵션" : `부옵션 ${index - 1}`;
 
 export default function OcrCropTest() {
   const { lang } = useAppStore();
@@ -35,6 +37,11 @@ export default function OcrCropTest() {
   const [matchReport, setMatchReport] = useState<{ source: Result; lang: string; data?: LocalMatches; error?: string } | null>(null);
   const local = matchReport?.source === result && matchReport?.lang === lang ? matchReport : null;
   const comparisons = crosscheckOcrRegions(ocrResults ?? [], report?.browser ?? [], local?.data ?? null);
+  const resolvedData = useMemo(() => {
+    if (!report || report.running || !local) return null;
+    const resolved = resolveBatchOcr(report.backend ?? [], local.data ?? null, lang, report.browser);
+    return { cost: resolved.cost, echoId: resolved.echoId, stats: resolved.echoStats, setId: resolved.setId, costCheck: resolved.costCheck };
+  }, [report, local, lang]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
@@ -159,7 +166,7 @@ export default function OcrCropTest() {
         }}>취소</button>}
       </div>
       <p role="status" className="crop-status">
-        {ocrBusy ? "OCR 교차검증 중…" : busy ? "COST 탐지 및 자르기 중…" : result ? `자르기 완료 · ${result.metadata.bands.length}개 영역 · ${(result.elapsed / 1000).toFixed(2)}초` : "대기 중"}
+        {ocrBusy ? "OCR 교차검증 중…" : busy ? "영역별 위치와 크기 탐지 중…" : result ? `자르기 완료 · ${result.metadata.bands.length}개 영역 · ${(result.elapsed / 1000).toFixed(2)}초` : "대기 중"}
       </p>
       {report?.browserEnabled && report.progress && <div className="crop-browser-progress" role="status">
         <progress max={9} value={report.progress.completed} />
@@ -171,7 +178,31 @@ export default function OcrCropTest() {
       {source && <section className="crop-source">
         <h2>원본</h2>
         <p>{source.name}</p>
-        <img src={source.url} alt="업로드한 원본" />
+        {result?.metadata.sourceWidth && result.metadata.sourceHeight ? <>
+          <svg className="crop-source-boxes" viewBox={`0 0 ${result.metadata.sourceWidth} ${result.metadata.sourceHeight}`}
+            role="img" aria-label="원본 위 각 영역의 위치와 크기. 실선은 개별 감지, 점선은 기준 좌표 사용.">
+            <image href={source.url} width={result.metadata.sourceWidth} height={result.metadata.sourceHeight} />
+            {result.metadata.bands.map((band, index) => band.source && <g key={band.index}
+              className={band.method === "detected" ? "crop-box-detected" : "crop-box-profile"}>
+              <title>{bandLabel(band.index)} · {band.method === "detected" ? "개별 감지" : "기준 좌표 사용"}</title>
+              <rect x={band.source[0]} y={band.source[1]} width={band.source[2]-band.source[0]} height={band.source[3]-band.source[1]} />
+              <text x={band.source[0]-6} y={band.source[1]+(band.source[3]-band.source[1])/2} textAnchor="end" dominantBaseline="middle"
+                fontSize={Math.max(12, result.metadata.sourceHeight! * 0.015)}>{index + 1}</text>
+            </g>)}
+          </svg>
+          <p>실선: 개별 감지 · 점선: 감지 실패로 기준 좌표 사용. 좌표와 크기는 원본 이미지의 픽셀 기준입니다.</p>
+          <div className="crop-ocr-results-scroll">
+            <table className="crop-coordinates">
+              <thead><tr><th>영역</th><th>X</th><th>Y</th><th>너비</th><th>높이</th><th>위치 판정</th></tr></thead>
+              <tbody>{result.metadata.bands.map((band, index) => band.source && <tr key={band.index}>
+                <th scope="row">{index + 1}. {bandLabel(band.index)}</th>
+                <td>{band.source[0]}</td><td>{band.source[1]}</td>
+                <td>{band.source[2]-band.source[0]}</td><td>{band.source[3]-band.source[1]}</td>
+                <td>{band.method === "detected" ? "개별 감지" : "기준 좌표 사용"}</td>
+              </tr>)}</tbody>
+            </table>
+          </div>
+        </> : <img src={source.url} alt="업로드한 원본" />}
       </section>}
       {result && <>
         <section className="crop-ocr-results" aria-label="OCR 결과값">
@@ -184,6 +215,7 @@ export default function OcrCropTest() {
                   const server = ocrResults?.find(region => region.id === id);
                   const client = report.browser.find(region => region.id === id);
                   const check = comparisons[index];
+                  const checkedCost = id === "cost" ? resolvedData?.costCheck.selected : null;
                   return <tr key={id}>
                   <th scope="row">{bandLabel(index - 2)}</th>
                   <td>{server?.raw ? server.raw.success ? server.raw.texts.join("\n") || "인식된 텍스트 없음" : server.raw.error || "인식 실패" : report.backendDone ? "원본 OCR 결과 없음" : "처리 중…"}
@@ -200,16 +232,17 @@ export default function OcrCropTest() {
                     {index >= 2 && <small>Paddle 원본: {check.rawStatId ? statName(check.rawStatId) : "미확정"}<br />Paddle 전처리: {check.backendStatId ? statName(check.backendStatId) : "미확정"}<br />Tesseract: {check.browserStatId ? statName(check.browserStatId) : "미확정"}<br />이미지: {check.imageStatId ? `${statName(check.imageStatId)} (${Math.round(check.imageConfidence! * 100)}%)` : "미확정"}</small>}
                   </td>
                   <td>{agreementLabel(check.valueAgreement)}</td>
-                  <td><span className={`crop-crosscheck crop-crosscheck--${check.selectedStatId ? "agree" : check.status}`}>{index >= 2
+                  <td><span className={`crop-crosscheck crop-crosscheck--${checkedCost || check.selectedStatId ? "agree" : check.status}`}>{checkedCost ? `COST ${checkedCost}` : index >= 2
                     ? check.selectedStatId ? statName(check.selectedStatId) : "미확정"
                     : comparisonLabels[check.status]}</span>
+                    {checkedCost && <small>주옵션·고정옵션 교차검증{resolvedData?.costCheck.status === "conflict" ? " · 불일치 보정" : ""}</small>}
                     {index >= 2 && check.selectedSource && <small>{sourceLabel(check.selectedSource)} · {check.votes}표</small>}
                   </td>
                 </tr>;
                 })}</tbody>
               </table>
             </div>
-            <details className="crop-ocr-json"><summary>OCR 영역 데이터 JSON 보기</summary><pre>{JSON.stringify({ backend: ocrResults, browser: report.browser, crosscheck: comparisons }, null, 2)}</pre></details>
+            <details className="crop-ocr-json"><summary>OCR 영역 데이터 JSON 보기</summary><pre>{JSON.stringify({ backend: ocrResults, browser: report.browser, crosscheck: comparisons, costCheck: resolvedData?.costCheck }, null, 2)}</pre></details>
           </> : <p>대기 중</p>}
         </section>
         <section aria-label="항목별 자르기 결과">
@@ -255,7 +288,21 @@ export default function OcrCropTest() {
         <section className="crop-atlas">
           <h2>통합 결과</h2>
           <a href={result.url} download="echo-regions.png">PNG 다운로드</a>
-          <img src={result.url} alt="통합 자르기 결과" style={{ width: result.metadata.width, maxWidth: "100%" }} />
+          <div className="crop-atlas-layout">
+            <img src={result.url} alt="통합 자르기 결과" style={{ width: result.metadata.width, maxWidth: "100%" }} />
+            <aside className="crop-result-panel" aria-label="캐릭터 화면 기준 판정 결과">
+              <h3>캐릭터 화면 판정 결과</h3>
+              {resolvedData ? <>
+                <p className="crop-result-note">COST 교차검증: 숫자 {resolvedData.costCheck.direct ?? "미확정"}
+                  {" · "}주옵션 {resolvedData.costCheck.main.join("/") || "미확정"}
+                  {" · "}고정옵션 {resolvedData.costCheck.fixed.join("/") || "미확정"}
+                  {" → "}{resolvedData.costCheck.selected === null ? "미확정 · COST를 직접 선택해주세요."
+                    : `COST ${resolvedData.costCheck.selected}${resolvedData.costCheck.status === "conflict" ? " · 불일치 보정" : ""}`}</p>
+                <p className="crop-result-note">{report?.cancelled ? "취소 전까지 받은 결과입니다. " : ""}드롭다운으로 결과를 확인하고 수정할 수 있습니다.</p>
+                <EchoOcrResultEditor datas={resolvedData} selectIdx={0} resetAction={() => {}} draftOnly />
+              </> : <p role="status">OCR과 이미지 비교가 끝나면 판정 결과가 표시됩니다.</p>}
+            </aside>
+          </div>
         </section>
       </>}
     </main>

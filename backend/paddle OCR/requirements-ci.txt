@@ -1,7 +1,8 @@
-fastapi==0.104.1
-python-multipart==0.0.6
+fastapi==0.156.7
+starlette==1.7.0
+python-multipart==0.0.32
 httpx==0.25.2
 pytest==8.2.2
-Pillow==10.1.0
+Pillow==12.2.0
 numpy==1.23.5
 opencv-python-headless==4.8.1.78

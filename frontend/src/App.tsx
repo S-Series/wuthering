@@ -13,11 +13,13 @@ import OcrServerWatcher from "@/components/features/OcrServerWatcher";
 import OcrCropTest from "@/pages/OcrCropTest";
 import Dev from "@/pages/Dev";
 import DevAnalystic from "@/pages/DevAnalystic";
+import SiteTooltipLayer from "@/components/common/SiteTooltipLayer";
 
 export default function App() {
   return (
     <>
       <OcrServerWatcher />
+      <SiteTooltipLayer />
       <Routes>
         <Route path="/test" element={<Navigate to="/dev/ocr" replace />} />
         <Route element={<Layout />}>
