@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useOverlay } from "@/contexts/PopupContext";
 import { HOME_POSTS, type HomePost } from "@/posts/homePosts";
 import { useAppStore, type LangType } from "@/stores/appStore";
+import { useCharacter } from "@/stores/characterDataStore";
 
 import "@/pages/Home.css";
 
@@ -109,12 +110,19 @@ export function getSortedHomePosts() {
 export default function GlobalNoticePopup() {
   const { lang } = useAppStore();
   const { openOverlay } = useOverlay();
+  const { refreshAllScoresForNotice } = useCharacter();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const latestNotice = getSortedHomePosts()[0];
     if (!latestNotice) return;
+    try {
+      refreshAllScoresForNotice(latestNotice.id);
+    } catch (error) {
+      // A failed refresh remains retryable and must not suppress the notice.
+      console.error("Failed to refresh character scores for the latest notice", error);
+    }
     if (hasNoticeId(window.localStorage, AUTO_NOTICE_LOCAL_KEY, latestNotice.id)) return;
     if (hasNoticeId(window.sessionStorage, AUTO_NOTICE_SESSION_KEY, latestNotice.id)) return;
 
@@ -125,7 +133,7 @@ export default function GlobalNoticePopup() {
       width: "min(90vw, 54rem)",
       height: "min(82vh, 42rem)",
     });
-  }, [lang, openOverlay]);
+  }, [lang, openOverlay, refreshAllScoresForNotice]);
 
   return null;
 }

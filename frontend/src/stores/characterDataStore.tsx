@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { characterIds } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
@@ -7,6 +7,7 @@ import { calcAllEchoScore, calcBaseStat, calcFinalScore, calcCharacterStatDetail
 import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
 import { saveCharacterScore } from "@/summaryData/storage";
+import { refreshScoresForNotice } from "@/summaryData/noticeScoreRefresh";
 import { harmony, type HarmonyId } from "@/datas/harmonies";
 import {
   CHARACTER_DATA_STORAGE_KEY,
@@ -34,6 +35,7 @@ type ContextType = {
   statContributions: StatContribution[];
   equipmentScore: ScoreList;
   finalScore: [number, number];
+  refreshAllScoresForNotice: (noticeId: number) => boolean;
   harmonySet: Partial<Record<HarmonyId, number>>;
   statColors: string[][];
   setStatColors: React.Dispatch<React.SetStateAction<string[][]>>;
@@ -142,6 +144,9 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const [ALL_CHARACTERS, setALL_CHARACTERS] = useState<Record<CharacterId, CharacterData>>(() =>
     createCharacterDataMap(readCharacterDataSnapshot())
   );
+
+  const refreshAllScoresForNotice = useCallback((noticeId: number) =>
+    refreshScoresForNotice(noticeId, ALL_CHARACTERS), [ALL_CHARACTERS]);
 
   const favoriteCharacterIds = useMemo(() => ALL_IDS.filter(id => ALL_CHARACTERS[id].isFavorite === true), [ALL_IDS, ALL_CHARACTERS]);
   const toggleFavoriteCharacter = (id: CharacterId) => {
@@ -366,6 +371,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     statContributions,
     equipmentScore,
     finalScore,
+    refreshAllScoresForNotice,
     harmonySet,
     statColors,
     setStatColors,

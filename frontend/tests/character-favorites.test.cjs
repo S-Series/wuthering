@@ -22,6 +22,7 @@ function harness(savedFavorites, savedCharacters = {}) {
     createElement: (type, props) => ({ type, props }),
     useContext: () => null,
     useMemo: callback => callback(),
+    useCallback: callback => callback,
     useEffect: callback => { effects.push(callback); },
     useState: initial => {
       const index = cursor++;
