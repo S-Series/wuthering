@@ -94,7 +94,7 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
   lucy: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
-    [FixedStats.healBns.id]: 1.5,
+    [FixedStats.heavyBns.id]: 1.5,
     [FixedStats.resonanceBns.id]: 1,
     maxResCount: 0,
   },
