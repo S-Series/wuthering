@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 
 import { useOverlay } from "@/contexts/PopupContext";
 import { HOME_POSTS, type HomePost } from "@/posts/homePosts";
@@ -108,12 +109,14 @@ export function getSortedHomePosts() {
 }
 
 export default function GlobalNoticePopup() {
+  const { pathname } = useLocation();
   const { lang } = useAppStore();
   const { openOverlay } = useOverlay();
   const { refreshAllScoresForNotice } = useCharacter();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (["/about", "/guide", "/guide/scoring", "/privacy", "/terms"].includes(pathname)) return;
 
     const latestNotice = getSortedHomePosts()[0];
     if (!latestNotice) return;
@@ -133,7 +136,7 @@ export default function GlobalNoticePopup() {
       width: "min(90vw, 54rem)",
       height: "min(82vh, 42rem)",
     });
-  }, [lang, openOverlay, refreshAllScoresForNotice]);
+  }, [pathname, lang, openOverlay, refreshAllScoresForNotice]);
 
   return null;
 }

@@ -1,7 +1,10 @@
+import "@/pages/InformationPages.css";
+
 export default function Terms() {
   return (
-    <div>
+    <article className="site-document kr-font" lang="ko">
       <h1>이용약관</h1>
+      <p className="document-date">최종 수정: 2026년 10월 29일</p>
 
       <h2>1. 서비스 소개</h2>
       <p>
@@ -30,13 +33,18 @@ export default function Terms() {
 
       <h2>6. 책임 제한</h2>
       <p>
-        서비스 이용 중 발생하는 문제에 대해 운영자는 책임을 지지 않습니다.
+        OCR 결과, 계산 점수와 추천 정보에는 오류가 있을 수 있으며 실제 게임의 결과를 보장하지 않습니다. 중요한 입력값과 공유할 이미지의 내용은 이용자가 확인해야 합니다. 운영자의 책임은 관련 법령에 따릅니다.
       </p>
 
       <h2>7. 약관 변경</h2>
       <p>
         본 약관은 필요 시 변경될 수 있으며, 변경된 내용은 서비스 내에 공지됩니다.
       </p>
-    </div>
+      <h2>8. 광고 및 권리 안내</h2>
+      <p>서비스 운영을 위해 Google AdSense 등 광고가 게재될 수 있습니다. 광고 관련 데이터 처리와 이용자의 선택 방법은 개인정보처리방침을 따릅니다.</p>
+      <p>이 서비스는 Kuro Games와 제휴하지 않은 비공식 팬 프로젝트입니다. 게임과 관련 자산의 권리는 각 권리자에게 있습니다. 이용자는 업로드하거나 공유하는 이미지·게시물에 필요한 권리를 확보하고 타인의 개인정보와 저작권을 침해하지 않아야 합니다.</p>
+      <h2>9. 운영자 및 문의</h2>
+      <p>운영자: SSeries · <a href="mailto:SSeries000923@gmail.com">SSeries000923@gmail.com</a></p>
+    </article>
   );
 }

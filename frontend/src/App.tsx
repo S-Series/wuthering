@@ -14,6 +14,9 @@ import OcrCropTest from "@/pages/OcrCropTest";
 import Dev from "@/pages/Dev";
 import DevAnalystic from "@/pages/DevAnalystic";
 import SiteTooltipLayer from "@/components/common/SiteTooltipLayer";
+import { AboutPage, GuidePage, InformationPage, ScoringPage } from "@/pages/InformationPages";
+import Privacy from "@/components/features/Profile/Privacy";
+import Terms from "@/components/features/Profile/Terms";
 
 export default function App() {
   return (
@@ -24,6 +27,11 @@ export default function App() {
         <Route path="/test" element={<Navigate to="/dev/ocr" replace />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/guide" element={<GuidePage />} />
+          <Route path="/guide/scoring" element={<ScoringPage />} />
+          <Route path="/privacy" element={<InformationPage title="개인정보처리방침"><Privacy /></InformationPage>} />
+          <Route path="/terms" element={<InformationPage title="이용약관"><Terms /></InformationPage>} />
           <Route path="/characters" element={<Characters />} />
           <Route path="/card" element={<Card />} />
           <Route path="/card/:characterId" element={<Card />} />

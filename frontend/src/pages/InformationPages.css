@@ -1,0 +1,79 @@
+.information-page {
+  width: min(100% - 2rem, 56rem);
+  margin: 0 auto;
+  color: var(--app-text);
+}
+
+.information-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--nav-panel-bg);
+  border: 1px solid var(--nav-border-muted);
+  font-size: 0.9rem;
+}
+
+.information-page a,
+.site-document a {
+  color: var(--nav-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+}
+
+.information-nav a.active {
+  color: var(--nav-accent);
+  font-weight: 700;
+}
+
+.site-document {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.information-page > .site-document {
+  background: var(--nav-panel-bg);
+  border: 1px solid var(--nav-border-muted);
+}
+
+.site-document h1 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.55rem, 4vw, 2rem);
+  line-height: 1.4;
+}
+
+.site-document h2 {
+  margin: 2rem 0 0.65rem;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.site-document p { margin: 0.75rem 0; }
+.site-document ul,
+.site-document ol { padding-left: 1.4rem; }
+.site-document li + li { margin-top: 0.5rem; }
+
+.site-document .document-eyebrow,
+.site-document .document-date {
+  color: var(--nav-muted-text);
+  font-size: 0.85rem;
+}
+
+.site-document .document-callout,
+.site-document .document-formula {
+  padding: 1rem;
+  border-left: 3px solid var(--nav-accent);
+  background: var(--nav-control-bg);
+}
+
+.information-page a:focus-visible,
+.site-document a:focus-visible {
+  outline: 2px solid var(--nav-accent);
+  outline-offset: 4px;
+}
