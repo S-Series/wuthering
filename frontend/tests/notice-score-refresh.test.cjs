@@ -23,6 +23,7 @@ function harness() {
   let refresh;
   const stubs = {
     react: { useEffect: fn => effects.push(fn) },
+    'react-router-dom': { useLocation: () => ({ pathname: '/' }) },
     'react/jsx-runtime': { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) },
     '@/posts/homePosts': { HOME_POSTS: posts },
     '@/stores/appStore': { useAppStore: () => ({ lang: 'kr' }) },
@@ -62,9 +63,10 @@ function harness() {
     echo.subOptions = [{ statId: 'critRate', statValue: 7.5 }, { statId: 'critDmg', statValue: 15 }, { statId: 'atkPct', statValue: 7.9 }, { statId: 'heavyBns', statValue: 8.6 }, { statId: 'resonanceBns', statValue: 10.8 }];
   }
   const api = load('summaryData/noticeScoreRefresh.ts');
+  const { SCORE_RULES_VERSION } = load('datas/characterScoreSheet.ts');
   refresh = id => api.refreshScoresForNotice(id, characters);
   return {
-    ...api, storage, writes, events, popups, posts, characters, characterIds, load,
+    ...api, SCORE_RULES_VERSION, storage, writes, events, popups, posts, characters, characterIds, load,
     failWrites: value => { failWrite = value; },
     runPopup() { load('components/features/Home/GlobalNoticePopup.tsx').default(); effects.splice(0).forEach(fn => fn()); },
   };
@@ -84,7 +86,7 @@ test('new notice rebuilds every score using equipped stats and sets, preserving 
   assert.deepEqual(Object.keys(saved.data).sort(), [...h.characterIds].sort());
   assert.equal(saved.data.rover_spectro.score, 0);
   assert.deepEqual(plain(h.characters), before);
-  assert.equal(h.storage.get(h.NOTICE_SCORE_REFRESH_KEY), '15');
+  assert.equal(h.storage.get(h.NOTICE_SCORE_REFRESH_KEY), `15:${h.SCORE_RULES_VERSION}`);
   assert.deepEqual(h.events, ['wuthering:character-summary-updated']);
 });
 
@@ -100,7 +102,30 @@ test('repeated effects, reloads and popup dismissal cannot repeat the same versi
   h.runPopup();
   assert.equal(h.popups.length, 2);
   assert.equal(h.events.length, 2);
-  assert.equal(h.storage.get(h.NOTICE_SCORE_REFRESH_KEY), '16');
+  assert.equal(h.storage.get(h.NOTICE_SCORE_REFRESH_KEY), `16:${h.SCORE_RULES_VERSION}`);
+});
+
+test('same notice with legacy or older score rules recalculates Zhezhi and preserves saved gear', () => {
+  const h = harness();
+  const zhezhi = h.characters.zhezhi;
+  const { scoreHarness, buildScoreFixture, evaluateScore } = require('./helpers/score-harness.cjs');
+  const { sheets } = require('./fixtures/score-sheet-2026-10-30.json');
+  Object.assign(zhezhi, plain(buildScoreFixture(scoreHarness(), 'zhezhi')));
+  const gear = plain(h.characters);
+  const oldScore = evaluateScore(scoreHarness(sheets), zhezhi).final[1];
+  const newScore = evaluateScore(scoreHarness(), zhezhi).final[1];
+  assert.ok(newScore < oldScore);
+  for (const oldVersion of ['15', '15:older-rules']) {
+    h.storage.set(h.NOTICE_SCORE_REFRESH_KEY, oldVersion);
+    h.storage.set('character_stat_data', JSON.stringify({ version: 1, data: { zhezhi: { score: oldScore } } }));
+    h.storage.set('wuthering.homeNotice.dismissedIds', '[15]');
+    h.runPopup();
+    assert.equal(JSON.parse(h.storage.get('character_stat_data')).data.zhezhi.score, newScore);
+    assert.equal(h.storage.get(h.NOTICE_SCORE_REFRESH_KEY), `15:${h.SCORE_RULES_VERSION}`);
+    assert.equal(h.refreshScoresForNotice(15, h.characters), false);
+    assert.deepEqual(plain(h.characters), gear);
+    assert.equal(h.popups.length, 0);
+  }
 });
 
 test('previously hidden or session-shown notices still refresh stale scores once on rollout', () => {

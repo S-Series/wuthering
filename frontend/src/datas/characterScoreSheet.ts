@@ -5,6 +5,9 @@ import type { WeaponId } from "./weapon";
 import { character } from "./characters";
 
 type StatWeightMap = Partial<Record<StatId, number>>;
+// Bump when score rules change so saved summaries are recalculated on rollout.
+export const SCORE_RULES_VERSION = "score-damage-types-2026-10-30";
+
 export interface CharacterScore extends StatWeightMap {
   maxResCount: number; //$ Legacy data (UnUse)
   isCritInvalid?: boolean;
@@ -558,7 +561,10 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
 
     [FixedStats.basicBns.id]: 1.1,
     [FixedStats.skillBns.id]: 0.1,
-    [FixedStats.liberationBns.id]: 0.1,
+    // Living Canvas / Inklit Spirit (including S5) deals Basic Attack DMG.
+    // Do not redistribute this invalid weight without rotation calibration.
+    // Evidence and pending profiles: docs/audits/score-damage-types-2026-10-30.md
+    [FixedStats.liberationBns.id]: 0,
 
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
