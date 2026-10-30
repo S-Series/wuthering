@@ -2,7 +2,6 @@ import type { EchoRuntime } from "@/runtime/echo.runtime";
 import type { CharacterId } from "./characterStats";
 import { FixedStats, type StatId } from "./stats";
 import type { WeaponId } from "./weapon";
-import { character } from "./characters";
 
 type StatWeightMap = Partial<Record<StatId, number>>;
 export interface CharacterScore extends StatWeightMap {
@@ -109,8 +108,8 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
   denia: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
-    [FixedStats.skillBns.id]: 0.5,
-    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.skillBns.id]: 0,
+    [FixedStats.liberationBns.id]: 1.5,
     [FixedStats.resonanceBns.id]: 1.2,
     maxResCount: 0,
   },
@@ -352,8 +351,10 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
-    [FixedStats.basicBns.id]: 1.0,
-    [FixedStats.liberationBns.id]: 0.5,
+    [FixedStats.basicBns.id]: 0.75,
+    [FixedStats.heavyBns.id]: 0.05,
+    [FixedStats.skillBns.id]: 0.6,
+    [FixedStats.liberationBns.id]: 0.1,
 
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 1,
@@ -412,8 +413,10 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
-    [FixedStats.heavyBns.id]: 1.0,
-    [FixedStats.skillBns.id]: 0.5,
+    [FixedStats.basicBns.id]: 0.55,
+    [FixedStats.heavyBns.id]: 0.05,
+    [FixedStats.skillBns.id]: 0.4,
+    [FixedStats.liberationBns.id]: 0.5,
 
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 3,
@@ -441,7 +444,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,
 
-    [FixedStats.liberationBns.id]: 1.0,
+    [FixedStats.heavyBns.id]: 0.4,
+    [FixedStats.skillBns.id]: 0.6,
+    [FixedStats.liberationBns.id]: 0.5,
 
     [FixedStats.resonanceBns.id]: 0.5,
     maxResCount: 1,
@@ -556,9 +561,9 @@ export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
     ...BaseSheet, //ㅈㅈ
     [FixedStats.atkPct.id]: 1.5,
 
-    [FixedStats.basicBns.id]: 1.1,
+    [FixedStats.basicBns.id]: 1.4,
     [FixedStats.skillBns.id]: 0.1,
-    [FixedStats.liberationBns.id]: 0.1,
+    [FixedStats.liberationBns.id]: 0,
 
     [FixedStats.resonanceBns.id]: 1.0,
     maxResCount: 4,
@@ -686,17 +691,6 @@ export function getCharacterScore(
     }
 
     //$ Constell
-    case character.suisui.id: {
-      //수수 6돌
-      if (constell >= 6) {
-        result[FixedStats.atkPct.id] = 1.5;
-        result[FixedStats.critRate.id] = 3;
-        result[FixedStats.critDmg.id] = 1.5;
-        result[FixedStats.basicBns.id] = 0.3;
-        result[FixedStats.skillBns.id] = 0.1;
-      }
-      break;
-    }
     case "iuno": {
       //유노 1돌+
       if (constell >= 1) {

@@ -23,6 +23,7 @@ function harness() {
   let refresh;
   const stubs = {
     react: { useEffect: fn => effects.push(fn) },
+    'react-router-dom': { useLocation: () => ({ pathname: '/card' }) },
     'react/jsx-runtime': { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) },
     '@/posts/homePosts': { HOME_POSTS: posts },
     '@/stores/appStore': { useAppStore: () => ({ lang: 'kr' }) },

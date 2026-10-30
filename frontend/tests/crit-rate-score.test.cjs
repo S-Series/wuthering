@@ -175,8 +175,9 @@ test('Lucy uses a 1.05 crit-only multiplier without lowering the legacy whole-sc
   const legacy = calcAllEchoScore(data);
   close(stats.critRate, 87.5);
   close(getCritRateScoreAdjustment(data, stats).scoreMultiplier, 1.05);
-  close(Math.round(legacy.slice(0,5).reduce((sum,value)=>sum+value[1],0)*10)/10, 350.9);
-  close(calcFinalScore(data, stats, data.weaponId, legacy)[1], 357.2);
+  // Lucy's corrected Heavy DMG weight participates in the original whole-score normalization.
+  close(Math.round(legacy.slice(0,5).reduce((sum,value)=>sum+value[1],0)*10)/10, 306.2);
+  close(calcFinalScore(data, stats, data.weaponId, legacy)[1], 311.4);
 });
 
 test('total-score tooltip explains the useful and wasted portions in all site languages', () => {
