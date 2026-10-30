@@ -1,4 +1,5 @@
 import { characterIds } from '@/datas/characters';
+import { SCORE_RULES_VERSION } from '@/datas/characterScoreSheet';
 import { harmony, type HarmonyId } from '@/datas/harmonies';
 import { calcAllEchoScore, calcFinalScore, calcFinalStat } from '@/runtime/characterData.helpers';
 import type { CharacterDataSnapshot } from '@/stores/characterDataStorage';
@@ -6,9 +7,9 @@ import { CHARACTER_SUMMARY_UPDATED_EVENT, saveCharacterScores } from './storage'
 
 export const NOTICE_SCORE_REFRESH_KEY = 'wuthering.homeNotice.scoresRecalculatedId';
 
-/** Rebuild the summary cache once per notice, using the same equipped gear and active sets as the card. */
+/** Rebuild once per notice/rules version, using the card's equipped gear and active sets. */
 export function refreshScoresForNotice(noticeId: number, characters: CharacterDataSnapshot): boolean {
-  const version = String(noticeId);
+  const version = `${noticeId}:${SCORE_RULES_VERSION}`;
   if (localStorage.getItem(NOTICE_SCORE_REFRESH_KEY) === version) return false;
 
   const scores = Object.fromEntries(characterIds.map(id => {

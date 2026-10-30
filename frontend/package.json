@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test:score": "node --test tests/*score*.test.cjs",
     "test:ocr": "node --test tests/ocr*.test.cjs",
     "test:cloud": "node --test tests/cloud-cache.test.cjs",
     "preview": "vite preview"
