@@ -125,16 +125,36 @@ test('uncapped builds retain legacy total-score weighting and equipped order is 
   close(after[1], before[1]);
 });
 
-test('crit-only multipliers use 52.5 / min(52.5, needed) and safely handle zero need', () => {
+test('crit value conversion uses 52.5 / min(52.5, needed) and safely handles zero need', () => {
   const data = build(6.3);
   for (const [fixed, expected] of [[0, 1], [13, 1], [47.5, 1], [50, 1.05], [58, 1.25], [80, 2.625], [100, 0], [110, 0]]) {
     const budget = getCritRateBudget(fixed + 31.5, equipped(data));
-    close(budget.scoreMultiplier, expected);
+    close(budget.valueMultiplier, expected);
   }
   const empty = createEmptyCharacterData('aemeath');
   const budget = getCritRateBudget(13, equipped(empty));
   assert.equal(budget.ratio, 1);
   assert.ok(Number.isFinite(score(empty, 100)[1]));
+});
+
+test('a 30% useful cap scores 6% CR as 10.5% before weighting, without changing actual stats or CV', () => {
+  const raw = build(0), reference = build(0);
+  raw.echoData[0].subOptions[0].statValue = 6;
+  reference.echoData[0].subOptions[0].statValue = 10.5;
+  const before = JSON.stringify(raw);
+  const budget = getCritRateBudget(76, equipped(raw));
+  close(budget.available, 30);
+  close(budget.valueMultiplier, 1.75);
+  close(budget.scoringValue, 10.5);
+  const converted = score(raw, 70), unconverted = score(reference, 13);
+  close(converted[1], unconverted[1]);
+  close(unconverted[0] - converted[0], (10.5 - 6) * 2);
+  assert.equal(JSON.stringify(raw), before);
+
+  const full = build(6), excess = build(6.3);
+  close(getCritRateBudget(100, equipped(full)).scoringValue, 52.5);
+  close(getCritRateBudget(101.5, equipped(excess)).scoringValue, 52.5);
+  close(score(full, 70)[1], score(excess, 70)[1]);
 });
 
 test('only crit points are replaced by the requested formula; all other points and pair bonuses stay at legacy weights', () => {
@@ -158,7 +178,7 @@ test('only crit points are replaced by the requested formula; all other points a
   }
 });
 
-test('Lucy uses a 1.05 crit-only multiplier without lowering the legacy whole-score coefficient', () => {
+test('Lucy uses a 1.05 crit value multiplier without lowering the legacy whole-score coefficient', () => {
   const data = createEmptyCharacterData('lucy');
   data.weaponId = 'pistol007';
   const slots = [
@@ -174,7 +194,7 @@ test('Lucy uses a 1.05 crit-only multiplier without lowering the legacy whole-sc
   const stats = calcFinalStat(data, data.echoDataIndex, { Adam:1, Radiance:2, Memories:2 });
   const legacy = calcAllEchoScore(data);
   close(stats.critRate, 87.5);
-  close(getCritRateScoreAdjustment(data, stats).scoreMultiplier, 1.05);
+  close(getCritRateScoreAdjustment(data, stats).valueMultiplier, 1.05);
   // Lucy's corrected Heavy DMG weight participates in the original whole-score normalization.
   close(Math.round(legacy.slice(0,5).reduce((sum,value)=>sum+value[1],0)*10)/10, 306.2);
   close(calcFinalScore(data, stats, data.weaponId, legacy)[1], 311.4);
@@ -184,9 +204,10 @@ test('total-score tooltip explains the useful and wasted portions in all site la
   const budget = getCritRateBudget(110.5, equipped(build()));
   for (const lang of ['kr', 'en', 'jp', 'zh']) {
     const lines = critScoreTooltipLines(budget, lang);
-    assert.equal(lines.length, 4);
+    assert.equal(lines.length, 5);
     assert.ok(lines.some(line => line.includes('42%')));
     assert.ok(lines.some(line => line.includes('10.5%')));
     assert.ok(lines.some(line => line.includes('500')));
+    assert.ok(lines.some(line => line.includes('× 1.25 = 52.5%')));
   }
 });

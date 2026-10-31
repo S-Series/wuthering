@@ -10,7 +10,8 @@ export type CritRateBudget = {
   effective: number;
   wasted: number;
   ratio: number;
-  scoreMultiplier: number;
+  valueMultiplier: number;
+  scoringValue: number;
 };
 
 /** Use the same final-stat calculation as the card; only equipped substats consume this budget. */
@@ -21,6 +22,8 @@ export function getCritRateBudget(finalCritRate: number, equipped: readonly Echo
   const available = clean(Math.min(maximum, Math.max(0, 100 - fixed)));
   const effective = Math.min(substats, available);
   const wasted = clean(Math.max(0, substats - effective));
-  const scoreMultiplier = available > 0 ? maximum / available : 0;
-  return { fixed, substats, maximum, available, effective, wasted, ratio: substats > 0 ? effective / substats : 1, scoreMultiplier };
+  const valueMultiplier = available > 0 ? maximum / available : 0;
+  // Convert useful substat CR into its scoring value before applying any point weights.
+  const scoringValue = effective * valueMultiplier;
+  return { fixed, substats, maximum, available, effective, wasted, ratio: substats > 0 ? effective / substats : 1, valueMultiplier, scoringValue };
 }

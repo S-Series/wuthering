@@ -20,12 +20,13 @@ export const formatInfoStat = (id: string, value: number) => `${Number(value.toF
 
 export function critScoreTooltipLines(budget: CritRateBudget, lang: LangType): string[] {
   const pct = (value: number) => `${Number(value.toFixed(2))}%`;
-  const factor = Number(budget.scoreMultiplier.toFixed(4));
+  const factor = Number(budget.valueMultiplier.toFixed(4));
   return [
     tr(lang, `부옵 외 크리티컬: ${pct(budget.fixed)}`, `Crit rate outside substats: ${pct(budget.fixed)}`, `サブ以外の会心率: ${pct(budget.fixed)}`, `副词条以外的暴击率: ${pct(budget.fixed)}`),
     tr(lang, `유효 부옵 상한: ${pct(budget.available)} / 최대 ${pct(budget.maximum)}`, `Useful substat cap: ${pct(budget.available)} / maximum ${pct(budget.maximum)}`, `有効サブ上限: ${pct(budget.available)} / 最大 ${pct(budget.maximum)}`, `有效副词条上限: ${pct(budget.available)} / 最高 ${pct(budget.maximum)}`),
     tr(lang, `장착 부옵 ${pct(budget.substats)} → 유효 ${pct(budget.effective)} · 초과 ${pct(budget.wasted)}`, `Equipped subs ${pct(budget.substats)} → effective ${pct(budget.effective)} · wasted ${pct(budget.wasted)}`, `装備サブ ${pct(budget.substats)} → 有効 ${pct(budget.effective)} · 超過 ${pct(budget.wasted)}`, `已装备副词条 ${pct(budget.substats)} → 有效 ${pct(budget.effective)} · 溢出 ${pct(budget.wasted)}`),
-    tr(lang, `유효 크리 부옵 × 크리 배점 × 기존 전체보정 × ${factor}. 계수는 최대 부옵 ÷ 유효 부옵 상한이며, 이미 100%면 크리 부옵은 0점입니다. 다른 옵션과 쌍크리 보너스는 유지하고 총점 상한은 500점입니다. 개별 에코는 단독 평가입니다.`, `Effective crit subs × crit weight × original whole-score multiplier × ${factor}. The factor is maximum subs / useful cap; crit subs score zero if already at 100%. Other stats and paired-crit bonuses stay unchanged, with a 500-point cap. Individual Echoes are rated separately.`, `有効会心サブ × 会心配点 × 元の全体係数 × ${factor}。係数は最大サブ÷有効上限、既に100%なら会心サブは0点です。他の属性と会心ペア加点を維持し、上限は500点です。個別エコーは単独評価です。`, `有效暴击副词条 × 暴击权重 × 原整体系数 × ${factor}。系数为副词条最大值÷有效上限，已达100%时暴击副词条记0分。其他属性与双暴加分不变，总分上限500。单个声骸独立评分。`),
+    tr(lang, `점수용 환산 크리: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `Crit rate converted for scoring: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `採点用の換算会心率: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `评分用换算暴击率: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`),
+    tr(lang, `환산 크리 수치 × 크리 배점 × 기존 전체보정으로 계산합니다. 환산 계수는 최대 부옵 ÷ 유효 부옵 상한이며, 이미 100%면 크리 부옵은 0점입니다. 다른 옵션과 쌍크리 보너스는 유지하고 총점 상한은 500점입니다. 개별 에코는 단독 평가입니다.`, `Converted crit value × crit weight × original whole-score multiplier. The value conversion factor is maximum subs / useful cap; crit subs score zero if already at 100%. Other stats and paired-crit bonuses stay unchanged, with a 500-point cap. Individual Echoes are rated separately.`, `換算会心率 × 会心配点 × 元の全体係数で計算します。換算係数は最大サブ÷有効上限、既に100%なら会心サブは0点です。他の属性と会心ペア加点を維持し、上限は500点です。個別エコーは単独評価です。`, `按换算暴击率 × 暴击权重 × 原整体系数计算。数值换算系数为副词条最大值÷有效上限，已达100%时暴击副词条记0分。其他属性与双暴加分不变，总分上限500。单个声骸独立评分。`),
   ];
 }
 

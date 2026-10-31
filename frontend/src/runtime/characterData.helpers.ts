@@ -555,9 +555,9 @@ export function getCritRateScoreAdjustment(cData: CharacterData, cStat: Characte
   const budget = getCritRateBudget(cStat.critRate,equipped);
   const weight = characterScoreSheet[cData.characterId].critRate ?? 0;
   const active = (budget.available < budget.maximum || budget.wasted > 0) && weight > 0;
-  // Replace only the CR contribution: min(value, useful cap) * t * whole multiplier * (52.5 / useful cap).
+  // Score the converted CR value with the original weights; replace only the raw CR contribution.
   const scoreDelta = active
-    ? (budget.effective * budget.scoreMultiplier - budget.substats) * weight * getEchoScoreMultiplier(cData.characterId)
+    ? (budget.scoringValue - budget.substats) * weight * getEchoScoreMultiplier(cData.characterId)
     : 0;
   return { ...budget, active, scoreDelta };
 }
