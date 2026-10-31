@@ -21,11 +21,26 @@ export const formatInfoStat = (id: string, value: number) => `${Number(value.toF
 export function critScoreTooltipLines(budget: CritRateBudget, lang: LangType): string[] {
   const pct = (value: number) => `${Number(value.toFixed(2))}%`;
   const factor = Number(budget.valueMultiplier.toFixed(4));
+  const assumption = budget.conditionalSet;
+  const extraNames = {
+    echoSkillBns: tr(lang, "에코 스킬 피해", "Echo Skill DMG", "音骸スキルダメージ", "声骸技能伤害"),
+    coordinatedBns: tr(lang, "협동 공격 피해", "Coordinated Attack DMG", "協同攻撃ダメージ", "协同攻击伤害"),
+    outroBns: tr(lang, "반주 피해", "Outro Skill DMG", "終奏スキルダメージ", "延奏技能伤害"),
+    tuneBreakBoost: tr(lang, "튜닝 파괴 증폭", "Tune Break Boost", "音律崩壊増幅", "谐度破坏增幅"),
+  };
+  const conditionalValues = assumption?.bonuses.map(bonus => {
+    const name = valid(FixedStats, bonus.statId) ? FixedStats[bonus.statId][lang] : extraNames[bonus.statId as keyof typeof extraNames];
+    return `${name} +${formatInfoStat(bonus.statId, bonus.value)}`;
+  }).join(" · ");
   return [
+    ...(assumption ? [
+      tr(lang, `SCORE 조건부 출처: ${harmony[assumption.setId][lang]} ${assumption.count}세트 · ${conditionalValues}`, `SCORE conditional source: ${harmony[assumption.setId][lang]} (${assumption.count}-piece) · ${conditionalValues}`, `SCORE条件付き効果: ${harmony[assumption.setId][lang]} ${assumption.count}セット · ${conditionalValues}`, `SCORE条件效果来源: ${harmony[assumption.setId][lang]} ${assumption.count}件套 · ${conditionalValues}`),
+      tr(lang, "추천 1순위 세트의 조건부 효과를 순수 스탯으로 항상 가정합니다. 실제 스탯에 이미 포함된 수치는 중복 가산하지 않습니다. 세트 정보: encore.moe.", "The first recommended set's conditional effects are always assumed as plain scoring stats. Bonuses already included in actual stats are not added twice. Set data: encore.moe.", "推奨1位セットの条件付き効果を採点用ステータスに常時換算します。実際のステータスに含まれる分は重複加算しません。セット情報: encore.moe。", "始终将首选套装的条件效果按纯评分属性计入，实际属性中已包含的数值不会重复加算。套装资料: encore.moe。"),
+    ] : []),
     tr(lang, `부옵 외 크리티컬: ${pct(budget.fixed)}`, `Crit rate outside substats: ${pct(budget.fixed)}`, `サブ以外の会心率: ${pct(budget.fixed)}`, `副词条以外的暴击率: ${pct(budget.fixed)}`),
     tr(lang, `유효 부옵 상한: ${pct(budget.available)} / 최대 ${pct(budget.maximum)}`, `Useful substat cap: ${pct(budget.available)} / maximum ${pct(budget.maximum)}`, `有効サブ上限: ${pct(budget.available)} / 最大 ${pct(budget.maximum)}`, `有效副词条上限: ${pct(budget.available)} / 最高 ${pct(budget.maximum)}`),
     tr(lang, `장착 부옵 ${pct(budget.substats)} → 유효 ${pct(budget.effective)} · 초과 ${pct(budget.wasted)}`, `Equipped subs ${pct(budget.substats)} → effective ${pct(budget.effective)} · wasted ${pct(budget.wasted)}`, `装備サブ ${pct(budget.substats)} → 有効 ${pct(budget.effective)} · 超過 ${pct(budget.wasted)}`, `已装备副词条 ${pct(budget.substats)} → 有效 ${pct(budget.effective)} · 溢出 ${pct(budget.wasted)}`),
-    tr(lang, `점수용 환산 크리: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `Crit rate converted for scoring: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `採点用の換算会心率: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `评分用换算暴击率: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`),
+    tr(lang, `점수용 환산 크리 (5부위 합계 최대 ${pct(budget.maximum)}): ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `Crit rate converted for scoring (five-piece total capped at ${pct(budget.maximum)}): ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `採点用の換算会心率（5部位合計の上限 ${pct(budget.maximum)}）: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`, `评分用换算暴击率（5部位合计上限 ${pct(budget.maximum)}）: ${pct(budget.effective)} × ${factor} = ${pct(budget.scoringValue)}`),
     tr(lang, `환산 크리 수치 × 크리 배점 × 기존 전체보정으로 계산합니다. 환산 계수는 최대 부옵 ÷ 유효 부옵 상한이며, 이미 100%면 크리 부옵은 0점입니다. 다른 옵션과 쌍크리 보너스는 유지하고 총점 상한은 500점입니다. 개별 에코는 단독 평가입니다.`, `Converted crit value × crit weight × original whole-score multiplier. The value conversion factor is maximum subs / useful cap; crit subs score zero if already at 100%. Other stats and paired-crit bonuses stay unchanged, with a 500-point cap. Individual Echoes are rated separately.`, `換算会心率 × 会心配点 × 元の全体係数で計算します。換算係数は最大サブ÷有効上限、既に100%なら会心サブは0点です。他の属性と会心ペア加点を維持し、上限は500点です。個別エコーは単独評価です。`, `按换算暴击率 × 暴击权重 × 原整体系数计算。数值换算系数为副词条最大值÷有效上限，已达100%时暴击副词条记0分。其他属性与双暴加分不变，总分上限500。单个声骸独立评分。`),
   ];
 }

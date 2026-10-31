@@ -2,7 +2,9 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 
 import { characterIds } from "@/datas/characters";
 import { type CharacterId } from "@/datas/characterStats";
-import { createEmptyCharacterData, type CharacterData, type CharacterStat, type ScoreList } from "@/types/character.type";
+import { type CharacterData, type CharacterStat, type ScoreList } from "@/types/character.type";
+import { createDefaultCharacterData } from "@/runtime/characterDefaults";
+import { resolveCharacterWeaponId } from "@/datas/characterWeapons";
 import { calcAllEchoScore, calcBaseStat, calcFinalScore, calcCharacterStatDetails, type StatContribution, setEchoDataIndexes } from "@/runtime/characterData.helpers";
 import { getCharacterScore } from "@/datas/characterScoreSheet";
 import { FixedStats } from "@/datas/stats";
@@ -48,7 +50,7 @@ const normalizeCharacterData = (
   savedData?: Partial<CharacterData>,
   fallbackFavorite = false,
 ): CharacterData => {
-  const base = createEmptyCharacterData(id);
+  const base = createDefaultCharacterData(id);
 
   if (!savedData) return { ...base, isFavorite: fallbackFavorite };
 
@@ -123,7 +125,7 @@ const normalizeCharacterData = (
     ...base,
     ...savedData,
     isFavorite: resolveCharacterFavorite(savedData.isFavorite, fallbackFavorite),
-    weaponId: savedData.weaponId ?? base.weaponId,
+    weaponId: resolveCharacterWeaponId(id, savedData.weaponId),
     constell: safeConstell,
     echoData: safeEchoData,
     echoDataIndex: safeEchoIndex,
@@ -160,7 +162,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     setALL_CHARACTERS((prev) => ({
       ...prev,
       [characterId]: {
-        ...(prev[characterId] ?? createEmptyCharacterData(characterId)),
+        ...(prev[characterId] ?? createDefaultCharacterData(characterId)),
         ...patch,
       },
     }));
@@ -196,7 +198,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
 
   const [characterId, setCharacterId] = useState<CharacterId>("rover_spectro");
   const characterData = useMemo<CharacterData>(() => {
-    return ALL_CHARACTERS[characterId] ?? createEmptyCharacterData(characterId);
+    return ALL_CHARACTERS[characterId] ?? createDefaultCharacterData(characterId);
   }, [ALL_CHARACTERS, characterId]);
 
   const harmonySet = useMemo<Partial<Record<HarmonyId, number>>>(() => {

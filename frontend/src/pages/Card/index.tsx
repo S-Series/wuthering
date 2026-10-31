@@ -25,6 +25,7 @@ import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { ATTACK_TYPE_STAT_MAP, ELEMENT_STAT_MAP, FixedStats, type StatId } from "@/datas/stats";
 
 import { getCharacterRank } from "@/types/character.type";
+import { withDefaultCharacterWeapon } from "@/runtime/characterDefaults";
 import { type CharacterData } from "@/types/character.type";
 import { type WeaponData } from "@/runtime/character.runtime";
 import {
@@ -214,10 +215,11 @@ function getHarmonySetFromData(data: CharacterData) {
 }
 
 function getCharacterDataScore(data: CharacterData) {
-  const dataHarmonySet = getHarmonySetFromData(data);
-  const finalStat = calcFinalStat(data, data.echoDataIndex, dataHarmonySet);
-  const scoreList = calcAllEchoScore(data);
-  return calcFinalScore(data, finalStat, data.weaponId ?? null, scoreList)[1];
+  const prepared = withDefaultCharacterWeapon(data);
+  const dataHarmonySet = getHarmonySetFromData(prepared);
+  const finalStat = calcFinalStat(prepared, prepared.echoDataIndex, dataHarmonySet);
+  const scoreList = calcAllEchoScore(prepared);
+  return calcFinalScore(prepared, finalStat, prepared.weaponId, scoreList)[1];
 }
 
 const LINKED_HIGHLIGHT_STATS: Partial<Record<StatId, StatId[]>> = {
@@ -312,8 +314,9 @@ function createSummaryFromCharacterData({
   localeText: CardLocaleText;
   updatedAt?: string;
 }): CloudSyncDataSummary {
-  const weaponName = data.weaponId
-    ? weaponDict[data.weaponId]?.[lang] ?? localeText.cloudSyncNoWeapon
+  const prepared = withDefaultCharacterWeapon(data);
+  const weaponName = prepared.weaponId
+    ? weaponDict[prepared.weaponId]?.[lang] ?? localeText.cloudSyncNoWeapon
     : localeText.cloudSyncNoWeapon;
 
   const score = (() => {

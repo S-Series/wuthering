@@ -337,7 +337,7 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
   },
   changli: {
     guideMainEcho: "W77N",
-    guideWeapons: [],
+    guideWeapons: [weapon.sword.sword002.id, weapon.sword.sword001.id],
     guideSkillOrder: ["skill", "forte", "liberation", "basic", "outro"],
   },
   jinhsi: {
@@ -401,12 +401,12 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
   },
   jianxin: {
     guideMainEcho: "H72",
-    guideWeapons: [weapon.rectifier.rectifier101.id],
+    guideWeapons: [weapon.gauntlet.gauntlet101.id],
     guideSkillOrder: ["liberation", "forte", "basic", "skill", "outro"],
   },
   lingyang: {
     guideMainEcho: "N74",
-    guideWeapons: [],
+    guideWeapons: [weapon.gauntlet.gauntlet001.id],
     guideSkillOrder: ["forte", "liberation", "outro", "skill", "basic"],
   },
   sanhua: {
@@ -416,42 +416,42 @@ export const characterGuideData: Record<CharacterId, characterGuide> = {
   },
   baizhi: {
     guideMainEcho: "X78",
-    guideWeapons: [],
+    guideWeapons: [weapon.rectifier.rectifier102.id],
     guideSkillOrder: ["liberation", "skill", "forte", "outro", "basic"],
   },
   chixia: {
     guideMainEcho: "W77N",
-    guideWeapons: [],
+    guideWeapons: [weapon.pistol.pistol001.id],
     guideSkillOrder: ["forte", "liberation", "basic", "skill", "outro"],
   },
   mortefi: {
     guideMainEcho: "H72",
-    guideWeapons: [],
+    guideWeapons: [weapon.pistol.pistol001.id],
     guideSkillOrder: ["liberation", "forte", "basic", "skill", "outro"],
   },
   yuanwu: {
     guideMainEcho: "H72",
-    guideWeapons: [],
+    guideWeapons: [weapon.gauntlet.gauntlet103.id],
     guideSkillOrder: ["liberation", "skill", "forte", "outro", "basic"],
   },
   yangyang: {
     guideMainEcho: "H72",
-    guideWeapons: [],
+    guideWeapons: [weapon.sword.sword001.id],
     guideSkillOrder: ["liberation", "skill", "forte", "basic", "outro"],
   },
   aalto: {
     guideMainEcho: "H72",
-    guideWeapons: [],
+    guideWeapons: [weapon.pistol.pistol001.id],
     guideSkillOrder: ["basic", "forte", "liberation", "skill", "outro"],
   },
   taoqi: {
     guideMainEcho: "H72",
-    guideWeapons: [],
+    guideWeapons: [weapon.broadblade.broadblade103.id],
     guideSkillOrder: ["forte", "skill", "liberation", "basic", "outro"],
   },
   danjin: {
     guideMainEcho: "H80N",
-    guideWeapons: [],
+    guideWeapons: [weapon.sword.sword001.id],
     guideSkillOrder: ["forte", "skill", "liberation", "basic", "outro"],
   },
 };

@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { useAppStore } from "@/stores/appStore";
 import { useCharacter } from "@/stores/characterDataStore";
-import { getCritRateBudget } from "@/runtime/critRateScore.helpers";
+import { getCritRateScoreAdjustment } from "@/runtime/characterData.helpers";
 import { resolveTooltipTarget, type TooltipTarget } from "./tooltipTarget";
 import "./SiteTooltipLayer.css";
 
@@ -14,7 +14,7 @@ export default function SiteTooltipLayer() {
   const id = useId();
   const context = useMemo(() => ({
     lang, characterId, chain: characterData.constell[0], refinement: characterData.constell[1], weaponId: characterData.weaponId,
-    critRateBudget: characterFinalStat ? getCritRateBudget(characterFinalStat.critRate, characterData.echoDataIndex.slice(0, 5).map(index => characterData.echoData[index])) : undefined,
+    critRateBudget: characterFinalStat ? getCritRateScoreAdjustment(characterData, characterFinalStat) : undefined,
   }), [lang, characterId, characterData, characterFinalStat]);
   const [active, setActive] = useState<TooltipTarget | null>(null);
   const panel = useRef<HTMLDivElement>(null);

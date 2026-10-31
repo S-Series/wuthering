@@ -14,12 +14,14 @@ import { HOME_POST_1_4_1 } from "./homePosts/1.4.1";
 import { HOME_POST_1_4_2 } from "./homePosts/1.4.2";
 import { HOME_POST_1_4_3 } from "./homePosts/1.4.3";
 import { HOME_POST_1_4_4 } from "./homePosts/1.4.4";
+import { HOME_POST_1_4_5 } from "./homePosts/1.4.5";
 import { HOME_POST_PRELAUNCH } from "./homePosts/prelaunch";
 import type { HomePost } from "./homePosts/types";
 
 export type { HomePost, LocaleReactNode } from "./homePosts/types";
 
 export const HOME_POSTS: HomePost[] = [
+  HOME_POST_1_4_5,
   HOME_POST_1_4_4,
   HOME_POST_1_4_3,
   HOME_POST_1_4_2,

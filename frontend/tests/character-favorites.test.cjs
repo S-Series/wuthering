@@ -33,7 +33,10 @@ function harness(savedFavorites, savedCharacters = {}) {
   const cache = new Map();
   const stubs = {
     react: { __esModule: true, default: react, ...react },
-    '@/datas/characters': { characterIds: ['rover_spectro', 'aemeath', 'zani'] },
+    '@/datas/characters': {
+      characterIds: ['rover_spectro', 'aemeath', 'zani'],
+      character: { rover_spectro: { weapon: 'sword' }, aemeath: { weapon: 'sword' }, zani: { weapon: 'gauntlet' } },
+    },
     '@/summaryData/storage': { saveCharacterScore() {} },
     '@/runtime/characterData.helpers': {
       calcBaseStat: () => ({}),
@@ -64,7 +67,7 @@ function harness(savedFavorites, savedCharacters = {}) {
   const { CharacterProvider } = load(path.join(root, 'stores/characterDataStore.tsx'));
   const { createEmptyCharacterData } = load(path.join(root, 'types/character.type.ts'));
   return {
-    storage, listeners, empty: createEmptyCharacterData,
+    storage, listeners, empty: createEmptyCharacterData, load,
     snapshot: () => JSON.parse(storage.get(charactersKey)),
     render: () => {
       cursor = 0;
@@ -75,6 +78,38 @@ function harness(savedFavorites, savedCharacters = {}) {
     },
   };
 }
+
+test('first recommendations fill missing weapons and persist locally without overwriting equipped choices or refinement', () => {
+  const app = harness([], { aemeath: { weaponId: 'sword001', constell: [2, 4] }, zani: { weaponId: null } });
+  app.render();
+  assert.equal(app.snapshot().aemeath.weaponId, 'sword001');
+  assert.deepEqual(app.snapshot().aemeath.constell, [2, 4]);
+  assert.equal(app.snapshot().zani.weaponId, 'gauntlet004');
+  assert.deepEqual(app.snapshot().zani.constell, [0, 1]);
+  assert.equal(app.snapshot().rover_spectro.weaponId, 'sword001');
+
+  const fresh = harness([]);
+  fresh.render();
+  assert.equal(fresh.snapshot().aemeath.weaponId, 'sword009');
+});
+
+test('invalid saved weapons use the first recommendation and broken recommendation data fails validation', () => {
+  const app = harness([]);
+  const { getDefaultCharacterWeaponId, resolveCharacterWeaponId } = app.load(path.join(root, 'datas/characterWeapons.ts'));
+  const { characterGuideData } = app.load(path.join(root, 'datas/characters.guide.ts'));
+  const { weaponStat } = app.load(path.join(root, 'datas/weaponStats.ts'));
+  assert.equal(getDefaultCharacterWeaponId('rover_spectro'), 'sword001');
+  assert.equal(getDefaultCharacterWeaponId('aemeath'), 'sword009');
+  assert.equal(resolveCharacterWeaponId('aemeath', null), 'sword009');
+  assert.equal(resolveCharacterWeaponId('aemeath', 'sword999'), 'sword009');
+  assert.equal(resolveCharacterWeaponId('aemeath', 'gauntlet004'), 'sword009');
+  characterGuideData.aemeath.guideWeapons[0] = 'sword999';
+  assert.throws(() => getDefaultCharacterWeaponId('aemeath'), /Invalid first recommended weapon/);
+  characterGuideData.aemeath.guideWeapons[0] = 'sword009';
+  weaponStat.sword009.value = [];
+  weaponStat.sword009.statType = [];
+  assert.throws(() => getDefaultCharacterWeaponId('aemeath'), /Invalid first recommended weapon/);
+});
 
 test('legacy local favorites migrate into character snapshots without overriding explicit saved states', () => {
   const app = harness(['aemeath', 'aemeath', 'zani', 'invalid'], { zani: { isFavorite: false } });

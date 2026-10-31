@@ -12,6 +12,7 @@ import { characterScoreSheet, getCharacterScore, type CharacterScore } from "@/d
 import { characterMeta, getCharacterMeta, type CharacterMeta } from "@/datas/characters.meta";
 import { isValidEchoMainOption } from "./echoMainOption.helpers";
 import { getCritRateBudget } from "./critRateScore.helpers";
+import { getCharacterScoringStats } from "./scoreSetEffects";
 
 type EchoIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type SubIndex = 0 | 1 | 2 | 3 | 4;
@@ -552,14 +553,15 @@ export const calcAllEchoScore = (
 
 export function getCritRateScoreAdjustment(cData: CharacterData, cStat: CharacterStat) {
   const equipped = cData.echoDataIndex.slice(0,5).map(index => cData.echoData[index]);
-  const budget = getCritRateBudget(cStat.critRate,equipped);
+  const { stats: scoringStats, assumption: conditionalSet } = getCharacterScoringStats(cData, cStat);
+  const budget = getCritRateBudget(scoringStats.critRate,equipped);
   const weight = characterScoreSheet[cData.characterId].critRate ?? 0;
   const active = (budget.available < budget.maximum || budget.wasted > 0) && weight > 0;
   // Score the converted CR value with the original weights; replace only the raw CR contribution.
   const scoreDelta = active
     ? (budget.scoringValue - budget.substats) * weight * getEchoScoreMultiplier(cData.characterId)
     : 0;
-  return { ...budget, active, scoreDelta };
+  return { ...budget, conditionalSet, scoringStats, active, scoreDelta };
 }
 
 export const calcFinalScore = (
@@ -608,7 +610,7 @@ export const calcFinalScore = (
   if (!cSheet) return fallback;
 
   // 공효가 요구치 보다 부족
-  const cRes = cStat.resonanceBns;
+  const cRes = critAdjustment.scoringStats.resonanceBns;
   const mRes = cMeta.resReq;
 
   if (cRes < mRes) {

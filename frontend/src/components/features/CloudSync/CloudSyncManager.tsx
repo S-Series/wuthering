@@ -13,6 +13,7 @@ import { harmony, type HarmonyId } from "@/datas/harmonies";
 import { weaponDict } from "@/datas/weapon";
 import { locale } from "@/locales/locale";
 import { calcAllEchoScore, calcFinalScore, calcFinalStat } from "@/runtime/characterData.helpers";
+import { createDefaultCharacterData, withDefaultCharacterWeapon } from "@/runtime/characterDefaults";
 import {
   CHARACTER_SUMMARY_UPDATED_EVENT,
   saveCharacterScore,
@@ -108,10 +109,11 @@ function getHarmonySetFromData(data: CharacterData) {
 }
 
 function getCharacterDataScore(data: CharacterData) {
-  const dataHarmonySet = getHarmonySetFromData(data);
-  const finalStat = calcFinalStat(data, data.echoDataIndex, dataHarmonySet);
-  const scoreList = calcAllEchoScore(data);
-  return calcFinalScore(data, finalStat, data.weaponId ?? null, scoreList)[1];
+  const prepared = withDefaultCharacterWeapon(data);
+  const dataHarmonySet = getHarmonySetFromData(prepared);
+  const finalStat = calcFinalStat(prepared, prepared.echoDataIndex, dataHarmonySet);
+  const scoreList = calcAllEchoScore(prepared);
+  return calcFinalScore(prepared, finalStat, prepared.weaponId, scoreList)[1];
 }
 
 function notifyCharacterSummaryUpdated() {
@@ -122,8 +124,7 @@ function refreshSummaryScoresFromSnapshot(data: Partial<Record<CharacterId, Char
   saveCharacterScores(
     Object.fromEntries(
       characterIds.map((id) => {
-        const item = data[id];
-        if (!item) return [id, 0];
+        const item = data[id] ?? createDefaultCharacterData(id);
 
         try {
           return [id, getCharacterDataScore(item)];
@@ -193,8 +194,9 @@ function createSummaryFromCharacterData({
   localeText: CardLocaleText;
   updatedAt?: string;
 }): CloudSyncDataSummary {
-  const weaponName = data.weaponId
-    ? weaponDict[data.weaponId]?.[lang] ?? localeText.cloudSyncNoWeapon
+  const prepared = withDefaultCharacterWeapon(data);
+  const weaponName = prepared.weaponId
+    ? weaponDict[prepared.weaponId]?.[lang] ?? localeText.cloudSyncNoWeapon
     : localeText.cloudSyncNoWeapon;
 
   const score = (() => {

@@ -25,6 +25,8 @@ const { calcFinalStat, calcAllEchoScore, calcFinalScore, getCritRateScoreAdjustm
 const { createEmptyCharacterData } = load(path.join(root, 'types/character.type.ts'));
 const { characterGuideData } = load(path.join(root, 'datas/characters.guide.ts'));
 const { critScoreTooltipLines } = load(path.join(root, 'components/common/tooltipContent.ts'));
+const { getAssumedScoreCritRate, getCharacterScoringStats } = load(path.join(root, 'runtime/scoreSetEffects.ts'));
+const { createDefaultCharacterData } = load(path.join(root, 'runtime/characterDefaults.ts'));
 const close = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-7, `${actual} != ${expected}`);
 const equipped = data => data.echoDataIndex.slice(0, 5).map(index => data.echoData[index]);
 function build(roll = 10.5) {
@@ -38,7 +40,8 @@ function build(roll = 10.5) {
 }
 function score(data, fixed) {
   const stats = calcFinalStat(data, data.echoDataIndex, {});
-  stats.critRate = fixed + getCritRateBudget(0, equipped(data)).substats;
+  // `fixed` is the SCORE fixed CR, including the now-always-active recommended set bonus.
+  stats.critRate = fixed + getCritRateBudget(0, equipped(data)).substats - getAssumedScoreCritRate(data);
   stats.resonanceBns = 200; // Isolate the crit correction from ER shortfall penalties.
   return calcFinalScore(data, stats, data.weaponId, calcAllEchoScore(data));
 }
@@ -176,6 +179,71 @@ test('only crit points are replaced by the requested formula; all other points a
     const expected = Math.round(Math.min(500, otherPoints + expectedCrit) * 10) / 10;
     close(score(data, fixed)[1], expected);
   }
+});
+
+test('converted CR across five equipped pieces never exceeds 52.5%, including overflow and floating-point caps', () => {
+  for (const [total, expected] of [[6, 10.5], [29.9, 52.325], [30, 52.5], [31.5, 52.5], [52.5, 52.5], [100, 52.5]]) {
+    const data = build(total / 5);
+    data.echoData[8].subOptions[0].statValue = 999; // A spare is outside the shared budget.
+    const budget = getCritRateBudget(70 + total, equipped(data));
+    close(budget.valueMultiplier, 1.75);
+    close(budget.scoringValue, expected);
+    assert.ok(budget.scoringValue <= 52.5);
+  }
+  const data = build(10.5);
+  for (const fixed of [47.51, 58.3, 70, 80, 87.3, 99.99, 100, 110]) {
+    const budget = getCritRateBudget(fixed + 52.5, equipped(data));
+    assert.ok(budget.scoringValue >= 0 && budget.scoringValue <= 52.5);
+    close(budget.scoringValue, fixed < 100 ? 52.5 : 0);
+  }
+});
+
+test('Sigrika and Galbrena always get one plain 20% recommended-set CR bonus with a visible source', () => {
+  for (const [id, setId, count] of [['sigrika', 'Sound', 5], ['galbrena', 'Shadow', 3]]) {
+    const data = createDefaultCharacterData(id);
+    for (const echo of equipped(data)) echo.subOptions[0] = { statId: 'critRate', statValue: 6.3 };
+    const actual = calcFinalStat(data, data.echoDataIndex, {});
+    const before = JSON.stringify({ data, actual });
+    const { stats, assumption } = getCharacterScoringStats(data, actual);
+    close(stats.critRate, actual.critRate + 20);
+    assert.equal(assumption.setId, setId);
+    assert.equal(assumption.count, count);
+    close(getAssumedScoreCritRate(data), 20); // Shadow is +20%, not +20% per damage type.
+    const adjusted = getCritRateScoreAdjustment(data, actual);
+    close(adjusted.fixed, actual.critRate + 20 - 31.5);
+    for (const lang of ['kr', 'en', 'jp', 'zh']) {
+      const text = critScoreTooltipLines(adjusted, lang).join('\n');
+      assert.ok(text.includes('SCORE'));
+      assert.ok(text.includes('20%'));
+      assert.ok(text.includes('encore.moe'));
+    }
+    assert.equal(JSON.stringify({ data, actual }), before);
+  }
+});
+
+test('all characters have a usable first recommendation and finite scores even without any saved build', () => {
+  for (const [id, guide] of Object.entries(characterGuideData)) {
+    const data = createDefaultCharacterData(id);
+    assert.ok(data.weaponId, id);
+    assert.equal(data.weaponId, guide.guideWeapons[0], id);
+    assert.deepEqual(Array.from(data.constell), [0, 1]);
+    const actual = calcFinalStat(data, data.echoDataIndex, {});
+    const scoring = getCharacterScoringStats(data, actual);
+    assert.ok(Object.values(scoring.stats).every(Number.isFinite), id);
+    assert.ok(calcFinalScore(data, actual, data.weaponId, calcAllEchoScore(data)).every(Number.isFinite), id);
+  }
+});
+
+test('a recommended-set CR bonus already present in equipped stats is not counted twice', () => {
+  const data = createDefaultCharacterData('aemeath');
+  const emptyStats = calcFinalStat(data, data.echoDataIndex, {});
+  const emptyScoreStats = getCharacterScoringStats(data, emptyStats);
+  for (const echo of equipped(data)) echo.setId = 'Star';
+  const equippedStats = calcFinalStat(data, data.echoDataIndex, { Star: 5 });
+  const equippedScoreStats = getCharacterScoringStats(data, equippedStats);
+  close(equippedStats.critRate, emptyStats.critRate + 20);
+  close(equippedScoreStats.stats.critRate, emptyScoreStats.stats.critRate);
+  close(equippedScoreStats.assumption.bonuses.find(bonus => bonus.statId === 'critRate').alreadyIncluded, 20);
 });
 
 test('Lucy uses a 1.05 crit value multiplier without lowering the legacy whole-score coefficient', () => {

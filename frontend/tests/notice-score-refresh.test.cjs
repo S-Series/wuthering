@@ -89,6 +89,41 @@ test('new notice rebuilds every score using equipped stats and sets, preserving 
   assert.deepEqual(h.events, ['wuthering:character-summary-updated']);
 });
 
+test('missing snapshots are scored using first recommended weapons and conditional set assumptions', () => {
+  const h = harness();
+  delete h.characters.sigrika;
+  delete h.characters.galbrena;
+  h.characters.aemeath.weaponId = null;
+  const before = plain(h.characters), seen = new Map();
+  const runtime = h.load('runtime/characterData.helpers.ts');
+  const original = runtime.calcFinalScore;
+  runtime.calcFinalScore = (data, stats, weaponId, scores) => {
+    seen.set(data.characterId, { data: plain(data), budget: runtime.getCritRateScoreAdjustment(data, stats) });
+    return original(data, stats, weaponId, scores);
+  };
+  assert.equal(h.refreshScoresForNotice(17, h.characters), true);
+  assert.equal(seen.size, h.characterIds.length);
+  assert.equal(seen.get('sigrika').data.weaponId, 'gauntlet008');
+  assert.equal(seen.get('galbrena').data.weaponId, 'pistol004');
+  assert.equal(seen.get('aemeath').data.weaponId, 'sword009');
+  for (const [id, setId] of [['sigrika', 'Sound'], ['galbrena', 'Shadow']]) {
+    const assumption = seen.get(id).budget.conditionalSet;
+    assert.equal(assumption.setId, setId);
+    assert.equal(assumption.bonuses.find(bonus => bonus.statId === 'critRate').value, 20);
+  }
+  assert.deepEqual(plain(h.characters), before);
+});
+
+test('a scoring-rules update refreshes a previously completed notice exactly once', () => {
+  const h = harness();
+  h.storage.set(h.NOTICE_SCORE_REFRESH_KEY, '17');
+  h.storage.set(h.NOTICE_SCORE_RULES_KEY, 'older-rules');
+  assert.equal(h.refreshScoresForNotice(17, h.characters), true);
+  assert.equal(h.storage.get(h.NOTICE_SCORE_RULES_KEY), h.NOTICE_SCORE_RULES_VERSION);
+  assert.equal(h.refreshScoresForNotice(17, h.characters), false);
+  assert.equal(h.events.length, 1);
+});
+
 test('repeated effects, reloads and popup dismissal cannot repeat the same version refresh', () => {
   const h = harness();
   h.runPopup(); h.runPopup();
