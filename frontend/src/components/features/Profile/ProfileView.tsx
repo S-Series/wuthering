@@ -5,13 +5,13 @@ import CharacterSlot from "@/components/features/Characters/CharacterSlot";
 import { characterList } from "@/datas/characters";
 import { loadSummaryStore } from "@/summaryData/storage";
 import { getCharacterRank } from "@/types/character.type";
+import { imageAsset } from "@/utils/imageAsset";
 
 import GameProfileEdit from "@/components/features/Profile/ProfileEdit";
 
 import "./ProfileView.override.css"
 
 export default function ProfileView() {
-  const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
 
   const { user, gameProfile, logoutAction } = useAuthStore();
   const { openOverlay } = useOverlay();
@@ -20,8 +20,8 @@ export default function ProfileView() {
   const userImageUrl = useMemo(() => {
     return [
       user?.imageUrl ?? "/default.webp",
-      `${BASE_URL}/character/${gameProfile?.characterId ?? "rover_spectro"}/ico.webp`,
-      `${BASE_URL}/character/${gameProfile?.characterId ?? "rover_spectro"}/stand.png`,
+      imageAsset(`character/${gameProfile?.characterId ?? "rover_spectro"}/ico.webp`),
+      imageAsset(`character/${gameProfile?.characterId ?? "rover_spectro"}/stand.png`),
       `./stand.png`
     ]
   }, [user?.imageUrl, gameProfile?.characterId])

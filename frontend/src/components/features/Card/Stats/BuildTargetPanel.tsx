@@ -30,8 +30,12 @@ export default function BuildTargetPanel({ data }: { data: CharacterData }) {
   const variant = profile.variants.find(item => item.id === choice) ?? suggested;
   if (!variant || !suggested) return null;
   const assessment = evaluateBuildTargets(data, variant);
+  const provisional = profile.sourceKind === 'provisional';
+  const tiers = provisional ? BUILD_TIERS.filter(tier => tier === 'wellBuilt') : BUILD_TIERS;
+  const tierLabel = (tier: typeof BUILD_TIERS[number]) => provisional ? text.provisionalTarget : text[tier];
   const weaponId = variant.weaponId ?? profile.weaponId;
-  const rows: TargetStatId[] = [profile.primary, 'resonanceBns', 'critRate', 'critDmg'];
+  const rows: TargetStatId[] = provisional
+    ? [profile.primary, 'resonanceBns'] : [profile.primary, 'resonanceBns', 'critRate', 'critDmg'];
   const statName = (id: StatId) => FixedStats[id][lang];
   const format = (id: TargetStatId, value: number) => `${Number(value.toFixed(1)).toLocaleString()}${['critRate','critDmg','resonanceBns'].includes(id) ? '%' : ''}`;
   const statList = (ids: StatId[]) => ids.map(statName).join(' / ');
@@ -43,7 +47,7 @@ export default function BuildTargetPanel({ data }: { data: CharacterData }) {
       <div className="build-target-panel__heading">
         <h2>{character[data.characterId][lang]} <span>{text.title}</span></h2>
         <strong className={`build-target-panel__result ${assessment.conditionsMatch ? assessment.tier ?? 'below' : 'mismatch'}`}>
-          {assessment.conditionsMatch ? assessment.tier ? `${text[assessment.tier]} · ${text.reached}` : text.below : text.checkConditions}
+          {assessment.conditionsMatch ? assessment.tier ? `${tierLabel(assessment.tier)} · ${text.reached}` : provisional ? `${text.provisionalTarget} · ${text.missing}` : text.below : text.checkConditions}
         </strong>
         {profile.variants.length > 1 && <label className="build-target-panel__variant">
           <span>{text.conditions}</span>
@@ -54,7 +58,7 @@ export default function BuildTargetPanel({ data }: { data: CharacterData }) {
         </label>}
       </div>
 
-      <div className="build-target-panel__conditions">
+      {!provisional && <div className="build-target-panel__conditions">
         <div className={assessment.conditions.weapon ? 'matched' : 'different'}>
           <span>{text.weapon}</span>
           <b data-info-kind="weapon" data-info-id={weaponId ?? undefined} tabIndex={0}>{weaponId ? `${weaponDict[weaponId][lang]} · R1` : `${profile.sourceWeapon.split(',')[0]} · ${text.unregistered}`}</b>
@@ -68,33 +72,33 @@ export default function BuildTargetPanel({ data }: { data: CharacterData }) {
         <div className={assessment.conditions.set ? 'matched' : 'different'}>
           <span>{text.set}</span><b>{setLabel || profile.setText}</b><em>{assessment.conditions.set ? text.match : text.mismatch}</em>
         </div>
-      </div>
+      </div>}
 
       <div className="build-target-panel__table-wrap">
         <table aria-label={`${character[data.characterId][lang]} ${text.title}`}>
           <thead><tr>
             <th scope="col">{text.stat}</th>
             <th scope="col" data-tooltip={text.normalizing} data-tooltip-description={text.normalizeHelp} tabIndex={0}>{text.current}<small>{text.normalizing}</small></th>
-            {BUILD_TIERS.map(tier => {
+            {tiers.map(tier => {
               const registered = rows.filter(id => assessment.targets[tier][id] !== undefined);
-              return <th scope="col" key={tier} className={assessment.passed[tier] ? 'reached' : ''}>{text[tier]}<small>{assessment.conditionsMatch ? `${registered.filter(id => (assessment.stats[id] ?? 0) >= assessment.targets[tier][id]!).length}/${registered.length}` : '—'}</small></th>;
+              return <th scope="col" key={tier} className={assessment.passed[tier] ? 'reached' : ''}>{tierLabel(tier)}<small>{assessment.conditionsMatch ? `${registered.filter(id => (assessment.stats[id] ?? 0) >= assessment.targets[tier][id]!).length}/${registered.length}` : '—'}</small></th>;
             })}
           </tr></thead>
           <tbody>{rows.map(id => <tr key={id}>
             <th scope="row" data-info-kind="stat" data-info-id={id} tabIndex={0}><img src={`/ico/stats/${id}.webp`} alt="" />{statName(id)}</th>
             <td className="current num-font">{format(id, assessment.stats[id] ?? 0)}</td>
-            {BUILD_TIERS.map(tier => {
+            {tiers.map(tier => {
               const target = assessment.targets[tier][id];
               if (target === undefined) return <td key={tier} className="unregistered" aria-label={`${statName(id)} · ${text[tier]} · ${text.unregistered}`}>{text.unregistered}</td>;
               const reached = (assessment.stats[id] ?? 0) + 1e-6 >= target;
               const gain = target - assessment.targets.wellBuilt[id]!;
               const substat = id === 'atk' && profile.primary === 'atk' ? 'atkPct' : id === 'critDmg' ? 'critDmg' : null;
-              const basis = tier === 'wellBuilt' ? text.sourceTarget
+              const basis = tier === 'wellBuilt' ? (provisional ? text.provisionalSource : text.sourceTarget)
                 : tier === 'nearFinal' ? `${text.midpoint}: (${format(id, assessment.targets.wellBuilt[id]!)} + ${format(id, assessment.targets.final[id]!)}) ÷ 2`
                 : substat ? `${text.substatTotal}: ${statName(substat)} ${FINAL_BUILD_SUBSTAT_TARGETS[substat]}%. ${text.substatProjection}`
                 : `${text.gain} ${gain >= 0 ? '+' : ''}${format(id, gain)}`;
               return <td key={tier} className={`${reached ? 'reached' : 'pending'} num-font`} tabIndex={0}
-                data-tooltip={`${statName(id)} · ${text[tier]}`}
+                data-tooltip={`${statName(id)} · ${tierLabel(tier)}`}
                 data-tooltip-description={`${format(id, target)} · ${basis} · ${reached ? text.reached : `${text.missing} ${format(id, target - (assessment.stats[id] ?? 0))}`}`}>
                 {format(id, target)}<span aria-hidden="true">{reached ? '✓' : '·'}</span>
               </td>;
@@ -105,12 +109,16 @@ export default function BuildTargetPanel({ data }: { data: CharacterData }) {
 
       <div className="build-target-panel__footnote">
         <span data-tooltip={text.normalizing} data-tooltip-description={text.normalizeHelp} tabIndex={0}>{text.normalizing} ⓘ</span>
-        <a href={profile.sourceUrl} target="_blank" rel="noreferrer">{text.source} ↗</a>
-        <span data-tooltip={text.policy} data-tooltip-description={text.policyHelp} tabIndex={0}>{text.policy} ⓘ</span>
+        {provisional ? <span>{text.provisionalSource}</span> : <>
+          <a href={profile.sourceUrl} target="_blank" rel="noreferrer">{text.source} ↗</a>
+          <span data-tooltip={text.policy} data-tooltip-description={text.policyHelp} tabIndex={0}>{text.policy} ⓘ</span>
+        </>}
       </div>
       <details className="build-target-panel__details">
         <summary>{text.details}</summary>
-        <p>{text.normalizeHelp}</p><p>{text.policyHelp}</p><p>{text.referenceHelp}</p>
+        <p>{text.normalizeHelp}</p>
+        {provisional ? <p>{text.provisionalHelp}</p> : <>
+        <p>{text.policyHelp}</p><p>{text.referenceHelp}</p>
         <p>{text.unregisteredHelp}</p><p>{text.manualUpdate}</p>
         <p>{text.sourceTarget}: {profile.sourcePrimary || text.unregistered} · {text.sourceEnergy}: {profile.sourceEnergy || text.unregistered}</p>
         <p>{text.weapon}: {profile.sourceWeapon}</p><p>{text.set}: {profile.setText}</p>
@@ -118,6 +126,7 @@ export default function BuildTargetPanel({ data }: { data: CharacterData }) {
         {profile.notes && <p><b>{text.originalNotes}: </b>{profile.notes}</p>}
         <p>{text.sourceUpdated}: {BUILD_TARGET_SOURCE_UPDATED_AT}</p>
         <p>{text.checked}: {BUILD_TARGET_CHECKED_AT} · <a href="/licenses/arca-yeejalky.txt" target="_blank" rel="noreferrer">{text.license} (CC BY-SA 4.0)</a></p>
+        </>}
       </details>
     </section>
   );

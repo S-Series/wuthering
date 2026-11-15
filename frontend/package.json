@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
+    "test:seo": "node --test tests/seo.test.mjs",
     "lint": "eslint .",
     "test:ocr": "node --test tests/ocr*.test.cjs",
     "test:cloud": "node --test tests/cloud-cache.test.cjs",

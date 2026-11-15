@@ -532,6 +532,14 @@ export const weapon = {
       zh: "碎骨",
       imgKey: "ico008",
     },
+    pistol009: {
+      id: "pistol009",
+      en: "Lullaby",
+      kr: "럴러바이",
+      jp: "ララバイ",
+      zh: "安魂",
+      imgKey: "ico009",
+    },
     //$ 4-Starts
     pistol101:{
 			id: "pistol101",

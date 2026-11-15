@@ -24,6 +24,15 @@ export type characterGuide = {
 };
 
 export const characterGuideData: Record<CharacterId, characterGuide> = {
+  lily: {
+    guideMainEcho: "A04",
+    guideWeapons: [
+      weapon.pistol.pistol009.id,
+      weapon.pistol.pistol001.id,
+      weapon.pistol.pistol101.id,
+    ],
+    guideSkillOrder: ["forte", "liberation", "outro", "skill", "basic"],
+  },
   hsin: {
     guideMainEcho: "A06",
     guideWeapons: [

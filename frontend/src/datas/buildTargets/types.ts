@@ -31,9 +31,7 @@ export type BuildTargetBaseline = {
   setCount: number;
   setRules?: { id: HarmonyId; count: number }[][];
   setText: string;
-  sourceKind: 'arca';
-  sourceUrl: string;
   notes: string;
   sourcePrimary: string;
   sourceEnergy: string;
-};
+} & ({ sourceKind: 'arca'; sourceUrl: string } | { sourceKind: 'provisional'; sourceUrl?: never });

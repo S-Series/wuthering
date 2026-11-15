@@ -2,6 +2,10 @@ from app.core.constants import ASSET_DIR, ASSET_BASE_URL, IMAGE_VERSION
 from app.renderers.profile_card import render_profile_card
 
 
+def card_asset_url(path: str) -> str:
+    return f"{ASSET_BASE_URL}/{path}?v={IMAGE_VERSION}"
+
+
 def prepare_render_data(payload: dict) -> bytes:
     base = payload.get("base", {})
     lang = str(base.get("lang"))
@@ -12,9 +16,7 @@ def prepare_render_data(payload: dict) -> bytes:
 
     #stand image
     c_id = character.get("id") or "rover_spectro"
-    character["stand_image_url"] = (
-        f"{ASSET_BASE_URL}/character/{c_id}/stand.png?v={IMAGE_VERSION}"
-    )
+    character["stand_image_url"] = card_asset_url(f"character/{c_id}/stand.png")
 
     c_constell = character.get("constell") or "0"
     character["overlay_image_url"] = (
@@ -22,12 +24,7 @@ def prepare_render_data(payload: dict) -> bytes:
     )
 
     character["constell_icon_urls"] = [
-        f"{ASSET_BASE_URL}/character/{c_id}/C1.png?v={IMAGE_VERSION}",
-        f"{ASSET_BASE_URL}/character/{c_id}/C2.png?v={IMAGE_VERSION}",
-        f"{ASSET_BASE_URL}/character/{c_id}/C3.png?v={IMAGE_VERSION}",
-        f"{ASSET_BASE_URL}/character/{c_id}/C4.png?v={IMAGE_VERSION}",
-        f"{ASSET_BASE_URL}/character/{c_id}/C5.png?v={IMAGE_VERSION}",
-        f"{ASSET_BASE_URL}/character/{c_id}/C6.png?v={IMAGE_VERSION}",
+        card_asset_url(f"character/{c_id}/C{stage}.png") for stage in range(1, 7)
     ]
     
     #data icon
@@ -71,7 +68,7 @@ def prepare_render_data(payload: dict) -> bytes:
     weapon["weapon_image_path"] = (
         f"{ASSET_DIR}/default.webp" 
         if not w_type
-        else f"{ASSET_BASE_URL}/weapon/{w_type}/{w_img_key}.png?v={IMAGE_VERSION}"
+        else card_asset_url(f"weapon/{w_type}/{w_img_key}.png")
     )
 
     weapon_stat = weapon.get("statType")
@@ -129,7 +126,7 @@ def prepare_render_data(payload: dict) -> bytes:
     namecard["score_text"] = f"Tv. {score:.1f}pt"
     
     #? {c_id} is in character region
-    namecard["image_path"] = f"{ASSET_BASE_URL}/character/{c_id}/art.png?v={IMAGE_VERSION}"
+    namecard["image_path"] = card_asset_url(f"character/{c_id}/art.png")
 
     icon_path = namecard.get("rank") or "default"
     namecard["rank_icon_path"] = f"{ASSET_DIR}/ico/rank/{icon_path}.png"

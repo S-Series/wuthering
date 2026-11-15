@@ -11,6 +11,14 @@ export type RecommendedParty = {
 export const recommendedPartyData: RecommendedParty[] = [
   {
     nameKey: "standard",
+    characters: ["hsin", "suoming", "lily"],
+  },
+  {
+    nameKey: "alternative",
+    characters: ["sigrika", "qiuyuan", "lily"],
+  },
+  {
+    nameKey: "standard",
     characters: ["hsin", "suoming", "shorekeeper"],
   },
   {

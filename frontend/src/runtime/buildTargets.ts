@@ -2,7 +2,7 @@ import { buildTargetBaselines } from '@/datas/buildTargets/baselines';
 import type { BuildTargetBaseline, BuildTargetVariant, BuildTier, TargetStatId, TargetStats } from '@/datas/buildTargets/types';
 import { characterStat, type CharacterId } from '@/datas/characterStats';
 import { ARCA_SOURCE_UPDATED_AT, ARCA_CHECKED_AT } from '@/datas/buildTargets/arca';
-import type { HarmonyId } from '@/datas/harmonies';
+import { harmony, type HarmonyId } from '@/datas/harmonies';
 import { FixedStats } from '@/datas/stats';
 import { weaponStat } from '@/datas/weaponStats';
 import { createEmptyCharacterData, type CharacterData } from '@/types/character.type';
@@ -16,6 +16,23 @@ export const FINAL_BUILD_SUBSTAT_TARGETS = { atkPct: 35, critDmg: 75 };
 const mean = (values: readonly number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
 const oneDecimal = (value: number) => Math.round(value * 10) / 10;
 const sorted = (values: readonly (number | string)[]) => [...values].sort().join(',');
+type SetCounts = Partial<Record<HarmonyId, number>>;
+
+function countEquippedSets(data: CharacterData): SetCounts {
+  const counts: SetCounts = {};
+  for (const echo of equippedEchoes(data)) {
+    if (echo?.setId && Object.hasOwn(harmony, echo.setId)) counts[echo.setId] = (counts[echo.setId] ?? 0) + 1;
+  }
+  return counts;
+}
+
+function getSetRules(profile: BuildTargetBaseline, variant: BuildTargetVariant) {
+  return variant.setRules ?? profile.setRules ?? profile.sets.map(id => [{ id, count: profile.setCount }]);
+}
+
+function matchesSetRule(counts: SetCounts, rule: { id: HarmonyId; count: number }[]) {
+  return rule.every(({ id, count }) => (counts[id] ?? 0) >= count);
+}
 
 export function getBuildTargetProfile(id: CharacterId): BuildTargetBaseline | undefined {
   return buildTargetBaselines[id];
@@ -25,6 +42,9 @@ export function getBuildTargetProfile(id: CharacterId): BuildTargetBaseline | un
 export function getTierTargets(id: CharacterId, variant: BuildTargetVariant, data?: CharacterData): Record<BuildTier, TargetStats> {
   const profile = getBuildTargetProfile(id);
   if (!profile) return { wellBuilt: {}, nearFinal: {}, final: {} };
+  if (profile.sourceKind === 'provisional') {
+    return { wellBuilt: { ...variant.baseline }, nearFinal: {}, final: {} };
+  }
   const base = characterStat[id];
   const weaponId = variant.weaponId ?? profile.weaponId;
   const primaryBase = profile.primary === 'atk' ? base.baseAtk + (weaponId ? weaponStat[weaponId].atk : 0) : profile.primary === 'hp' ? base.baseHp : base.baseDef;
@@ -38,7 +58,11 @@ export function getTierTargets(id: CharacterId, variant: BuildTargetVariant, dat
     final.critRate = oneDecimal(Math.min(100, final.critRate + mean(FixedStats.critRate.ValueSub)));
   }
   const reference = createTargetReference(id, variant, data);
-  const projected = getNormalizedBuildStats(reference, FINAL_BUILD_SUBSTAT_TARGETS);
+  const rules = getSetRules(profile, variant);
+  const equippedSets = data ? countEquippedSets(data) : {};
+  const referenceRule = rules.find(rule => matchesSetRule(equippedSets, rule)) ?? rules[0];
+  const referenceSets = Object.fromEntries((referenceRule ?? []).map(({ id, count }) => [id, count]));
+  const projected = getNormalizedBuildStats(reference, referenceSets, FINAL_BUILD_SUBSTAT_TARGETS);
   const equipped = data && matchesMainOptions(data, variant) ? equippedEchoes(data) : undefined;
   if (profile.primary === 'atk' && variant.baseline.atk !== undefined) {
     if (weaponId && (variant.main1 || equipped)) final.atk = projected.atk;
@@ -55,7 +79,7 @@ export function getTierTargets(id: CharacterId, variant: BuildTargetVariant, dat
   return { wellBuilt: { ...variant.baseline }, nearFinal, final };
 }
 
-/** Reference gear includes its main-Echo effect, without substats or set effects. Valid equipped main-stat choices may select
+/** Reference gear includes its main-Echo effect, without equipped substats. Valid equipped main-stat choices may select
  * a permitted alternative, but equipment rolls, Chain and refinement cannot move the target. */
 function createTargetReference(id: CharacterId, variant: BuildTargetVariant, data?: CharacterData): CharacterData {
   const profile = getBuildTargetProfile(id);
@@ -98,7 +122,9 @@ export function matchesMainOptions(data: CharacterData, variant: BuildTargetVari
 }
 
 export function getSuggestedVariant(data: CharacterData): BuildTargetVariant | undefined {
-  const variants = getBuildTargetProfile(data.characterId)?.variants ?? [];
+  const profile = getBuildTargetProfile(data.characterId);
+  const variants = profile?.variants ?? [];
+  if (profile?.sourceKind === 'provisional') return variants[0];
   // Prefer a specific main-Echo exception over the generic build if both match.
   return variants.find(variant => variant.mainEchoId && matchesMainOptions(data, variant))
     ?? variants.find(variant => matchesMainOptions(data, variant))
@@ -108,28 +134,25 @@ export function getSuggestedVariant(data: CharacterData): BuildTargetVariant | u
 export function getTargetConditions(data: CharacterData, variant: BuildTargetVariant) {
   const profile = getBuildTargetProfile(data.characterId);
   if (!profile) return { weapon: false, mainOptions: false, set: false };
-  const echoes = equippedEchoes(data);
-  const counts: Partial<Record<HarmonyId, number>> = {};
-  for (const echo of echoes) if (echo?.setId) counts[echo.setId] = (counts[echo.setId] ?? 0) + 1;
-  const rules = variant.setRules ?? profile.setRules ?? profile.sets.map(id => [{ id, count: profile.setCount }]);
+  const counts = countEquippedSets(data);
   return {
     weapon: !!(variant.weaponId ?? profile.weaponId) && data.weaponId === (variant.weaponId ?? profile.weaponId),
     mainOptions: matchesMainOptions(data, variant),
-    set: rules.some(rule => rule.every(({ id, count }) => (counts[id] ?? 0) >= count)),
+    set: getSetRules(profile, variant).some(rule => matchesSetRule(counts, rule)),
   };
 }
 
-/** Same Echoes and weapon, including the main-Echo effect, normalized to C0/R1 without set buffs. */
+/** Same Echoes and weapon, including main-Echo and equipped set effects, normalized to C0/R1. */
 export function getBuildComparisonStats(data: CharacterData): TargetStats {
-  return getNormalizedBuildStats(data);
+  return getNormalizedBuildStats(data, countEquippedSets(data));
 }
 
-function getNormalizedBuildStats(data: CharacterData, extraSubstats?: { atkPct: number; critDmg: number }): TargetStats {
+function getNormalizedBuildStats(data: CharacterData, sets: SetCounts, extraSubstats?: { atkPct: number; critDmg: number }): TargetStats {
   const normalized: CharacterData = { ...data, constell: [0, 1] };
-  const { contributions } = calcCharacterStatDetails(normalized, normalized.echoDataIndex, {});
+  const { contributions } = calcCharacterStatDetails(normalized, normalized.echoDataIndex, sets);
   const stats: TargetStats = {};
   for (const source of contributions) {
-    if (source.kind === 'harmony' || source.kind === 'rounding') continue;
+    if (source.kind === 'rounding') continue;
     stats[source.statId] = (stats[source.statId] ?? 0) + source.value;
   }
   if (extraSubstats) {
@@ -145,7 +168,8 @@ function getNormalizedBuildStats(data: CharacterData, extraSubstats?: { atkPct: 
 export function evaluateBuildTargets(data: CharacterData, variant: BuildTargetVariant, stats = getBuildComparisonStats(data)) {
   const targets = getTierTargets(data.characterId, variant, data);
   const conditions = getTargetConditions(data, variant);
-  const conditionsMatch = Object.values(conditions).every(Boolean);
+  const conditionsMatch = getBuildTargetProfile(data.characterId)?.sourceKind === 'provisional'
+    || Object.values(conditions).every(Boolean);
   const registered = Object.keys(targets.wellBuilt) as TargetStatId[];
   const passed = Object.fromEntries(BUILD_TIERS.map(tier => [tier, conditionsMatch && registered.length > 0 && registered.every(id => targets[tier][id] !== undefined && (stats[id] ?? 0) + 1e-6 >= targets[tier][id]!)])) as Record<BuildTier, boolean>;
   const tier = [...BUILD_TIERS].reverse().find(tier => passed[tier]) ?? null;

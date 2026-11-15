@@ -213,6 +213,17 @@ export const characterConstellStats: Partial<
       ),
     ],
   },
+  lily: {
+    1: [specific("강화 강공격 경직 면역 및 아군 변주당 꿈내음 2스택")],
+    2: [specific("릴리 퇴장 중 꿈내음 4스택의 파티 효과", stat("critRate", 8), stat("critDmg", 24))],
+    3: [specific("꿈결에 숨 쉬는 향기, 협주·공명 에너지 수급 및 꿈방울 획득 속도 강화")],
+    4: [specific("꿈의 안식처 치료량 30% 증가")],
+    5: [specific("아군 변주 시 견인 범위 50% 증가")],
+    6: [
+      specific("강화 강공격 종막·종말에만 적용", stat("spectroBns", 100)),
+      specific("강화 변주 스킬 영원한 피어남에만 적용", stat("spectroBns", 700)),
+    ],
+  },
   hsin: {
     3: [
       specific(

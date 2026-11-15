@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from "react";
+import { imageAsset } from "@/utils/imageAsset";
 
 import { characterGuideData } from "@/datas/characters.guide";
 import { getRecommendedParties } from "@/datas/characters.parties";
@@ -83,7 +84,7 @@ export default function CardDetail({ cData }: Props) {
     <div className="card-detail-body">
       <div className="title-area">
         <img
-          src={`${BASE_URL}/character/${characterImageId}/ico.webp?v=${imgVer}`}
+          src={imageAsset(`character/${characterImageId}/ico.webp`, `?v=${imgVer}`)}
         />
         <span className={`${lang}-font`}>
           {characterData[lang]} {buildTargetText[lang].guide}
@@ -96,7 +97,7 @@ export default function CardDetail({ cData }: Props) {
 
           <div className="party-slot" data-entry-group="recommended-party">
             <img
-              src={`${BASE_URL}/character/${characterImageId}/stand.png?v=${imgVer}`}
+              src={imageAsset(`character/${characterImageId}/stand.png`, `?v=${imgVer}`)}
             />
 
             <div className={`party-detail-slot ${lang}-font`}>
@@ -116,11 +117,11 @@ export default function CardDetail({ cData }: Props) {
                         key={partyCharacterId}
                       >
                         <img
-                          src={`${BASE_URL}/character/${
+                          src={imageAsset(`character/${
                             partyCharacterId.includes("rover")
                               ? "rover"
                               : partyCharacterId
-                          }/ico.webp?v=${imgVer}`}
+                          }/ico.webp`, `?v=${imgVer}`)}
                         />
                       </div>
                     ))}
@@ -173,7 +174,7 @@ export default function CardDetail({ cData }: Props) {
                   key={weaponId}
                   data-info-kind="weapon" data-info-id={weaponId} tabIndex={0}
                   className={index === 0 ? "main" : "sub"}
-                  src={`${BASE_URL}/weapon/${characterData.weapon}/${weaponData.imgKey}.png?v=${imgVer}`}
+                  src={imageAsset(`weapon/${characterData.weapon}/${weaponData.imgKey}.png`, `?v=${imgVer}`)}
                   title={String(weaponData[lang])}
                 />
               );

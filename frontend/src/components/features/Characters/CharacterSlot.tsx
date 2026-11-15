@@ -2,6 +2,7 @@ import { useAppStore } from "@/stores/appStore";
 import type { Character } from "@/datas/characters";
 import type { CharacterRank } from "@/types/character.type";
 import { locale } from "@/locales/locale";
+import { imageAsset } from "@/utils/imageAsset";
 
 import "./CharacterSlot.css"
 
@@ -13,7 +14,6 @@ interface CharaterSlotProps {
 }
 
 export default function CharacterSlot({ isGrid, prop, isFavorite = false, onToggleFavorite }: CharaterSlotProps) {
-
   const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const { lang } = useAppStore();
   const id = prop.id;
@@ -30,7 +30,7 @@ export default function CharacterSlot({ isGrid, prop, isFavorite = false, onTogg
 
         <div className="character-image-slot">
           <img className={`character-image ${prop.rank}`} alt="character image" 
-            src={`${BASE_URL}/character/${id.includes("rover") ? "rover" : id}/stand.png?ver=2`} 
+            src={imageAsset(`character/${id.includes("rover") ? "rover" : id}/stand.png`, "?ver=2")}
             loading="lazy"
             decoding="async"
           />
@@ -69,7 +69,7 @@ export default function CharacterSlot({ isGrid, prop, isFavorite = false, onTogg
           <img
             alt="character image"
             className="character-image"
-            src={`${BASE_URL}/character/${id}/stand.png`}
+            src={imageAsset(`character/${id}/stand.png`)}
             loading="lazy"
             decoding="async"
           />

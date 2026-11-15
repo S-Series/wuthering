@@ -48,6 +48,7 @@ export interface Character {
     //========================================================//  
     | "Black Shores" // ======= //@ 검은해안
     | "Huanglong" // ========== //@ 황룡
+    | "Federated Cities"
     | "Unknown"; // =========== //@ 기타, 알 수 없음
   //==========================================================//
 }
@@ -67,6 +68,22 @@ export const character: Record<CharacterId, Character> = {
     isElite: true,
     region: ,
   },*/
+
+  //*== ver 3.8 ===========================//
+  lily: {
+    id: "lily",
+    en: "Lily",
+    kr: "릴리",
+    jp: "リリー",
+    zh: "莉莉",
+    hasSkin: false,
+    weapon: "pistol",
+    element: "spectro",
+    type: "heal",
+    version: 3.8,
+    isElite: true,
+    region: "Federated Cities",
+  },
 
   //*== ver 3.7 ===========================//
   hsin: {

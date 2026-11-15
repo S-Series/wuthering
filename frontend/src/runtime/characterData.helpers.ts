@@ -166,6 +166,7 @@ export const calcBaseStat = (data: CharacterData) => {
 
   stats[characterData.element] = C_baseStat.typeBns[0];
   stats[characterData.type] = C_baseStat.typeBns[1];
+  stats.heal += C_baseStat.healBns;
 
   return stats;
 };
@@ -268,9 +269,11 @@ export const calcCharacterStatDetails = (
   equipmentStats.hpPct += C_baseStat.hpPct;
   equipmentStats.atkPct += C_baseStat.atkPct;
   equipmentStats.defPct += C_baseStat.defPct;
+  equipmentStats.healBns += C_baseStat.healBns;
   record("hpPct", C_baseStat.hpPct, { kind: "nodes" });
   record("atkPct", C_baseStat.atkPct, { kind: "nodes" });
   record("defPct", C_baseStat.defPct, { kind: "nodes" });
+  record("healBns", C_baseStat.healBns, { kind: "nodes" });
 
   equipmentStats[`${characterData.element}Bns`] += C_baseStat.typeBns[0];
   equipmentStats[`${characterData.type}Bns`] += C_baseStat.typeBns[1];
@@ -437,6 +440,9 @@ export const calcCharacterStatDetails = (
     C_baseStat.typeBns[1] +
     equipmentStats[`${characterData.type}Bns`] +
     harmonyStats[`${characterData.type}Bns`];
+  if (characterData.type !== "heal") {
+    stats.heal = equipmentStats.healBns + harmonyStats.healBns;
+  }
 
   for (const statId of ["hp", "atk", "def"] as const) {
     const rawTotal = contributions.filter((source) => source.statId === statId).reduce((sum, source) => sum + source.value, 0);

@@ -26,7 +26,30 @@ const { characterStat } = load(path.join(root, 'datas/characterStats.ts'));
 const { echoDict } = load(path.join(root, 'datas/echos.ts'));
 const { harmony } = load(path.join(root, 'datas/harmonies.ts'));
 const { characterGuideData } = load(path.join(root, 'datas/characters.guide.ts'));
+const { characterMeta } = load(path.join(root, 'datas/characters.meta.ts'));
+const { getDefaultCharacterWeaponId } = load(path.join(root, 'datas/characterWeapons.ts'));
+const { getCharacterConstellEffects } = load(path.join(root, 'datas/characterConstellStats.ts'));
 const close = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-9, `${actual} != ${expected}`);
+
+test('Lily equips Lullaby, recommends Formrender and keeps chain effects off her permanent stats', () => {
+  const data = createEmptyCharacterData('lily');
+  data.weaponId = getDefaultCharacterWeaponId('lily');
+  assert.equal(data.weaponId, 'pistol009');
+  assert.equal(characterGuideData.lily.guideMainEcho, 'A04');
+  assert.ok(echoDict.Cost3.A04.type.includes(characterMeta.lily.harmonySets[0]));
+  assert.equal(characterMeta.lily.resReq, 260);
+  const s0 = calcCharacterStatDetails(data, data.echoDataIndex, {});
+  close(s0.stats.resonanceBns, 177.04);
+  close(s0.stats.heal, 12);
+  close(s0.contributions.find(s => s.kind === 'weaponEffect' && s.statId === 'hp').percent, 12);
+  data.constell = [6, 1];
+  const s6 = calcCharacterStatDetails(data, data.echoDataIndex, {});
+  assert.equal(getCharacterConstellEffects('lily', 6).length, 7);
+  assert.equal(s6.contributions.some(s => s.kind === 'chain'), false);
+  for (const statId of ['heal', 'hp', 'critRate', 'critDmg', 'spectro']) {
+    close(s6.stats[statId], s0.stats[statId]);
+  }
+});
 
 test('weapon refinement, chain, equipped echo and set sources reconcile with final totals', () => {
   const data = createEmptyCharacterData('zani');

@@ -23,6 +23,7 @@ import {
 
 import "@/pages/_Page.css";
 import "@/pages/Home.css";
+import { HomeIntro } from "@/seo/DiscoveryIntro";
 
 const DISPLAY_LIMIT_MEDIUM_BREAKPOINT = 1071;
 const DISPLAY_LIMIT_SMALL_BREAKPOINT = 572;
@@ -226,9 +227,7 @@ export default function Home() {
 
   return (
     <div id="page-slot" className="home-slot">
-      <section className="banner-slot">
-        <h1>{localeText.navbar.title}</h1>
-      </section>
+      <HomeIntro lang={lang} />
 
       <section className="summary-slot">
         <article className="summary-item notice-slot">

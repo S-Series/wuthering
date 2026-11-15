@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import Layout from "./components/_Layout/Layout";
 import Home from "@/pages/Home";
 import Card from "@/pages/Card/index";
@@ -17,10 +17,19 @@ import SiteTooltipLayer from "@/components/common/SiteTooltipLayer";
 import { AboutPage, GuidePage, InformationPage, ScoringPage } from "@/pages/InformationPages";
 import Privacy from "@/components/features/Profile/Privacy";
 import Terms from "@/components/features/Profile/Terms";
+import PageSeo from "@/seo/PageSeo";
+import NotFound from "@/pages/NotFound";
+import { character } from "@/datas/characters";
+
+function CharacterCardRoute() {
+  const { characterId = "" } = useParams();
+  return Object.hasOwn(character, characterId) ? <Card /> : <NotFound />;
+}
 
 export default function App() {
   return (
     <>
+      <PageSeo />
       <OcrServerWatcher />
       <SiteTooltipLayer />
       <Routes>
@@ -34,7 +43,7 @@ export default function App() {
           <Route path="/terms" element={<InformationPage title="이용약관"><Terms /></InformationPage>} />
           <Route path="/characters" element={<Characters />} />
           <Route path="/card" element={<Card />} />
-          <Route path="/card/:characterId" element={<Card />} />
+          <Route path="/card/:characterId" element={<CharacterCardRoute />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/board" element={<Board />} />
           <Route path="/board/write" element={<BoardEditor />} />
@@ -47,6 +56,7 @@ export default function App() {
             <Route path="ocr" element={<OcrCropTest />} />
             <Route path="analystic" element={<DevAnalystic />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </>

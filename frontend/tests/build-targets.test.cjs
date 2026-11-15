@@ -55,13 +55,19 @@ function build(id, variant = getBuildTargetProfile(id).variants[0]) {
   return data;
 }
 
-test('exactly the 45 Arca snapshot characters are registered; every other character has no fallback', () => {
+test('Arca profiles come only from the 45 snapshot entries, with one explicit provisional profile', () => {
   const ids = new Set(source.characters.map(row=>row.characterId));
   assert.equal(ids.size,45);
   assert.equal(ARCA_SOURCE_UPDATED_AT,'2026-10-09');
   assert.equal(ARCA_UPDATE_POLICY,'manual-user-request');
   for (const id of Object.keys(character)) {
     const profile = getBuildTargetProfile(id);
+    if (id === 'lily') {
+      assert.equal(ids.has(id), false);
+      assert.equal(profile.sourceKind, 'provisional');
+      assert.equal(profile.sourceUrl, undefined);
+      continue;
+    }
     if (!ids.has(id)) {
       assert.equal(profile,undefined,id);
       assert.equal(getSuggestedVariant(createEmptyCharacterData(id)),undefined,id);
@@ -82,6 +88,19 @@ test('exactly the 45 Arca snapshot characters are registered; every other charac
       assert.ok(getTargetConditions(build(id,variant),variant).mainOptions,id+' '+variant.id);
     }
   }
+});
+
+test('Lily compares the two user-defined thresholds without gear or higher-tier requirements', () => {
+  const data = createEmptyCharacterData('lily');
+  const variant = getSuggestedVariant(data);
+  const thresholds = { hp: 39000, resonanceBns: 260 };
+  const result = evaluateBuildTargets(data, variant, thresholds);
+  assert.equal(result.tier, 'wellBuilt');
+  assert.deepEqual(Object.entries(result.targets.wellBuilt), Object.entries(thresholds));
+  assert.equal(Object.keys(result.targets.nearFinal).length, 0);
+  assert.equal(Object.keys(result.targets.final).length, 0);
+  assert.equal(evaluateBuildTargets(data, variant, { ...thresholds, hp: 38999 }).tier, null);
+  assert.equal(evaluateBuildTargets(data, variant, { ...thresholds, resonanceBns: 259.9 }).tier, null);
 });
 
 test('direct Arca values replace old overlay and guide supplements', () => {
@@ -161,26 +180,32 @@ test('missing source 1-cost options are not invented; projections require concre
   assert.equal(getTierTargets('lucy',v).final.atk,undefined);
   assert.equal(getTierTargets('lucy',v).nearFinal.atk,undefined);
   assert.equal(getTierTargets('lucy',v).wellBuilt.atk,2500);
-  assert.equal(getTierTargets('lucy',v,build('lucy',v)).final.atk,2626);
+  assert.equal(getTierTargets('lucy',v,build('lucy',v)).final.atk,2828);
 });
 
-test('comparison keeps main Echo effects, excludes all set and Chain effects, and normalizes refinement', () => {
+test('comparison includes equipped set and main Echo effects, but excludes Chain and refinement', () => {
   const v=getBuildTargetProfile('lucy').variants.find(v=>v.label==='속공'),data=build('lucy',v);
   data.echoData[0].echoId='X80';
   [6.9,7.5,7.5,8.7,6.9].forEach((statValue,i)=>data.echoData[i].subOptions[0]={statId:'critRate',statValue});
   const before=getBuildComparisonStats(data);
   close(before.critRate,87.5);
   data.constell=[6,5];
+  for(const stat of ['atk','critRate','critDmg','resonanceBns']) close(getBuildComparisonStats(data)[stat],before[stat]);
   data.echoData.forEach(e=>e.setId='Radiance');
+  data.echoData[4].setId=null;
+  const partial=getBuildComparisonStats(data);
+  close(partial.critRate,before.critRate);
+  data.echoData[4].setId='Radiance';
   const after=getBuildComparisonStats(data);
-  for(const stat of ['atk','critRate','critDmg','resonanceBns']) close(after[stat],before[stat]);
-  assert.ok(calcFinalStat(data,data.echoDataIndex,{Radiance:5}).critRate>after.critRate);
+  const normalized=calcFinalStat({...data,constell:[0,1]},data.echoDataIndex,{Radiance:5});
+  assert.ok(after.critRate>partial.critRate);
+  for(const stat of ['atk','critRate','critDmg','resonanceBns']) close(after[stat],normalized[stat]);
 });
 
 test('projected final targets include the selected main Echo and fixed substat budgets', () => {
   const v=getBuildTargetProfile('lucy').variants.find(v=>v.label==='속공'),data=build('lucy',v);
   data.echoData[0].echoId='R56';
-  assert.equal(getTierTargets('lucy',v,data).final.atk,2747);
+  assert.equal(getTierTargets('lucy',v,data).final.atk,2950);
   for(const id of ['aemeath','zani','camellya']) {
     const v=getBuildTargetProfile(id).variants[0],data=build(id,v),target=getTierTargets(id,v,data).final;
     data.echoData[0].subOptions[0]={statId:'atkPct',statValue:35};

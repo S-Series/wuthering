@@ -35,6 +35,21 @@ export const characterStat = {
   },
   */
 
+  // == 3.8 ======================================= //
+  lily: {
+    baseHp: 16713,
+    baseAtk: 288,
+    baseDef: 1100,
+    CritRate: 5.0,
+    CritDmg: 150.0,
+    healBns: 12.0,
+    ResonanceBns: 100.0,
+    atkPct: 0.0,
+    hpPct: 12.0,
+    defPct: 0.0,
+    typeBns: [0, 0.0],
+  },
+
   // == 3.7 ======================================= //
   hsin: {
     baseHp: 10300,

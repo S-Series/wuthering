@@ -28,6 +28,14 @@ const BaseSheet: Partial<CharacterScore> = {
 };
 
 export const characterScoreSheet: Record<CharacterId, CharacterScore> = {
+  lily: {
+    ...BaseSheet,
+    [FixedStats.hpPct.id]: 3,
+    [FixedStats.critRate.id]: 0,
+    [FixedStats.critDmg.id]: 0,
+    [FixedStats.resonanceBns.id]: 3,
+    maxResCount: 2,
+  },
   suoming: {
     ...BaseSheet,
     [FixedStats.atkPct.id]: 1.5,

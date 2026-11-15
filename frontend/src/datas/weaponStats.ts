@@ -335,6 +335,11 @@ export const weaponStat = {
     value: [72.0, 12],
     statType: [FixedStats.critDmg.id, FixedStats.atkPct.id],
   },
+  pistol009: {
+    atk: 412,
+    value: [77.04, 12],
+    statType: [FixedStats.resonanceBns.id, FixedStats.hpPct.id],
+  },
   //$ -------------------------------------------
   pistol101: {
     atk: 337,

@@ -77,3 +77,16 @@
   outline: 2px solid var(--nav-accent);
   outline-offset: 4px;
 }
+
+.guide-example { margin: 1.5rem 0; padding: 1rem; border: 1px solid var(--nav-border-muted); background: var(--nav-control-bg); }
+.site-document [id] { scroll-margin-top: 110px; }
+.guide-example figcaption { margin-bottom: 1rem; font-weight: 700; }
+.echo-capture-example { border: 2px dashed var(--nav-accent); padding: 1rem; }
+.spec-card-example { padding: 1rem; border: 1px solid var(--nav-accent); }
+.spec-card-example dl { margin-bottom: 0; }
+.spec-card-example dl > div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem 1rem; }
+.spec-card-example dd { margin: 0; font-variant-numeric: tabular-nums; }
+.document-table-scroll { overflow-x: auto; }
+.document-table-scroll table { width: 100%; border-collapse: collapse; min-width: 26rem; }
+.document-table-scroll th, .document-table-scroll td { padding: 0.75rem; border: 1px solid var(--nav-border-muted); text-align: left; vertical-align: top; }
+.document-table-scroll th[scope="row"] { width: 30%; }

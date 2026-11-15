@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { imageAsset } from "@/utils/imageAsset";
 
 import { useAppStore, type LangType } from "@/stores/appStore";
 import { useImgStore } from "@/stores/imgStore";
@@ -51,6 +52,7 @@ import { useRenderStore } from "@/stores/renderStore";
 import "./index.css"
 import "./contents.main.css"
 import CardCharacterSection from "./Character";
+import { CardIntro } from "@/seo/DiscoveryIntro";
 
 type CardLocaleText = ReturnType<typeof locale>["card"];
 
@@ -688,7 +690,6 @@ export default function Card() {
     );
   };
 
-  const BASE_URL = import.meta.env.VITE_IMAGE_BASE;
   const SCOREBOARD_URL = "https://docs.google.com/spreadsheets/d/169EqXJatZIMqL0MPbHF6Eg9DgLFcaxjE6hG03gYZ-_U/edit?gid=1750559029#gid=1750559029";
   const UI_BUTTON_POS = [
     { x: 85.5, y: 62.8 },
@@ -1265,6 +1266,7 @@ export default function Card() {
   //* == return data ================================================//
   return (
     <div id="card-page-slot">
+      <CardIntro lang={lang} />
       {isGuideOpen && (
         <CardGuideOverlay
           dismissed={cardGuideDismissed}
@@ -1418,11 +1420,11 @@ export default function Card() {
               <div className="card-character-slot">
                 <div className="character-image-frame">
                   <img className="character-img"
-                    src={`${BASE_URL}/character/${
+                    src={imageAsset(`character/${
                       characterId?.includes("rover")
-                        ? `rover?v=${imgVer}`
+                        ? "rover"
                         : characterId
-                    }/stand.png?v=${imgVer}`}
+                    }/stand.png`, `?v=${imgVer}`)}
                     onClick={openCharacterWeaponManager}
                   />
 
@@ -1458,11 +1460,11 @@ export default function Card() {
                         >
                           <img
                             className="constell-image"
-                            src={`${BASE_URL}/character/${
+                            src={imageAsset(`character/${
                               characterId?.includes("rover")
                                 ? "rover"
                                 : characterId
-                            }/C${idx + 1}.png`}
+                            }/C${idx + 1}.png`)}
                           />
                         </button>
                       );
@@ -1518,7 +1520,7 @@ export default function Card() {
               <div className="weapon-info-img">
                 <img
                   alt="weapon icon"
-                  src={`${BASE_URL}/weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png?v=${imgVer}`}
+                  src={imageAsset(`weapon/${selectedCharacterData.weapon}/${weaponData?.imgKey}.png`, `?v=${imgVer}`)}
                   onError={(e) => {
                     e.currentTarget.dataset.fallback = "true";
                     e.currentTarget.src = "/default.webp";
@@ -1690,9 +1692,9 @@ export default function Card() {
               <div className="namecard-image">
                 <ImagePicker
                   src={namecardImage.src}
-                  defaultSrc={`${BASE_URL}/character/${
+                  defaultSrc={imageAsset(`character/${
                     characterId.includes("rover") ? "rover" : characterId
-                  }/art.png`}
+                  }/art.png`)}
                   onChangeSrc={(src) => setImageSrc("namecardImage", src)}
                 />
               </div>

@@ -1,5 +1,76 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "routes": [
+    {
+      "src": "/index\\.html",
+      "headers": {
+        "Location": "/"
+      },
+      "status": 308
+    },
+    {
+      "src": "/(about|card|guide|guide/scoring|privacy|terms)\\.html",
+      "headers": {
+        "Location": "/$1"
+      },
+      "status": 308
+    },
+    {
+      "src": "/(?:app|private)\\.html",
+      "dest": "/404.html",
+      "status": 404
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/about/?",
+      "dest": "/about.html"
+    },
+    {
+      "src": "/card/?",
+      "dest": "/card.html"
+    },
+    {
+      "src": "/guide/?",
+      "dest": "/guide.html"
+    },
+    {
+      "src": "/guide/scoring/?",
+      "dest": "/guide/scoring.html"
+    },
+    {
+      "src": "/privacy/?",
+      "dest": "/privacy.html"
+    },
+    {
+      "src": "/terms/?",
+      "dest": "/terms.html"
+    },
+    {
+      "src": "/card/(lily|hsin|suoming|jingran|qingxiao|suisui|xuanling|rover_electro|lucilla|rebecca|lucy|denia|hiyuki|sigrika|luuk_herssen|aemeath|mornye|lynae|chisa|buling|qiuyuan|galbrena|iuno|augusta|phrolova|lupa|cartethyia|chiaccona|zani|cantarella|rover_aero|brant|phoebe|roccia|carlotta|lumi|camellya|youhu|shorekeeper|xiangliyao|zhezhi|changli|jinhsi|yinlin|jiyan|rover_havoc|rover_spectro|verina|calcharo|encore|jianxin|lingyang|sanhua|baizhi|chixia|mortefi|yuanwu|yangyang|aalto|taoqi|danjin)/?",
+      "dest": "/card.html"
+    },
+    {
+      "src": "/(?:profile|debug|dev(?:/(?:ocr|analystic|test))?|test|board/write|board/[^/]+/edit)/?",
+      "dest": "/private.html",
+      "headers": {
+        "X-Robots-Tag": "noindex, follow"
+      }
+    },
+    {
+      "src": "/(?:characters|board(?:/[^/]+)?)/?",
+      "dest": "/app.html"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "status": 404,
+      "dest": "/404.html"
+    }
   ]
 }

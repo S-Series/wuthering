@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { imageAsset } from "@/utils/imageAsset";
 
 import { useAppStore } from "@/stores/appStore";
 import { useCharacter } from "@/stores/characterDataStore";
@@ -210,7 +211,7 @@ export default function CardCharacterSection() {
               >
                 <img
                   alt=""
-                  src={`${BASE_URL}/character/${assetId}/ico.webp?v=${imgVer}`}
+                  src={imageAsset(`character/${assetId}/ico.webp`, `?v=${imgVer}`)}
                   onError={(event) => {
                     event.currentTarget.onerror = null;
                     event.currentTarget.src = "/default.webp";
@@ -270,7 +271,7 @@ export default function CardCharacterSection() {
               >
                 <img
                   alt=""
-                  src={`${BASE_URL}/weapon/${selectedCharacter.weapon}/${item.imgKey}.png?v=${imgVer}`}
+                  src={imageAsset(`weapon/${selectedCharacter.weapon}/${item.imgKey}.png`, `?v=${imgVer}`)}
                   onError={(event) => {
                     event.currentTarget.onerror = null;
                     event.currentTarget.src = "/default.webp";
