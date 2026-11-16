@@ -30,13 +30,13 @@ const baseMeta: CharacterMetaBase = {
 export const characterMeta: Record<CharacterId, CharacterMeta> = {
   lily: {
     ...baseMeta,
-    harmonySets: [harmony.Yearning.id, harmony.Rejuvent.id],
+    harmonySets: [harmony.Rejuvent.id, harmony.Yearning.id, ],
     cost4MainStats: [FixedStats.healBns.id, FixedStats.hpPct.id],
     cost3MainStats: [FixedStats.resonanceBns.id, FixedStats.hpPct.id],
     statType: "hp",
     isNeedCrit: false,
     resReq: 260,
-    subResReq: 20,
+    subResReq: 50,
   },
   //*== ver 3.5 ===========================//
   rover_electro: {

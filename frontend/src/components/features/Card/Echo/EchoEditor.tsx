@@ -13,7 +13,7 @@ import { FixedStats } from "@/datas/stats";
 import { echoDict, type EchoData } from "@/datas/echos";
 
 import type { EchoEditorProps, SelectOption, SelectOriginalOption, SelectOptionWithImage, SelectOptionStatOriginal, Cost, SelectOpt } from "./echoOptions.types";
-import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase } from "./echoOptions.helpers";
+import { formatOptionWithImage, formatOptionWithImage_Smaller, getStatDropStyleOptionWide, getStatDropStyleLarge, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase, getSubStatOptions } from "./echoOptions.helpers";
 
 import { createEmptyEchoRuntime, type EchoRuntime } from "@/runtime/echo.runtime";
 import { patchEchoAt, setEchoId, patchEchoMainOption, patchEchoSubOption, setEchoCost, setEchoSetId, } from "@/runtime/characterData.helpers";
@@ -132,8 +132,8 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
       getEchoOptionBase(lang, selectedCost, BASE_URL)
       , [lang, selectedCost, BASE_URL]);
 
-  const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal[]>(() =>
-    getStatOptionBase(lang, characterData.characterId)
+  const STAT_OPTION_SUB = useMemo<SelectOptionStatOriginal[]>(() =>
+    getSubStatOptions(lang, characterData.characterId)
     , [lang, characterData.characterId])
 
   const MAIN_STAT_OPTION_BASE = useMemo(() => getStatOptionBase(lang, characterData.characterId, selectedCost, characterData.constell[0]),
@@ -182,9 +182,6 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
   )
   const STAT_OPTION_MAIN_COST1 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[2] !== 0
-  )
-  const STAT_OPTION_SUB = STAT_OPTION_BASE.filter(
-    (opt) => opt.subValue.length !== 0
   )
 
   const isFixedStatId = (id: string): id is keyof typeof FixedStats => id in FixedStats;
@@ -458,7 +455,7 @@ export default function EchoEditor({ index = 0 }: EchoEditorProps) {
                 menuShouldScrollIntoView={false}
                 menuPortalTarget={document.body}
                 value={
-                  STAT_OPTION_BASE.find(
+                  STAT_OPTION_SUB.find(
                     (e) =>
                       e.value ===
                       characterData.echoData[index].subOptions[idx].statId

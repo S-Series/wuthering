@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { imageAsset } from "@/utils/imageAsset";
+import { getSubStatOptions } from "@/components/features/Card/Echo/echoOptions.helpers";
 
 import { characterGuideData } from "@/datas/characters.guide";
 import { getRecommendedParties } from "@/datas/characters.parties";
@@ -69,13 +70,9 @@ export default function CardDetail({ cData }: Props) {
   const meta = getCharacterMeta(cData.characterId, cData.constell[0]);
   const mainEcho = getEchoData(guide.guideMainEcho);
   const cost1MainStat = `${meta.statType}Pct` as StatId;
-  const effectiveSubStats: StatId[] = meta.isNeedCrit
-    ? [FixedStats.critRate.id, FixedStats.critDmg.id, cost1MainStat]
-    : [cost1MainStat];
-  const secondarySubStats: StatId[] = [
-    FixedStats.resonanceBns.id,
-    FixedStats[`${characterData.type}Bns`].id,
-  ];
+  const subStats = getSubStatOptions(lang, cData.characterId);
+  const effectiveSubStats = subStats.filter(option => option.relevanceTier === "valid");
+  const secondarySubStats = subStats.filter(option => option.relevanceTier === "partial");
   const characterImageId = cData.characterId.includes("rover")
     ? "rover"
     : cData.characterId;
@@ -249,8 +246,8 @@ export default function CardDetail({ cData }: Props) {
               {localeText.subStats.priority}
             </span>
             <div className="divider" />
-            {effectiveSubStats.map((statId) => (
-              <StatSlot key={statId} statId={statId} lang={lang} />
+            {effectiveSubStats.map(({ value }) => (
+              <StatSlot key={value} statId={value} lang={lang} />
             ))}
 
             <div className="split" />
@@ -258,8 +255,8 @@ export default function CardDetail({ cData }: Props) {
               {localeText.subStats.secondary}
             </span>
             <div className="divider" />
-            {secondarySubStats.map((statId) => (
-              <StatSlot key={statId} statId={statId} lang={lang} />
+            {secondarySubStats.map(({ value }) => (
+              <StatSlot key={value} statId={value} lang={lang} />
             ))}
           </div>
         </div>

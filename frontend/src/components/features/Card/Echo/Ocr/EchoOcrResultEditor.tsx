@@ -23,7 +23,7 @@ import EchoOcrTargetPreview from "./EchoOcrTargetPreview";
 import "./EchoOcrResultEditor.css"
 import Select, { type StylesConfig } from "react-select";
 import { useCharacter } from "@/stores/characterDataStore";
-import { formatOptionWithImage, formatOptionWithImage_Smaller, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase, getStatDropStyleDrag } from "../echoOptions.helpers";
+import { formatOptionWithImage, formatOptionWithImage_Smaller, HARMONY_OPTIONS_BASE, getEchoOptionBase, getStatOptionBase, getStatDropStyleDrag, getSubStatOptions } from "../echoOptions.helpers";
 import { useStyleStore } from "@/stores/styleStore";
 import type { Cost, SelectOpt, SelectOption, SelectOptionStatOriginal, SelectOptionWithImage } from "../echoOptions.types";
 import { createEmptyEchoRuntime, type EchoRuntime, type EchoStatOption } from "@/runtime/echo.runtime";
@@ -249,8 +249,8 @@ export default function EchoOcrResultEditor({
       }));
   }, [lang, tempEchoData?.type]);
 
-  const STAT_OPTION_BASE = useMemo<SelectOptionStatOriginal<StatId>[]>(() =>
-    getStatOptionBase(lang, characterData.characterId)
+  const STAT_OPTION_SUB = useMemo<SelectOptionStatOriginal<StatId>[]>(() =>
+    getSubStatOptions(lang, characterData.characterId)
     , [lang, characterData.characterId])
 
   const MAIN_STAT_OPTION_BASE = useMemo(() => getStatOptionBase(lang, characterData.characterId, tempEcho.cost, characterData.constell[0]),
@@ -264,9 +264,6 @@ export default function EchoOcrResultEditor({
   )
   const STAT_OPTION_MAIN_COST1 = MAIN_STAT_OPTION_BASE.filter(
     (opt) => opt.mainValue[2] !== 0
-  )
-  const STAT_OPTION_SUB = STAT_OPTION_BASE.filter(
-    (opt) => opt.subValue.length !== 0
   )
 
   const isFixedStatId = (id: string): id is keyof typeof FixedStats => id in FixedStats;

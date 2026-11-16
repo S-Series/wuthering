@@ -26,7 +26,7 @@ function load(relative) {
 const { characterMeta } = load('datas/characters.meta.ts');
 const { FixedStats } = load('datas/stats.ts');
 const { isValidEchoMainOption, countInvalidEquippedMainOptions } = load('runtime/echoMainOption.helpers.ts');
-const { getStatOptionBase } = load('components/features/Card/Echo/echoOptions.helpers.tsx');
+const { getStatOptionBase, getSubStatOptions } = load('components/features/Card/Echo/echoOptions.helpers.tsx');
 const echo = (cost, statId) => ({ cost, mainOption: { statId, statValue: 0 }, subOptions: [] });
 
 test('main dropdown recognizes accepted elemental bonuses without substat weights', () => {
@@ -37,6 +37,27 @@ test('main dropdown recognizes accepted elemental bonuses without substat weight
     assert.equal(options.find(o => o.value === 'fusionBns').relevanceTier, 'invalid');
   }
   assert.equal(getStatOptionBase('kr', 'hsin').find(o => o.value === 'skillBns').relevanceTier, 'valid');
+});
+test('Lily guide classifications match rollable substats and keep Healing Bonus as a main option', () => {
+  const substats = getSubStatOptions('kr', 'lily');
+  const values = tier => Array.from(substats.filter(option => option.relevanceTier === tier), option => option.value).sort();
+  assert.deepEqual(values('valid'), ['hpPct', 'resonanceBns']);
+  assert.deepEqual(values('partial'), ['hp']);
+  assert.equal(substats.some(option => option.value === 'healBns'), false);
+  assert.equal(getStatOptionBase('kr', 'lily', 4).find(option => option.value === 'healBns').relevanceTier, 'valid');
+});
+test('shared substat options preserve scoring relevance for every character and exclude main-only stats', () => {
+  const { characterScoreSheet } = load('datas/characterScoreSheet.ts');
+  const rollable = Object.values(FixedStats).filter(stat => stat.id !== 'dummy' && stat.ValueSub.length > 0);
+  for (const [id, meta] of Object.entries(characterMeta)) {
+    const options = getSubStatOptions('en', id);
+    assert.deepEqual(Array.from(options, option => option.value).sort(), rollable.map(stat => stat.id).sort(), id);
+    for (const { value, relevanceTier } of options) {
+      const score = characterScoreSheet[id][value] ?? 0;
+      const flat = value === 'atk' ? (characterScoreSheet[id].atkPct ?? 0) >= 1 : value === meta.statType;
+      assert.equal(relevanceTier, score >= 1 ? 'valid' : score > 0 || flat ? 'partial' : 'invalid', id + '/' + value);
+    }
+  }
 });
 test('all characters use the same accepted main stats in dropdowns and scoring', () => {
   for (const [id, meta] of Object.entries(characterMeta)) {

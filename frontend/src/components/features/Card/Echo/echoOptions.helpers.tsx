@@ -552,3 +552,6 @@ export const getStatOptionBase = (
       return bScore - aScore;
     })
 }
+
+export const getSubStatOptions = (lang: LangType, characterId: CharacterId) =>
+    getStatOptionBase(lang, characterId).filter(option => option.subValue.length > 0);
